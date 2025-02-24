@@ -1,0 +1,10 @@
+:root {
+    --color_white: #ffffff;
+    --color_black: #3f3f3f;
+
+    --border-radius: 12px;
+
+    --block-shadow: 0px 0px 13px -5px rgba(0, 0, 0, 0.1);
+
+    --font-inter: "Inter", sans-serif;
+}

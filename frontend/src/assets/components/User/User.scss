@@ -1,0 +1,14 @@
+.user {
+    &__nav {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.15s ease-in-out;
+
+        &.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+    }
+}
