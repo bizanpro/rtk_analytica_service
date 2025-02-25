@@ -4,7 +4,7 @@ import Home from "../Home";
 import NotFound from "../NotFound";
 import Sidebar from "../SideBar/SideBar";
 import Header from "../Header/Header";
-import Footer from "../Footer/Footer";
+// import Footer from "../Footer/Footer";
 import Projects from "../Projects/Projects";
 import ProjectCard from "../Projects/ProjectCard";
 
@@ -31,7 +31,7 @@ function App() {
                 </Route>
             </Routes>
 
-            <Footer />
+            {/* <Footer /> */}
         </BrowserRouter>
     );
 }

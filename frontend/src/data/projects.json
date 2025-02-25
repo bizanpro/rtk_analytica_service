@@ -17,11 +17,11 @@
     "work_group_employee_name": "Petrov Petr Petrovich",
     "work_group_employee_salary_fund": 150000,
     "work_group_employee_role": "Leader",
-    "work_group_employee_engagement_percentage": 50,
-    "work_group_employee_time_spent": 200,
+    "work_group_employee_engagement_percentage": "50%",
+    "work_group_employee_time_spent": "200 ч",
     "subcontractor_name": "LLC Partner",
     "subcontractor_role": "Executor",
-    "service_cost": 200000,
+    "service_cost": "200000 руб.",
     "subcontractor_period_start": "2025-02-01",
     "subcontractor_period_end": "2025-05-31",
     "comment": "Project is on track",
@@ -29,7 +29,7 @@
     "work_group_evaluation_employee_role": "Leader",
     "work_group_evaluation_employee_engagement_percentage": 50,
     "work_group_evaluation_employee_time_spent": 200,
-    "work_group_evaluation_employee_score": 9
+    "work_group_evaluation_employee_score": "9/10"
   },
   {
     "id": 2,
