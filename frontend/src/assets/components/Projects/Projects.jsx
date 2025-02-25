@@ -123,6 +123,18 @@ const Projects = () => {
                                 >
                                     Период реализации, план
                                 </th>
+                                <th
+                                    className="border border-gray-300 px-4 py-2 align-middle"
+                                    rowSpan="2"
+                                >
+                                    Комментарий
+                                </th>
+                                <th
+                                    className="border border-gray-300 px-4 py-2"
+                                    colSpan="5"
+                                >
+                                    Рабочая группа
+                                </th>
                             </tr>
                             <tr className="bg-gray-100">
                                 <th className="border border-gray-300 px-4 py-2">
@@ -157,6 +169,21 @@ const Projects = () => {
                                 </th>
                                 <th className="border border-gray-300 px-4 py-2">
                                     Конец
+                                </th>
+                                <th className="border border-gray-300 px-4 py-2">
+                                    ФИО сотрудника
+                                </th>
+                                <th className="border border-gray-300 px-4 py-2">
+                                    Роль
+                                </th>
+                                <th className="border border-gray-300 px-4 py-2">
+                                    % вовлечения, план
+                                </th>
+                                <th className="border border-gray-300 px-4 py-2">
+                                    Затрачиваемое время, план
+                                </th>
+                                <th className="border border-gray-300 px-4 py-2">
+                                    Баллы
                                 </th>
                             </tr>
                         </thead>
