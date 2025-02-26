@@ -13,8 +13,12 @@ const User = () => {
 
     return (
         <div className="user">
-            <button type="button" className="user__info cursor-pointer font-medium text-lg" onClick={toggleMenu}>
+            <button type="button" className="user__info cursor-pointer font-medium text-lg flex items-center gap-2" onClick={toggleMenu}>
                 Пользователь
+
+                <span className="flex items-center justify-center w-[20px] h-[20px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="currentColor" fillRule="non-zero" d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61a1.65 1.65 0 002.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0"/></svg>
+                </span>
             </button>
 
             <nav
