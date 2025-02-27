@@ -7,6 +7,8 @@ import Header from "../Header/Header";
 // import Footer from "../Footer/Footer";
 import Projects from "../Projects/Projects";
 import ProjectCard from "../Projects/ProjectCard";
+import Employees from "../Employees/Employees";
+import EmployeeCard from "../Employees/EmployeeCard";
 
 import "./App.scss";
 
@@ -23,10 +25,15 @@ function App() {
                     <Route path="*" element={<NotFound />} />
 
                     <Route path="projects" element={<Projects />} />
-
                     <Route
                         path="projects/:projectId"
                         element={<ProjectCard />}
+                    />
+
+                    <Route path="employees" element={<Employees />} />
+                    <Route
+                        path="employees/:employeeId"
+                        element={<EmployeeCard />}
                     />
                 </Route>
             </Routes>

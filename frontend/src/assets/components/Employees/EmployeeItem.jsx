@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
 
-const ProjectItem = (props) => {
+const EmployeeItem = (props) => {
     const navigate = useNavigate();
 
     const handleRowClick = () => {
-        navigate(`/projects/${props.id}`);
+        navigate(`/employees/${props.id}`);
     };
 
     return (
@@ -62,4 +62,4 @@ const ProjectItem = (props) => {
     );
 };
 
-export default ProjectItem;
+export default EmployeeItem;

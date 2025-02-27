@@ -22,7 +22,7 @@ const User = () => {
             </button>
 
             <nav
-                className={`user__nav absolute flex flex-col gap-[15px] pt-5 pb-6 pl-4 pr-4 z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-sm shadow-sm ${
+                className={`user__nav w-[120px] absolute flex flex-col gap-[15px] pt-3 pb-4 pl-4 pr-4 z-50 my-2 text-base list-none bg-white rounded-sm shadow-sm ${
                     isActive ? "active" : ""
                 }`}
             >
