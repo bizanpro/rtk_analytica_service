@@ -11,11 +11,11 @@ const Employees = () => {
         );
         // .finally(() => setIsLoading(false));
     }, []);
-
+    
     return (
         <main className="page">
             <div className="container py-8">
-                <h1 className="text-4xl mb-8">Список проектов</h1>
+                <h1 className="text-4xl mb-8">Список сотрудников</h1>
 
                 <div className="overflow-x-auto w-full">
                     <table className="table-auto w-full border-collapse border border-gray-300 shadow-lg text-sm">

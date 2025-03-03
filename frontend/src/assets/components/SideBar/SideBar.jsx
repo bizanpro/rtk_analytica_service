@@ -1,8 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 
-import "./Sidebar.scss";
-
 const Sidebar = () => {
     return (
         <nav className="sidebar fixed top-0 bottom-0 left-0 z-50 w-max h-screen bg-white border-r border-gray-200">
