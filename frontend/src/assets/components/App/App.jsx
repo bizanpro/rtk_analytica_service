@@ -7,6 +7,7 @@ import Header from "../Header/Header";
 // import Footer from "../Footer/Footer";
 import Projects from "../Projects/Projects";
 import ProjectCard from "../Projects/ProjectCard";
+import NewProject from "../Projects/NewProject";
 import Employees from "../Employees/Employees";
 import EmployeeCard from "../Employees/EmployeeCard";
 
@@ -29,6 +30,7 @@ function App() {
                         path="projects/:projectId"
                         element={<ProjectCard />}
                     />
+                    <Route path="projects/new" element={<NewProject />} />
 
                     <Route path="employees" element={<Employees />} />
                     <Route

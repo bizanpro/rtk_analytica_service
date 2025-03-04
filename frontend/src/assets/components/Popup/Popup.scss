@@ -1,0 +1,23 @@
+.popup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.6);
+
+    &__wrapper {
+        background: var(--color_white);
+        padding: 25px 35px;
+    }
+
+    &__header {
+        font-size: 24px;
+        line-height: 120%;
+        font-weight: 400;
+        margin-bottom: 20px;
+    }
+}
