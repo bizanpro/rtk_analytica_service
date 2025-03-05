@@ -7,7 +7,7 @@ import Header from "../Header/Header";
 // import Footer from "../Footer/Footer";
 import Projects from "../Projects/Projects";
 import ProjectCard from "../Projects/ProjectCard";
-import NewProject from "../Projects/NewProject";
+import NewProject from "../NewProject/NewProject";
 import Employees from "../Employees/Employees";
 import EmployeeCard from "../Employees/EmployeeCard";
 

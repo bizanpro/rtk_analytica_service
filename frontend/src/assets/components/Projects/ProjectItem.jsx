@@ -13,7 +13,7 @@ const ProjectItem = (props) => {
             onClick={handleRowClick}
         >
             {Object.entries(props).map(([key, value]) => {
-                if (Array.isArray(value)) {
+                if (Array.isArray(value) && value.length > 1) {
                     return (
                         <td
                             className="border border-gray-300 min-w-[150px]"
