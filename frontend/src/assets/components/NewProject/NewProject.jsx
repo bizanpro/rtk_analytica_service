@@ -180,7 +180,10 @@ const NewProject = () => {
                                         </button>
                                     </div>
 
-                                    <ul>
+                                    <ul className="mt-20">
+                                        Нет данных
+                                        <li></li>
+                                        <li></li>
                                         <li></li>
                                     </ul>
                                 </div>
@@ -198,7 +201,14 @@ const NewProject = () => {
                                         </button>
                                     </div>
 
-                                    <ul>
+                                    <ul className="flex gap-3 flex-wrap">
+                                        <li className="border rounded border-gray-300 border-dashed p-1 flex-[0_0_30%] text-center text-gray-300">
+                                            Банк
+                                        </li>
+                                    </ul>
+
+                                    <ul className="mt-20">
+                                        Нет данных
                                         <li></li>
                                         <li></li>
                                         <li></li>
@@ -308,9 +318,13 @@ const NewProject = () => {
                                     </button>
                                 </div>
 
-                                <div className="border-2 border-gray-300 p-5 min-h-full flex-grow">
-                                    Нет данных
-                                </div>
+                                <ul className="border-2 border-gray-300 p-5 min-h-full flex-grow">
+                                    <li className="grid items-center grid-cols-[25%_20%_55%] text-gray-400">
+                                        <span>Отчет</span>
+                                        <span>Статус</span>
+                                        <span>Согласован</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
