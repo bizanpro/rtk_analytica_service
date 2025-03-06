@@ -25,8 +25,8 @@ const NewProject = () => {
     };
 
     const [dateRanges, setDateRanges] = useState(defaultRanges);
-
     const [agreementStatus, setAgreementStatus] = useState("запланирован");
+    const [reportWindowsState, setReportWindowsState] = useState(true);
 
     const addBlock = (type) => {
         if (type === "key-person") {
@@ -482,230 +482,317 @@ const NewProject = () => {
                                     <button
                                         type="button"
                                         className="add-button"
+                                        onClick={() =>
+                                            setReportWindowsState(true)
+                                        }
                                     >
                                         <span></span>
                                     </button>
                                 </div>
 
                                 <div className="border-2 border-gray-300 p-5 min-h-full flex-grow">
-                                    {/* <ul>
-                                        <li className="grid items-center grid-cols-[25%_20%_55%] text-gray-400">
-                                            <span>Отчет</span>
-                                            <span>Статус</span>
-                                            <span>Согласован</span>
-                                        </li>
-                                    </ul> */}
-
-                                    <div className="grid gap-6">
-                                        <div className="grid gap-3 grid-cols-[50%_50%]">
-                                            <div className="flex flex-col gap-2 justify-between">
-                                                <span className="text-gray-400">
-                                                    Тип отчёта
-                                                </span>
-                                                <div className="border-2 border-gray-300 p-1">
-                                                    <select className="w-full">
-                                                        <option value="ФТА">
-                                                            ФТА
-                                                        </option>
-                                                        <option value="ФТМ">
-                                                            ФТМ
-                                                        </option>
-                                                        <option value="ФМ">
-                                                            ФМ
-                                                        </option>
-                                                        <option value="ИЗ">
-                                                            ИЗ
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex flex-col gap-2 justify-between">
-                                                <span className="text-gray-400">
-                                                    Отчетный период
-                                                </span>
-                                                <DatePicker
-                                                    className="border-2 border-gray-300 p-1 w-full"
-                                                    selected={
-                                                        dateRanges.picker1.start
-                                                    }
-                                                    startDate={
-                                                        dateRanges.picker1.start
-                                                    }
-                                                    endDate={
-                                                        dateRanges.picker1.end
-                                                    }
-                                                    onChange={handleChangeDateRange(
-                                                        "picker1"
-                                                    )}
-                                                    excludeDates={[
-                                                        new Date("2024-05-01"),
-                                                        new Date("2024-02-01"),
-                                                        new Date("2024-01-01"),
-                                                        new Date("2024-11-01"),
-                                                    ]}
-                                                    dateFormat="dd.MM.yyyy"
-                                                    placeholderText=""
-                                                    selectsRange
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="grid gap-3 grid-cols-[50%_50%]">
-                                            <div className="flex flex-col gap-2 justify-between">
-                                                <span className="text-gray-400">
-                                                    Бюджет проекта, млрд руб.
-                                                </span>
-                                                <div className="border-2 border-gray-300 p-1">
-                                                    <input
-                                                        type="number"
-                                                        className="w-full"
-                                                        placeholder="0,0"
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className="flex flex-col gap-2 justify-between">
-                                                <span className="text-gray-400">
-                                                    Период реализации
-                                                </span>
-                                                <DatePicker
-                                                    className="border-2 border-gray-300 p-1 w-full"
-                                                    selected={
-                                                        dateRanges.picker2.start
-                                                    }
-                                                    startDate={
-                                                        dateRanges.picker2.start
-                                                    }
-                                                    endDate={
-                                                        dateRanges.picker2.end
-                                                    }
-                                                    onChange={handleChangeDateRange(
-                                                        "picker2"
-                                                    )}
-                                                    excludeDates={[
-                                                        new Date("2024-05-01"),
-                                                        new Date("2024-02-01"),
-                                                        new Date("2024-01-01"),
-                                                        new Date("2024-11-01"),
-                                                    ]}
-                                                    dateFormat="dd.MM.yyyy"
-                                                    placeholderText=""
-                                                    selectsRange
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="grid gap-3 grid-cols-1">
-                                            <div className="flex flex-col gap-2 justify-between">
-                                                <span className="text-gray-400">
-                                                    Договор
-                                                </span>
-                                                <div className="border-2 border-gray-300 p-1">
-                                                    <select className="w-full">
-                                                        <option value="Договор 45222 от 12.01.2025">
-                                                            Договор 45222 от
-                                                            12.01.2025
-                                                        </option>
-                                                        <option value="Договор 45222 от 12.01.2025">
-                                                            Договор 45222 от
-                                                            13.01.2025
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid gap-3 grid-cols-[50%_50%]">
-                                            <div className="flex flex-col gap-2 justify-between">
-                                                <span className="text-gray-400">
-                                                    Стоимость услуг, руб.
-                                                </span>
-                                                <div className="border-2 border-gray-300 p-1">
-                                                    <input
-                                                        type="number"
-                                                        className="w-full"
-                                                        placeholder="0,0"
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className="flex flex-col gap-2 justify-between">
-                                                <span className="text-gray-400">
-                                                    Период выполнения
-                                                </span>
-                                                <DatePicker
-                                                    className="border-2 border-gray-300 p-1 w-full"
-                                                    selected={
-                                                        dateRanges.picker3.start
-                                                    }
-                                                    startDate={
-                                                        dateRanges.picker3.start
-                                                    }
-                                                    endDate={
-                                                        dateRanges.picker3.end
-                                                    }
-                                                    onChange={handleChangeDateRange(
-                                                        "picker3"
-                                                    )}
-                                                    excludeDates={[
-                                                        new Date("2024-05-01"),
-                                                        new Date("2024-02-01"),
-                                                        new Date("2024-01-01"),
-                                                        new Date("2024-11-01"),
-                                                    ]}
-                                                    dateFormat="dd.MM.yyyy"
-                                                    placeholderText=""
-                                                    selectsRange
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            className={`grid gap-3 ${
-                                                agreementStatus == "завершён"
-                                                    ? "grid-cols-[50%_50%]"
-                                                    : "grid-cols-1"
-                                            }`}
-                                        >
-                                            <div className="flex flex-col gap-2 justify-between">
-                                                <span className="text-gray-400">
-                                                    Статус
-                                                </span>
-                                                <div className="border-2 border-gray-300 p-1">
-                                                    <select
-                                                        className="w-full"
-                                                        value={agreementStatus}
-                                                        onChange={(evt) =>
-                                                            setAgreementStatus(
-                                                                evt.target.value
-                                                            )
-                                                        }
-                                                    >
-                                                        <option value="запланирован">
-                                                            запланирован
-                                                        </option>
-                                                        <option value="в работе">
-                                                            в работе
-                                                        </option>
-                                                        <option value="завершён">
-                                                            завершён
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            {agreementStatus == "завершён" && (
+                                    {!reportWindowsState ? (
+                                        <ul>
+                                            <li className="grid items-center grid-cols-[25%_20%_55%] text-gray-400">
+                                                <span>Отчет</span>
+                                                <span>Статус</span>
+                                                <span>Согласован</span>
+                                            </li>
+                                        </ul>
+                                    ) : (
+                                        <div className="grid gap-6">
+                                            <div className="grid gap-3 grid-cols-[50%_50%]">
                                                 <div className="flex flex-col gap-2 justify-between">
                                                     <span className="text-gray-400">
-                                                        Добавить отчет
+                                                        Тип отчёта
                                                     </span>
-
-                                                    <div className="grid gap-3 grid-cols-[50%_50%]"></div>
+                                                    <div className="border-2 border-gray-300 p-1">
+                                                        <select className="w-full">
+                                                            <option value="ФТА">
+                                                                ФТА
+                                                            </option>
+                                                            <option value="ФТМ">
+                                                                ФТМ
+                                                            </option>
+                                                            <option value="ФМ">
+                                                                ФМ
+                                                            </option>
+                                                            <option value="ИЗ">
+                                                                ИЗ
+                                                            </option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            )}
+
+                                                <div className="flex flex-col gap-2 justify-between">
+                                                    <span className="text-gray-400">
+                                                        Отчетный период
+                                                    </span>
+                                                    <DatePicker
+                                                        className="border-2 border-gray-300 p-1 w-full"
+                                                        selected={
+                                                            dateRanges.picker1
+                                                                .start
+                                                        }
+                                                        startDate={
+                                                            dateRanges.picker1
+                                                                .start
+                                                        }
+                                                        endDate={
+                                                            dateRanges.picker1
+                                                                .end
+                                                        }
+                                                        onChange={handleChangeDateRange(
+                                                            "picker1"
+                                                        )}
+                                                        excludeDates={[
+                                                            new Date(
+                                                                "2024-05-01"
+                                                            ),
+                                                            new Date(
+                                                                "2024-02-01"
+                                                            ),
+                                                            new Date(
+                                                                "2024-01-01"
+                                                            ),
+                                                            new Date(
+                                                                "2024-11-01"
+                                                            ),
+                                                        ]}
+                                                        dateFormat="dd.MM.yyyy"
+                                                        placeholderText=""
+                                                        selectsRange
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid gap-3 grid-cols-[50%_50%]">
+                                                <div className="flex flex-col gap-2 justify-between">
+                                                    <span className="text-gray-400">
+                                                        Бюджет проекта, млрд
+                                                        руб.
+                                                    </span>
+                                                    <div className="border-2 border-gray-300 p-1">
+                                                        <input
+                                                            type="number"
+                                                            className="w-full"
+                                                            placeholder="0,0"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex flex-col gap-2 justify-between">
+                                                    <span className="text-gray-400">
+                                                        Период реализации
+                                                    </span>
+                                                    <DatePicker
+                                                        className="border-2 border-gray-300 p-1 w-full"
+                                                        selected={
+                                                            dateRanges.picker2
+                                                                .start
+                                                        }
+                                                        startDate={
+                                                            dateRanges.picker2
+                                                                .start
+                                                        }
+                                                        endDate={
+                                                            dateRanges.picker2
+                                                                .end
+                                                        }
+                                                        onChange={handleChangeDateRange(
+                                                            "picker2"
+                                                        )}
+                                                        excludeDates={[
+                                                            new Date(
+                                                                "2024-05-01"
+                                                            ),
+                                                            new Date(
+                                                                "2024-02-01"
+                                                            ),
+                                                            new Date(
+                                                                "2024-01-01"
+                                                            ),
+                                                            new Date(
+                                                                "2024-11-01"
+                                                            ),
+                                                        ]}
+                                                        dateFormat="dd.MM.yyyy"
+                                                        placeholderText=""
+                                                        selectsRange
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid gap-3 grid-cols-1">
+                                                <div className="flex flex-col gap-2 justify-between">
+                                                    <span className="text-gray-400">
+                                                        Договор
+                                                    </span>
+                                                    <div className="border-2 border-gray-300 p-1">
+                                                        <select className="w-full">
+                                                            <option value="Договор 45222 от 12.01.2025">
+                                                                Договор 45222 от
+                                                                12.01.2025
+                                                            </option>
+                                                            <option value="Договор 45222 от 12.01.2025">
+                                                                Договор 45222 от
+                                                                13.01.2025
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid gap-3 grid-cols-[50%_50%]">
+                                                <div className="flex flex-col gap-2 justify-between">
+                                                    <span className="text-gray-400">
+                                                        Стоимость услуг, руб.
+                                                    </span>
+                                                    <div className="border-2 border-gray-300 p-1">
+                                                        <input
+                                                            type="number"
+                                                            className="w-full"
+                                                            placeholder="0,0"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex flex-col gap-2 justify-between">
+                                                    <span className="text-gray-400">
+                                                        Период выполнения
+                                                    </span>
+                                                    <DatePicker
+                                                        className="border-2 border-gray-300 p-1 w-full"
+                                                        selected={
+                                                            dateRanges.picker3
+                                                                .start
+                                                        }
+                                                        startDate={
+                                                            dateRanges.picker3
+                                                                .start
+                                                        }
+                                                        endDate={
+                                                            dateRanges.picker3
+                                                                .end
+                                                        }
+                                                        onChange={handleChangeDateRange(
+                                                            "picker3"
+                                                        )}
+                                                        excludeDates={[
+                                                            new Date(
+                                                                "2024-05-01"
+                                                            ),
+                                                            new Date(
+                                                                "2024-02-01"
+                                                            ),
+                                                            new Date(
+                                                                "2024-01-01"
+                                                            ),
+                                                            new Date(
+                                                                "2024-11-01"
+                                                            ),
+                                                        ]}
+                                                        dateFormat="dd.MM.yyyy"
+                                                        placeholderText=""
+                                                        selectsRange
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div
+                                                className={`grid gap-3 ${
+                                                    agreementStatus ==
+                                                    "завершён"
+                                                        ? "grid-cols-[50%_50%]"
+                                                        : "grid-cols-1"
+                                                }`}
+                                            >
+                                                <div className="flex flex-col gap-2 justify-between">
+                                                    <span className="text-gray-400">
+                                                        Статус
+                                                    </span>
+                                                    <div className="border-2 border-gray-300 p-1">
+                                                        <select
+                                                            className="w-full"
+                                                            value={
+                                                                agreementStatus
+                                                            }
+                                                            onChange={(evt) =>
+                                                                setAgreementStatus(
+                                                                    evt.target
+                                                                        .value
+                                                                )
+                                                            }
+                                                        >
+                                                            <option value="запланирован">
+                                                                запланирован
+                                                            </option>
+                                                            <option value="в работе">
+                                                                в работе
+                                                            </option>
+                                                            <option value="завершён">
+                                                                завершён
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                {agreementStatus ==
+                                                    "завершён" && (
+                                                    <div className="flex flex-col gap-2 justify-between">
+                                                        <span className="text-gray-400">
+                                                            Добавить отчет
+                                                        </span>
+
+                                                        <div className="grid gap-3 grid-cols-2">
+                                                            <div className="radio-field">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="add_report"
+                                                                    id="addReportYes"
+                                                                />
+                                                                <label htmlFor="addReportYes">
+                                                                    Да
+                                                                </label>
+                                                            </div>
+                                                            <div className="radio-field">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="add_report"
+                                                                    id="addReportNo"
+                                                                />
+                                                                <label htmlFor="addReportNo">
+                                                                    Нет
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div className="mt-5 flex items-center gap-6 justify-between">
+                                                <button
+                                                    type="button"
+                                                    className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
+                                                    // onClick={}
+                                                >
+                                                    Сохранить
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setReportWindowsState(
+                                                            false
+                                                        )
+                                                    }
+                                                    className="border rounded-lg py-2 px-5 flex-[1_1_50%]"
+                                                >
+                                                    Отменить
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
