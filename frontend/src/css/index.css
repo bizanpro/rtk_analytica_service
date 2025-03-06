@@ -50,10 +50,10 @@ button {
 }
 
 .container {
-    max-width: 1920px;
+    max-width: 1800px;
     margin: 0 auto;
-    padding-left: 250px;
-    padding-right: 15px;
+    padding-left: 40px;
+    padding-right: 40px;
 }
 
 .page {
@@ -224,4 +224,15 @@ button {
 
 .add-button span::after {
     transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.delete-button,
+.delete-button svg {
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.delete-button svg {
+    pointer-events: none;
 }

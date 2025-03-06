@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import postData from "../../utils/postData";
+import getData from "../../utils/getData";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -12,9 +12,9 @@ const ProjectCard = () => {
     const [startDate, endDate] = dateRange;
 
     useEffect(() => {
-        postData("POST", "../../../src/data/projects.json", {}).then(
+        getData("/data/projects.json", { Accept: "application/json" }).then(
             (response) => {
-                const data = response.find((item) => item.id == projectId);
+                const data = response.data.find((item) => item.id == projectId);
                 setProjectData(data);
             }
         );

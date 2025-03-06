@@ -1,0 +1,19 @@
+.header {
+    &__logo {
+        width: 90px;
+        height: 70px;
+
+        img {
+            object-fit: contain;
+        }
+    }
+
+    &__wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 50px;
+        border: 1px solid #000;
+        padding: 10px 20px;
+    }
+}

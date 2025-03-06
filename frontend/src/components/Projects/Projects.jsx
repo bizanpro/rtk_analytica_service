@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import postData from "../../utils/postData";
+import getData from "../../utils/getData";
 import ProjectItem from "./ProjectItem";
 import Popup from "../Popup/Popup";
 import Select from "../Select";
@@ -76,8 +76,10 @@ const Projects = () => {
     };
 
     useEffect(() => {
-        postData("POST", "../../../src/data/projects.json", {}).then(
-            (response) => setProjects(response)
+        getData("/data/projects.json", { Accept: "application/json" }).then(
+            (response) => {
+                setProjects(response.data);
+            }
         );
         // .finally(() => setIsLoading(false));
     }, []);

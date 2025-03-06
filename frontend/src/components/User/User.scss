@@ -1,0 +1,27 @@
+.user {
+    &__nav {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.15s ease-in-out;
+
+        &.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+    }
+
+    &__info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 60px;
+        width: 60px;
+        height: 60px;
+        border: 1px solid #000000;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 18px;
+    }
+}

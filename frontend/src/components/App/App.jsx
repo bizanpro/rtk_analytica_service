@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "../MainLayout";
 import Home from "../Home";
 import NotFound from "../NotFound";
-import Sidebar from "../SideBar/SideBar";
 import Header from "../Header/Header";
 // import Footer from "../Footer/Footer";
 import Projects from "../Projects/Projects";
@@ -16,8 +15,6 @@ import "./App.scss";
 function App() {
     return (
         <BrowserRouter basename="/">
-            <Sidebar />
-
             <Header />
 
             <Routes>

@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import postData from "../../utils/postData";
+import getData from "../../utils/getData";
 import EmployeeItem from "./EmployeeItem";
 
 const Employees = () => {
     const [employees, setEmployees] = useState([]);
 
     useEffect(() => {
-        postData("POST", "../../../src/data/employees.json", {}).then(
-            (response) => setEmployees(response)
+        getData("/data/employees.json", { Accept: "application/json" }).then(
+            (response) => setEmployees(response.data)
         );
         // .finally(() => setIsLoading(false));
     }, []);
-    
+
     return (
         <main className="page">
             <div className="container py-8">

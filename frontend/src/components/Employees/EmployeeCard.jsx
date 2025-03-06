@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import postData from "../../utils/postData";
+import getData from "../../utils/getData";
 
 const EmployeeCard = () => {
     const { employeeId } = useParams();
     const [employeeData, setEmployeeData] = useState({});
 
     useEffect(() => {
-        postData("POST", "../../../src/data/employees.json", {}).then(
+        getData("/data/employees.json", { Accept: "application/json" }).then(
             (response) => {
-                const data = response.find((item) => item.id == employeeId);
+                const data = response.data.find((item) => item.id == employeeId);
                 setEmployeeData(data);
             }
         );
@@ -295,7 +295,10 @@ const EmployeeCard = () => {
                                         {Object.entries(
                                             employeeData.next_vacation
                                         ).map(([key, value]) => (
-                                            <div className="flex items-center gap-5" key={`${value}_${key}`}>
+                                            <div
+                                                className="flex items-center gap-5"
+                                                key={`${value}_${key}`}
+                                            >
                                                 <p>{key}</p>
 
                                                 <input
