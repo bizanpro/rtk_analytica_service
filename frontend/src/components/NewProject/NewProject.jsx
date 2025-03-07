@@ -28,7 +28,7 @@ const NewProject = () => {
 
     const [dateRanges, setDateRanges] = useState(defaultRanges);
     const [agreementStatus, setAgreementStatus] = useState("запланирован");
-    const [reportWindowsState, setReportWindowsState] = useState(true);
+    const [reportWindowsState, setReportWindowsState] = useState(false);
 
     const addBlock = (type) => {
         if (type === "key-person") {
@@ -144,6 +144,7 @@ const NewProject = () => {
                             className="text-3xl font-medium"
                             value={projectName}
                             onChange={(e) => setProjectName(e.target.value)}
+                            disabled={mode == "read" ? true : false}
                         />
 
                         <nav className="switch">
@@ -184,6 +185,7 @@ const NewProject = () => {
                                         className="py-5"
                                         type="text"
                                         value="Нет данных"
+                                        disabled={mode == "read" ? true : false}
                                     />
                                 </div>
 
@@ -195,14 +197,23 @@ const NewProject = () => {
                                         </span>
                                     </span>
                                     <div className="border-2 border-gray-300 p-5">
-                                        <select className="w-full">
-                                            <option value="ООО 'СГРК'">
-                                                ООО "СГРК"
-                                            </option>
-                                            <option value="ООО 'СГРК'">
-                                                ООО "СГРК"
-                                            </option>
-                                        </select>
+                                        {mode == "read" ? (
+                                            <input
+                                                className="w-full h-[21px]"
+                                                type="text"
+                                                disabled
+                                                value="ООО 'СГРК'"
+                                            />
+                                        ) : (
+                                            <select className="w-full">
+                                                <option value="ООО 'СГРК'">
+                                                    ООО "СГРК"
+                                                </option>
+                                                <option value="ООО 'СГРК'">
+                                                    ООО "СГРК"
+                                                </option>
+                                            </select>
+                                        )}
                                     </div>
                                 </div>
 
@@ -217,6 +228,7 @@ const NewProject = () => {
                                         className="py-5"
                                         type="text"
                                         value="Нет данных"
+                                        disabled={mode == "read" ? true : false}
                                     />
                                 </div>
                             </div>
@@ -230,6 +242,7 @@ const NewProject = () => {
                                         className="py-5"
                                         type="text"
                                         value="Нет данных"
+                                        disabled={mode == "read" ? true : false}
                                     />
                                 </div>
 
@@ -241,14 +254,23 @@ const NewProject = () => {
                                         </span>
                                     </span>
                                     <div className="border-2 border-gray-300 p-5">
-                                        <select className="w-full">
-                                            <option value="Золотодобыча">
-                                                Золотодобыча
-                                            </option>
-                                            <option value="Золотодобыча">
-                                                Золотодобыча
-                                            </option>
-                                        </select>
+                                        {mode == "read" ? (
+                                            <input
+                                                className="w-full h-[21px]"
+                                                type="text"
+                                                disabled
+                                                value="Золотодобыча"
+                                            />
+                                        ) : (
+                                            <select className="w-full">
+                                                <option value="Золотодобыча">
+                                                    Золотодобыча
+                                                </option>
+                                                <option value="Золотодобыча">
+                                                    Золотодобыча
+                                                </option>
+                                            </select>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -262,6 +284,7 @@ const NewProject = () => {
                                         className="border-2 border-gray-300 p-5 min-h-[320px] max-h-[450px]"
                                         placeholder="Заполните описание проекта"
                                         type="text"
+                                        disabled={mode == "read" ? true : false}
                                     />
                                 </div>
 
@@ -301,16 +324,18 @@ const NewProject = () => {
                                         <span className="text-gray-400">
                                             Ключевые лица Заказчика
                                         </span>
-                                        <button
-                                            type="button"
-                                            className="add-button"
-                                            onClick={() =>
-                                                addBlock("key-person")
-                                            }
-                                            title="Добавить ключевое лицо Заказчика"
-                                        >
-                                            <span></span>
-                                        </button>
+                                        {mode == "edit" && (
+                                            <button
+                                                type="button"
+                                                className="add-button"
+                                                onClick={() =>
+                                                    addBlock("key-person")
+                                                }
+                                                title="Добавить ключевое лицо Заказчика"
+                                            >
+                                                <span></span>
+                                            </button>
+                                        )}
                                     </div>
 
                                     <ul className="mt-20 grid gap-4">
@@ -355,14 +380,18 @@ const NewProject = () => {
                                         <span className="text-gray-400">
                                             Кредиторы
                                         </span>
-                                        <button
-                                            type="button"
-                                            className="add-button"
-                                            onClick={() => addBlock("lender")}
-                                            title="Добавить Кредитора"
-                                        >
-                                            <span></span>
-                                        </button>
+                                        {mode == "edit" && (
+                                            <button
+                                                type="button"
+                                                className="add-button"
+                                                onClick={() =>
+                                                    addBlock("lender")
+                                                }
+                                                title="Добавить Кредитора"
+                                            >
+                                                <span></span>
+                                            </button>
+                                        )}
                                     </div>
 
                                     <ul className="flex gap-3 flex-wrap">
@@ -502,16 +531,17 @@ const NewProject = () => {
                                     <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                         ?
                                     </span>
-
-                                    <button
-                                        type="button"
-                                        className="add-button"
-                                        onClick={() =>
-                                            setReportWindowsState(true)
-                                        }
-                                    >
-                                        <span></span>
-                                    </button>
+                                    {mode == "edit" && (
+                                        <button
+                                            type="button"
+                                            className="add-button"
+                                            onClick={() =>
+                                                setReportWindowsState(true)
+                                            }
+                                        >
+                                            <span></span>
+                                        </button>
+                                    )}
                                 </div>
 
                                 <div className="border-2 border-gray-300 p-5 min-h-full flex-grow">
@@ -883,62 +913,68 @@ const NewProject = () => {
                                             {contractors.length > 0 &&
                                                 contractors.map((id) => (
                                                     <div
-                                                        className="grid gap-3 grid-cols-2"
+                                                        className="flex flex-col gap-1"
                                                         key={id}
                                                     >
-                                                        <div className="flex flex-col gap-2 justify-between">
-                                                            <div className="border-2 border-gray-300 p-1">
-                                                                <select className="w-full">
-                                                                    <option value="ООО 'ИЭС'">
-                                                                        ООО
-                                                                        'ИЭС'
-                                                                    </option>
-                                                                    <option value="ООО 'ИЭС'">
-                                                                        ООО
-                                                                        'ИЭС'
-                                                                    </option>
-                                                                    <option value="ООО 'ИЭС'">
-                                                                        ООО
-                                                                        'ИЭС'
-                                                                    </option>
-                                                                </select>
+                                                        <div className="grid gap-3 grid-cols-2">
+                                                            <div className="flex flex-col gap-2 justify-between">
+                                                                <div className="border-2 border-gray-300 p-1">
+                                                                    <select className="w-full">
+                                                                        <option value="ООО 'ИЭС'">
+                                                                            ООО
+                                                                            'ИЭС'
+                                                                        </option>
+                                                                        <option value="ООО 'ИЭС'">
+                                                                            ООО
+                                                                            'ИЭС'
+                                                                        </option>
+                                                                        <option value="ООО 'ИЭС'">
+                                                                            ООО
+                                                                            'ИЭС'
+                                                                        </option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex flex-col gap-2 justify-between">
+                                                                <div className="border-2 border-gray-300 p-1">
+                                                                    <select className="w-full">
+                                                                        <option value="Технология">
+                                                                            Технология
+                                                                        </option>
+                                                                        <option value="Технология">
+                                                                            Технология
+                                                                        </option>
+                                                                        <option value="Технология">
+                                                                            Технология
+                                                                        </option>
+                                                                    </select>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div className="flex flex-col gap-2 justify-between">
-                                                            <div className="border-2 border-gray-300 p-1">
-                                                                <select className="w-full">
-                                                                    <option value="Технология">
-                                                                        Технология
-                                                                    </option>
-                                                                    <option value="Технология">
-                                                                        Технология
-                                                                    </option>
-                                                                    <option value="Технология">
-                                                                        Технология
-                                                                    </option>
-                                                                </select>
+
+                                                        <div className="grid gap-3 grid-cols-1">
+                                                            <div className="flex flex-col gap-2 justify-between">
+                                                                <span className="text-gray-400"></span>
+                                                                <div className="border-2 border-gray-300 p-1">
+                                                                    <select className="w-full">
+                                                                        <option value="Договор 45222 от 12.01.2025">
+                                                                            Договор
+                                                                            45222
+                                                                            от
+                                                                            12.01.2025
+                                                                        </option>
+                                                                        <option value="Договор 45222 от 12.01.2025">
+                                                                            Договор
+                                                                            45222
+                                                                            от
+                                                                            13.01.2025
+                                                                        </option>
+                                                                    </select>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 ))}
-
-                                            <div className="grid gap-3 grid-cols-1">
-                                                <div className="flex flex-col gap-2 justify-between">
-                                                    <span className="text-gray-400"></span>
-                                                    <div className="border-2 border-gray-300 p-1">
-                                                        <select className="w-full">
-                                                            <option value="Договор 45222 от 12.01.2025">
-                                                                Договор 45222 от
-                                                                12.01.2025
-                                                            </option>
-                                                            <option value="Договор 45222 от 12.01.2025">
-                                                                Договор 45222 от
-                                                                13.01.2025
-                                                            </option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
 
                                             <div className="mt-5 flex items-center gap-6 justify-between">
                                                 <button

@@ -174,30 +174,27 @@ button {
     visibility: hidden;
 }
 
+.radio-field label,
 .switch label {
     display: block;
     width: 100%;
     cursor: pointer;
     padding: 5px 10px;
-    background: #ffffff;
+    background: #e0e0e0;
     border: 1px solid #e0e0e0;
     text-align: center;
     transition: background 0.2s ease-in-out;
 }
 
+.radio-field label {
+    padding: 10px;
+    text-align: left;
+}
+
 .radio-field input:checked + label,
 .switch input:checked + label {
     pointer-events: none;
-    background: #e0e0e0;
-}
-
-.radio-field label {
-    display: block;
-    cursor: pointer;
-    padding: 10px;
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    transition: background 0.2s ease-in-out;
+    background: #fff;
 }
 
 .add-button {
