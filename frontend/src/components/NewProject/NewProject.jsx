@@ -153,7 +153,10 @@ const NewProject = () => {
                                     type="radio"
                                     name="mode"
                                     id="read_mode"
-                                    onChange={() => setMode("read")}
+                                    onChange={() => {
+                                        setMode("read");
+                                        setReportWindowsState(false);
+                                    }}
                                     checked={mode === "read" ? true : false}
                                 />
                                 <label htmlFor="read_mode">Чтение</label>
