@@ -1,10 +1,10 @@
 @charset "UTF-8";
 
-* {
+/* * {
     padding: 0;
     margin: 0;
     border: 0;
-}
+} */
 
 *,
 *:before,
@@ -23,12 +23,12 @@ a:active {
     outline: none;
 }
 
-nav,
+/* nav,
 footer,
 header,
 aside {
     display: block;
-}
+} */
 
 html,
 body {
@@ -54,14 +54,14 @@ input::-ms-clear {
 
 button {
     cursor: pointer;
-    background: transparent;
-    border: none;
+    /* background: transparent;
+    border: none; */
 }
 
-button::-moz-focus-inner {
+/* button::-moz-focus-inner {
     padding: 0;
     border: 0;
-}
+} */
 
 a,
 a:visited {

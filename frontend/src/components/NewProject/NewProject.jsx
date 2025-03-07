@@ -17,6 +17,8 @@ const NewProject = () => {
     const [mode, setMode] = useState("edit");
     const [keyPersons, setKeyPersons] = useState([]);
     const [lenders, setLenders] = useState([]);
+    const [teammates, setTeammates] = useState([]);
+    const [contractors, setContractors] = useState([]);
 
     const defaultRanges = {
         picker1: { start: new Date("2024-08-01"), end: new Date("2024-10-01") },
@@ -30,29 +32,51 @@ const NewProject = () => {
 
     const addBlock = (type) => {
         if (type === "key-person") {
-            setKeyPersons([
-                ...keyPersons,
-                {
-                    id: Date.now(),
-                    fullName: "",
-                    phone: "",
-                    position: "",
-                    email: "",
-                    isEditing: false,
-                },
-            ]);
+            if (keyPersons.length < 5) {
+                setKeyPersons([
+                    ...keyPersons,
+                    {
+                        id: Date.now(),
+                        fullName: "",
+                        phone: "",
+                        position: "",
+                        email: "",
+                        isEditing: false,
+                    },
+                ]);
+            }
         } else if (type === "lender") {
-            setLenders([
-                ...lenders,
-                {
-                    id: Date.now(),
-                    fullName: "",
-                    phone: "",
-                    position: "",
-                    email: "",
-                    isEditing: false,
-                },
-            ]);
+            if (lenders.length < 5) {
+                setLenders([
+                    ...lenders,
+                    {
+                        id: Date.now(),
+                        fullName: "",
+                        phone: "",
+                        position: "",
+                        email: "",
+                        isEditing: false,
+                    },
+                ]);
+            }
+        } else if (type === "teammate") {
+            if (teammates.length < 5) {
+                setTeammates([
+                    ...teammates,
+                    {
+                        id: Date.now(),
+                    },
+                ]);
+            }
+        } else if (type === "contractor") {
+            if (contractors.length < 5) {
+                setContractors([
+                    ...contractors,
+                    {
+                        id: Date.now(),
+                    },
+                ]);
+            }
         }
     };
 
@@ -770,10 +794,156 @@ const NewProject = () => {
                                                 )}
                                             </div>
 
+                                            <div className="grid gap-3 grid-cols-1">
+                                                <div className="flex flex-col gap-2 justify-between">
+                                                    <span className="text-gray-400 flex items-center gap-2">
+                                                        Команда проекта
+                                                        <button
+                                                            type="button"
+                                                            className="add-button"
+                                                            onClick={() =>
+                                                                addBlock(
+                                                                    "teammate"
+                                                                )
+                                                            }
+                                                        >
+                                                            <span></span>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {teammates.length > 0 &&
+                                                teammates.map((id) => (
+                                                    <div
+                                                        className="grid gap-3 grid-cols-2"
+                                                        key={id}
+                                                    >
+                                                        <div className="flex flex-col gap-2 justify-between">
+                                                            <div className="border-2 border-gray-300 p-1">
+                                                                <select className="w-full">
+                                                                    <option value="Прохоров Сергей Викторович">
+                                                                        Прохоров
+                                                                        Сергей
+                                                                        Викторович
+                                                                    </option>
+                                                                    <option value="Прохоров Сергей Викторович">
+                                                                        Прохоров
+                                                                        Сергей
+                                                                        Викторович
+                                                                    </option>
+                                                                    <option value="Прохоров Сергей Викторович">
+                                                                        Прохоров
+                                                                        Сергей
+                                                                        Викторович
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex flex-col gap-2 justify-between">
+                                                            <div className="border-2 border-gray-300 p-1">
+                                                                <select className="w-full">
+                                                                    <option value="Руководитель проекта">
+                                                                        Руководитель
+                                                                        проекта
+                                                                    </option>
+                                                                    <option value="Руководитель проекта">
+                                                                        Руководитель
+                                                                        проекта
+                                                                    </option>
+                                                                    <option value="Руководитель проекта">
+                                                                        Руководитель
+                                                                        проекта
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+
+                                            <div className="grid gap-3 grid-cols-1">
+                                                <div className="flex flex-col gap-2 justify-between">
+                                                    <span className="text-gray-400 flex items-center gap-2">
+                                                        Подрядчики
+                                                        <button
+                                                            type="button"
+                                                            className="add-button"
+                                                            onClick={() =>
+                                                                addBlock(
+                                                                    "contractor"
+                                                                )
+                                                            }
+                                                        >
+                                                            <span></span>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {contractors.length > 0 &&
+                                                contractors.map((id) => (
+                                                    <div
+                                                        className="grid gap-3 grid-cols-2"
+                                                        key={id}
+                                                    >
+                                                        <div className="flex flex-col gap-2 justify-between">
+                                                            <div className="border-2 border-gray-300 p-1">
+                                                                <select className="w-full">
+                                                                    <option value="ООО 'ИЭС'">
+                                                                        ООО
+                                                                        'ИЭС'
+                                                                    </option>
+                                                                    <option value="ООО 'ИЭС'">
+                                                                        ООО
+                                                                        'ИЭС'
+                                                                    </option>
+                                                                    <option value="ООО 'ИЭС'">
+                                                                        ООО
+                                                                        'ИЭС'
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex flex-col gap-2 justify-between">
+                                                            <div className="border-2 border-gray-300 p-1">
+                                                                <select className="w-full">
+                                                                    <option value="Технология">
+                                                                        Технология
+                                                                    </option>
+                                                                    <option value="Технология">
+                                                                        Технология
+                                                                    </option>
+                                                                    <option value="Технология">
+                                                                        Технология
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+
+                                            <div className="grid gap-3 grid-cols-1">
+                                                <div className="flex flex-col gap-2 justify-between">
+                                                    <span className="text-gray-400"></span>
+                                                    <div className="border-2 border-gray-300 p-1">
+                                                        <select className="w-full">
+                                                            <option value="Договор 45222 от 12.01.2025">
+                                                                Договор 45222 от
+                                                                12.01.2025
+                                                            </option>
+                                                            <option value="Договор 45222 от 12.01.2025">
+                                                                Договор 45222 от
+                                                                13.01.2025
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div className="mt-5 flex items-center gap-6 justify-between">
                                                 <button
                                                     type="button"
-                                                    className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
+                                                    className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
                                                     // onClick={}
                                                 >
                                                     Сохранить
@@ -786,7 +956,7 @@ const NewProject = () => {
                                                             false
                                                         )
                                                     }
-                                                    className="border rounded-lg py-2 px-5 flex-[1_1_50%]"
+                                                    className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
                                                 >
                                                     Отменить
                                                 </button>
