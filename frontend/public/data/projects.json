@@ -11,7 +11,7 @@
     "sector": "Финансы",
     "services": "Аудит",
     "client": "ООО Ромашка",
-    "credit_manager_bank_name": ["Сбер", "Альфа Банк", "ТБанк"],
+    "credit_manager_bank_name": ["Альфа Банк", "ТБанк"],
     "credit_manager_name": ["Иванов Иван Иванович", "Петров Александр Иванович"],
     "implementation_period_start": "2025-01-01",
     "implementation_period_end": "2025-06-30",
