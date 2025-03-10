@@ -1,28 +1,34 @@
-import './ExecutroBlock.scss'
-
 const ExecutorBlock = ({
-    id,
-    fullName,
-    phone,
-    position,
-    email,
-    isEditing,
+    person,
     removeBlock,
     handleChange,
     handleBlur,
+    handleFocus,
     data,
     method,
 }) => {
+    const {
+        id,
+        fullName,
+        phone,
+        position,
+        email,
+        borderClass = "border-transparent",
+    } = person;
+
     return (
         <li className="flex items-center justify-between gap-6">
             <div
-                className={`executor-block flex-grow ${
-                    isEditing ? "border border-black" : "border border-gray-300"
-                } transition-all`}
+                className={`executor-block flex-grow border transition-all ${borderClass}`}
             >
-                <div className="grid grid-cols-[60%_40%] border-b border-gray-300">
-                    <div className="p-1 border-r border-gray-300">
+                <div
+                    className={`grid grid-cols-[60%_40%] border-b transition-all ${borderClass}`}
+                >
+                    <div
+                        className={`p-1 border-r transition-all ${borderClass}`}
+                    >
                         <input
+                            className="w-full"
                             type="text"
                             placeholder="ФИО"
                             value={fullName}
@@ -36,10 +42,12 @@ const ExecutorBlock = ({
                                 )
                             }
                             onBlur={() => handleBlur(id, data, method)}
+                            onFocus={() => handleFocus(id, data, method)}
                         />
                     </div>
                     <div className="p-1 pr-3">
                         <input
+                            className="w-full"
                             type="tel"
                             placeholder="+7 999 999 99 99"
                             value={phone}
@@ -53,12 +61,16 @@ const ExecutorBlock = ({
                                 )
                             }
                             onBlur={() => handleBlur(id, data, method)}
+                            onFocus={() => handleFocus(id, data, method)}
                         />
                     </div>
                 </div>
                 <div className="grid grid-cols-[60%_40%]">
-                    <div className="p-1 border-r border-gray-300">
+                    <div
+                        className={`p-1 border-r transition-all ${borderClass}`}
+                    >
                         <input
+                            className="w-full"
                             type="text"
                             placeholder="Должность"
                             value={position}
@@ -72,10 +84,12 @@ const ExecutorBlock = ({
                                 )
                             }
                             onBlur={() => handleBlur(id, data, method)}
+                            onFocus={() => handleFocus(id, data, method)}
                         />
                     </div>
                     <div className="p-1 pr-3">
                         <input
+                            className="w-full"
                             type="email"
                             placeholder="mail@mail.ru"
                             value={email}
@@ -89,6 +103,7 @@ const ExecutorBlock = ({
                                 )
                             }
                             onBlur={() => handleBlur(id, data, method)}
+                            onFocus={() => handleFocus(id, data, method)}
                         />
                     </div>
                 </div>
@@ -96,7 +111,7 @@ const ExecutorBlock = ({
             <button
                 onClick={() => removeBlock(id, data, method)}
                 className="delete-button"
-                title='Удалить исполнителя'
+                title="Удалить исполнителя"
             >
                 <svg
                     height="48"

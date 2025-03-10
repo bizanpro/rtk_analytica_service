@@ -141,180 +141,48 @@ const Projects = () => {
                 <div className="overflow-x-auto w-full pb-5">
                     <table className="table-auto w-full border-collapse border-b border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
-                            <tr className="">
+                            <tr>
                                 <th
-                                    className="border-b border-gray-300 px-4 py-2 align-middle"
+                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
                                     rowSpan="2"
                                 >
                                     Проект
                                 </th>
                                 <th
-                                    className="border-b border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Тип
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Руководитель проекта
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Статус
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Оплаты
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Дебиторская задолженность
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Отрасль
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Услуги
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2 align-middle"
+                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
                                     rowSpan="2"
                                 >
                                     Заказчик
                                 </th>
                                 <th
-                                    className="border-b border-gray-300 px-4 py-2"
+                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
                                     rowSpan="2"
                                 >
-                                    Кредитные управляющие - Название банка
+                                    Банк
                                 </th>
                                 <th
-                                    className="border-b border-gray-300 px-4 py-2"
+                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
                                     rowSpan="2"
                                 >
-                                    Кредитные управляющие - ФИО менеджера
+                                    Бюджет
                                 </th>
                                 <th
-                                    className="border-b border-gray-300 px-4 py-2"
+                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
                                     rowSpan="2"
                                 >
-                                    Период реализации, план - Начало
+                                    Срок
                                 </th>
                                 <th
-                                    className="border-b border-gray-300 px-4 py-2"
+                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
                                     rowSpan="2"
                                 >
-                                    Период реализации, план - Конец
+                                    Руководитель проекта
                                 </th>
                                 <th
-                                    className="border-b border-gray-300 px-4 py-2"
+                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
                                     rowSpan="2"
                                 >
-                                    Рабочая группа - ФИО сотрудника
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Рабочая группа - ФОТ
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Рабочая группа - Роль
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Рабочая группа - % вовлечения, план
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Рабочая группа - Затрачиваемое время, план
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Наименование субподрядчика
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Роль
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Стоимость услуг
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Период реализации, план - Начало
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Период реализации, план - Конец
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Комментарий
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Рабочая группа - ФИО сотрудника
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Рабочая группа - Роль
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Рабочая группа - % вовлечения, план
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Рабочая группа - Затрачиваемое время, план
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Рабочая группа - Баллы
+                                    Статус
                                 </th>
                             </tr>
                         </thead>

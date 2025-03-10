@@ -3,10 +3,8 @@ import MainLayout from "../MainLayout";
 import Home from "../Home";
 import NotFound from "../NotFound";
 import Header from "../Header/Header";
-// import Footer from "../Footer/Footer";
 import Projects from "../Projects/Projects";
-import ProjectCard from "../Projects/ProjectCard";
-import NewProject from "../NewProject/NewProject";
+import ProjectCard from "../ProjectCard/ProjectCard";
 import Employees from "../Employees/Employees";
 import EmployeeCard from "../Employees/EmployeeCard";
 
@@ -27,7 +25,7 @@ function App() {
                         path="projects/:projectId"
                         element={<ProjectCard />}
                     />
-                    <Route path="projects/new" element={<NewProject />} />
+                    <Route path="projects/new" element={<ProjectCard />} />
 
                     <Route path="employees" element={<Employees />} />
                     <Route
@@ -36,8 +34,6 @@ function App() {
                     />
                 </Route>
             </Routes>
-
-            {/* <Footer /> */}
         </BrowserRouter>
     );
 }

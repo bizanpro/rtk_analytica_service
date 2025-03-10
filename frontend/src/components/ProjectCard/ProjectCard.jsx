@@ -1,24 +1,51 @@
 import { useState, useCallback, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+
+import getData from "../../utils/getData";
 
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
-
 import DatePicker from "react-datepicker";
 
-import "./NewProject.scss";
+import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
 
-const NewProject = () => {
+const ProjectCard = () => {
+    const { projectId } = useParams();
     const location = useLocation();
+
+    const [projectData, setProjectData] = useState({});
     const [projectName, setProjectName] = useState(
-        location.state?.projectName || "Новый проект"
+        projectId ? "" : location.state?.projectName
     );
 
-    const [mode, setMode] = useState("edit");
+    useEffect(() => {
+        if (projectId) {
+            getData("/data/projects.json", { Accept: "application/json" }).then(
+                (response) => {
+                    const data = response.data.find(
+                        (item) => item.id == projectId
+                    );
+                    setProjectData(data);
+                }
+            );
+        }
+        // .finally(() => setIsLoading(false));
+    }, []);
+
+    const [mode, setMode] = useState(projectId ? "read" : "edit");
     const [keyPersons, setKeyPersons] = useState([]);
     const [lenders, setLenders] = useState([]);
     const [teammates, setTeammates] = useState([]);
     const [contractors, setContractors] = useState([]);
+
+    useEffect(() => {
+        if (projectId && projectData?.name) {
+            setProjectName(projectData.name);
+        }
+        if (projectId && projectData?.customer_key_persons) {
+            setKeyPersons(projectData.customer_key_persons);
+        }
+    }, [projectData, projectId]);
 
     const defaultRanges = {
         picker1: { start: new Date("2024-08-01"), end: new Date("2024-10-01") },
@@ -41,7 +68,7 @@ const NewProject = () => {
                         phone: "",
                         position: "",
                         email: "",
-                        isEditing: false,
+                        borderClass: "border-gray-300",
                     },
                 ]);
             }
@@ -55,7 +82,7 @@ const NewProject = () => {
                         phone: "",
                         position: "",
                         email: "",
-                        isEditing: false,
+                        borderClass: "border-gray-300",
                     },
                 ]);
             }
@@ -88,23 +115,45 @@ const NewProject = () => {
         method(
             data.map((block) =>
                 block.id === id
-                    ? { ...block, [field]: value, isEditing: true }
+                    ? {
+                          ...block,
+                          borderClass: "border-gray-300",
+                          [field]: value,
+                      }
                     : block
             )
         );
     }, []);
 
-    const handleBlur = useCallback((id, data, method) => {
+    const handleFocus = (id, data, method) => {
         method(
             data.map((block) =>
-                block.id === id &&
-                block.fullName &&
-                block.phone &&
-                block.position &&
-                block.email
-                    ? { ...block, isEditing: false }
+                block.id === id
+                    ? { ...block, borderClass: "border-gray-300" }
                     : block
             )
+        );
+    };
+
+    const handleBlur = useCallback((id, data, method) => {
+        method(
+            data.map((block) => {
+                if (block.id === id) {
+                    const allFilled =
+                        block.fullName.trim() &&
+                        block.phone.trim() &&
+                        block.position.trim() &&
+                        block.email.trim();
+
+                    return {
+                        ...block,
+                        borderClass: allFilled
+                            ? "border-transparent"
+                            : "border-gray-300",
+                    };
+                }
+                return block;
+            })
         );
     }, []);
 
@@ -187,7 +236,11 @@ const NewProject = () => {
                                     <input
                                         className="py-5"
                                         type="text"
-                                        value="Нет данных"
+                                        value={
+                                            projectId && projectData
+                                                ? projectData.service_cost
+                                                : "Нет данных"
+                                        }
                                         disabled={mode == "read" ? true : false}
                                     />
                                 </div>
@@ -205,15 +258,24 @@ const NewProject = () => {
                                                 className="w-full h-[21px]"
                                                 type="text"
                                                 disabled
-                                                value="ООО 'СГРК'"
+                                                value={
+                                                    projectId && projectData
+                                                        ? projectData.client
+                                                        : "ООО 'СГРК'"
+                                                }
                                             />
                                         ) : (
                                             <select className="w-full">
-                                                <option value="ООО 'СГРК'">
-                                                    ООО "СГРК"
-                                                </option>
-                                                <option value="ООО 'СГРК'">
-                                                    ООО "СГРК"
+                                                <option
+                                                    value={
+                                                        projectId && projectData
+                                                            ? projectData.client
+                                                            : "ООО 'СГРК'"
+                                                    }
+                                                >
+                                                    {projectId && projectData
+                                                        ? projectData.client
+                                                        : "ООО 'СГРК'"}
                                                 </option>
                                             </select>
                                         )}
@@ -227,12 +289,32 @@ const NewProject = () => {
                                             ?
                                         </span>
                                     </span>
-                                    <input
-                                        className="py-5"
-                                        type="text"
-                                        value="Нет данных"
-                                        disabled={mode == "read" ? true : false}
-                                    />
+                                    <ul className="grid gap-3">
+                                        <li className="flex items-center gap-4">
+                                            <div className="text-lg">ФТМ</div>
+                                            <div className="text-lg">
+                                                5,0 млн руб.
+                                            </div>
+                                            <div className="text-lg">
+                                                ежеквартально
+                                            </div>
+                                            <div className="bg-gray-200 py-1 px-2 text-center rounded-md">
+                                                в процессе
+                                            </div>
+                                        </li>
+                                        <li className="flex items-center gap-4">
+                                            <div className="text-lg">ФТМ</div>
+                                            <div className="text-lg">
+                                                5,0 млн руб.
+                                            </div>
+                                            <div className="text-lg">
+                                                ежеквартально
+                                            </div>
+                                            <div className="bg-gray-200 py-1 px-2 text-center rounded-md">
+                                                в процессе
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
 
@@ -244,7 +326,11 @@ const NewProject = () => {
                                     <input
                                         className="py-5"
                                         type="text"
-                                        value="Нет данных"
+                                        value={
+                                            projectId && projectData
+                                                ? projectData.implementation_period_start
+                                                : "ООО 'СГРК'"
+                                        }
                                         disabled={mode == "read" ? true : false}
                                     />
                                 </div>
@@ -262,15 +348,24 @@ const NewProject = () => {
                                                 className="w-full h-[21px]"
                                                 type="text"
                                                 disabled
-                                                value="Золотодобыча"
+                                                value={
+                                                    projectId && projectData
+                                                        ? projectData.sector
+                                                        : "Золотодобыча"
+                                                }
                                             />
                                         ) : (
                                             <select className="w-full">
-                                                <option value="Золотодобыча">
-                                                    Золотодобыча
-                                                </option>
-                                                <option value="Золотодобыча">
-                                                    Золотодобыча
+                                                <option
+                                                    value={
+                                                        projectId && projectData
+                                                            ? projectData.sector
+                                                            : "Золотодобыча"
+                                                    }
+                                                >
+                                                    {projectId && projectData
+                                                        ? projectData.sector
+                                                        : "Золотодобыча"}
                                                 </option>
                                             </select>
                                         )}
@@ -278,16 +373,21 @@ const NewProject = () => {
                                 </div>
                             </div>
 
-                            <div className="grid gap-6 grid-cols-[60%_40%] mb-10">
+                            <div className="grid gap-6 grid-cols-[60%_40%] mb-5">
                                 <div className="flex flex-col gap-2">
                                     <span className="text-gray-400">
                                         Краткое описание
                                     </span>
                                     <textarea
-                                        className="border-2 border-gray-300 p-5 min-h-[320px] max-h-[450px]"
+                                        className="border-2 border-gray-300 p-5 min-h-[300px] max-h-[400px]"
                                         placeholder="Заполните описание проекта"
                                         type="text"
                                         disabled={mode == "read" ? true : false}
+                                        value={
+                                            projectId && projectData
+                                                ? projectData.comment
+                                                : ""
+                                        }
                                     />
                                 </div>
 
@@ -300,22 +400,33 @@ const NewProject = () => {
                                         <li className="border rounded border-gray-300 border-dashed p-2 flex-[1_0_30%]"></li>
                                         <li className="border rounded border-gray-300 border-dashed p-2 flex-[1_0_30%]"></li>
                                     </ul>
-                                    <div className="grid grid-cols-2 gap-4 mt-10">
-                                        <div className="flex flex-col gap-2">
-                                            <b>Прохоров Серей Викторович</b>
-                                            <span>Сотрудник</span>
+                                    <div className="grid gap-8 mt-10">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="flex flex-col gap-1">
+                                                <div className="text-lg">
+                                                    Прохоров Серей Викторович
+                                                </div>
+                                                <span className="text-sm">
+                                                    Сотрудник
+                                                </span>
+                                            </div>
+                                            <div className="text-lg">
+                                                Руководитель проекта
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col gap-2">
-                                            <b>Руководитель проекта</b>
-                                            <span></span>
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                            <b>ООО "ИЭС"</b>
-                                            <span>Подрядчик</span>
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                            <b>Технология</b>
-                                            <span></span>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="flex flex-col gap-1">
+                                                <div className="text-lg">
+                                                    ООО "ИЭС"
+                                                </div>
+                                                <span className="text-sm">
+                                                    Подрядчик
+                                                </span>
+                                            </div>
+                                            <div className="text-lg">
+                                                Технология
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -341,39 +452,26 @@ const NewProject = () => {
                                         )}
                                     </div>
 
-                                    <ul className="mt-20 grid gap-4">
+                                    <ul className="mt-12 grid gap-4">
                                         {keyPersons.length === 0 ? (
                                             <p>Нет данных</p>
                                         ) : (
-                                            keyPersons.map(
-                                                ({
-                                                    id,
-                                                    fullName,
-                                                    phone,
-                                                    position,
-                                                    email,
-                                                    isEditing,
-                                                }) => (
-                                                    <ExecutorBlock
-                                                        key={id}
-                                                        id={id}
-                                                        fullName={fullName}
-                                                        phone={phone}
-                                                        position={position}
-                                                        email={email}
-                                                        isEditing={isEditing}
-                                                        removeBlock={
-                                                            removeBlock
-                                                        }
-                                                        handleChange={
-                                                            handleChange
-                                                        }
-                                                        handleBlur={handleBlur}
-                                                        data={keyPersons}
-                                                        method={setKeyPersons}
-                                                    />
-                                                )
-                                            )
+                                            keyPersons.map((person) => (
+                                                <ExecutorBlock
+                                                    key={person.id}
+                                                    person={person}
+                                                    borderClass={
+                                                        person.borderClass ||
+                                                        "border-transparent"
+                                                    }
+                                                    removeBlock={removeBlock}
+                                                    handleChange={handleChange}
+                                                    handleBlur={handleBlur}
+                                                    data={keyPersons}
+                                                    method={setKeyPersons}
+                                                    handleFocus={handleFocus}
+                                                />
+                                            ))
                                         )}
                                     </ul>
                                 </div>
@@ -403,39 +501,26 @@ const NewProject = () => {
                                         </li>
                                     </ul>
 
-                                    <ul className="mt-11 grid gap-4">
+                                    <ul className="mt-3.5 grid gap-4">
                                         {lenders.length === 0 ? (
                                             <p>Нет данных</p>
                                         ) : (
-                                            lenders.map(
-                                                ({
-                                                    id,
-                                                    fullName,
-                                                    phone,
-                                                    position,
-                                                    email,
-                                                    isEditing,
-                                                }) => (
-                                                    <ExecutorBlock
-                                                        key={id}
-                                                        id={id}
-                                                        fullName={fullName}
-                                                        phone={phone}
-                                                        position={position}
-                                                        email={email}
-                                                        isEditing={isEditing}
-                                                        removeBlock={
-                                                            removeBlock
-                                                        }
-                                                        handleChange={
-                                                            handleChange
-                                                        }
-                                                        handleBlur={handleBlur}
-                                                        data={lenders}
-                                                        method={setLenders}
-                                                    />
-                                                )
-                                            )
+                                            lenders.map((person) => (
+                                                <ExecutorBlock
+                                                    key={person.id}
+                                                    person={person}
+                                                    borderClass={
+                                                        person.borderClass ||
+                                                        "border-transparent"
+                                                    }
+                                                    removeBlock={removeBlock}
+                                                    handleChange={handleChange}
+                                                    handleBlur={handleBlur}
+                                                    data={lenders}
+                                                    method={setKeyPersons}
+                                                    handleFocus={handleFocus}
+                                                />
+                                            ))
                                         )}
                                     </ul>
                                 </div>
@@ -444,80 +529,127 @@ const NewProject = () => {
 
                         <div className="flex flex-col">
                             <div className="border-2 border-gray-300 p-5 mb-5">
-                                <div className="grid items-center grid-cols-3 gap-3">
+                                <div className="flex flex-col gap-2 justify-between">
+                                    <div className="switch gap-4 w-[70%] mb-5">
+                                        <div>
+                                            <input
+                                                type="radio"
+                                                name="time_sort"
+                                                id="this_year"
+                                                checked
+                                            />
+                                            <label
+                                                className="bg-gray-200 py-1 px-2 text-center rounded-md"
+                                                htmlFor="this_year"
+                                            >
+                                                Текущий год
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input
+                                                type="radio"
+                                                name="time_sort"
+                                                id="all_time"
+                                            />
+                                            <label
+                                                className="bg-gray-200 py-1 px-2 text-center rounded-md"
+                                                htmlFor="all_time"
+                                            >
+                                                За всё время
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="grid items-stretch grid-cols-3 gap-3 mb-3">
                                     <div className="flex flex-col gap-2">
-                                        <span className="flex items-center gap-2 text-gray-400">
+                                        <div className="flex items-center gap-2 text-gray-400">
                                             Выручка{" "}
                                             <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                                 ?
                                             </span>
-                                        </span>
-                                        <input
-                                            className="py-5"
-                                            type="text"
-                                            value="Нет данных"
-                                        />
+                                        </div>
+                                        <div className="flex items-center flex-grow gap-2">
+                                            <strong className="font-normal text-4xl">
+                                                10,0
+                                            </strong>
+                                            <small className="text-sm">
+                                                млн
+                                                <br />
+                                                руб.
+                                            </small>
+                                        </div>
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        <span className="text-gray-400">
+                                        <div className="text-gray-400">
                                             Поступления
-                                        </span>
-                                        <input
-                                            className="py-5"
-                                            type="text"
-                                            value="Нет данных"
-                                        />
+                                        </div>
+                                        <div className="flex items-center flex-grow gap-2">
+                                            <strong className="font-normal text-4xl">
+                                                8,0
+                                            </strong>
+                                            <small className="text-sm">
+                                                млн
+                                                <br />
+                                                руб.
+                                            </small>
+                                        </div>
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        <span className="flex items-center gap-2 text-gray-400">
+                                        <div className="flex items-center gap-2 text-gray-400">
                                             ДЗ{" "}
                                             <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                                 ?
                                             </span>
-                                        </span>
-                                        <input
-                                            className="py-5"
-                                            type="text"
-                                            value="Нет данных"
-                                        />
+                                        </div>
+                                        <div className="flex items-center flex-grow gap-2">
+                                            <strong className="font-normal text-4xl">
+                                                2,0
+                                            </strong>
+                                            <small className="text-sm">
+                                                млн
+                                                <br />
+                                                руб.
+                                            </small>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="grid items-center grid-cols-3 gap-3">
+                                <div className="grid items-stretch grid-cols-3 gap-3">
                                     <div className="flex flex-col gap-2">
-                                        <span className="flex items-center gap-2 text-gray-400">
+                                        <div className="flex items-center flex-grow gap-2 text-gray-400">
                                             Валовая прибыль{" "}
                                             <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                                 ?
                                             </span>
-                                        </span>
-                                        <input
-                                            className="py-5"
-                                            type="text"
-                                            value="Нет данных"
-                                        />
+                                        </div>
+                                        <input type="text" value="Нет данных" />
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        <span className="flex items-center gap-2 text-gray-400">
+                                        <div className="flex items-center gap-2 text-gray-400">
                                             Подрячики{" "}
                                             <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                                 ?
                                             </span>
-                                        </span>
-                                        <input
-                                            className="py-5"
-                                            type="text"
-                                            value="Нет данных"
-                                        />
+                                        </div>
+                                        <div className="flex items-center flex-grow gap-2">
+                                            <strong className="font-normal text-4xl">
+                                                1,0
+                                            </strong>
+                                            <small className="text-sm">
+                                                млн
+                                                <br />
+                                                руб.
+                                            </small>
+                                        </div>
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        <span className="flex items-center gap-2 text-gray-400">
+                                        <div className="flex items-center gap-2 text-gray-400">
                                             Валовая рент.{" "}
                                             <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                                 ?
                                             </span>
-                                        </span>
+                                        </div>
                                         <input
-                                            className="py-5"
+                                            className="flex-grow"
                                             type="text"
                                             value="Нет данных"
                                         />
@@ -547,13 +679,76 @@ const NewProject = () => {
                                     )}
                                 </div>
 
-                                <div className="border-2 border-gray-300 p-5 min-h-full flex-grow">
+                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow">
                                     {!reportWindowsState ? (
-                                        <ul>
-                                            <li className="grid items-center grid-cols-[25%_20%_55%] text-gray-400">
+                                        <ul className="grid gap-3">
+                                            <li className="grid items-center grid-cols-[24%_24%_49%] gap-3 mb-2 text-gray-400">
                                                 <span>Отчет</span>
                                                 <span>Статус</span>
-                                                <span>Согласован</span>
+                                                <span>Период выполнения</span>
+                                            </li>
+
+                                            <li className="grid items-center grid-cols-[24%_24%_49%] gap-3">
+                                                <div className="flex flex-col">
+                                                    <div className="text-lg">
+                                                        ФТМ 1Q25
+                                                    </div>
+                                                    <span className="text-sm">
+                                                        01.01.25 - 31.03.25
+                                                    </span>
+                                                </div>
+                                                <div className="bg-gray-200 py-1 px-2 text-center rounded-md">
+                                                    завершён
+                                                </div>
+                                                <div className="flex gap-3 items-center">
+                                                    <div className="flex flex-col flex-grow">
+                                                        <div className="text-lg">
+                                                            180 дней
+                                                        </div>
+                                                        <span className="text-sm">
+                                                            01.04.25 - 20.05.25
+                                                        </span>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        className="flex-none w-[15px] h-[20px] border border-gray-400"
+                                                    ></button>
+                                                    <button
+                                                        type="button"
+                                                        className="flex-none w-[20px] h-[20px] border border-gray-400 rounded-[50%]"
+                                                    ></button>
+                                                </div>
+                                            </li>
+                                            <li className="grid items-center grid-cols-[24%_24%_49%] gap-3">
+                                                <div className="flex flex-col">
+                                                    <div className="text-lg">
+                                                        ФТМ 1Q25
+                                                    </div>
+                                                    <span className="text-sm">
+                                                        01.01.25 - 31.03.25
+                                                    </span>
+                                                </div>
+                                                <div className="bg-gray-200 py-1 px-2 text-center rounded-md">
+                                                    завершён
+                                                </div>
+                                                <div className="flex gap-3 items-center">
+                                                    <div className="flex flex-col flex-grow">
+                                                        <div className="text-lg">
+                                                            180 дней
+                                                        </div>
+                                                        <span className="text-sm">
+                                                            01.04.25 - 20.05.25
+                                                        </span>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        className="flex-none w-[15px] h-[20px] border border-gray-400"
+                                                    ></button>
+                                                    <button
+                                                        type="button"
+                                                        className="flex-none w-[20px] h-[20px] border border-gray-400 rounded-[50%]"
+                                                    ></button>
+                                                </div>
                                             </li>
                                         </ul>
                                     ) : (
@@ -1011,4 +1206,4 @@ const NewProject = () => {
         </main>
     );
 };
-export default NewProject;
+export default ProjectCard;
