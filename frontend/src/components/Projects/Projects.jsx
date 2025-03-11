@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const Projects = () => {
     const URL = import.meta.env.DEV
         ? "/data/projects.json"
-        : import.meta.env.VITE_API_URL;
+        : `${import.meta.env.VITE_API_URL}projects`;
     const navigate = useNavigate();
     const [projects, setProjects] = useState([]);
     const [popupState, setPopupState] = useState(false);
