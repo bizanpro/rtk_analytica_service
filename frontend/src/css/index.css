@@ -180,7 +180,7 @@ button {
     width: 100%;
     cursor: pointer;
     padding: 5px 10px;
-    background: #e0e0e0;
+    background: #fff;
     border: 1px solid #e0e0e0;
     text-align: center;
     transition: background 0.2s ease-in-out;
@@ -194,7 +194,7 @@ button {
 .radio-field input:checked + label,
 .switch input:checked + label {
     pointer-events: none;
-    background: #fff;
+    background: #e0e0e0;
 }
 
 .add-button {

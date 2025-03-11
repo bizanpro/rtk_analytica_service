@@ -7,6 +7,8 @@ import Projects from "../Projects/Projects";
 import ProjectCard from "../ProjectCard/ProjectCard";
 import Employees from "../Employees/Employees";
 import EmployeeCard from "../Employees/EmployeeCard";
+import ReferenceBooks from "../ReferenceBooks/ReferenceBooks";
+import SingleBook from "../ReferenceBooks/SingleBook";
 
 import "./App.scss";
 
@@ -31,6 +33,15 @@ function App() {
                     <Route
                         path="employees/:employeeId"
                         element={<EmployeeCard />}
+                    />
+
+                    <Route
+                        path="reference-books"
+                        element={<ReferenceBooks />}
+                    />
+                    <Route
+                        path="reference-books/:bookId"
+                        element={<SingleBook />}
                     />
                 </Route>
             </Routes>

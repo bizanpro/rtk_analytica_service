@@ -39,7 +39,7 @@ const Header = () => {
                                     ? "sidebar__list-item font-medium"
                                     : "sidebar__list-item"
                             }
-                            title="Справочник проектов"
+                            title="Перейти в реестр проектов"
                         >
                             Проекты
                         </NavLink>
@@ -51,7 +51,7 @@ const Header = () => {
                                     ? "sidebar__list-item font-medium"
                                     : "sidebar__list-item"
                             }
-                            title="Справочник проектов"
+                            title="Перейти в реестр отчетов"
                         >
                             Отчеты
                         </NavLink>
@@ -63,7 +63,7 @@ const Header = () => {
                                     ? "sidebar__list-item font-medium"
                                     : "sidebar__list-item"
                             }
-                            title="Справочник сотрудников"
+                            title="Перейти в реестр сотрудников"
                         >
                             Сотрудники
                         </NavLink>
@@ -75,9 +75,21 @@ const Header = () => {
                                     ? "sidebar__list-item font-medium"
                                     : "sidebar__list-item"
                             }
-                            title="Справочник сотрудников"
+                            title="Перейти в реестр подрядчиков"
                         >
                             Подрядчики
+                        </NavLink>
+
+                        <NavLink
+                            to={"/reference-books"}
+                            className={({ isActive }) =>
+                                isActive
+                                    ? "sidebar__list-item font-medium"
+                                    : "sidebar__list-item"
+                            }
+                            title="Перейти в справочники"
+                        >
+                            Справочники
                         </NavLink>
                     </nav>
 

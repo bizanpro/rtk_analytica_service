@@ -1,0 +1,38 @@
+[
+    {
+      "id": "sectors",
+      "name": "Отрасли проектов",
+      "elements_count": 10,
+      "last_changes": "2 августа 2023, 17:00",
+      "edit_author": "Прохоров Сергей Петрович"
+    },
+    {
+      "id": "types",
+      "name": "Типы услуг / отчетов",
+      "elements_count": 5,
+      "last_changes": "2 августа 2023, 17:00",
+      "edit_author": "Прохоров Сергей Петрович"
+    },
+    {
+      "id": "roles",
+      "name": "Роли в проектах",
+      "elements_count": 5,
+      "last_changes": "2 августа 2023, 17:00",
+      "edit_author": "Прохоров Сергей Петрович"
+    },
+    {
+      "id": "creditors",
+      "name": "Кредиторы",
+      "elements_count": 5,
+      "last_changes": "2 августа 2023, 17:00",
+      "edit_author": "Прохоров Сергей Петрович"
+    },
+    {
+      "id": "contacts",
+      "name": "Контакты",
+      "elements_count": 5,
+      "last_changes": "2 августа 2023, 17:00",
+      "edit_author": "Прохоров Сергей Петрович"
+    }
+  ]
+    

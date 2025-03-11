@@ -80,8 +80,6 @@ const Projects = () => {
 
     useEffect(() => {
         getData(URL, { Accept: "application/json" }).then((response) => {
-            console.log(response);
-
             setProjects(response.data);
         });
         // .finally(() => setIsLoading(false));
