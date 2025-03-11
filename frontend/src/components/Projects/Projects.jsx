@@ -6,6 +6,9 @@ import Select from "../Select";
 import { useNavigate } from "react-router-dom";
 
 const Projects = () => {
+    const URL = import.meta.env.DEV
+        ? "/data/projects.json"
+        : import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
     const [projects, setProjects] = useState([]);
     const [popupState, setPopupState] = useState(false);
@@ -76,11 +79,11 @@ const Projects = () => {
     };
 
     useEffect(() => {
-        getData("/data/projects.json", { Accept: "application/json" }).then(
-            (response) => {
-                setProjects(response.data);
-            }
-        );
+        getData(URL, { Accept: "application/json" }).then((response) => {
+            console.log(response);
+
+            setProjects(response.data);
+        });
         // .finally(() => setIsLoading(false));
     }, []);
 
