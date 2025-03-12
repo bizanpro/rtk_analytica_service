@@ -33,10 +33,10 @@ const ReferenceBooks = () => {
                 <div className="overflow-x-auto w-full pb-5">
                     <table className="table-auto w-full border-collapse border-b border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
-                            <tr>
+                            <tr className="border-b border-gray-300">
                                 {COLUMNS.map(({ label, key }) => (
                                     <th
-                                        className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
+                                        className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
                                         rowSpan="2"
                                         key={key}
                                     >

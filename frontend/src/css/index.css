@@ -244,3 +244,21 @@ button {
 .delete-button svg {
     pointer-events: none;
 }
+
+.edit-icon {
+    display: block;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    background: url("../assets/icons/edit.svg") center no-repeat;
+    background-size: contain;
+}
+
+.delete-icon {
+    display: block;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    background: url("../assets/icons/delete.svg") center no-repeat;
+    background-size: contain;
+}
