@@ -254,6 +254,15 @@ button {
     background-size: contain;
 }
 
+.save-icon {
+    display: block;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    background: url("../assets/icons/save.svg") center no-repeat;
+    background-size: contain;
+}
+
 .delete-icon {
     display: block;
     width: 20px;
@@ -261,4 +270,9 @@ button {
     flex: 0 0 auto;
     background: url("../assets/icons/delete.svg") center no-repeat;
     background-size: contain;
+}
+
+:disabled .delete-icon {
+    opacity: 0.6;
+    pointer-events: none;
 }

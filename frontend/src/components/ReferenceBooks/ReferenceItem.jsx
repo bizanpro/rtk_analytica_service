@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
 
-const ReferenceItem = ({ data, columns, mode = "read", bookId }) => {
+const ReferenceItem = ({
+    data,
+    columns,
+    mode = "read",
+    bookId,
+    deleteElement,
+}) => {
     const navigate = useNavigate();
-
-    columns = bookId ? columns[bookId] : columns;
 
     const handleRowClick = () => {
         navigate(`/reference-books/${data.id}`);
@@ -114,9 +118,14 @@ const ReferenceItem = ({ data, columns, mode = "read", bookId }) => {
             {mode === "edit" && (
                 <td className="border-b border-gray-300 px-4 py-7 min-w-[50px] text-center">
                     <button
-                        // onClick={() => removeBlock(data.id, data, method)}
+                        onClick={() => {
+                            // if (data.totalCount < 1) {
+                                deleteElement(data.id);
+                            // }
+                        }}
                         className="delete-button"
                         title="Удалить элемент"
+                        disabled={data.totalCount > 0}
                     >
                         <span className="delete-icon"></span>
                     </button>
