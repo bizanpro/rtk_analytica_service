@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 
 import getData from "../../utils/getData";
+import postData from "../../utils/postData";
 
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import DatePicker from "react-datepicker";
@@ -10,8 +11,11 @@ import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
 
 const ProjectCard = () => {
+    const URL = `${import.meta.env.VITE_API_URL}projects`;
+
     const { projectId } = useParams();
     const location = useLocation();
+    const navigate = useNavigate();
 
     const [projectData, setProjectData] = useState({});
     const [projectName, setProjectName] = useState(
@@ -183,18 +187,40 @@ const ProjectCard = () => {
         updateStatus();
     }, [dateRanges]);
 
+    const createProject = () => {
+        if (projectId) return;
+
+        postData("POST", URL, { name: projectName }).then((response) => {
+            if (response) {
+                alert("Проект успешно создан");
+                navigate(`/projects`);
+            }
+        });
+    };
+
     return (
         <main className="page">
             <div className="new-project">
                 <div className="container py-8">
                     <div className="flex justify-between items-center">
-                        <input
-                            type="text"
-                            className="text-3xl font-medium"
-                            value={projectName}
-                            onChange={(e) => setProjectName(e.target.value)}
-                            disabled={mode == "read" ? true : false}
-                        />
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="text"
+                                className="text-3xl font-medium"
+                                value={projectName}
+                                onChange={(e) => setProjectName(e.target.value)}
+                                disabled={mode == "read" ? true : false}
+                            />
+
+                            <button
+                                type="button"
+                                className="save-icon"
+                                style={{
+                                    opacity: projectName.length > 3 ? 1 : 0,
+                                }}
+                                onClick={createProject}
+                            ></button>
+                        </div>
 
                         <nav className="switch">
                             <div>
