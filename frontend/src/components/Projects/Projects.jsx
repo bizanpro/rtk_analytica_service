@@ -6,9 +6,7 @@ import Select from "../Select";
 import { useNavigate } from "react-router-dom";
 
 const Projects = () => {
-    const URL = import.meta.env.DEV
-        ? "/data/projects.json"
-        : `${import.meta.env.VITE_API_URL}projects`;
+    const URL = `${import.meta.env.VITE_API_URL}projects`;
     const navigate = useNavigate();
     const [projects, setProjects] = useState([]);
     const [popupState, setPopupState] = useState(false);
@@ -16,6 +14,16 @@ const Projects = () => {
     const [selectedSector, setSelectedSector] = useState("");
     const [selectedBank, setSelectedBank] = useState("");
     const [selectedManager, setSelectedManager] = useState("");
+
+    const COLUMNS = [
+        { label: "Проект", key: "name" },
+        { label: "Заказчик", key: "contragent" },
+        { label: "Банк", key: "bank" },
+        { label: "Бюджет", key: "budget" },
+        { label: "Срок", key: "term" },
+        { label: "Руководитель проекта", key: "manager" },
+        { label: "Статус", key: "status" },
+    ];
 
     const filteredProjects = useMemo(() => {
         const result = projects.filter((project) => {
@@ -96,38 +104,44 @@ const Projects = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        <Select
-                            className={
-                                "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                            }
-                            title={"Отрасль"}
-                            items={sectorOptions}
-                            onChange={(evt) => {
-                                setSelectedSector(evt.target.value);
-                            }}
-                        />
+                        {sectorOptions > 1 && (
+                            <Select
+                                className={
+                                    "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                }
+                                title={"Отрасль"}
+                                items={sectorOptions}
+                                onChange={(evt) => {
+                                    setSelectedSector(evt.target.value);
+                                }}
+                            />
+                        )}
 
-                        <Select
-                            className={
-                                "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                            }
-                            title={"Банк"}
-                            items={bankOptions}
-                            onChange={(evt) =>
-                                setSelectedBank(evt.target.value)
-                            }
-                        />
+                        {bankOptions > 1 && (
+                            <Select
+                                className={
+                                    "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                }
+                                title={"Банк"}
+                                items={bankOptions}
+                                onChange={(evt) =>
+                                    setSelectedBank(evt.target.value)
+                                }
+                            />
+                        )}
 
-                        <Select
-                            className={
-                                "p-1 border border-gray-300 min-w-[200px] cursor-pointer"
-                            }
-                            title={"Руководитель проекта"}
-                            items={projectManagerOptions}
-                            onChange={(evt) =>
-                                setSelectedManager(evt.target.value)
-                            }
-                        />
+                        {projectManagerOptions > 1 && (
+                            <Select
+                                className={
+                                    "p-1 border border-gray-300 min-w-[200px] cursor-pointer"
+                                }
+                                title={"Руководитель проекта"}
+                                items={projectManagerOptions}
+                                onChange={(evt) =>
+                                    setSelectedManager(evt.target.value)
+                                }
+                            />
+                        )}
 
                         <button
                             type="button"
@@ -142,56 +156,27 @@ const Projects = () => {
                 <div className="overflow-x-auto w-full pb-5">
                     <table className="table-auto w-full border-collapse border-b border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
-                            <tr>
-                                <th
-                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
-                                    rowSpan="2"
-                                >
-                                    Проект
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
-                                    rowSpan="2"
-                                >
-                                    Заказчик
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
-                                    rowSpan="2"
-                                >
-                                    Банк
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
-                                    rowSpan="2"
-                                >
-                                    Бюджет
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
-                                    rowSpan="2"
-                                >
-                                    Срок
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
-                                    rowSpan="2"
-                                >
-                                    Руководитель проекта
-                                </th>
-                                <th
-                                    className="border-b border-gray-300 text-base px-4 py-2 min-w-[180px] max-w-[200px]"
-                                    rowSpan="2"
-                                >
-                                    Статус
-                                </th>
+                            <tr className="border-b border-gray-300">
+                                {COLUMNS.map(({ label, key }) => (
+                                    <th
+                                        className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
+                                        rowSpan="2"
+                                        key={key}
+                                    >
+                                        {label}
+                                    </th>
+                                ))}
                             </tr>
                         </thead>
 
                         <tbody>
                             {filteredProjects.length > 0 &&
                                 filteredProjects.map((item) => (
-                                    <ProjectItem key={item.id} {...item} />
+                                    <ProjectItem
+                                        key={item.id}
+                                        props={item}
+                                        columns={COLUMNS}
+                                    />
                                 ))}
                         </tbody>
                     </table>

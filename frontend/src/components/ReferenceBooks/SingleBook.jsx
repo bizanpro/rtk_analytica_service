@@ -210,7 +210,7 @@ const SingleBook = () => {
                                     {columns.map(({ key }) => (
                                         <td
                                             key={key}
-                                            className="border-b border-gray-300 px-4 py-7 min-w-[180px] max-w-[200px]"
+                                            className="px-4 py-7 min-w-[180px] max-w-[200px]"
                                         >
                                             {key === "name" ||
                                             key === "counterparty_name" ? (

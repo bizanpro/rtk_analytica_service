@@ -24,7 +24,7 @@ const ReferenceItem = ({
                 if (Array.isArray(value) && value.length > 0) {
                     return (
                         <td
-                            className="border-b border-gray-300 py-7 min-w-[180px] max-w-[200px]"
+                            className="py-7 min-w-[180px] max-w-[200px]"
                             key={key}
                         >
                             <table className="w-full">
@@ -94,7 +94,7 @@ const ReferenceItem = ({
                 } else {
                     return (
                         <td
-                            className="border-b border-gray-300 px-4 py-7 min-w-[180px] max-w-[200px]"
+                            className="px-4 py-7 min-w-[180px] max-w-[200px]"
                             key={key}
                         >
                             {(key === "name" || key === "phone") &&
@@ -116,7 +116,7 @@ const ReferenceItem = ({
             })}
 
             {mode === "edit" && (
-                <td className="border-b border-gray-300 px-4 py-7 min-w-[50px] text-center">
+                <td className="px-4 py-7 min-w-[50px] text-center">
                     <button
                         onClick={() => {
                             // if (data.totalCount < 1) {
