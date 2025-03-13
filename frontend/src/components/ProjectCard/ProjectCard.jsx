@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
@@ -14,42 +14,19 @@ const ProjectCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
 
     const { projectId } = useParams();
-    const location = useLocation();
+    // const location = useLocation();
     const navigate = useNavigate();
 
     const [projectData, setProjectData] = useState({});
-    const [projectName, setProjectName] = useState(
-        projectId ? "" : location.state?.projectName
-    );
-
-    useEffect(() => {
-        if (projectId) {
-            getData("/data/projects.json", { Accept: "application/json" }).then(
-                (response) => {
-                    const data = response.data.find(
-                        (item) => item.id == projectId
-                    );
-                    setProjectData(data);
-                }
-            );
-        }
-        // .finally(() => setIsLoading(false));
-    }, []);
+    const [formFields, setFormFields] = useState({});
 
     const [mode, setMode] = useState(projectId ? "read" : "edit");
     const [keyPersons, setKeyPersons] = useState([]);
     const [lenders, setLenders] = useState([]);
     const [teammates, setTeammates] = useState([]);
     const [contractors, setContractors] = useState([]);
-
-    useEffect(() => {
-        if (projectId && projectData?.name) {
-            setProjectName(projectData.name);
-        }
-        if (projectId && projectData?.customer_key_persons) {
-            setKeyPersons(projectData.customer_key_persons);
-        }
-    }, [projectData, projectId]);
+    const [industries, setIndustries] = useState([]);
+    const [contragents, setContragents] = useState([]);
 
     const defaultRanges = {
         picker1: { start: new Date("2024-08-01"), end: new Date("2024-10-01") },
@@ -61,6 +38,22 @@ const ProjectCard = () => {
     const [agreementStatus, setAgreementStatus] = useState("запланирован");
     const [reportWindowsState, setReportWindowsState] = useState(false);
 
+    const handleChangeDateRange =
+        (id) =>
+        ([newStartDate, newEndDate]) => {
+            setDateRanges((prev) => ({
+                ...prev,
+                [id]: { start: newStartDate, end: newEndDate },
+            }));
+        };
+
+    const handleInputChange = (e, name) => {
+        setFormFields({ ...formFields, [name]: e.target.value });
+        setProjectData({ ...projectData, [name]: e.target.value });
+        console.log(name + ' ' + e.target.value)
+    };
+
+    // Добавление блока заказчика или кредитора
     const addBlock = (type) => {
         if (type === "key-person") {
             if (keyPersons.length < 5) {
@@ -111,6 +104,7 @@ const ProjectCard = () => {
         }
     };
 
+    // Удаление блока заказчика или кредитора
     const removeBlock = useCallback((id, data, method) => {
         method(data.filter((block) => block.id !== id));
     }, []);
@@ -161,15 +155,7 @@ const ProjectCard = () => {
         );
     }, []);
 
-    const handleChangeDateRange =
-        (id) =>
-        ([newStartDate, newEndDate]) => {
-            setDateRanges((prev) => ({
-                ...prev,
-                [id]: { start: newStartDate, end: newEndDate },
-            }));
-        };
-
+    // Обновление статуса проекта в отчете
     const updateStatus = () => {
         const today = new Date();
         const { start, end } = dateRanges.picker3;
@@ -183,43 +169,76 @@ const ProjectCard = () => {
         }
     };
 
-    useEffect(() => {
-        updateStatus();
-    }, [dateRanges]);
+    // Получение проекта
+    const getProject = (id) => {
+        getData(`${URL}/${id}`, { Accept: "application/json" }).then(
+            (response) => {
+                setProjectData(response.data);
+            }
+        );
+    };
 
-    const createProject = () => {
-        if (projectId) return;
-
-        postData("POST", URL, { name: projectName }).then((response) => {
+    // Обновление проекта
+    const updateProject = (id) => {
+        postData("PUT", `${URL}/${id}`, formFields).then((response) => {
             if (response) {
-                alert("Проект успешно создан");
-                navigate(`/projects`);
+                alert("Проект успешно обновлен");
+                // navigate(`/projects/`);
             }
         });
     };
 
+    useEffect(() => {
+        if (projectId) {
+            getProject(projectId);
+        }
+
+        getData(`${import.meta.env.VITE_API_URL}/industries`, {
+            Accept: "application/json",
+        }).then((response) => {
+            setIndustries(response.data.data);
+        });
+
+        getData(`${import.meta.env.VITE_API_URL}/contragents`, {
+            Accept: "application/json",
+        }).then((response) => {
+            setContragents(response.data);
+        });
+    }, []);
+
+    useEffect(() => {
+        if (projectId && projectData?.customer_key_persons) {
+            setKeyPersons(projectData.customer_key_persons);
+        }
+    }, [projectData, projectId]);
+
+    useEffect(() => {
+        updateStatus();
+    }, [dateRanges]);
+
     return (
         <main className="page">
-            <div className="new-project">
-                <div className="container py-8">
-                    <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-2">
+            <div className="new-project pt-8 pb-15">
+                <div className="container">
+                    <div className="flex justify-between items-center gap-10">
+                        <div className="flex items-center gap-3 flex-grow">
                             <input
                                 type="text"
-                                className="text-3xl font-medium"
-                                value={projectName}
-                                onChange={(e) => setProjectName(e.target.value)}
+                                className="text-3xl font-medium w-full"
+                                name="name"
+                                value={projectData?.name}
+                                onChange={(e) => handleInputChange(e, "name")}
                                 disabled={mode == "read" ? true : false}
                             />
 
-                            <button
-                                type="button"
-                                className="save-icon"
-                                style={{
-                                    opacity: projectName.length > 3 ? 1 : 0,
-                                }}
-                                onClick={createProject}
-                            ></button>
+                            {mode === "edit" &&
+                                projectData.name?.length > 3 && (
+                                    <button
+                                        type="button"
+                                        className="update-icon"
+                                        onClick={() => updateProject(projectId)}
+                                    ></button>
+                                )}
                         </div>
 
                         <nav className="switch">
@@ -267,6 +286,7 @@ const ProjectCard = () => {
                                                 ? projectData.service_cost
                                                 : "Нет данных"
                                         }
+                                        readOnly
                                         disabled={mode == "read" ? true : false}
                                     />
                                 </div>
@@ -279,32 +299,33 @@ const ProjectCard = () => {
                                         </span>
                                     </span>
                                     <div className="border-2 border-gray-300 p-5">
-                                        {mode == "read" ? (
-                                            <input
-                                                className="w-full h-[21px]"
-                                                type="text"
-                                                disabled
-                                                value={
-                                                    projectId && projectData
-                                                        ? projectData.client
-                                                        : "ООО 'СГРК'"
-                                                }
-                                            />
-                                        ) : (
-                                            <select className="w-full">
-                                                <option
-                                                    value={
-                                                        projectId && projectData
-                                                            ? projectData.client
-                                                            : "ООО 'СГРК'"
-                                                    }
-                                                >
-                                                    {projectId && projectData
-                                                        ? projectData.client
-                                                        : "ООО 'СГРК'"}
-                                                </option>
-                                            </select>
-                                        )}
+                                        <select
+                                            className="w-full h-[21px]"
+                                            value={
+                                                projectId
+                                                    ? projectData?.contragent_id
+                                                    : "Выбрать заказчика"
+                                            }
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    e,
+                                                    "contragent_id"
+                                                )
+                                            }
+                                            disabled={
+                                                mode == "read" ? true : false
+                                            }
+                                        >
+                                            {contragents.length > 0 &&
+                                                contragents.map((item) => (
+                                                    <option
+                                                        value={item.id}
+                                                        key={item.id}
+                                                    >
+                                                        {item.program_name}
+                                                    </option>
+                                                ))}
+                                        </select>
                                     </div>
                                 </div>
 
@@ -358,6 +379,7 @@ const ProjectCard = () => {
                                                 : "ООО 'СГРК'"
                                         }
                                         disabled={mode == "read" ? true : false}
+                                        readOnly
                                     />
                                 </div>
 
@@ -369,32 +391,33 @@ const ProjectCard = () => {
                                         </span>
                                     </span>
                                     <div className="border-2 border-gray-300 p-5">
-                                        {mode == "read" ? (
-                                            <input
-                                                className="w-full h-[21px]"
-                                                type="text"
-                                                disabled
-                                                value={
-                                                    projectId && projectData
-                                                        ? projectData.sector
-                                                        : "Золотодобыча"
-                                                }
-                                            />
-                                        ) : (
-                                            <select className="w-full">
-                                                <option
-                                                    value={
-                                                        projectId && projectData
-                                                            ? projectData.sector
-                                                            : "Золотодобыча"
-                                                    }
-                                                >
-                                                    {projectId && projectData
-                                                        ? projectData.sector
-                                                        : "Золотодобыча"}
-                                                </option>
-                                            </select>
-                                        )}
+                                        <select
+                                            className="w-full h-[21px]"
+                                            value={
+                                                projectId
+                                                    ? projectData?.industry_id
+                                                    : "Выбрать отрасль"
+                                            }
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    e,
+                                                    "industry_id"
+                                                )
+                                            }
+                                            disabled={
+                                                mode == "read" ? true : false
+                                            }
+                                        >
+                                            {industries.length > 0 &&
+                                                industries.map((item) => (
+                                                    <option
+                                                        value={item.id}
+                                                        key={item.id}
+                                                    >
+                                                        {item.name}
+                                                    </option>
+                                                ))}
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -408,11 +431,15 @@ const ProjectCard = () => {
                                         className="border-2 border-gray-300 p-5 min-h-[300px] max-h-[400px]"
                                         placeholder="Заполните описание проекта"
                                         type="text"
+                                        name="description"
                                         disabled={mode == "read" ? true : false}
                                         value={
                                             projectId && projectData
-                                                ? projectData.comment
+                                                ? projectData.description
                                                 : ""
+                                        }
+                                        onChange={(e) =>
+                                            handleInputChange(e, "description")
                                         }
                                     />
                                 </div>
@@ -562,6 +589,7 @@ const ProjectCard = () => {
                                                 type="radio"
                                                 name="time_sort"
                                                 id="this_year"
+                                                readOnly
                                                 checked
                                             />
                                             <label
@@ -576,6 +604,7 @@ const ProjectCard = () => {
                                                 type="radio"
                                                 name="time_sort"
                                                 id="all_time"
+                                                readOnly
                                             />
                                             <label
                                                 className="bg-gray-200 py-1 px-2 text-center rounded-md"
@@ -647,7 +676,11 @@ const ProjectCard = () => {
                                                 ?
                                             </span>
                                         </div>
-                                        <input type="text" value="Нет данных" />
+                                        <input
+                                            type="text"
+                                            value="Нет данных"
+                                            readOnly
+                                        />
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         <div className="flex items-center gap-2 text-gray-400">
@@ -678,6 +711,7 @@ const ProjectCard = () => {
                                             className="flex-grow"
                                             type="text"
                                             value="Нет данных"
+                                            readOnly
                                         />
                                     </div>
                                 </div>
@@ -785,7 +819,10 @@ const ProjectCard = () => {
                                                         Тип отчёта
                                                     </span>
                                                     <div className="border-2 border-gray-300 p-1">
-                                                        <select className="w-full">
+                                                        <select
+                                                            className="w-full"
+                                                            disabled
+                                                        >
                                                             <option value="ФТА">
                                                                 ФТА
                                                             </option>
@@ -855,6 +892,7 @@ const ProjectCard = () => {
                                                             type="number"
                                                             className="w-full"
                                                             placeholder="0,0"
+                                                            readOnly
                                                         />
                                                     </div>
                                                 </div>
@@ -907,7 +945,10 @@ const ProjectCard = () => {
                                                         Договор
                                                     </span>
                                                     <div className="border-2 border-gray-300 p-1">
-                                                        <select className="w-full">
+                                                        <select
+                                                            className="w-full"
+                                                            disabled
+                                                        >
                                                             <option value="Договор 45222 от 12.01.2025">
                                                                 Договор 45222 от
                                                                 12.01.2025
@@ -931,6 +972,7 @@ const ProjectCard = () => {
                                                             type="number"
                                                             className="w-full"
                                                             placeholder="0,0"
+                                                            readOnly
                                                         />
                                                     </div>
                                                 </div>
@@ -1028,6 +1070,7 @@ const ProjectCard = () => {
                                                                     type="radio"
                                                                     name="add_report"
                                                                     id="addReportYes"
+                                                                    readOnly
                                                                 />
                                                                 <label htmlFor="addReportYes">
                                                                     Да
@@ -1038,6 +1081,7 @@ const ProjectCard = () => {
                                                                     type="radio"
                                                                     name="add_report"
                                                                     id="addReportNo"
+                                                                    readOnly
                                                                 />
                                                                 <label htmlFor="addReportNo">
                                                                     Нет
@@ -1075,12 +1119,10 @@ const ProjectCard = () => {
                                                     >
                                                         <div className="flex flex-col gap-2 justify-between">
                                                             <div className="border-2 border-gray-300 p-1">
-                                                                <select className="w-full">
-                                                                    <option value="Прохоров Сергей Викторович">
-                                                                        Прохоров
-                                                                        Сергей
-                                                                        Викторович
-                                                                    </option>
+                                                                <select
+                                                                    className="w-full"
+                                                                    disabled
+                                                                >
                                                                     <option value="Прохоров Сергей Викторович">
                                                                         Прохоров
                                                                         Сергей
@@ -1096,11 +1138,10 @@ const ProjectCard = () => {
                                                         </div>
                                                         <div className="flex flex-col gap-2 justify-between">
                                                             <div className="border-2 border-gray-300 p-1">
-                                                                <select className="w-full">
-                                                                    <option value="Руководитель проекта">
-                                                                        Руководитель
-                                                                        проекта
-                                                                    </option>
+                                                                <select
+                                                                    className="w-full"
+                                                                    disabled
+                                                                >
                                                                     <option value="Руководитель проекта">
                                                                         Руководитель
                                                                         проекта
@@ -1143,11 +1184,10 @@ const ProjectCard = () => {
                                                         <div className="grid gap-3 grid-cols-2">
                                                             <div className="flex flex-col gap-2 justify-between">
                                                                 <div className="border-2 border-gray-300 p-1">
-                                                                    <select className="w-full">
-                                                                        <option value="ООО 'ИЭС'">
-                                                                            ООО
-                                                                            'ИЭС'
-                                                                        </option>
+                                                                    <select
+                                                                        className="w-full"
+                                                                        disabled
+                                                                    >
                                                                         <option value="ООО 'ИЭС'">
                                                                             ООО
                                                                             'ИЭС'
@@ -1161,10 +1201,10 @@ const ProjectCard = () => {
                                                             </div>
                                                             <div className="flex flex-col gap-2 justify-between">
                                                                 <div className="border-2 border-gray-300 p-1">
-                                                                    <select className="w-full">
-                                                                        <option value="Технология">
-                                                                            Технология
-                                                                        </option>
+                                                                    <select
+                                                                        className="w-full"
+                                                                        disabled
+                                                                    >
                                                                         <option value="Технология">
                                                                             Технология
                                                                         </option>
@@ -1180,7 +1220,10 @@ const ProjectCard = () => {
                                                             <div className="flex flex-col gap-2 justify-between">
                                                                 <span className="text-gray-400"></span>
                                                                 <div className="border-2 border-gray-300 p-1">
-                                                                    <select className="w-full">
+                                                                    <select
+                                                                        className="w-full"
+                                                                        disabled
+                                                                    >
                                                                         <option value="Договор 45222 от 12.01.2025">
                                                                             Договор
                                                                             45222

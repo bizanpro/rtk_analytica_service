@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import getData from "../../utils/getData";
+import postData from "../../utils/postData";
 import ProjectItem from "./ProjectItem";
 import Popup from "../Popup/Popup";
 import Select from "../Select";
@@ -75,15 +76,13 @@ const Projects = () => {
         if (evt.currentTarget.classList.contains("popup")) setPopupState(false);
     };
 
-    const openNewProjectPage = () => {
-        // const valid = projects.filter((project) => {
-        //     return (
-        //         project.name.trim().toLowerCase() ===
-        //         newProjectName.trim().toLowerCase()
-        //     );
-        // });
-
-        navigate(`/projects/new`, { state: { projectName: newProjectName } });
+    // Создание проекта
+    const createProject = () => {
+        postData("POST", URL, { name: newProjectName }).then((response) => {
+            if (response) {
+                navigate(`/projects/${response.id}`);
+            }
+        });
     };
 
     useEffect(() => {
@@ -207,7 +206,7 @@ const Projects = () => {
                                 <button
                                     type="button"
                                     className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
-                                    onClick={openNewProjectPage}
+                                    onClick={createProject}
                                 >
                                     Создать
                                 </button>

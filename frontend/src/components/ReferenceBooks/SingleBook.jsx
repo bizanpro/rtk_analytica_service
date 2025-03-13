@@ -112,7 +112,7 @@ const SingleBook = () => {
 
     const getBooks = () => {
         getData(URL, { Accept: "application/json" }).then((response) => {
-            setBooksItems(response.data);
+            setBooksItems(response.data.data);           
         });
         // .finally(() => setIsLoading(false));
     };
