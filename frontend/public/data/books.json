@@ -2,37 +2,37 @@
     {
       "id": "industries",
       "name": "Отрасли проектов",
-      "elements_count": 10,
-      "last_changes": "2 августа 2023, 17:00",
-      "edit_author": "Прохоров Сергей Петрович"
+      "totalCount": 10,
+      "updated_at": "2025-03-14T08:36:09.000000Z",
+      "author": "Прохоров Сергей Петрович"
     },
     {
       "id": "types",
       "name": "Типы услуг / отчетов",
-      "elements_count": 5,
-      "last_changes": "2 августа 2023, 17:00",
-      "edit_author": "Прохоров Сергей Петрович"
+      "totalCount": 5,
+      "updated_at": "2025-03-14T08:36:09.000000Z",
+      "author": "Прохоров Сергей Петрович"
     },
     {
       "id": "roles",
       "name": "Роли в проектах",
-      "elements_count": 5,
-      "last_changes": "2 августа 2023, 17:00",
-      "edit_author": "Прохоров Сергей Петрович"
+      "totalCount": 5,
+      "updated_at": "2025-03-14T08:36:09.000000Z",
+      "author": "Прохоров Сергей Петрович"
     },
     {
-      "id": "creditors",
+      "id": "banks",
       "name": "Кредиторы",
-      "elements_count": 5,
-      "last_changes": "2 августа 2023, 17:00",
-      "edit_author": "Прохоров Сергей Петрович"
+      "totalCount": 5,
+      "updated_at": "2025-03-14T08:36:09.000000Z",
+      "author": "Прохоров Сергей Петрович"
     },
     {
       "id": "contacts",
       "name": "Контакты",
-      "elements_count": 5,
-      "last_changes": "2 августа 2023, 17:00",
-      "edit_author": "Прохоров Сергей Петрович"
+      "totalCount": 5,
+      "updated_at": "2025-03-14T08:36:09.000000Z",
+      "author": "Прохоров Сергей Петрович"
     }
   ]
     

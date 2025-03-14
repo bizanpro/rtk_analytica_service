@@ -50,7 +50,6 @@ const ProjectCard = () => {
     const handleInputChange = (e, name) => {
         setFormFields({ ...formFields, [name]: e.target.value });
         setProjectData({ ...projectData, [name]: e.target.value });
-        console.log(name + ' ' + e.target.value)
     };
 
     // Добавление блока заказчика или кредитора

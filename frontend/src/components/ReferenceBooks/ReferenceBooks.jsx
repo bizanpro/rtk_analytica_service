@@ -16,9 +16,9 @@ const ReferenceBooks = () => {
 
     const COLUMNS = [
         { label: "Наименование", key: "name" },
-        { label: "Кол-во элементов", key: "elements_count" },
-        { label: "Последнее изменение", key: "last_changes" },
-        { label: "Автор измнения", key: "edit_author" },
+        { label: "Кол-во элементов", key: "totalCount" },
+        { label: "Последнее изменение", key: "updated_at" },
+        { label: "Автор измнения", key: "author" },
     ];
 
     return (

@@ -26,12 +26,12 @@ const SingleBook = () => {
             { label: "Последнее изменение", key: "last_changes" },
             { label: "Автор измнения", key: "edit_author" },
         ],
-        creditors: [
-            { label: "Сокращённое наименование", key: "short_name" },
-            { label: "Полное наименование", key: "name" },
-            { label: "Кол-во проектов", key: "projects_count" },
-            { label: "Последнее изменение", key: "last_changes" },
-            { label: "Автор измнения", key: "edit_author" },
+        banks: [
+            { label: "Сокращённое наименование", key: "name" },
+            { label: "Полное наименование", key: "full_name" },
+            { label: "Кол-во проектов", key: "totalCount" },
+            { label: "Последнее изменение", key: "updated_at" },
+            { label: "Автор измнения", key: "author" },
         ],
         contacts: [
             { label: "Наименование контрагента", key: "counterparty_name" },
@@ -48,7 +48,7 @@ const SingleBook = () => {
         industries: "Отрасли проектов",
         types: "Типы услуг / отчетов",
         roles: "Роли в проектах",
-        creditors: "Кредиторы",
+        banks: "Кредиторы",
         contacts: "Контакты",
     };
 
@@ -60,7 +60,8 @@ const SingleBook = () => {
 
     const [booksItems, setBooksItems] = useState([]);
     const [mode, setMode] = useState("edit");
-    const [newElementName, setNewElementName] = useState("");
+    const [formFields, setFormFields] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
 
     const [selectedCounterpartyName, setSelectedCounterpartyName] =
         useState("");
@@ -87,15 +88,15 @@ const SingleBook = () => {
         return Array.from(new Set(allSectors));
     }, [booksItems]);
 
-    const handleNewElementName = (e) => {
-        setNewElementName(e.target.value);
+    const handleInputChange = (e, name) => {
+        setFormFields({ ...formFields, [name]: e.target.value });
     };
 
     const addNewElement = () => {
-        postData("POST", URL, { name: newElementName }).then((response) => {
+        postData("POST", URL, formFields).then((response) => {
             if (response) {
                 setBooksItems((booksItems) => [...booksItems, response]);
-                setNewElementName("");
+                setFormFields({});
             }
         });
     };
@@ -111,10 +112,11 @@ const SingleBook = () => {
     };
 
     const getBooks = () => {
-        getData(URL, { Accept: "application/json" }).then((response) => {
-            setBooksItems(response.data.data);           
-        });
-        // .finally(() => setIsLoading(false));
+        getData(URL, { Accept: "application/json" })
+            .then((response) => {
+                setBooksItems(response.data.data);
+            })
+            .finally(() => setIsLoading(false));
     };
 
     useEffect(() => {
@@ -188,84 +190,99 @@ const SingleBook = () => {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto w-full pb-5">
-                    <table className="table-auto w-full border-collapse border-b border-gray-300 text-sm">
-                        <thead className="text-gray-400 text-left">
-                            <tr className="border-b border-gray-300">
-                                {COLUMNS[bookId].map(({ label, key }) => (
-                                    <th
-                                        className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
-                                        rowSpan="2"
-                                        key={key}
-                                    >
-                                        {label}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {mode === "edit" && (
-                                <tr className="border-b border-gray-300 text-base text-left">
-                                    {columns.map(({ key }) => (
-                                        <td
+                {isLoading ? (
+                    "Загрузка..."
+                ) : (
+                    <div className="overflow-x-auto w-full pb-5">
+                        <table className="table-auto w-full border-collapse border-b border-gray-300 text-sm">
+                            <thead className="text-gray-400 text-left">
+                                <tr className="border-b border-gray-300">
+                                    {COLUMNS[bookId].map(({ label, key }) => (
+                                        <th
+                                            className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
+                                            rowSpan="2"
                                             key={key}
-                                            className="px-4 py-7 min-w-[180px] max-w-[200px]"
                                         >
-                                            {key === "name" ||
-                                            key === "counterparty_name" ? (
-                                                <div
-                                                    key={key}
-                                                    className="flex items-center gap-2"
-                                                >
-                                                    <input
-                                                        type="text"
-                                                        className="w-full"
-                                                        placeholder="Новый элемент"
-                                                        value={newElementName}
-                                                        onChange={(evt) =>
-                                                            handleNewElementName(
-                                                                evt
-                                                            )
-                                                        }
-                                                    />
-                                                    <span className="edit-icon"></span>
-
-                                                    <button
-                                                        type="button"
-                                                        className="save-icon"
-                                                        style={{
-                                                            opacity:
-                                                                newElementName.length >
-                                                                3
-                                                                    ? 1
-                                                                    : 0,
-                                                        }}
-                                                        onClick={addNewElement}
-                                                    ></button>
-                                                </div>
-                                            ) : (
-                                                "—"
-                                            )}
-                                        </td>
+                                            {label}
+                                        </th>
                                     ))}
                                 </tr>
-                            )}
+                            </thead>
 
-                            {filteredProjects.length > 0 &&
-                                filteredProjects.map((item) => (
-                                    <ReferenceItem
-                                        key={item.id}
-                                        data={item}
-                                        columns={columns}
-                                        mode={mode}
-                                        bookId={bookId}
-                                        deleteElement={deleteElement}
-                                    />
-                                ))}
-                        </tbody>
-                    </table>
-                </div>
+                            <tbody>
+                                {mode === "edit" && (
+                                    <tr className="border-b border-gray-300 text-base text-left">
+                                        {columns.map(({ key }) => (
+                                            <td
+                                                key={key}
+                                                className="px-4 py-7 min-w-[180px] max-w-[200px]"
+                                            >
+                                                {key === "name" ||
+                                                key === "counterparty_name" ||
+                                                key === "full_name" ? (
+                                                    <div
+                                                        key={key}
+                                                        className="flex items-center gap-2"
+                                                    >
+                                                        <input
+                                                            type="text"
+                                                            className="w-full"
+                                                            placeholder="Новый элемент"
+                                                            name={key}
+                                                            value={
+                                                                formFields.key
+                                                            }
+                                                            onChange={(e) =>
+                                                                handleInputChange(
+                                                                    e,
+                                                                    key
+                                                                )
+                                                            }
+                                                        />
+                                                        <span className="edit-icon"></span>
+
+                                                        {key === "name" && (
+                                                            <button
+                                                                type="button"
+                                                                className="save-icon"
+                                                                style={{
+                                                                    opacity:
+                                                                        formFields
+                                                                            .name
+                                                                            ?.length >
+                                                                        3
+                                                                            ? 1
+                                                                            : 0,
+                                                                }}
+                                                                onClick={
+                                                                    addNewElement
+                                                                }
+                                                            ></button>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    "—"
+                                                )}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                )}
+
+                                {filteredProjects.length > 0 &&
+                                    filteredProjects.map((item) => (
+                                        <ReferenceItem
+                                            key={item.id}
+                                            data={item}
+                                            columns={columns}
+                                            mode={mode}
+                                            bookId={bookId}
+                                            deleteElement={deleteElement}
+                                        />
+                                    ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
         </main>
     );

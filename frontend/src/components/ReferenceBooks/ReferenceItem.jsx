@@ -1,5 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
+import { format, parseISO } from "date-fns";
+import { ru } from "date-fns/locale";
+
 const ReferenceItem = ({
     data,
     columns,
@@ -45,6 +48,8 @@ const ReferenceItem = ({
                                                                     ]) =>
                                                                         (field ===
                                                                             "name" ||
+                                                                            field ===
+                                                                                "full_name" ||
                                                                             field ===
                                                                                 "phone") &&
                                                                         mode ===
@@ -97,7 +102,9 @@ const ReferenceItem = ({
                             className="px-4 py-7 min-w-[180px] max-w-[200px]"
                             key={key}
                         >
-                            {(key === "name" || key === "phone") &&
+                            {(key === "name" ||
+                                key === "full_name" ||
+                                key === "phone") &&
                             mode === "edit" ? (
                                 <div className="flex items-center gap-2">
                                     <input
@@ -107,6 +114,10 @@ const ReferenceItem = ({
                                     />
                                     <span className="edit-icon"></span>
                                 </div>
+                            ) : key === "updated_at" ? (
+                                format(parseISO(value), "d MMMM yyyy, HH:mm", {
+                                    locale: ru,
+                                }) || "—"
                             ) : (
                                 value?.toString() || "—"
                             )}
@@ -120,7 +131,7 @@ const ReferenceItem = ({
                     <button
                         onClick={() => {
                             // if (data.totalCount < 1) {
-                                deleteElement(data.id);
+                            deleteElement(data.id);
                             // }
                         }}
                         className="delete-button"

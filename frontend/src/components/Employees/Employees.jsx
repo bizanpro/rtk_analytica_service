@@ -5,6 +5,8 @@ import EmployeeItem from "./EmployeeItem";
 const Employees = () => {
     const [employees, setEmployees] = useState([]);
 
+    const COLUMNS = [{ label: "Наименование", key: "employee_full_name" }];
+
     useEffect(() => {
         getData("/data/employees.json", { Accept: "application/json" }).then(
             (response) => setEmployees(response.data)
@@ -15,116 +17,36 @@ const Employees = () => {
     return (
         <main className="page">
             <div className="container py-8">
-                <h1 className="text-4xl mb-8">Список сотрудников</h1>
+                <div className="flex justify-between items-center gap-6 mb-8">
+                    <h1 className="text-3xl font-medium">
+                        Реестр сотрудников{" "}
+                        {employees.length > 0 && `(${employees.length})`}
+                    </h1>
+                </div>
 
                 <div className="overflow-x-auto w-full">
-                    <table className="table-auto w-full border-collapse border border-gray-300 shadow-lg text-sm">
-                        <thead className="bg-gray-200 text-gray-700">
-                            <tr className="bg-gray-100">
-                                <th
-                                    className="border border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    ID
-                                </th>
-                                <th
-                                    className="border border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Time code
-                                </th>
-                                <th
-                                    className="border border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    ФИО сотрудника
-                                </th>
-                                <th
-                                    className="border border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Телефон
-                                </th>
-                                <th
-                                    className="border border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Email
-                                </th>
-                                <th
-                                    className="border border-gray-300 px-4 py-2 align-middle"
-                                    rowSpan="2"
-                                >
-                                    Должность
-                                </th>
-                                <th
-                                    className="border border-gray-300 px-4 py-2"
-                                    colSpan="2"
-                                >
-                                    Кадровые мероприятия
-                                </th>
-                                <th
-                                    className="border border-gray-300 px-4 py-2"
-                                    rowSpan="2"
-                                >
-                                    Оклад, руб./мес.
-                                </th>
-                                <th
-                                    className="border border-gray-300 px-4 py-2"
-                                    rowSpan="5"
-                                >
-                                    Квалификация
-                                </th>
-                                <th
-                                    className="border border-gray-300 px-4 py-2 align-middle"
-                                    colSpan="3"
-                                >
-                                    Ближайший отпуск
-                                </th>
-                                <th
-                                    className="border border-gray-300 px-4 py-2 align-middle"
-                                    colSpan="5"
-                                >
-                                    Проекты и загрузка
-                                </th>
-                            </tr>
-                            <tr className="bg-gray-100">
-                                <th className="border border-gray-300 px-4 py-2">
-                                    Мероприятие
-                                </th>
-                                <th className="border border-gray-300 px-4 py-2">
-                                    Значение
-                                </th>
-                                <th className="border border-gray-300 px-4 py-2">
-                                    1
-                                </th>
-                                <th className="border border-gray-300 px-4 py-2">
-                                    2
-                                </th>
-                                <th className="border border-gray-300 px-4 py-2">
-                                    3
-                                </th>
-                                <th className="border border-gray-300 px-4 py-2">
-                                    ID
-                                </th>
-                                <th className="border border-gray-300 px-4 py-2">
-                                    Название
-                                </th>
-                                <th className="border border-gray-300 px-4 py-2">
-                                    Роль
-                                </th>
-                                <th className="border border-gray-300 px-4 py-2">
-                                    % загрузки
-                                </th>
-                                <th className="border border-gray-300 px-4 py-2">
-                                    Рабочее время
-                                </th>
+                    <table className="table-auto w-full border-collapse border-b border-gray-300 text-sm">
+                        <thead className="text-gray-400 text-left">
+                            <tr className="border-b border-gray-300">
+                                {COLUMNS.map(({ label, key }) => (
+                                    <th
+                                        className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
+                                        rowSpan="2"
+                                        key={key}
+                                    >
+                                        {label}
+                                    </th>
+                                ))}
                             </tr>
                         </thead>
                         <tbody>
                             {employees.length > 0 &&
                                 employees.map((item) => (
-                                    <EmployeeItem key={item.id} {...item} />
+                                    <EmployeeItem
+                                        key={item.id}
+                                        data={item}
+                                        columns={COLUMNS}
+                                    />
                                 ))}
                         </tbody>
                     </table>
