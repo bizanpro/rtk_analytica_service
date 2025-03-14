@@ -4,7 +4,7 @@ const ProjectItem = ({ props, columns }) => {
     const navigate = useNavigate();
 
     const handleRowClick = () => {
-        navigate(`/projects/${props.id}`);
+        navigate(`/projects/${props.id}`, { state: { mode: "read" } });
     };
 
     return (

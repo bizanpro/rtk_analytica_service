@@ -80,7 +80,9 @@ const Projects = () => {
     const createProject = () => {
         postData("POST", URL, { name: newProjectName }).then((response) => {
             if (response) {
-                navigate(`/projects/${response.id}`);
+                navigate(`/projects/${response.id}`, {
+                    state: { mode: "edit" },
+                });
             }
         });
     };

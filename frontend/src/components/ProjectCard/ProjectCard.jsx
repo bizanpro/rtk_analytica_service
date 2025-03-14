@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
@@ -12,21 +12,20 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const ProjectCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
-
+    const location = useLocation();
     const { projectId } = useParams();
-    // const location = useLocation();
-    const navigate = useNavigate();
 
     const [projectData, setProjectData] = useState({});
     const [formFields, setFormFields] = useState({});
 
-    const [mode, setMode] = useState(projectId ? "read" : "edit");
+    const [mode, setMode] = useState(location.state?.mode);
     const [keyPersons, setKeyPersons] = useState([]);
     const [lenders, setLenders] = useState([]);
     const [teammates, setTeammates] = useState([]);
     const [contractors, setContractors] = useState([]);
     const [industries, setIndustries] = useState([]);
     const [contragents, setContragents] = useState([]);
+    const [banks, setBanks] = useState([]);
 
     const defaultRanges = {
         picker1: { start: new Date("2024-08-01"), end: new Date("2024-10-01") },
@@ -52,10 +51,51 @@ const ProjectCard = () => {
         setProjectData({ ...projectData, [name]: e.target.value });
     };
 
+    const handleBankChange = (e, index) => {
+        const selectedId = e.target.value;
+
+        setFormFields((prev) => {
+            const updatedBanks = prev.bank_ids ? [...prev.bank_ids] : [];
+
+            if (selectedId === "") {
+                updatedBanks.splice(index, 1);
+            } else {
+                updatedBanks[index] = selectedId;
+            }
+
+            const uniqueBanks = updatedBanks.filter((id) => id !== "");
+            const newState = { ...prev, bank_ids: uniqueBanks };
+
+            return newState;
+        });
+
+        setProjectData((prev) => {
+            const updatedBanks = prev.banks ? [...prev.banks] : [];
+
+            if (selectedId === "") {
+                updatedBanks.splice(index, 1);
+            } else {
+                const selectedBank = banks.find(
+                    (bank) => bank.id == selectedId
+                );
+                if (selectedBank) {
+                    updatedBanks[index] = {
+                        id: selectedBank.id,
+                        name: selectedBank.name,
+                    };
+                }
+            }
+
+            const uniqueBanks = updatedBanks.filter((bank) => bank?.id);
+            const newState = { ...prev, banks: uniqueBanks };
+            return newState;
+        });
+    };
+
     // Добавление блока заказчика или кредитора
     const addBlock = (type) => {
         if (type === "key-person") {
-            if (keyPersons.length < 5) {
+            if (keyPersons.length < 1) {
                 setKeyPersons([
                     ...keyPersons,
                     {
@@ -69,7 +109,7 @@ const ProjectCard = () => {
                 ]);
             }
         } else if (type === "lender") {
-            if (lenders.length < 5) {
+            if (lenders.length < 1) {
                 setLenders([
                     ...lenders,
                     {
@@ -83,7 +123,7 @@ const ProjectCard = () => {
                 ]);
             }
         } else if (type === "teammate") {
-            if (teammates.length < 5) {
+            if (teammates.length < 1) {
                 setTeammates([
                     ...teammates,
                     {
@@ -92,7 +132,7 @@ const ProjectCard = () => {
                 ]);
             }
         } else if (type === "contractor") {
-            if (contractors.length < 5) {
+            if (contractors.length < 1) {
                 setContractors([
                     ...contractors,
                     {
@@ -108,6 +148,7 @@ const ProjectCard = () => {
         method(data.filter((block) => block.id !== id));
     }, []);
 
+    // Обработка состояния добавочного блока при изменении
     const handleChange = useCallback((id, field, value, data, method) => {
         method(
             data.map((block) =>
@@ -122,6 +163,7 @@ const ProjectCard = () => {
         );
     }, []);
 
+    // Обработка состояния добавочного блока при фокусе
     const handleFocus = (id, data, method) => {
         method(
             data.map((block) =>
@@ -132,6 +174,7 @@ const ProjectCard = () => {
         );
     };
 
+    // Обработка состояния добавочного блока при расфокусе
     const handleBlur = useCallback((id, data, method) => {
         method(
             data.map((block) => {
@@ -170,19 +213,39 @@ const ProjectCard = () => {
 
     // Получение проекта
     const getProject = (id) => {
-        getData(`${URL}/${id}`, { Accept: "application/json" }).then(
-            (response) => {
+        getData(`${URL}/${id}`, { Accept: "application/json" })
+            .then((response) => {
                 setProjectData(response.data);
-            }
-        );
+            })
+            .then(() => {
+                // Получение отраслей
+                getData(`${import.meta.env.VITE_API_URL}/industries`, {
+                    Accept: "application/json",
+                }).then((response) => {
+                    setIndustries(response.data.data);
+                });
+
+                // Получение заказчика
+                getData(`${import.meta.env.VITE_API_URL}/contragents`, {
+                    Accept: "application/json",
+                }).then((response) => {
+                    setContragents(response.data);
+                });
+
+                // Получение банков
+                getData(`${import.meta.env.VITE_API_URL}/banks`).then(
+                    (response) => {
+                        setBanks(response.data.data);
+                    }
+                );
+            });
     };
 
     // Обновление проекта
     const updateProject = (id) => {
-        postData("PUT", `${URL}/${id}`, formFields).then((response) => {
+        postData("PATCH", `${URL}/${id}`, formFields).then((response) => {
             if (response) {
                 alert("Проект успешно обновлен");
-                // navigate(`/projects/`);
             }
         });
     };
@@ -191,18 +254,6 @@ const ProjectCard = () => {
         if (projectId) {
             getProject(projectId);
         }
-
-        getData(`${import.meta.env.VITE_API_URL}/industries`, {
-            Accept: "application/json",
-        }).then((response) => {
-            setIndustries(response.data.data);
-        });
-
-        getData(`${import.meta.env.VITE_API_URL}/contragents`, {
-            Accept: "application/json",
-        }).then((response) => {
-            setContragents(response.data);
-        });
     }, []);
 
     useEffect(() => {
@@ -210,6 +261,15 @@ const ProjectCard = () => {
             setKeyPersons(projectData.customer_key_persons);
         }
     }, [projectData, projectId]);
+
+    useEffect(() => {
+        if (projectData.banks) {
+            setFormFields((prev) => ({
+                ...prev,
+                bank_ids: projectData.banks.map((bank) => bank.id),
+            }));
+        }
+    }, [projectData.banks]);
 
     useEffect(() => {
         updateStatus();
@@ -548,9 +608,30 @@ const ProjectCard = () => {
                                     </div>
 
                                     <ul className="flex gap-3 flex-wrap">
-                                        <li className="border rounded border-gray-300 border-dashed p-1 flex-[0_0_30%] text-center text-gray-300">
-                                            Банк
-                                        </li>
+                                        {(projectData.banks?.length > 0
+                                            ? projectData.banks
+                                            : [{}]
+                                        ).map((item, index) => (
+                                            <select
+                                                className="flex-[0_0_30%] bg-gray-200 py-1 px-2 text-center rounded-md"
+                                                value={item.id || ""}
+                                                key={index}
+                                                onChange={(e) =>
+                                                    handleBankChange(e, index)
+                                                }
+                                                disabled={mode === "read"}
+                                            >
+                                                <option value="">Банк</option>
+                                                {banks.map((bank) => (
+                                                    <option
+                                                        value={bank.id}
+                                                        key={bank.id}
+                                                    >
+                                                        {bank.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        ))}
                                     </ul>
 
                                     <ul className="mt-3.5 grid gap-4">
