@@ -19,7 +19,7 @@ const Projects = () => {
     const COLUMNS = [
         { label: "Проект", key: "name" },
         { label: "Заказчик", key: "contragent" },
-        { label: "Банк", key: "bank" },
+        { label: "Банк", key: "banks" },
         { label: "Бюджет", key: "budget" },
         { label: "Срок", key: "term" },
         { label: "Руководитель проекта", key: "manager" },

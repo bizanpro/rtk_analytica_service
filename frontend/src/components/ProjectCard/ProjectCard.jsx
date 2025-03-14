@@ -612,26 +612,100 @@ const ProjectCard = () => {
                                             ? projectData.banks
                                             : [{}]
                                         ).map((item, index) => (
-                                            <select
-                                                className="flex-[0_0_30%] bg-gray-200 py-1 px-2 text-center rounded-md"
-                                                value={item.id || ""}
-                                                key={index}
-                                                onChange={(e) =>
-                                                    handleBankChange(e, index)
-                                                }
-                                                disabled={mode === "read"}
-                                            >
-                                                <option value="">Банк</option>
-                                                {banks.map((bank) => (
-                                                    <option
-                                                        value={bank.id}
-                                                        key={bank.id}
-                                                    >
-                                                        {bank.name}
+                                            <div key={index} className="mb-2">
+                                                <select
+                                                    className="flex-[0_0_30%] bg-gray-200 py-1 px-2 text-center rounded-md"
+                                                    value={item.id || ""}
+                                                    onChange={(e) =>
+                                                        handleBankChange(
+                                                            e,
+                                                            index
+                                                        )
+                                                    }
+                                                    disabled={mode === "read"}
+                                                >
+                                                    <option value="">
+                                                        Банк
                                                     </option>
-                                                ))}
-                                            </select>
+                                                    {banks
+                                                        .filter(
+                                                            (bank) =>
+                                                                !projectData.banks.some(
+                                                                    (
+                                                                        selectedBank,
+                                                                        idx
+                                                                    ) =>
+                                                                        selectedBank.id ===
+                                                                            bank.id &&
+                                                                        idx !==
+                                                                            index
+                                                                )
+                                                        )
+                                                        .map((bank) => (
+                                                            <option
+                                                                value={bank.id}
+                                                                key={bank.id}
+                                                            >
+                                                                {bank.name}
+                                                            </option>
+                                                        ))}
+                                                </select>
+                                            </div>
                                         ))}
+
+                                        {projectData.banks &&
+                                            projectData.banks.length > 0 &&
+                                            projectData.banks[
+                                                projectData.banks.length - 1
+                                            ].id !== "" && (
+                                                <div className="mb-2">
+                                                    <select
+                                                        className={`flex-[0_0_30%] py-1 px-2 text-center rounded-md ${
+                                                            mode === "read"
+                                                                ? "border border-gray-300 border-dashed"
+                                                                : "bg-gray-200"
+                                                        }`}
+                                                        onChange={(e) =>
+                                                            handleBankChange(
+                                                                e,
+                                                                projectData
+                                                                    .banks
+                                                                    .length
+                                                            )
+                                                        }
+                                                        disabled={
+                                                            mode === "read"
+                                                        }
+                                                    >
+                                                        <option value="">
+                                                            Банк
+                                                        </option>
+                                                        {banks
+                                                            .filter(
+                                                                (bank) =>
+                                                                    !projectData.banks.some(
+                                                                        (
+                                                                            selectedBank
+                                                                        ) =>
+                                                                            selectedBank.id ===
+                                                                            bank.id
+                                                                    )
+                                                            )
+                                                            .map((bank) => (
+                                                                <option
+                                                                    value={
+                                                                        bank.id
+                                                                    }
+                                                                    key={
+                                                                        bank.id
+                                                                    }
+                                                                >
+                                                                    {bank.name}
+                                                                </option>
+                                                            ))}
+                                                    </select>
+                                                </div>
+                                            )}
                                     </ul>
 
                                     <ul className="mt-3.5 grid gap-4">

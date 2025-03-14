@@ -32,7 +32,9 @@ const ProjectItem = ({ props, columns }) => {
                                                         : "pt-1"
                                                 }`}
                                             >
-                                                {item.toString()}
+                                                {key === "banks"
+                                                    ? item.name
+                                                    : item.toString()}
                                             </td>
                                         </tr>
                                     ))}
