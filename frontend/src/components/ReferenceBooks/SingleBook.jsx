@@ -9,7 +9,7 @@ const SingleBook = () => {
     const COLUMNS = {
         industries: [
             { label: "Наименование", key: "name" },
-            { label: "Кол-во элементов", key: "totalCount" },
+            { label: "Кол-во элементов", key: "projects_count" },
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
         ],

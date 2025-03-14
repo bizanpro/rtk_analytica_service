@@ -114,7 +114,7 @@ const ReferenceItem = ({
                                     />
                                     <span className="edit-icon"></span>
                                 </div>
-                            ) : key === "updated_at" ? (
+                            ) : key === "updated_at" && value ? (
                                 format(parseISO(value), "d MMMM yyyy, HH:mm", {
                                     locale: ru,
                                 }) || "—"

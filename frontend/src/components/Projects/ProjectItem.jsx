@@ -61,7 +61,7 @@ const ProjectItem = ({ props, columns }) => {
                                 {value?.toString() || "—"}
                                 <br />
                                 <span className="text-gray-400 text-sm">
-                                    {props.sector}
+                                    {props.industry}
                                 </span>
                             </td>
                         );
