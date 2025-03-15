@@ -19,7 +19,7 @@ async function getData(url = "", headers = {}) {
         if (error.status === undefined && error.response) {
             error.status = error.response.status;
         }
-        console.error(error);
+        console.error("Ошибка получения данных " + error);
         throw error;
     }
 }

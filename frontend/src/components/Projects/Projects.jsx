@@ -15,6 +15,7 @@ const Projects = () => {
     const [selectedSector, setSelectedSector] = useState("");
     const [selectedBank, setSelectedBank] = useState("");
     const [selectedManager, setSelectedManager] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
 
     const COLUMNS = [
         { label: "Проект", key: "name" },
@@ -47,6 +48,7 @@ const Projects = () => {
         return result;
     }, [projects, selectedSector, selectedBank, selectedManager]);
 
+    // Заполняем селектор отраслей
     const sectorOptions = useMemo(() => {
         const allSectors = projects
             .map((item) => item.industry)
@@ -55,6 +57,7 @@ const Projects = () => {
         return Array.from(new Set(allSectors));
     }, [projects]);
 
+    // Заполняем селектор банков
     const bankOptions = useMemo(() => {
         const allBanks = projects.flatMap((item) =>
             item.banks.map((bank) => bank.name)
@@ -62,6 +65,7 @@ const Projects = () => {
         return Array.from(new Set(allBanks));
     }, [projects]);
 
+    // Заполняем селектор руководителей
     const projectManagerOptions = useMemo(() => {
         const allPM = projects
             .map((item) => item.manager)
@@ -93,10 +97,11 @@ const Projects = () => {
     };
 
     useEffect(() => {
-        getData(URL, { Accept: "application/json" }).then((response) => {
-            setProjects(response.data);
-        });
-        // .finally(() => setIsLoading(false));
+        getData(URL, { Accept: "application/json" })
+            .then((response) => {
+                setProjects(response.data);
+            })
+            .finally(() => setIsLoading(false));
     }, []);
 
     return (
@@ -160,7 +165,7 @@ const Projects = () => {
                 </div>
 
                 <div className="overflow-x-auto w-full pb-5">
-                    <table className="table-auto w-full border-collapse border-b border-gray-300 text-sm">
+                    <table className="table-auto w-full border-collapse border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
                                 {COLUMNS.map(({ label, key }) => (
@@ -176,14 +181,22 @@ const Projects = () => {
                         </thead>
 
                         <tbody>
-                            {filteredProjects.length > 0 &&
+                            {isLoading ? (
+                                <tr>
+                                    <td className="text-base px-4 py-2">
+                                        Загрузка...
+                                    </td>
+                                </tr>
+                            ) : (
+                                filteredProjects.length > 0 &&
                                 filteredProjects.map((item) => (
                                     <ProjectItem
                                         key={item.id}
                                         props={item}
                                         columns={COLUMNS}
                                     />
-                                ))}
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>

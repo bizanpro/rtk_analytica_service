@@ -18,7 +18,7 @@ async function postData(method = "POST", url = "", data = {}) {
         if (error.name === "AbortError") {
             console.log("Request was aborted");
         } else {
-            console.error("Fetch error:", error);
+            console.error("Ошибка запроса: ", error);
             throw error;
         }
     }
