@@ -67,6 +67,7 @@ const ReferenceItem = ({
                                                                                         val?.toString() ||
                                                                                         "—"
                                                                                     }
+                                                                                    readOnly
                                                                                 />
                                                                                 <span className="edit-icon"></span>
                                                                             </div>
@@ -111,6 +112,7 @@ const ReferenceItem = ({
                                         type="text"
                                         className="w-full"
                                         value={value?.toString() || "—"}
+                                        readOnly
                                     />
                                     <span className="edit-icon"></span>
                                 </div>
@@ -130,13 +132,17 @@ const ReferenceItem = ({
                 <td className="px-4 py-7 min-w-[50px] text-center">
                     <button
                         onClick={() => {
-                            // if (data.totalCount < 1) {
-                            deleteElement(data.id);
-                            // }
+                            if (data.projects_count) {
+                                if (data.projects_count < 1) {
+                                    deleteElement(data.id);
+                                }
+                            } else {
+                                deleteElement(data.id);
+                            }
                         }}
                         className="delete-button"
                         title="Удалить элемент"
-                        disabled={data.totalCount > 0}
+                        disabled={data.projects_count > 0}
                     >
                         <span className="delete-icon"></span>
                     </button>

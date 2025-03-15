@@ -82,11 +82,11 @@ const SingleBook = () => {
         return result;
     }, [booksItems, selectedCounterpartyName]);
 
-    const sectorOptions = useMemo(() => {
-        if (bookId != "contacts") return;
-        const allSectors = booksItems.flatMap((item) => item.counterparty_name);
-        return Array.from(new Set(allSectors));
-    }, [booksItems]);
+    // const sectorOptions = useMemo(() => {
+    //     if (bookId != "contacts") return;
+    //     const allSectors = booksItems.flatMap((item) => item.counterparty_name);
+    //     return Array.from(new Set(allSectors));
+    // }, [booksItems]);
 
     const handleInputChange = (e, name) => {
         setFormFields({ ...formFields, [name]: e.target.value });
@@ -95,8 +95,13 @@ const SingleBook = () => {
     const addNewElement = () => {
         postData("POST", URL, formFields).then((response) => {
             if (response) {
+                setFormFields((prev) => ({
+                    ...prev,
+                    name: "",
+                    counterparty_name: "",
+                    full_name: "",
+                }));
                 setBooksItems((booksItems) => [...booksItems, response]);
-                setFormFields({});
             }
         });
     };
@@ -132,7 +137,7 @@ const SingleBook = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        {bookId === "contacts" && (
+                        {/* {bookId === "contacts" && (
                             <>
                                 <Select
                                     className={
@@ -147,7 +152,7 @@ const SingleBook = () => {
                                     }}
                                 />
 
-                                {/* <Select
+                                <Select
                                     className={
                                         "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
                                     }
@@ -156,9 +161,9 @@ const SingleBook = () => {
                                     onChange={(evt) =>
                                         setSelectedBank(evt.target.value)
                                     }
-                                /> */}
+                                />
                             </>
-                        )}
+                        )} */}
 
                         <nav className="switch">
                             <div>
@@ -230,7 +235,9 @@ const SingleBook = () => {
                                                             placeholder="Новый элемент"
                                                             name={key}
                                                             value={
-                                                                formFields.key
+                                                                formFields[
+                                                                    key
+                                                                ] || ""
                                                             }
                                                             onChange={(e) =>
                                                                 handleInputChange(
@@ -250,7 +257,7 @@ const SingleBook = () => {
                                                                         formFields
                                                                             .name
                                                                             ?.length >
-                                                                        3
+                                                                        1
                                                                             ? 1
                                                                             : 0,
                                                                 }}

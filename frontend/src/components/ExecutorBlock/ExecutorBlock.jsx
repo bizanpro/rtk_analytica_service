@@ -107,6 +107,10 @@ const ExecutorBlock = ({
                         />
                     </div>
                 </div>
+
+                <div className={`p-1 border-t transition-all ${borderClass}`}>
+                    {person.bank}
+                </div>
             </div>
             <button
                 onClick={() => removeBlock(id, data, method)}

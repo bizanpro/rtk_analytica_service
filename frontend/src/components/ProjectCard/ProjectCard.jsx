@@ -268,6 +268,25 @@ const ProjectCard = () => {
                 ...prev,
                 bank_ids: projectData.banks.map((bank) => bank.id),
             }));
+
+            if (projectData.banks.length < 1) return;
+
+            projectData.banks?.map((bankItem) => {
+                bankItem.managers?.map((item) => {
+                    setLenders([
+                        ...lenders,
+                        {
+                            id: item.id,
+                            fullName: item.name || "",
+                            phone: item.phone || "",
+                            position: item.position || "",
+                            email: item.email || "",
+                            bank: bankItem.name || "",
+                            borderClass: "border-gray-300",
+                        },
+                    ]);
+                });
+            });
         }
     }, [projectData.banks]);
 
@@ -454,15 +473,21 @@ const ProjectCard = () => {
                                             className="w-full h-[21px]"
                                             value={
                                                 projectId
-                                                    ? projectData?.industry_id
+                                                    ? projectData.industry?.id
                                                     : "Выбрать отрасль"
                                             }
-                                            onChange={(e) =>
-                                                handleInputChange(
-                                                    e,
-                                                    "industry_id"
-                                                )
-                                            }
+                                            onChange={(e) => {
+                                                setFormFields({
+                                                    ...formFields,
+                                                    industry_id: e.target.value,
+                                                });
+                                                setProjectData({
+                                                    ...projectData,
+                                                    industry: {
+                                                        id: e.target.value,
+                                                    },
+                                                });
+                                            }}
                                             disabled={
                                                 mode == "read" ? true : false
                                             }

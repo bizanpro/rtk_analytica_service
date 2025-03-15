@@ -30,17 +30,17 @@ const Projects = () => {
         const result = projects.filter((project) => {
             return (
                 (selectedSector && selectedSector !== "default"
-                    ? project.sector === selectedSector
+                    ? project.industry === selectedSector
                     : true) &&
                 (selectedBank && selectedBank !== "default"
-                    ? Array.isArray(project.credit_manager_bank_name)
-                        ? project.credit_manager_bank_name.includes(
-                              selectedBank
+                    ? Array.isArray(project.banks)
+                        ? project.banks.some(
+                              (bank) => bank.name === selectedBank
                           )
-                        : project.credit_manager_bank_name === selectedBank
+                        : false
                     : true) &&
                 (selectedManager && selectedManager !== "default"
-                    ? project.project_manager === selectedManager
+                    ? project.manager === selectedManager
                     : true)
             );
         });
@@ -48,19 +48,24 @@ const Projects = () => {
     }, [projects, selectedSector, selectedBank, selectedManager]);
 
     const sectorOptions = useMemo(() => {
-        const allSectors = projects.flatMap((item) => item.sector);
+        const allSectors = projects
+            .map((item) => item.industry)
+            .filter((industry) => industry !== null);
+
         return Array.from(new Set(allSectors));
     }, [projects]);
 
     const bankOptions = useMemo(() => {
-        const allSectors = projects.flatMap(
-            (item) => item.credit_manager_bank_name
+        const allBanks = projects.flatMap((item) =>
+            item.banks.map((bank) => bank.name)
         );
-        return Array.from(new Set(allSectors));
+        return Array.from(new Set(allBanks));
     }, [projects]);
 
     const projectManagerOptions = useMemo(() => {
-        const allPM = projects.flatMap((item) => item.project_manager);
+        const allPM = projects
+            .map((item) => item.manager)
+            .filter((manager) => manager !== null);
         return Array.from(new Set(allPM));
     }, [projects]);
 
@@ -105,7 +110,7 @@ const Projects = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        {sectorOptions > 1 && (
+                        {sectorOptions.length > 0 && (
                             <Select
                                 className={
                                     "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
@@ -118,7 +123,7 @@ const Projects = () => {
                             />
                         )}
 
-                        {bankOptions > 1 && (
+                        {bankOptions.length > 0 && (
                             <Select
                                 className={
                                     "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
@@ -131,7 +136,7 @@ const Projects = () => {
                             />
                         )}
 
-                        {projectManagerOptions > 1 && (
+                        {projectManagerOptions.length > 0 && (
                             <Select
                                 className={
                                     "p-1 border border-gray-300 min-w-[200px] cursor-pointer"
