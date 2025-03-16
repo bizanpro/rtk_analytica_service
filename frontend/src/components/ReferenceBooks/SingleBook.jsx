@@ -29,7 +29,7 @@ const SingleBook = () => {
         banks: [
             { label: "Сокращённое наименование", key: "name" },
             { label: "Полное наименование", key: "full_name" },
-            { label: "Кол-во проектов", key: "totalCount" },
+            { label: "Кол-во проектов", key: "projects_count" },
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
         ],

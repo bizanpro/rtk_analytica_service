@@ -6,6 +6,7 @@ const ExecutorBlock = ({
     method,
     mode,
     banks,
+    type,
 }) => {
     const { id, fullName, phone, position, email } = person;
 
@@ -35,15 +36,6 @@ const ExecutorBlock = ({
                             type="text"
                             placeholder="ФИО"
                             value={fullName}
-                            // onChange={(e) =>
-                            //     handleChange(
-                            //         id,
-                            //         "fullName",
-                            //         e.target.value,
-                            //         data,
-                            //         method
-                            //     )
-                            // }
                             disabled={mode == "read"}
                         />
                     </div>
@@ -53,15 +45,6 @@ const ExecutorBlock = ({
                             type="tel"
                             placeholder="+7 999 999 99 99"
                             value={phone}
-                            // onChange={(e) =>
-                            //     handleChange(
-                            //         id,
-                            //         "phone",
-                            //         e.target.value,
-                            //         data,
-                            //         method
-                            //     )
-                            // }
                             disabled={mode == "read"}
                         />
                     </div>
@@ -79,15 +62,6 @@ const ExecutorBlock = ({
                             type="text"
                             placeholder="Должность"
                             value={position}
-                            // onChange={(e) =>
-                            //     handleChange(
-                            //         id,
-                            //         "position",
-                            //         e.target.value,
-                            //         data,
-                            //         method
-                            //     )
-                            // }
                             disabled={mode == "read"}
                         />
                     </div>
@@ -97,51 +71,42 @@ const ExecutorBlock = ({
                             type="email"
                             placeholder="mail@mail.ru"
                             value={email}
-                            // onChange={(e) =>
-                            //     handleChange(
-                            //         id,
-                            //         "email",
-                            //         e.target.value,
-                            //         data,
-                            //         method
-                            //     )
-                            // }
                             disabled={mode == "read"}
                         />
                     </div>
                 </div>
 
-                <div
-                    className={`p-1 border-t transition-all ${
-                        mode === "edit"
-                            ? "border-gray-300"
-                            : "border-transparent"
-                    }`}
-                >
-                    <select
-                        className="w-full"
-                        value={person.bank}
-                        disabled={mode === "read"}
+                {type === "lender" && (
+                    <div
+                        className={`p-1 border-t transition-all ${
+                            mode === "edit"
+                                ? "border-gray-300"
+                                : "border-transparent"
+                        }`}
                     >
-                        {banks?.map((bank) => (
-                            <option value={bank.id} key={bank.id}>
-                                {bank.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                        <select
+                            className="w-full"
+                            value={person.bank}
+                            disabled={mode === "read"}
+                        >
+                            {banks?.map((bank) => (
+                                <option value={bank.id} key={bank.id}>
+                                    {bank.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
             </div>
 
-            {mode === "edit" ? (
+            {/* {mode === "edit" ? (
                 <div className="flex gap-[10px] items-center">
                     <button
-                        // onClick={() => removeBlock(id, data, method)}
                         title="Обновить исполнителя"
                     >
                         <span className="update-icon"></span>
                     </button>
                     <button
-                        // onClick={() => removeBlock(id, data, method)}
                         className="delete-button"
                         title="Удалить исполнителя"
                     >
@@ -150,7 +115,7 @@ const ExecutorBlock = ({
                 </div>
             ) : (
                 <div className="h-[50px] w-[50px]"></div>
-            )}
+            )} */}
         </li>
     );
 };

@@ -5,7 +5,7 @@ import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
-import LenderBlock from "../LenderBlock";
+import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
 import DatePicker from "react-datepicker";
 
 import "./ProjectCard.scss";
@@ -21,13 +21,13 @@ const ProjectCard = () => {
 
     const [mode, setMode] = useState(location.state?.mode);
     const [keyPersons, setKeyPersons] = useState([]);
-    const [lenders, setLenders] = useState([]);
     const [teammates, setTeammates] = useState([]);
     const [contractors, setContractors] = useState([]);
     const [industries, setIndustries] = useState([]);
     const [contragents, setContragents] = useState([]);
     const [banks, setBanks] = useState([]);
     const [addLender, setAddLender] = useState(false);
+    const [addCustomer, setAddCustomer] = useState(false);
 
     const defaultRanges = {
         picker1: { start: new Date("2024-08-01"), end: new Date("2024-10-01") },
@@ -249,7 +249,7 @@ const ProjectCard = () => {
                             />
 
                             {mode === "edit" &&
-                                projectData.name?.length > 3 && (
+                                projectData.name?.length > 2 && (
                                     <button
                                         type="button"
                                         className="update-icon"
@@ -519,9 +519,11 @@ const ProjectCard = () => {
                                             <button
                                                 type="button"
                                                 className="add-button"
-                                                onClick={() =>
-                                                    addBlock("key-person")
-                                                }
+                                                onClick={() => {
+                                                    if (!addCustomer) {
+                                                        setAddCustomer(true);
+                                                    }
+                                                }}
                                                 title="Добавить ключевое лицо Заказчика"
                                             >
                                                 <span></span>
@@ -548,6 +550,17 @@ const ProjectCard = () => {
                                                 />
                                             ))
                                         )}
+
+                                        {addCustomer && (
+                                            <EmptyExecutorBlock
+                                                borderClass={"border-gray-300"}
+                                                banks={banks}
+                                                type={"customer"}
+                                                method={setKeyPersons}
+                                                removeBlock={removeBlock}
+                                                handleChange={handleChange}
+                                            />
+                                        )}
                                     </ul>
                                 </div>
 
@@ -560,9 +573,11 @@ const ProjectCard = () => {
                                             <button
                                                 type="button"
                                                 className="add-button"
-                                                onClick={() =>
-                                                    addBlock("lender")
-                                                }
+                                                onClick={() => {
+                                                    if (!addLender) {
+                                                        setAddLender(true);
+                                                    }
+                                                }}
                                                 title="Добавить Кредитора"
                                             >
                                                 <span></span>
@@ -687,13 +702,13 @@ const ProjectCard = () => {
                                                                 person={item}
                                                                 mode={mode}
                                                                 banks={banks}
+                                                                type={"lender"}
                                                                 removeBlock={
                                                                     removeBlock
                                                                 }
                                                                 handleChange={
                                                                     handleChange
                                                                 }
-                                                                data={lenders}
                                                                 method={
                                                                     setKeyPersons
                                                                 }
@@ -705,9 +720,10 @@ const ProjectCard = () => {
                                         )}
 
                                         {addLender && (
-                                            <LenderBlock
+                                            <EmptyExecutorBlock
                                                 borderClass={"border-gray-300"}
                                                 banks={banks}
+                                                type={"lender"}
                                                 method={setKeyPersons}
                                                 removeBlock={removeBlock}
                                                 handleChange={handleChange}
