@@ -1,40 +1,25 @@
-const ExecutorBlock = ({
-    person,
+const LenderBlock = ({
     removeBlock,
     handleChange,
-    data,
     method,
-    mode,
     banks,
+    borderClass,
 }) => {
-    const { id, fullName, phone, position, email } = person;
-
     return (
         <li className="flex items-center justify-between gap-6">
             <div
-                className={`executor-block flex-grow border transition-all ${
-                    mode === "edit" ? "border-gray-300" : "border-transparent"
-                }`}
+                className={`executor-block flex-grow border transition-all ${borderClass}`}
             >
                 <div
-                    className={`grid grid-cols-[60%_40%] border-b transition-all ${
-                        mode === "edit"
-                            ? "border-gray-300"
-                            : "border-transparent"
-                    }`}
+                    className={`grid grid-cols-[60%_40%] border-b transition-all ${borderClass}`}
                 >
                     <div
-                        className={`p-1 border-r transition-all ${
-                            mode === "edit"
-                                ? "border-gray-300"
-                                : "border-transparent"
-                        }`}
+                        className={`p-1 border-r transition-all ${borderClass}`}
                     >
                         <input
                             className="w-full"
                             type="text"
                             placeholder="ФИО"
-                            value={fullName}
                             // onChange={(e) =>
                             //     handleChange(
                             //         id,
@@ -44,7 +29,6 @@ const ExecutorBlock = ({
                             //         method
                             //     )
                             // }
-                            disabled={mode == "read"}
                         />
                     </div>
                     <div className="p-1 pr-3">
@@ -52,7 +36,6 @@ const ExecutorBlock = ({
                             className="w-full"
                             type="tel"
                             placeholder="+7 999 999 99 99"
-                            value={phone}
                             // onChange={(e) =>
                             //     handleChange(
                             //         id,
@@ -62,23 +45,17 @@ const ExecutorBlock = ({
                             //         method
                             //     )
                             // }
-                            disabled={mode == "read"}
                         />
                     </div>
                 </div>
                 <div className="grid grid-cols-[60%_40%]">
                     <div
-                        className={`p-1 border-r transition-all ${
-                            mode === "edit"
-                                ? "border-gray-300"
-                                : "border-transparent"
-                        }`}
+                        className={`p-1 border-r transition-all ${borderClass}`}
                     >
                         <input
                             className="w-full"
                             type="text"
                             placeholder="Должность"
-                            value={position}
                             // onChange={(e) =>
                             //     handleChange(
                             //         id,
@@ -88,7 +65,6 @@ const ExecutorBlock = ({
                             //         method
                             //     )
                             // }
-                            disabled={mode == "read"}
                         />
                     </div>
                     <div className="p-1 pr-3">
@@ -96,7 +72,6 @@ const ExecutorBlock = ({
                             className="w-full"
                             type="email"
                             placeholder="mail@mail.ru"
-                            value={email}
                             // onChange={(e) =>
                             //     handleChange(
                             //         id,
@@ -106,23 +81,13 @@ const ExecutorBlock = ({
                             //         method
                             //     )
                             // }
-                            disabled={mode == "read"}
                         />
                     </div>
                 </div>
 
-                <div
-                    className={`p-1 border-t transition-all ${
-                        mode === "edit"
-                            ? "border-gray-300"
-                            : "border-transparent"
-                    }`}
-                >
-                    <select
-                        className="w-full"
-                        value={person.bank}
-                        disabled={mode === "read"}
-                    >
+                <div className={`p-1 border-t transition-all ${borderClass}`}>
+                    <select className="w-full">
+                        <option value="">Банк</option>
                         {banks?.map((bank) => (
                             <option value={bank.id} key={bank.id}>
                                 {bank.name}
@@ -132,27 +97,23 @@ const ExecutorBlock = ({
                 </div>
             </div>
 
-            {mode === "edit" ? (
-                <div className="flex gap-[10px] items-center">
-                    <button
-                        // onClick={() => removeBlock(id, data, method)}
-                        title="Обновить исполнителя"
-                    >
-                        <span className="update-icon"></span>
-                    </button>
-                    <button
-                        // onClick={() => removeBlock(id, data, method)}
-                        className="delete-button"
-                        title="Удалить исполнителя"
-                    >
-                        <span className="delete-icon"></span>
-                    </button>
-                </div>
-            ) : (
-                <div className="h-[50px] w-[50px]"></div>
-            )}
+            <div className="flex gap-[10px] items-center">
+                <button
+                    // onClick={() => removeBlock(id, data, method)}
+                    title="Сохранить исполнителя"
+                >
+                    <span className="save-icon"></span>
+                </button>
+                <button
+                    // onClick={() => removeBlock(id, data, method)}
+                    className="delete-button"
+                    title="Удалить исполнителя"
+                >
+                    <span className="delete-icon"></span>
+                </button>
+            </div>
         </li>
     );
 };
 
-export default ExecutorBlock;
+export default LenderBlock;

@@ -34,13 +34,13 @@ const SingleBook = () => {
             { label: "Автор измнения", key: "author" },
         ],
         contacts: [
-            { label: "Наименование контрагента", key: "counterparty_name" },
-            { label: "Тип контрагента", key: "counterparty_type" },
-            { label: "ФИО / должность", key: "counterparty_info" },
+            { label: "Наименование контрагента", key: "name" },
+            { label: "Тип контрагента", key: "role" },
+            { label: "ФИО / должность", key: "contact_persons" },
             { label: "Кол-во проектов", key: "projects_count" },
-            { label: "Контакты", key: "counterparty_contacts" },
-            { label: "Последнее изменение", key: "last_changes" },
-            { label: "Автор измнения", key: "edit_author" },
+            { label: "Контакты", key: "contact_persons" },
+            { label: "Последнее изменение", key: "updated_at" },
+            { label: "Автор измнения", key: "author" },
         ],
     };
 
@@ -67,10 +67,10 @@ const SingleBook = () => {
         useState("");
 
     const filteredProjects = useMemo(() => {
-        const result = booksItems.filter((book) => {
+        const result = booksItems?.filter((book) => {
             return selectedCounterpartyName &&
                 selectedCounterpartyName !== "default"
-                ? book.counterparty_name === selectedCounterpartyName
+                ? book.role === selectedCounterpartyName
                 : true;
             //     &&
             // (selectedBank && selectedBank !== "default"
@@ -133,7 +133,7 @@ const SingleBook = () => {
             <div className="container py-8">
                 <div className="flex justify-between items-center gap-6 mb-8">
                     <h1 className="text-3xl font-medium">
-                        {TITLES[bookId]} ({booksItems.length})
+                        {TITLES[bookId]} ({booksItems?.length})
                     </h1>
 
                     <div className="flex items-center gap-6">
@@ -281,7 +281,7 @@ const SingleBook = () => {
                                         </tr>
                                     )}
 
-                                    {filteredProjects.length > 0 &&
+                                    {filteredProjects?.length > 0 &&
                                         filteredProjects.map((item) => (
                                             <ReferenceItem
                                                 key={item.id}

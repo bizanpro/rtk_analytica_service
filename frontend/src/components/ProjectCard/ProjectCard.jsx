@@ -5,6 +5,7 @@ import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
+import LenderBlock from "../LenderBlock";
 import DatePicker from "react-datepicker";
 
 import "./ProjectCard.scss";
@@ -26,6 +27,7 @@ const ProjectCard = () => {
     const [industries, setIndustries] = useState([]);
     const [contragents, setContragents] = useState([]);
     const [banks, setBanks] = useState([]);
+    const [addLender, setAddLender] = useState(false);
 
     const defaultRanges = {
         picker1: { start: new Date("2024-08-01"), end: new Date("2024-10-01") },
@@ -109,18 +111,8 @@ const ProjectCard = () => {
                 ]);
             }
         } else if (type === "lender") {
-            if (lenders.length < 1) {
-                setLenders([
-                    ...lenders,
-                    {
-                        id: Date.now(),
-                        fullName: "",
-                        phone: "",
-                        position: "",
-                        email: "",
-                        borderClass: "border-gray-300",
-                    },
-                ]);
+            if (!addLender) {
+                setAddLender(true);
             }
         } else if (type === "teammate") {
             if (teammates.length < 1) {
@@ -160,40 +152,6 @@ const ProjectCard = () => {
                       }
                     : block
             )
-        );
-    }, []);
-
-    // Обработка состояния добавочного блока при фокусе
-    const handleFocus = (id, data, method) => {
-        method(
-            data.map((block) =>
-                block.id === id
-                    ? { ...block, borderClass: "border-gray-300" }
-                    : block
-            )
-        );
-    };
-
-    // Обработка состояния добавочного блока при расфокусе
-    const handleBlur = useCallback((id, data, method) => {
-        method(
-            data.map((block) => {
-                if (block.id === id) {
-                    const allFilled =
-                        block.fullName.trim() &&
-                        block.phone.trim() &&
-                        block.position.trim() &&
-                        block.email.trim();
-
-                    return {
-                        ...block,
-                        borderClass: allFilled
-                            ? "border-transparent"
-                            : "border-gray-300",
-                    };
-                }
-                return block;
-            })
         );
     }, []);
 
@@ -268,25 +226,6 @@ const ProjectCard = () => {
                 ...prev,
                 bank_ids: projectData.banks.map((bank) => bank.id),
             }));
-
-            if (projectData.banks.length < 1) return;
-
-            projectData.banks?.map((bankItem) => {
-                bankItem.managers?.map((item) => {
-                    setLenders([
-                        ...lenders,
-                        {
-                            id: item.id,
-                            fullName: item.name || "",
-                            phone: item.phone || "",
-                            position: item.position || "",
-                            email: item.email || "",
-                            bank: bankItem.name || "",
-                            borderClass: "border-gray-300",
-                        },
-                    ]);
-                });
-            });
         }
     }, [projectData.banks]);
 
@@ -327,6 +266,7 @@ const ProjectCard = () => {
                                     id="read_mode"
                                     onChange={() => {
                                         setMode("read");
+                                        setAddLender(false);
                                         setReportWindowsState(false);
                                     }}
                                     checked={mode === "read" ? true : false}
@@ -603,10 +543,8 @@ const ProjectCard = () => {
                                                     }
                                                     removeBlock={removeBlock}
                                                     handleChange={handleChange}
-                                                    handleBlur={handleBlur}
                                                     data={keyPersons}
                                                     method={setKeyPersons}
-                                                    handleFocus={handleFocus}
                                                 />
                                             ))
                                         )}
@@ -680,6 +618,8 @@ const ProjectCard = () => {
 
                                         {projectData.banks &&
                                             projectData.banks.length > 0 &&
+                                            projectData.banks.length <
+                                                banks.length &&
                                             projectData.banks[
                                                 projectData.banks.length - 1
                                             ].id !== "" && (
@@ -734,25 +674,44 @@ const ProjectCard = () => {
                                     </ul>
 
                                     <ul className="mt-3.5 grid gap-4">
-                                        {lenders.length === 0 ? (
+                                        {projectData.banks?.managers?.length ===
+                                            0 && banks.length === 0 ? (
                                             <p>Нет данных</p>
                                         ) : (
-                                            lenders.map((person) => (
-                                                <ExecutorBlock
-                                                    key={person.id}
-                                                    person={person}
-                                                    borderClass={
-                                                        person.borderClass ||
-                                                        "border-transparent"
-                                                    }
-                                                    removeBlock={removeBlock}
-                                                    handleChange={handleChange}
-                                                    handleBlur={handleBlur}
-                                                    data={lenders}
-                                                    method={setKeyPersons}
-                                                    handleFocus={handleFocus}
-                                                />
-                                            ))
+                                            projectData.banks?.map(
+                                                (bankItem) => {
+                                                    return bankItem.managers?.map(
+                                                        (item) => (
+                                                            <ExecutorBlock
+                                                                key={item.id}
+                                                                person={item}
+                                                                mode={mode}
+                                                                banks={banks}
+                                                                removeBlock={
+                                                                    removeBlock
+                                                                }
+                                                                handleChange={
+                                                                    handleChange
+                                                                }
+                                                                data={lenders}
+                                                                method={
+                                                                    setKeyPersons
+                                                                }
+                                                            />
+                                                        )
+                                                    );
+                                                }
+                                            )
+                                        )}
+
+                                        {addLender && (
+                                            <LenderBlock
+                                                borderClass={"border-gray-300"}
+                                                banks={banks}
+                                                method={setKeyPersons}
+                                                removeBlock={removeBlock}
+                                                handleChange={handleChange}
+                                            />
                                         )}
                                     </ul>
                                 </div>
