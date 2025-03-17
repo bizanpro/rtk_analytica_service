@@ -173,7 +173,7 @@ const ProjectCard = () => {
     const getProject = (id) => {
         getData(`${URL}/${id}`, { Accept: "application/json" })
             .then((response) => {
-                setProjectData(response.data);
+                setProjectData(response.data.project);
             })
             .then(() => {
                 // Получение отраслей
@@ -197,6 +197,35 @@ const ProjectCard = () => {
                     }
                 );
             });
+    };
+
+    const sendExecutor = (type) => {
+        console.log(type);
+
+        if (type === "lender") {
+            const contactId = projectData.banks.find(
+                (bank) => bank.pivot.bank_id == newLender.bank_id
+            ).pivot.contact_id;
+
+            setNewLender((prevState) => {
+                const updatedLender = { ...prevState, contact_id: contactId };
+
+                // Формируем данные для запроса
+                const data = { contact_persons: [updatedLender] };
+
+                // Отправляем запрос после обновления состояния
+                postData("PATCH", `${URL}/${projectId}`, data).then(
+                    (response) => {
+                        if (response) {
+                            console.log(response);
+                        }
+                    }
+                );
+
+                // Возвращаем обновленное состояние
+                return updatedLender;
+            });
+        }
     };
 
     // Обновление проекта
@@ -249,7 +278,7 @@ const ProjectCard = () => {
                             />
 
                             {mode === "edit" &&
-                                projectData.name?.length > 2 && (
+                                projectData?.name?.length > 2 && (
                                     <button
                                         type="button"
                                         className="update-icon"
@@ -414,7 +443,7 @@ const ProjectCard = () => {
                                             className="w-full h-[21px]"
                                             value={
                                                 projectId
-                                                    ? projectData.industry?.id
+                                                    ? projectData?.industry?.id
                                                     : "Выбрать отрасль"
                                             }
                                             onChange={(e) => {
@@ -460,7 +489,7 @@ const ProjectCard = () => {
                                         disabled={mode == "read" ? true : false}
                                         value={
                                             projectId && projectData
-                                                ? projectData.description
+                                                ? projectData?.description
                                                 : ""
                                         }
                                         onChange={(e) =>
@@ -566,6 +595,7 @@ const ProjectCard = () => {
                                                 handleNewExecutor={
                                                     handleNewExecutor
                                                 }
+                                                sendExecutor={sendExecutor}
                                             />
                                         )}
                                     </ul>
@@ -738,6 +768,7 @@ const ProjectCard = () => {
                                                 handleNewExecutor={
                                                     handleNewExecutor
                                                 }
+                                                sendExecutor={sendExecutor}
                                             />
                                         )}
                                     </ul>

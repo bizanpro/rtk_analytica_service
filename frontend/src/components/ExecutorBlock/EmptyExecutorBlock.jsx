@@ -7,6 +7,7 @@ const EmptyExecutorBlock = ({
     banks,
     borderClass,
     type,
+    sendExecutor,
 }) => {
     const PhoneMask = "+{7}(000) 000 00 00";
 
@@ -25,7 +26,9 @@ const EmptyExecutorBlock = ({
                             className="w-full"
                             type="text"
                             placeholder="ФИО"
-                            onChange={(e) => handleNewExecutor(type, e, "name")}
+                            onChange={(e) =>
+                                handleNewExecutor(type, e, "full_name")
+                            }
                         />
                     </div>
                     <div className="p-1 pr-3">
@@ -73,7 +76,9 @@ const EmptyExecutorBlock = ({
                     >
                         <select
                             className="w-full"
-                            onChange={(e) => handleNewExecutor(type, e, "bank")}
+                            onChange={(e) =>
+                                handleNewExecutor(type, e, "bank_id")
+                            }
                         >
                             <option value="">Банк</option>
                             {banks?.map((bank) => (
@@ -87,7 +92,10 @@ const EmptyExecutorBlock = ({
             </div>
 
             <div className="flex gap-[10px] items-center">
-                <button title="Сохранить исполнителя">
+                <button
+                    title="Сохранить исполнителя"
+                    // onClick={() => sendExecutor(type)}
+                >
                     <span className="save-icon"></span>
                 </button>
                 <button
