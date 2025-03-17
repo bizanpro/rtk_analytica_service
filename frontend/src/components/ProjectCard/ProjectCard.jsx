@@ -28,6 +28,8 @@ const ProjectCard = () => {
     const [banks, setBanks] = useState([]);
     const [addLender, setAddLender] = useState(false);
     const [addCustomer, setAddCustomer] = useState(false);
+    const [newLender, setNewLender] = useState({});
+    const [newCustomer, setNewCustomer] = useState({});
 
     const defaultRanges = {
         picker1: { start: new Date("2024-08-01"), end: new Date("2024-10-01") },
@@ -53,6 +55,22 @@ const ProjectCard = () => {
         setProjectData({ ...projectData, [name]: e.target.value });
     };
 
+    // Обработчик ввода данных для заказчика и кредитора
+    const handleNewExecutor = (type, e, name) => {
+        if (type === "lender") {
+            setNewLender({
+                ...newLender,
+                [name]: name === "phone" ? e : e.target.value,
+            });
+        } else if (type === "customer") {
+            setNewCustomer({
+                ...newCustomer,
+                [name]: name === "phone" ? e : e.target.value,
+            });
+        }
+    };
+
+    // Обработчик назначения банков
     const handleBankChange = (e, index) => {
         const selectedId = e.target.value;
 
@@ -96,25 +114,7 @@ const ProjectCard = () => {
 
     // Добавление блока заказчика или кредитора
     const addBlock = (type) => {
-        if (type === "key-person") {
-            if (keyPersons.length < 1) {
-                setKeyPersons([
-                    ...keyPersons,
-                    {
-                        id: Date.now(),
-                        fullName: "",
-                        phone: "",
-                        position: "",
-                        email: "",
-                        borderClass: "border-gray-300",
-                    },
-                ]);
-            }
-        } else if (type === "lender") {
-            if (!addLender) {
-                setAddLender(true);
-            }
-        } else if (type === "teammate") {
+        if (type === "teammate") {
             if (teammates.length < 1) {
                 setTeammates([
                     ...teammates,
@@ -135,7 +135,7 @@ const ProjectCard = () => {
         }
     };
 
-    // Удаление блока заказчика или кредитора
+    // Удаление блока команды проекта или подрядчика
     const removeBlock = useCallback((id, data, method) => {
         method(data.filter((block) => block.id !== id));
     }, []);
@@ -267,6 +267,7 @@ const ProjectCard = () => {
                                     onChange={() => {
                                         setMode("read");
                                         setAddLender(false);
+                                        setAddCustomer(false);
                                         setReportWindowsState(false);
                                     }}
                                     checked={mode === "read" ? true : false}
@@ -354,7 +355,7 @@ const ProjectCard = () => {
                                             ?
                                         </span>
                                     </span>
-                                    <ul className="grid gap-3">
+                                    {/* <ul className="grid gap-3">
                                         <li className="flex items-center gap-4">
                                             <div className="text-lg">ФТМ</div>
                                             <div className="text-lg">
@@ -379,7 +380,7 @@ const ProjectCard = () => {
                                                 в процессе
                                             </div>
                                         </li>
-                                    </ul>
+                                    </ul> */}
                                 </div>
                             </div>
 
@@ -477,7 +478,7 @@ const ProjectCard = () => {
                                         <li className="border rounded border-gray-300 border-dashed p-2 flex-[1_0_30%]"></li>
                                         <li className="border rounded border-gray-300 border-dashed p-2 flex-[1_0_30%]"></li>
                                     </ul>
-                                    <div className="grid gap-8 mt-10">
+                                    {/* <div className="grid gap-8 mt-10">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="flex flex-col gap-1">
                                                 <div className="text-lg">
@@ -505,7 +506,7 @@ const ProjectCard = () => {
                                                 Технология
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
 
@@ -544,7 +545,9 @@ const ProjectCard = () => {
                                                         "border-transparent"
                                                     }
                                                     removeBlock={removeBlock}
-                                                    handleChange={handleChange}
+                                                    // handleNewExecutor={
+                                                    //     handleNewExecutor
+                                                    // }
                                                     data={keyPersons}
                                                     method={setKeyPersons}
                                                 />
@@ -557,8 +560,12 @@ const ProjectCard = () => {
                                                 banks={banks}
                                                 type={"customer"}
                                                 method={setKeyPersons}
-                                                removeBlock={removeBlock}
-                                                handleChange={handleChange}
+                                                removeBlock={() =>
+                                                    setAddCustomer(false)
+                                                }
+                                                handleNewExecutor={
+                                                    handleNewExecutor
+                                                }
                                             />
                                         )}
                                     </ul>
@@ -689,8 +696,8 @@ const ProjectCard = () => {
                                     </ul>
 
                                     <ul className="mt-3.5 grid gap-4">
-                                        {projectData.banks?.managers?.length ===
-                                            0 && banks.length === 0 ? (
+                                        {projectData.banks?.managers?.length <
+                                            1 && banks.length < 1 ? (
                                             <p>Нет данных</p>
                                         ) : (
                                             projectData.banks?.map(
@@ -725,8 +732,12 @@ const ProjectCard = () => {
                                                 banks={banks}
                                                 type={"lender"}
                                                 method={setKeyPersons}
-                                                removeBlock={removeBlock}
-                                                handleChange={handleChange}
+                                                removeBlock={() =>
+                                                    setAddLender(false)
+                                                }
+                                                handleNewExecutor={
+                                                    handleNewExecutor
+                                                }
                                             />
                                         )}
                                     </ul>

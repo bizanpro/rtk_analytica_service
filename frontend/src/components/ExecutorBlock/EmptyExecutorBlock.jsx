@@ -1,11 +1,15 @@
+import { IMaskInput } from "react-imask";
+
 const EmptyExecutorBlock = ({
     removeBlock,
-    handleChange,
+    handleNewExecutor,
     method,
     banks,
     borderClass,
     type,
 }) => {
+    const PhoneMask = "+{7}(000) 000 00 00";
+
     return (
         <li className="flex items-center justify-between gap-6">
             <div
@@ -21,12 +25,19 @@ const EmptyExecutorBlock = ({
                             className="w-full"
                             type="text"
                             placeholder="ФИО"
+                            onChange={(e) => handleNewExecutor(type, e, "name")}
                         />
                     </div>
                     <div className="p-1 pr-3">
-                        <input
+                        <IMaskInput
+                            mask={PhoneMask}
                             className="w-full"
+                            name="phone"
                             type="tel"
+                            inputMode="tel"
+                            onAccept={(e) =>
+                                handleNewExecutor(type, e, "phone")
+                            }
                             placeholder="+7 999 999 99 99"
                         />
                     </div>
@@ -39,6 +50,9 @@ const EmptyExecutorBlock = ({
                             className="w-full"
                             type="text"
                             placeholder="Должность"
+                            onChange={(e) =>
+                                handleNewExecutor(type, e, "position")
+                            }
                         />
                     </div>
                     <div className="p-1 pr-3">
@@ -46,6 +60,9 @@ const EmptyExecutorBlock = ({
                             className="w-full"
                             type="email"
                             placeholder="mail@mail.ru"
+                            onChange={(e) =>
+                                handleNewExecutor(type, e, "email")
+                            }
                         />
                     </div>
                 </div>
@@ -54,7 +71,10 @@ const EmptyExecutorBlock = ({
                     <div
                         className={`p-1 border-t transition-all ${borderClass}`}
                     >
-                        <select className="w-full">
+                        <select
+                            className="w-full"
+                            onChange={(e) => handleNewExecutor(type, e, "bank")}
+                        >
                             <option value="">Банк</option>
                             {banks?.map((bank) => (
                                 <option value={bank.id} key={bank.id}>
@@ -66,19 +86,18 @@ const EmptyExecutorBlock = ({
                 )}
             </div>
 
-            {/* <div className="flex gap-[10px] items-center">
-                <button
-                    title="Сохранить исполнителя"
-                >
+            <div className="flex gap-[10px] items-center">
+                <button title="Сохранить исполнителя">
                     <span className="save-icon"></span>
                 </button>
                 <button
                     className="delete-button"
                     title="Удалить исполнителя"
+                    onClick={removeBlock}
                 >
                     <span className="delete-icon"></span>
                 </button>
-            </div> */}
+            </div>
         </li>
     );
 };

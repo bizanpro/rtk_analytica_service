@@ -88,8 +88,16 @@ const SingleBook = () => {
     //     return Array.from(new Set(allSectors));
     // }, [booksItems]);
 
-    const handleInputChange = (e, name) => {
+    const handleNewElementInputChange = (e, name) => {
         setFormFields({ ...formFields, [name]: e.target.value });
+    };
+
+    const handleInputChange = (e, name, id) => {
+        setBooksItems((prevBooksItems) =>
+            prevBooksItems.map((item) =>
+                item.id === id ? { ...item, [name]: e.target.value } : item
+            )
+        );
     };
 
     const addNewElement = () => {
@@ -102,6 +110,18 @@ const SingleBook = () => {
                     full_name: "",
                 }));
                 setBooksItems((booksItems) => [...booksItems, response]);
+            }
+        });
+    };
+
+    const editElement = (id) => {
+        const data = booksItems.find((book) => book.id === id);
+        delete data?.projects_count;
+        delete data?.updated_at;
+
+        postData("PATCH", URL, data).then((response) => {
+            if (response) {
+                alert("Запись обновлена");
             }
         });
     };
@@ -246,7 +266,7 @@ const SingleBook = () => {
                                                                     ] || ""
                                                                 }
                                                                 onChange={(e) =>
-                                                                    handleInputChange(
+                                                                    handleNewElementInputChange(
                                                                         e,
                                                                         key
                                                                     )
@@ -289,7 +309,11 @@ const SingleBook = () => {
                                                 columns={columns}
                                                 mode={mode}
                                                 bookId={bookId}
+                                                handleInputChange={
+                                                    handleInputChange
+                                                }
                                                 deleteElement={deleteElement}
+                                                editElement={editElement}
                                             />
                                         ))}
                                 </>

@@ -9,6 +9,8 @@ const ReferenceItem = ({
     mode = "read",
     bookId,
     deleteElement,
+    editElement,
+    handleInputChange,
 }) => {
     const navigate = useNavigate();
 
@@ -67,7 +69,15 @@ const ReferenceItem = ({
                                                                                         val?.toString() ||
                                                                                         "—"
                                                                                     }
-                                                                                    readOnly
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) =>
+                                                                                        handleInputChange(
+                                                                                            e,
+                                                                                            field,
+                                                                                            data.id
+                                                                                        )
+                                                                                    }
                                                                                 />
                                                                                 <span className="edit-icon"></span>
                                                                             </div>
@@ -112,7 +122,9 @@ const ReferenceItem = ({
                                         type="text"
                                         className="w-full"
                                         value={value?.toString() || "—"}
-                                        readOnly
+                                        onChange={(e) =>
+                                            handleInputChange(e, key, data.id)
+                                        }
                                     />
                                     <span className="edit-icon"></span>
                                 </div>
@@ -129,7 +141,16 @@ const ReferenceItem = ({
             })}
 
             {mode === "edit" && (
-                <td className="px-4 py-7 min-w-[50px] text-center">
+                <td className="flex items-center gap-2 px-4 py-7 min-w-[50px] text-center">
+                    <button
+                        onClick={() => {
+                            editElement(data.id);
+                        }}
+                        className="delete-button"
+                        title="Изменить элемент"
+                    >
+                        <span className="update-icon"></span>
+                    </button>
                     <button
                         onClick={() => {
                             if (data.projects_count) {

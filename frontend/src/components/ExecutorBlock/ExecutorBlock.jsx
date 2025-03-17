@@ -1,3 +1,5 @@
+import { IMaskInput } from "react-imask";
+
 const ExecutorBlock = ({
     person,
     removeBlock,
@@ -9,6 +11,7 @@ const ExecutorBlock = ({
     type,
 }) => {
     const { id, fullName, phone, position, email } = person;
+    const PhoneMask = "+{7}(000) 000 00 00";
 
     return (
         <li className="flex items-center justify-between gap-6">
@@ -40,11 +43,17 @@ const ExecutorBlock = ({
                         />
                     </div>
                     <div className="p-1 pr-3">
-                        <input
+                        <IMaskInput
+                            mask={PhoneMask}
                             className="w-full"
+                            name="phone"
                             type="tel"
-                            placeholder="+7 999 999 99 99"
+                            inputMode="tel"
                             value={phone}
+                            // onAccept={(el) => {
+                            //     setFormFields({ ...formFields, ["phone"]: el });
+                            // }}
+                            placeholder="+7 999 999 99 99"
                             disabled={mode == "read"}
                         />
                     </div>
