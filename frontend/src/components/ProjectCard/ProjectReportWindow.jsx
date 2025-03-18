@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import DatePicker from "react-datepicker";
 
-const ReportWindow = ({ ReportWindowsState }) => {
+const ProjectReportWindow = ({ ReportWindowsState }) => {
     const [agreementStatus, setAgreementStatus] = useState("запланирован");
     const [teammates, setTeammates] = useState([]);
     const [contractors, setContractors] = useState([]);
@@ -367,4 +367,4 @@ const ReportWindow = ({ ReportWindowsState }) => {
     );
 };
 
-export default ReportWindow;
+export default ProjectReportWindow;

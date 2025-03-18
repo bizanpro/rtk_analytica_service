@@ -4,7 +4,6 @@ const ExecutorBlock = ({
     contanct,
     removeBlock,
     handleChange,
-    method,
     mode,
     banks,
     type,

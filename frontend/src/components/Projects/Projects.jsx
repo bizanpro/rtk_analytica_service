@@ -20,7 +20,7 @@ const Projects = () => {
     const COLUMNS = [
         { label: "Проект", key: "name" },
         { label: "Заказчик", key: "contragent" },
-        { label: "Банк", key: "banks" },
+        { label: "Банк", key: "creditors" },
         { label: "Бюджет", key: "budget" },
         { label: "Срок", key: "term" },
         { label: "Руководитель проекта", key: "manager" },
@@ -34,8 +34,8 @@ const Projects = () => {
                     ? project.industry === selectedSector
                     : true) &&
                 (selectedBank && selectedBank !== "default"
-                    ? Array.isArray(project.banks)
-                        ? project.banks.some(
+                    ? Array.isArray(project.creditors)
+                        ? project.creditors?.some(
                               (bank) => bank.name === selectedBank
                           )
                         : false
@@ -60,7 +60,7 @@ const Projects = () => {
     // Заполняем селектор банков
     const bankOptions = useMemo(() => {
         const allBanks = projects.flatMap((item) =>
-            item.banks.map((bank) => bank.name)
+            item.creditors?.map((bank) => bank.name)
         );
         return Array.from(new Set(allBanks));
     }, [projects]);

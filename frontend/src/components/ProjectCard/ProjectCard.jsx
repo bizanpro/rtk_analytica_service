@@ -6,8 +6,9 @@ import postData from "../../utils/postData";
 
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
-import ReportWindow from "../ReportWindow";
-import ReportItem from "../ReportItem";
+import ProjectReportWindow from "./ProjectReportWindow";
+import ProjectReportItem from "./ProjectReportItem";
+import ProjectStatisticsBlock from "./ProjectStatisticsBlock";
 
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -43,7 +44,7 @@ const ProjectCard = () => {
         setProjectData({ ...projectData, [name]: e.target.value });
     };
 
-    // Обработчик ввода данных для заказчика и кредитора
+    // Обработчик ввода данных блока заказчика и кредитора
     const handleNewExecutor = (type, e, name) => {
         if (type === "lender") {
             setNewLender({
@@ -124,12 +125,12 @@ const ProjectCard = () => {
     const getProject = (id) => {
         getData(`${URL}/${id}`, { Accept: "application/json" })
             .then((response) => {
-                setProjectData(response.data.project);
+                setProjectData(response.data);
 
                 // Получаем кредиторов
                 setLenders(
-                    response.data.project?.banks?.flatMap(
-                        (bank) => bank.contact_persons
+                    response.data?.creditors?.flatMap(
+                        (bank) => bank.contact_persons || []
                     ) || []
                 );
             })
@@ -157,9 +158,10 @@ const ProjectCard = () => {
             });
     };
 
+    // Добавление кредитора и заказчика
     const sendExecutor = (type) => {
         if (type === "lender") {
-            const contactId = projectData.banks.find(
+            const contactId = projectData.creditors.find(
                 (bank) => bank.pivot.bank_id == newLender.bank_id
             ).pivot.contact_id;
 
@@ -202,13 +204,13 @@ const ProjectCard = () => {
     }, [projectData, projectId]);
 
     useEffect(() => {
-        if (projectData.banks) {
+        if (projectData.creditors) {
             setFormFields((prev) => ({
                 ...prev,
-                bank_ids: projectData.banks.map((bank) => bank.id),
+                bank_ids: projectData.creditors.map((bank) => bank.id),
             }));
         }
-    }, [projectData.banks]);
+    }, [projectData.creditors]);
 
     return (
         <main className="page">
@@ -569,8 +571,8 @@ const ProjectCard = () => {
                                     </div>
 
                                     <ul className="flex gap-3 flex-wrap">
-                                        {(projectData.banks?.length > 0
-                                            ? projectData.banks
+                                        {(projectData.creditors?.length > 0
+                                            ? projectData.creditors
                                             : [{}]
                                         ).map((item, index) => (
                                             <div key={index} className="mb-2">
@@ -591,7 +593,7 @@ const ProjectCard = () => {
                                                     {banks
                                                         .filter(
                                                             (bank) =>
-                                                                !projectData.banks.some(
+                                                                !projectData.creditors.some(
                                                                     (
                                                                         selectedBank,
                                                                         idx
@@ -614,12 +616,12 @@ const ProjectCard = () => {
                                             </div>
                                         ))}
 
-                                        {projectData.banks &&
-                                            projectData.banks.length > 0 &&
-                                            projectData.banks.length <
+                                        {projectData.creditors &&
+                                            projectData.creditors.length > 0 &&
+                                            projectData.creditors.length <
                                                 banks.length &&
-                                            projectData.banks[
-                                                projectData.banks.length - 1
+                                            projectData.creditors[
+                                                projectData.creditors.length - 1
                                             ].id !== "" && (
                                                 <div className="mb-2">
                                                     <select
@@ -632,7 +634,7 @@ const ProjectCard = () => {
                                                             handleBankChange(
                                                                 e,
                                                                 projectData
-                                                                    .banks
+                                                                    .creditors
                                                                     .length
                                                             )
                                                         }
@@ -646,7 +648,7 @@ const ProjectCard = () => {
                                                         {banks
                                                             .filter(
                                                                 (bank) =>
-                                                                    !projectData.banks.some(
+                                                                    !projectData.creditors.some(
                                                                         (
                                                                             selectedBank
                                                                         ) =>
@@ -688,10 +690,8 @@ const ProjectCard = () => {
                                             />
                                         )}
 
-                                        {lenders.length < 1 &&
-                                        banks.length < 1 ? (
-                                            <p>Нет данных</p>
-                                        ) : (
+                                        {lenders.length > 0 &&
+                                        banks.length > 0 ? (
                                             lenders.map((lender) => (
                                                 <ExecutorBlock
                                                     key={lender.id}
@@ -704,6 +704,8 @@ const ProjectCard = () => {
                                                     method={setKeyPersons}
                                                 />
                                             ))
+                                        ) : (
+                                            <p>Нет данных</p>
                                         )}
                                     </ul>
                                 </div>
@@ -711,141 +713,7 @@ const ProjectCard = () => {
                         </div>
 
                         <div className="flex flex-col">
-                            <div className="border-2 border-gray-300 p-5 mb-5">
-                                <div className="flex flex-col gap-2 justify-between">
-                                    <div className="switch gap-4 w-[70%] mb-5">
-                                        <div>
-                                            <input
-                                                type="radio"
-                                                name="time_sort"
-                                                id="this_year"
-                                                readOnly
-                                                checked
-                                            />
-                                            <label
-                                                className="bg-gray-200 py-1 px-2 text-center rounded-md"
-                                                htmlFor="this_year"
-                                            >
-                                                Текущий год
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <input
-                                                type="radio"
-                                                name="time_sort"
-                                                id="all_time"
-                                                readOnly
-                                            />
-                                            <label
-                                                className="bg-gray-200 py-1 px-2 text-center rounded-md"
-                                                htmlFor="all_time"
-                                            >
-                                                За всё время
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="grid items-stretch grid-cols-3 gap-3 mb-3">
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex items-center gap-2 text-gray-400">
-                                            Выручка{" "}
-                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                ?
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center flex-grow gap-2">
-                                            <strong className="font-normal text-4xl">
-                                                10,0
-                                            </strong>
-                                            <small className="text-sm">
-                                                млн
-                                                <br />
-                                                руб.
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <div className="text-gray-400">
-                                            Поступления
-                                        </div>
-                                        <div className="flex items-center flex-grow gap-2">
-                                            <strong className="font-normal text-4xl">
-                                                8,0
-                                            </strong>
-                                            <small className="text-sm">
-                                                млн
-                                                <br />
-                                                руб.
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex items-center gap-2 text-gray-400">
-                                            ДЗ{" "}
-                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                ?
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center flex-grow gap-2">
-                                            <strong className="font-normal text-4xl">
-                                                2,0
-                                            </strong>
-                                            <small className="text-sm">
-                                                млн
-                                                <br />
-                                                руб.
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="grid items-stretch grid-cols-3 gap-3">
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex items-center flex-grow gap-2 text-gray-400">
-                                            Валовая прибыль{" "}
-                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                ?
-                                            </span>
-                                        </div>
-                                        <input
-                                            type="text"
-                                            value="Нет данных"
-                                            readOnly
-                                        />
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex items-center gap-2 text-gray-400">
-                                            Подрячики{" "}
-                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                ?
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center flex-grow gap-2">
-                                            <strong className="font-normal text-4xl">
-                                                1,0
-                                            </strong>
-                                            <small className="text-sm">
-                                                млн
-                                                <br />
-                                                руб.
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex items-center gap-2 text-gray-400">
-                                            Валовая рент.{" "}
-                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                ?
-                                            </span>
-                                        </div>
-                                        <input
-                                            className="flex-grow"
-                                            type="text"
-                                            value="Нет данных"
-                                            readOnly
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                            <ProjectStatisticsBlock />
 
                             <div className="flex flex-col gap-2 flex-grow">
                                 <div className="flex items-center gap-2">
@@ -878,10 +746,10 @@ const ProjectCard = () => {
                                                 <span>Период выполнения</span>
                                             </li>
 
-                                            <ReportItem />
+                                            <ProjectReportItem />
                                         </ul>
                                     ) : (
-                                        <ReportWindow
+                                        <ProjectReportWindow
                                             ReportWindowsState={
                                                 setReportWindowsState
                                             }

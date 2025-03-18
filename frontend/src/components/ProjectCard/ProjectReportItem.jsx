@@ -1,4 +1,4 @@
-const ReportItem = () => {
+const ProjectReportItem = () => {
     return (
         <li className="grid items-center grid-cols-[24%_24%_49%] gap-3">
             <div className="flex flex-col">
@@ -26,4 +26,4 @@ const ReportItem = () => {
     );
 };
 
-export default ReportItem;
+export default ProjectReportItem;
