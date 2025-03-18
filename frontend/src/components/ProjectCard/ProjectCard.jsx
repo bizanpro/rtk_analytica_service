@@ -64,7 +64,7 @@ const ProjectCard = () => {
         const selectedId = e.target.value ? +e.target.value : null;
 
         setFormFields((prev) => {
-            const updatedBanks = prev.bank_ids ? [...prev.bank_ids] : [];
+            const updatedBanks = prev.creditors ? [...prev.creditors] : [];
 
             if (selectedId === "") {
                 updatedBanks.splice(index, 1);
@@ -73,7 +73,7 @@ const ProjectCard = () => {
             }
 
             const uniqueBanks = updatedBanks.filter((id) => id !== "");
-            const newState = { ...prev, bank_ids: uniqueBanks };
+            const newState = { ...prev, creditors: uniqueBanks };
 
             return newState;
         });
@@ -208,7 +208,7 @@ const ProjectCard = () => {
         if (projectData.creditors) {
             setFormFields((prev) => ({
                 ...prev,
-                bank_ids: projectData.creditors.map((bank) => bank.id),
+                creditors: projectData.creditors.map((bank) => bank.id),
             }));
         }
     }, [projectData.creditors]);
