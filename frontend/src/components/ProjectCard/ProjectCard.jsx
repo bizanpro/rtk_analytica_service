@@ -443,7 +443,7 @@ const ProjectCard = () => {
                                             className="w-full h-[21px]"
                                             value={
                                                 projectId
-                                                    ? projectData?.industry?.id
+                                                    ? projectData?.industry_id
                                                     : "Выбрать отрасль"
                                             }
                                             onChange={(e) => {
@@ -453,9 +453,7 @@ const ProjectCard = () => {
                                                 });
                                                 setProjectData({
                                                     ...projectData,
-                                                    industry: {
-                                                        id: e.target.value,
-                                                    },
+                                                    industry_id: e.target.value,
                                                 });
                                             }}
                                             disabled={
