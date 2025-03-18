@@ -3,7 +3,6 @@ import { IMaskInput } from "react-imask";
 const EmptyExecutorBlock = ({
     removeBlock,
     handleNewExecutor,
-    method,
     banks,
     borderClass,
     type,
@@ -94,7 +93,7 @@ const EmptyExecutorBlock = ({
             <div className="flex gap-[10px] items-center">
                 <button
                     title="Сохранить исполнителя"
-                    // onClick={() => sendExecutor(type)}
+                    onClick={() => sendExecutor(type)}
                 >
                     <span className="save-icon"></span>
                 </button>

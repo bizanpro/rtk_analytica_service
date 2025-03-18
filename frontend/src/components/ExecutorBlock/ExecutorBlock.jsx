@@ -1,16 +1,15 @@
 import { IMaskInput } from "react-imask";
 
 const ExecutorBlock = ({
-    person,
+    contanct,
     removeBlock,
     handleChange,
-    data,
     method,
     mode,
     banks,
     type,
 }) => {
-    const { id, fullName, phone, position, email } = person;
+    const { full_name, phone, position, email, bank_id } = contanct;
     const PhoneMask = "+{7}(000) 000 00 00";
 
     return (
@@ -38,7 +37,7 @@ const ExecutorBlock = ({
                             className="w-full"
                             type="text"
                             placeholder="ФИО"
-                            value={fullName}
+                            value={full_name}
                             disabled={mode == "read"}
                         />
                     </div>
@@ -95,7 +94,7 @@ const ExecutorBlock = ({
                     >
                         <select
                             className="w-full"
-                            value={person.bank}
+                            value={bank_id}
                             disabled={mode === "read"}
                         >
                             {banks?.map((bank) => (
