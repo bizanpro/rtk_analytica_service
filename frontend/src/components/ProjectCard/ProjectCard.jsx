@@ -303,7 +303,7 @@ const ProjectCard = () => {
                                             value={
                                                 projectId
                                                     ? projectData?.contragent_id
-                                                    : "Выбрать заказчика"
+                                                    : ""
                                             }
                                             onChange={(e) =>
                                                 handleInputChange(
@@ -315,6 +315,9 @@ const ProjectCard = () => {
                                                 mode == "read" ? true : false
                                             }
                                         >
+                                            <option value="">
+                                                Выбрать заказчика
+                                            </option>
                                             {contragents.length > 0 &&
                                                 contragents.map((item) => (
                                                     <option
@@ -395,7 +398,7 @@ const ProjectCard = () => {
                                             value={
                                                 projectId
                                                     ? projectData?.industry_id
-                                                    : "Выбрать отрасль"
+                                                    : ""
                                             }
                                             onChange={(e) => {
                                                 setFormFields({
@@ -411,6 +414,9 @@ const ProjectCard = () => {
                                                 mode == "read" ? true : false
                                             }
                                         >
+                                            <option value="">
+                                                Выбрать отрасль
+                                            </option>
                                             {industries.length > 0 &&
                                                 industries.map((item) => (
                                                     <option
