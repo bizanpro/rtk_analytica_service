@@ -61,7 +61,7 @@ const ProjectCard = () => {
 
     // Обработчик назначения банков
     const handleBankChange = (e, index) => {
-        const selectedId = e.target.value;
+        const selectedId = e.target.value ? +e.target.value : null;
 
         setFormFields((prev) => {
             const updatedBanks = prev.bank_ids ? [...prev.bank_ids] : [];
@@ -79,25 +79,26 @@ const ProjectCard = () => {
         });
 
         setProjectData((prev) => {
-            const updatedBanks = prev.banks ? [...prev.banks] : [];
+            const updatedCreditors = [...prev.creditors];
 
-            if (selectedId === "") {
-                updatedBanks.splice(index, 1);
+            if (selectedId === null) {
+                updatedCreditors.splice(index, 1);
             } else {
                 const selectedBank = banks.find(
-                    (bank) => bank.id == selectedId
+                    (bank) => bank.id === selectedId
                 );
                 if (selectedBank) {
-                    updatedBanks[index] = {
+                    updatedCreditors[index] = {
                         id: selectedBank.id,
                         name: selectedBank.name,
                     };
                 }
             }
 
-            const uniqueBanks = updatedBanks.filter((bank) => bank?.id);
-            const newState = { ...prev, banks: uniqueBanks };
-            return newState;
+            return {
+                ...prev,
+                creditors: updatedCreditors.filter((bank) => bank?.id),
+            };
         });
     };
 
@@ -526,9 +527,7 @@ const ProjectCard = () => {
                                             />
                                         )}
 
-                                        {keyPersons.length === 0 ? (
-                                            <p>Нет данных</p>
-                                        ) : (
+                                        {keyPersons.length > 0 ? (
                                             keyPersons.map((person) => (
                                                 <ExecutorBlock
                                                     key={person.id}
@@ -545,6 +544,8 @@ const ProjectCard = () => {
                                                     method={setKeyPersons}
                                                 />
                                             ))
+                                        ) : (
+                                            <p>Нет данных</p>
                                         )}
                                     </ul>
                                 </div>
