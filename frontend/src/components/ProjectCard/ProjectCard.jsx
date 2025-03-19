@@ -596,8 +596,18 @@ const ProjectCard = () => {
                                                 type="button"
                                                 className="add-button"
                                                 onClick={() => {
-                                                    if (!addCustomer) {
-                                                        setAddCustomer(true);
+                                                    if (
+                                                        projectData?.contragent_id
+                                                    ) {
+                                                        if (!addCustomer) {
+                                                            setAddCustomer(
+                                                                true
+                                                            );
+                                                        }
+                                                    } else {
+                                                        alert(
+                                                            "Необходимо назначить заказчика"
+                                                        );
                                                     }
                                                 }}
                                                 title="Добавить ключевое лицо Заказчика"
@@ -650,8 +660,17 @@ const ProjectCard = () => {
                                                 type="button"
                                                 className="add-button"
                                                 onClick={() => {
-                                                    if (!addLender) {
-                                                        setAddLender(true);
+                                                    if (
+                                                        projectData.creditors
+                                                            ?.length > 0
+                                                    ) {
+                                                        if (!addLender) {
+                                                            setAddLender(true);
+                                                        }
+                                                    } else {
+                                                        alert(
+                                                            "Необходимо назначить банк"
+                                                        );
                                                     }
                                                 }}
                                                 title="Добавить Кредитора"
