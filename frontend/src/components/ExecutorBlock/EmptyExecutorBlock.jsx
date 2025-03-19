@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { IMaskInput } from "react-imask";
 
 const EmptyExecutorBlock = ({
@@ -10,6 +11,29 @@ const EmptyExecutorBlock = ({
     data,
 }) => {
     const PhoneMask = "+{7}(000) 000 00 00";
+
+    const [errors, setErrors] = useState({});
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const handleSave = () => {
+        const newErrors = {
+            full_name: !data.full_name,
+            phone: !data.phone,
+            position: !data.position,
+            email: !data.email || !validateEmail(data.email),
+            creditor_id: type === "lender" ? !data.creditor_id : false,
+        };
+
+        setErrors(newErrors);
+
+        if (Object.values(newErrors).some((err) => err)) return;
+
+        sendExecutor(type);
+    };
 
     return (
         <li className="flex items-center justify-between gap-6">
@@ -31,6 +55,11 @@ const EmptyExecutorBlock = ({
                             }
                             value={data.full_name}
                         />
+                        {errors.full_name && (
+                            <p className="text-red-500 text-sm">
+                                Заполните ФИО
+                            </p>
+                        )}
                     </div>
                     <div className="p-1 pr-3">
                         <IMaskInput
@@ -39,12 +68,17 @@ const EmptyExecutorBlock = ({
                             name="phone"
                             type="tel"
                             inputMode="tel"
-                            onAccept={(e) =>
-                                handleNewExecutor(type, e, "phone")
+                            onAccept={(value) =>
+                                handleNewExecutor(type, value || "", "phone")
                             }
-                            value={data.phone}
+                            value={data.phone || ""}
                             placeholder="+7 999 999 99 99"
                         />
+                        {errors.phone && (
+                            <p className="text-red-500 text-sm">
+                                Заполните телефон
+                            </p>
+                        )}
                     </div>
                 </div>
                 <div className="grid grid-cols-[60%_40%]">
@@ -60,6 +94,11 @@ const EmptyExecutorBlock = ({
                                 handleNewExecutor(type, e, "position")
                             }
                         />
+                        {errors.position && (
+                            <p className="text-red-500 text-sm">
+                                Заполните должность
+                            </p>
+                        )}
                     </div>
                     <div className="p-1 pr-3">
                         <input
@@ -71,6 +110,11 @@ const EmptyExecutorBlock = ({
                                 handleNewExecutor(type, e, "email")
                             }
                         />
+                        {errors.email && (
+                            <p className="text-red-500 text-sm">
+                                Некорректный email
+                            </p>
+                        )}
                     </div>
                 </div>
 
@@ -85,21 +129,24 @@ const EmptyExecutorBlock = ({
                             }
                             value={data.creditor_id}
                         >
+                            <option value="">Выберите банк</option>
                             {banks?.map((bank) => (
                                 <option value={bank.id} key={bank.id}>
                                     {bank.name}
                                 </option>
                             ))}
                         </select>
+                        {errors.creditor_id && (
+                            <p className="text-red-500 text-sm">
+                                Выберите банк
+                            </p>
+                        )}
                     </div>
                 )}
             </div>
 
             <div className="flex gap-[10px] items-center">
-                <button
-                    title="Сохранить исполнителя"
-                    onClick={() => sendExecutor(type)}
-                >
+                <button title="Сохранить исполнителя" onClick={handleSave}>
                     <span className="save-icon"></span>
                 </button>
                 <button
