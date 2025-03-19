@@ -44,21 +44,6 @@ const ProjectCard = () => {
         setProjectData({ ...projectData, [name]: e.target.value });
     };
 
-    // Обработчик ввода данных блока заказчика и кредитора
-    const handleNewExecutor = (type, e, name) => {
-        if (type === "lender") {
-            setNewLender({
-                ...newLender,
-                [name]: name === "phone" ? e : e.target.value,
-            });
-        } else if (type === "customer") {
-            setNewCustomer({
-                ...newCustomer,
-                [name]: name === "phone" ? e : e.target.value,
-            });
-        }
-    };
-
     // Обработчик назначения банков
     const handleBankChange = (e, index) => {
         const selectedId = e.target.value ? +e.target.value : null;
@@ -122,65 +107,83 @@ const ProjectCard = () => {
         );
     }, []);
 
-    // Получение проекта
-    const getProject = (id) => {
-        getData(`${URL}/${id}`, { Accept: "application/json" })
-            .then((response) => {
-                setProjectData(response.data);
-
-                // Получаем кредиторов
-                setLenders(
-                    response.data?.creditors?.flatMap(
-                        (bank) => bank.contact_persons || []
-                    ) || []
-                );
-            })
-            .then(() => {
-                // Получение отраслей
-                getData(`${import.meta.env.VITE_API_URL}industries`, {
-                    Accept: "application/json",
-                }).then((response) => {
-                    setIndustries(response.data.data);
-                });
-
-                // Получение заказчика
-                getData(`${import.meta.env.VITE_API_URL}contragents`, {
-                    Accept: "application/json",
-                }).then((response) => {
-                    setContragents(response.data);
-                });
-
-                // Получение банков
-                getData(`${import.meta.env.VITE_API_URL}banks`).then(
-                    (response) => {
-                        setBanks(response.data.data);
-                    }
-                );
-            });
-    };
-
-    // Добавление кредитора и заказчика
-    const sendExecutor = (type) => {
+    // Обработчик ввода данных блока заказчика и кредитора
+    const handleNewExecutor = (type, e, name) => {
         if (type === "lender") {
-            const contactId = projectData.creditors.find(
-                (bank) => bank.pivot.bank_id == newLender.bank_id
-            ).pivot.contact_id;
-
-            setNewLender((prevState) => {
-                const updatedLender = { ...prevState, contact_id: contactId };
-                const data = { contact_persons: [updatedLender] };
-
-                postData("PATCH", `${URL}/${projectId}`, data).then(
-                    (response) => {
-                        if (response) {
-                            console.log(response);
-                        }
-                    }
-                );
-
-                return updatedLender;
+            setNewLender({
+                ...newLender,
+                [name]: name === "phone" ? e : e.target.value,
+            });
+        } else if (type === "customer") {
+            setNewCustomer({
+                ...newCustomer,
+                [name]: name === "phone" ? e : e.target.value,
             });
         }
+    };
+
+    // Получение отраслей
+    const fetchIndustries = async () => {
+        const response = await getData(
+            `${import.meta.env.VITE_API_URL}industries`,
+            {
+                Accept: "application/json",
+            }
+        );
+        setIndustries(response.data.data);
+    };
+
+    // Получение заказчика
+    const fetchContragents = async () => {
+        const response = await getData(
+            `${import.meta.env.VITE_API_URL}contragents`,
+            {
+                Accept: "application/json",
+            }
+        );
+        setContragents(response.data);
+    };
+
+    // Получение банков
+    const fetchBanks = async () => {
+        const response = await getData(`${import.meta.env.VITE_API_URL}banks`);
+        setBanks(response.data.data);
+    };
+
+    // Получение проекта
+    const getProject = async (id) => {
+        try {
+            const response = await getData(`${URL}/${id}`, {
+                Accept: "application/json",
+            });
+            setProjectData(response.data);
+
+            // Получаем кредиторов
+            setLenders(
+                response.data?.creditors?.flatMap(
+                    (bank) => bank.responsible_persons
+                ) || []
+            );
+
+            await Promise.all([
+                fetchIndustries(),
+                fetchContragents(),
+                fetchBanks(),
+            ]);
+        } catch (error) {
+            console.error("Ошибка при загрузке проекта:", error);
+        }
+    };
+
+    // Отправляем кредитора и заказчика
+    const sendExecutor = (type) => {
+        const data = type === "lender" ? newLender : newCustomer;
+
+        postData("PATCH", `${URL}/${projectId}`, data).then((response) => {
+            if (response) {
+                console.log(response);
+            }
+        });
     };
 
     // Обновление проекта
