@@ -7,6 +7,7 @@ const EmptyExecutorBlock = ({
     borderClass,
     type,
     sendExecutor,
+    data,
 }) => {
     const PhoneMask = "+{7}(000) 000 00 00";
 
@@ -28,6 +29,7 @@ const EmptyExecutorBlock = ({
                             onChange={(e) =>
                                 handleNewExecutor(type, e, "full_name")
                             }
+                            value={data.full_name}
                         />
                     </div>
                     <div className="p-1 pr-3">
@@ -40,6 +42,7 @@ const EmptyExecutorBlock = ({
                             onAccept={(e) =>
                                 handleNewExecutor(type, e, "phone")
                             }
+                            value={data.phone}
                             placeholder="+7 999 999 99 99"
                         />
                     </div>
@@ -52,6 +55,7 @@ const EmptyExecutorBlock = ({
                             className="w-full"
                             type="text"
                             placeholder="Должность"
+                            value={data.position}
                             onChange={(e) =>
                                 handleNewExecutor(type, e, "position")
                             }
@@ -62,6 +66,7 @@ const EmptyExecutorBlock = ({
                             className="w-full"
                             type="email"
                             placeholder="mail@mail.ru"
+                            value={data.email}
                             onChange={(e) =>
                                 handleNewExecutor(type, e, "email")
                             }
@@ -78,8 +83,8 @@ const EmptyExecutorBlock = ({
                             onChange={(e) =>
                                 handleNewExecutor(type, e, "creditor_id")
                             }
+                            value={data.creditor_id}
                         >
-                            <option value="">Банк</option>
                             {banks?.map((bank) => (
                                 <option value={bank.id} key={bank.id}>
                                     {bank.name}

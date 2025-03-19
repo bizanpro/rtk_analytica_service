@@ -34,8 +34,19 @@ const ProjectCard = () => {
     const [addLender, setAddLender] = useState(false);
     const [addCustomer, setAddCustomer] = useState(false);
 
-    const [newLender, setNewLender] = useState({});
-    const [newCustomer, setNewCustomer] = useState({});
+    const [newLender, setNewLender] = useState({
+        full_name: "",
+        phone: "",
+        position: "",
+        email: "",
+        creditor_id: 1,
+    });
+    const [newCustomer, setNewCustomer] = useState({
+        full_name: "",
+        phone: "",
+        position: "",
+        email: "",
+    });
 
     const [reportWindowsState, setReportWindowsState] = useState(false);
 
@@ -45,47 +56,47 @@ const ProjectCard = () => {
     };
 
     // Обработчик назначения банков
-    const handleBankChange = (e, index) => {
-        const selectedId = e.target.value ? +e.target.value : null;
+    // const handleBankChange = (e, index) => {
+    //     const selectedId = e.target.value ? +e.target.value : null;
 
-        setFormFields((prev) => {
-            const updatedBanks = prev.creditors ? [...prev.creditors] : [];
+    //     setFormFields((prev) => {
+    //         const updatedBanks = prev.creditors ? [...prev.creditors] : [];
 
-            if (selectedId === "") {
-                updatedBanks.splice(index, 1);
-            } else {
-                updatedBanks[index] = selectedId;
-            }
+    //         if (selectedId === "") {
+    //             updatedBanks.splice(index, 1);
+    //         } else {
+    //             updatedBanks[index] = selectedId;
+    //         }
 
-            const uniqueBanks = updatedBanks.filter((id) => id !== "");
-            const newState = { ...prev, creditors: uniqueBanks };
+    //         const uniqueBanks = updatedBanks.filter((id) => id !== "");
+    //         const newState = { ...prev, creditors: uniqueBanks };
 
-            return newState;
-        });
+    //         return newState;
+    //     });
 
-        setProjectData((prev) => {
-            const updatedCreditors = [...prev.creditors];
+    //     setProjectData((prev) => {
+    //         const updatedCreditors = [...prev.creditors];
 
-            if (selectedId === null) {
-                updatedCreditors.splice(index, 1);
-            } else {
-                const selectedBank = banks.find(
-                    (bank) => bank.id === selectedId
-                );
-                if (selectedBank) {
-                    updatedCreditors[index] = {
-                        id: selectedBank.id,
-                        name: selectedBank.name,
-                    };
-                }
-            }
+    //         if (selectedId === null) {
+    //             updatedCreditors.splice(index, 1);
+    //         } else {
+    //             const selectedBank = banks.find(
+    //                 (bank) => bank.id === selectedId
+    //             );
+    //             if (selectedBank) {
+    //                 updatedCreditors[index] = {
+    //                     id: selectedBank.id,
+    //                     name: selectedBank.name,
+    //                 };
+    //             }
+    //         }
 
-            return {
-                ...prev,
-                creditors: updatedCreditors.filter((bank) => bank?.id),
-            };
-        });
-    };
+    //         return {
+    //             ...prev,
+    //             creditors: updatedCreditors.filter((bank) => bank?.id),
+    //         };
+    //     });
+    // };
 
     // Обработка состояния добавочного блока при изменении
     const handleChange = useCallback((id, field, value, data, method) => {
@@ -190,7 +201,13 @@ const ProjectCard = () => {
                             ]);
                         }
 
-                        setAddLender(false);
+                        setNewLender({
+                            full_name: "",
+                            phone: "",
+                            position: "",
+                            email: "",
+                            creditor_id: 1,
+                        });
 
                         alert(response.message);
                     }
@@ -553,6 +570,7 @@ const ProjectCard = () => {
                                                 banks={banks}
                                                 type={"customer"}
                                                 method={setKeyPersons}
+                                                data={newCustomer}
                                                 removeBlock={() =>
                                                     setAddCustomer(false)
                                                 }
@@ -607,7 +625,7 @@ const ProjectCard = () => {
                                         )}
                                     </div>
 
-                                    <ul className="flex gap-3 flex-wrap">
+                                    {/* <ul className="flex gap-3 flex-wrap">
                                         {(projectData.creditors?.length > 0
                                             ? projectData.creditors
                                             : [{}]
@@ -708,13 +726,14 @@ const ProjectCard = () => {
                                                     </select>
                                                 </div>
                                             )}
-                                    </ul>
+                                    </ul> */}
 
                                     <ul className="mt-3.5 grid gap-4">
                                         {addLender && (
                                             <EmptyExecutorBlock
                                                 borderClass={"border-gray-300"}
                                                 banks={banks}
+                                                data={newLender}
                                                 type={"lender"}
                                                 method={setKeyPersons}
                                                 removeBlock={() =>
