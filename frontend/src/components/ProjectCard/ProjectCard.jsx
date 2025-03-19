@@ -87,11 +87,6 @@ const ProjectCard = () => {
         });
     };
 
-    // Удаление блока команды проекта или подрядчика
-    const removeBlock = useCallback((id, data, method) => {
-        method(data.filter((block) => block.id !== id));
-    }, []);
-
     // Обработка состояния добавочного блока при изменении
     const handleChange = useCallback((id, field, value, data, method) => {
         method(
@@ -177,11 +172,43 @@ const ProjectCard = () => {
 
     // Отправляем кредитора и заказчика
     const sendExecutor = (type) => {
-        const data = type === "lender" ? newLender : newCustomer;
+        if (type === "lender") {
+            setNewLender((prev) => {
+                const updatedLender = { ...prev, project_id: projectId };
+                postData(
+                    "POST",
+                    `${
+                        import.meta.env.VITE_API_URL
+                    }creditor-responsible-persons`,
+                    updatedLender
+                ).then((response) => {
+                    if (response) {
+                        if (response?.responsible_person) {
+                            setLenders((prevLenders) => [
+                                ...prevLenders,
+                                response.responsible_person,
+                            ]);
+                        }
 
-        postData("PATCH", `${URL}/${projectId}`, data).then((response) => {
+                        setAddLender(false);
+
+                        alert(response.message);
+                    }
+                });
+                return updatedLender;
+            });
+        }
+    };
+
+    // Удаление кредитора
+    const deleteLender = (id) => {
+        postData(
+            "DELETE",
+            `${import.meta.env.VITE_API_URL}creditor-responsible-persons/${id}`,
+            {}
+        ).then((response) => {
             if (response) {
-                console.log(response);
+                setLenders(lenders.filter((item) => item.id !== id));
             }
         });
     };
@@ -545,7 +572,7 @@ const ProjectCard = () => {
                                                         person.borderClass ||
                                                         "border-transparent"
                                                     }
-                                                    removeBlock={removeBlock}
+                                                    // removeBlock={}
                                                     // handleNewExecutor={
                                                     //     handleNewExecutor
                                                     // }
@@ -709,7 +736,7 @@ const ProjectCard = () => {
                                                     mode={mode}
                                                     banks={banks}
                                                     type={"lender"}
-                                                    removeBlock={removeBlock}
+                                                    deleteBlock={deleteLender}
                                                     handleChange={handleChange}
                                                     method={setKeyPersons}
                                                 />

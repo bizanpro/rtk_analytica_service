@@ -2,13 +2,13 @@ import { IMaskInput } from "react-imask";
 
 const ExecutorBlock = ({
     contanct,
-    removeBlock,
+    deleteBlock,
     handleChange,
     mode,
     banks,
     type,
 }) => {
-    const { full_name, phone, position, email, bank_id } = contanct;
+    const { id, full_name, phone, position, email, bank_id } = contanct;
     const PhoneMask = "+{7}(000) 000 00 00";
 
     return (
@@ -106,23 +106,24 @@ const ExecutorBlock = ({
                 )}
             </div>
 
-            {/* {mode === "edit" ? (
+            {mode === "edit" ? (
                 <div className="flex gap-[10px] items-center">
-                    <button
+                    {/* <button
                         title="Обновить исполнителя"
                     >
                         <span className="update-icon"></span>
-                    </button>
+                    </button> */}
                     <button
                         className="delete-button"
                         title="Удалить исполнителя"
+                        onClick={() => deleteBlock(id)}
                     >
                         <span className="delete-icon"></span>
                     </button>
                 </div>
             ) : (
                 <div className="h-[50px] w-[50px]"></div>
-            )} */}
+            )}
         </li>
     );
 };

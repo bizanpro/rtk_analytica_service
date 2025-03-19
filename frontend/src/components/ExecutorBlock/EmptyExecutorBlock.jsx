@@ -76,7 +76,7 @@ const EmptyExecutorBlock = ({
                         <select
                             className="w-full"
                             onChange={(e) =>
-                                handleNewExecutor(type, e, "bank_id")
+                                handleNewExecutor(type, e, "creditor_id")
                             }
                         >
                             <option value="">Банк</option>
