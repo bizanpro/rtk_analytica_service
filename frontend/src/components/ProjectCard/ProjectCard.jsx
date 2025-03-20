@@ -167,8 +167,8 @@ const ProjectCard = () => {
 
             // Получаем кредиторов
             setLenders(
-                response.data?.creditors?.flatMap(
-                    (bank) => bank.responsible_persons
+                response.data?.creditor_responsible_persons?.flatMap(
+                    (item) => item
                 ) || []
             );
 
