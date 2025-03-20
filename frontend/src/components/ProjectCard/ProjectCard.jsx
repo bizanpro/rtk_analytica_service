@@ -124,8 +124,6 @@ const ProjectCard = () => {
                 ...newCustomer,
                 [name]: name === "phone" ? e : e.target.value,
             });
-
-            console.log(newCustomer);
         }
     };
 
@@ -187,71 +185,86 @@ const ProjectCard = () => {
 
     // Отправляем кредитора и заказчика
     const sendExecutor = (type) => {
-        if (type === "lender") {
-            setNewLender((prev) => {
-                const updatedLender = { ...prev, project_id: projectId };
-                postData(
-                    "POST",
-                    `${
-                        import.meta.env.VITE_API_URL
-                    }creditor-responsible-persons`,
-                    updatedLender
-                ).then((response) => {
-                    if (response) {
-                        if (response?.responsible_person) {
-                            setLenders((prevLenders) => [
-                                ...prevLenders,
-                                response.responsible_person,
-                            ]);
-                        }
+        updateProject(projectId, false).then(() => {
+            if (type === "lender") {
+                if (projectData.creditors?.length > 0) {
+                    setNewLender((prev) => {
+                        const updatedLender = {
+                            ...prev,
+                            project_id: projectId,
+                        };
+                        postData(
+                            "POST",
+                            `${
+                                import.meta.env.VITE_API_URL
+                            }creditor-responsible-persons`,
+                            updatedLender
+                        ).then((response) => {
+                            if (response) {
+                                if (response?.responsible_person) {
+                                    setLenders((prevLenders) => [
+                                        ...prevLenders,
+                                        response.responsible_person,
+                                    ]);
+                                }
 
-                        setNewLender({
-                            full_name: "",
-                            phone: "",
-                            position: "",
-                            email: "",
-                            creditor_id: 1,
+                                setNewLender({
+                                    full_name: "",
+                                    phone: "",
+                                    position: "",
+                                    email: "",
+                                    creditor_id: 1,
+                                });
+
+                                alert(response.message);
+                            }
                         });
+                        return updatedLender;
+                    });
+                } else {
+                    alert("Необходимо назначить банк");
+                }
+            } else if (type === "customer") {
+                if (projectData?.contragent_id) {
+                    setNewCustomer((prev) => {
+                        const updatedCustomer = {
+                            ...prev,
+                            project_id: projectId,
+                            contragent_id: projectData?.contragent_id,
+                        };
 
-                        alert(response.message);
-                    }
-                });
-                return updatedLender;
-            });
-        } else if (type === "customer") {
-            setNewCustomer((prev) => {
-                const updatedCustomer = {
-                    ...prev,
-                    project_id: projectId,
-                    contragent_id: projectData?.contragent_id,
-                };
+                        postData(
+                            "POST",
+                            `${
+                                import.meta.env.VITE_API_URL
+                            }responsible-persons`,
+                            updatedCustomer
+                        ).then((response) => {
+                            if (response) {
+                                if (response?.responsible_person) {
+                                    setCustomers((prevCustomer) => [
+                                        ...prevCustomer,
+                                        response.responsible_person,
+                                    ]);
+                                }
 
-                postData(
-                    "POST",
-                    `${import.meta.env.VITE_API_URL}responsible-persons`,
-                    updatedCustomer
-                ).then((response) => {
-                    if (response) {
-                        if (response?.responsible_person) {
-                            setCustomers((prevCustomer) => [
-                                ...prevCustomer,
-                                response.responsible_person,
-                            ]);
-                        }
+                                setNewCustomer({
+                                    full_name: "",
+                                    phone: "",
+                                    position: "",
+                                    email: "",
+                                });
 
-                        setNewCustomer({
-                            full_name: "",
-                            phone: "",
-                            position: "",
-                            email: "",
+                                alert(response.message);
+                            }
                         });
-
-                        alert(response.message);
-                    }
-                });
-                return updatedCustomer;
-            });
-        }
+                        return updatedCustomer;
+                    });
+                } else {
+                    alert("Необходимо назначить заказчика");
+                }
+            }
+        });
     };
 
     // Удаление кредитора
@@ -281,12 +294,21 @@ const ProjectCard = () => {
     };
 
     // Обновление проекта
-    const updateProject = (id) => {
-        postData("PATCH", `${URL}/${id}`, formFields).then((response) => {
-            if (response) {
+    const updateProject = async (id, showMessage = true) => {
+        try {
+            const response = await postData(
+                "PATCH",
+                `${URL}/${id}`,
+                formFields
+            );
+            if (response && showMessage) {
                 alert("Проект успешно обновлен");
             }
-        });
+            return response;
+        } catch (error) {
+            console.error("Ошибка при обновлении проекта:", error);
+            throw error;
+        }
     };
 
     useEffect(() => {
