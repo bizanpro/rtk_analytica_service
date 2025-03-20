@@ -2,37 +2,44 @@
     {
       "id": "industries",
       "name": "Отрасли проектов",
-      "totalCount": 10,
+      "totalCount":  "-",
       "updated_at": "2025-03-14T08:36:09.000000Z",
-      "author": "Прохоров Сергей Петрович"
+      "author": "-"
     },
     {
       "id": "types",
       "name": "Типы услуг / отчетов",
-      "totalCount": 5,
+      "totalCount": "-",
       "updated_at": "2025-03-14T08:36:09.000000Z",
-      "author": "Прохоров Сергей Петрович"
+      "author": "-"
     },
     {
       "id": "roles",
       "name": "Роли в проектах",
-      "totalCount": 5,
+      "totalCount": "-",
       "updated_at": "2025-03-14T08:36:09.000000Z",
-      "author": "Прохоров Сергей Петрович"
+      "author": "-"
     },
     {
       "id": "banks",
       "name": "Кредиторы",
-      "totalCount": 5,
+      "totalCount": "-",
       "updated_at": "2025-03-14T08:36:09.000000Z",
-      "author": "Прохоров Сергей Петрович"
+      "author": "-"
     },
     {
-      "id": "contacts",
-      "name": "Контакты",
-      "totalCount": 5,
+      "id": "responsible-persons",
+      "name": "Контакты заказчика",
+      "totalCount": "-",
       "updated_at": "2025-03-14T08:36:09.000000Z",
-      "author": "Прохоров Сергей Петрович"
+      "author": "-"
+    },
+    {
+      "id": "creditor-responsible-persons",
+      "name": "Контакты кредитора",
+      "totalCount": "-",
+      "updated_at": "2025-03-14T08:36:09.000000Z",
+      "author": "-"
     }
   ]
     

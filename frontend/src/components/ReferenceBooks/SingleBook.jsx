@@ -4,6 +4,7 @@ import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 import Select from "../Select";
 import ReferenceItem from "./ReferenceItem";
+import ReferenceItemExtended from "./ReferenceItemExtended";
 
 const SingleBook = () => {
     const COLUMNS = {
@@ -33,7 +34,7 @@ const SingleBook = () => {
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
         ],
-        contacts: [
+        "responsible-persons": [
             { label: "Наименование контрагента", key: "name" },
             { label: "Тип контрагента", key: "role" },
             { label: "ФИО / должность", key: "contact_persons" },
@@ -42,6 +43,11 @@ const SingleBook = () => {
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
         ],
+        "creditor-responsible-persons": [
+            { label: "Банк", key: "" },
+            { label: "Контакт", key: "" },
+            { label: "Проект", key: "" },
+        ],
     };
 
     const TITLES = {
@@ -49,7 +55,8 @@ const SingleBook = () => {
         types: "Типы услуг / отчетов",
         roles: "Роли в проектах",
         banks: "Кредиторы",
-        contacts: "Контакты",
+        "responsible-persons": "Контакты заказчика",
+        "creditor-responsible-persons": "Контакты кредитора",
     };
 
     const { bookId } = useParams();
@@ -302,8 +309,28 @@ const SingleBook = () => {
                                     )}
 
                                     {filteredProjects?.length > 0 &&
+                                        bookId !==
+                                            "creditor-responsible-persons" &&
                                         filteredProjects.map((item) => (
                                             <ReferenceItem
+                                                key={item.id}
+                                                data={item}
+                                                columns={columns}
+                                                mode={mode}
+                                                bookId={bookId}
+                                                handleInputChange={
+                                                    handleInputChange
+                                                }
+                                                deleteElement={deleteElement}
+                                                editElement={editElement}
+                                            />
+                                        ))}
+
+                                    {filteredProjects?.length > 0 &&
+                                        bookId ==
+                                            "creditor-responsible-persons" &&
+                                        filteredProjects.map((item) => (
+                                            <ReferenceItemExtended
                                                 key={item.id}
                                                 data={item}
                                                 columns={columns}
