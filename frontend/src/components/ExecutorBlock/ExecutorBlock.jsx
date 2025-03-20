@@ -8,7 +8,7 @@ const ExecutorBlock = ({
     banks,
     type,
 }) => {
-    const { id, full_name, phone, position, email, bank_id } = contanct;
+    const { id, full_name, phone, position, email, creditor_id } = contanct;
     const PhoneMask = "+{7}(000) 000 00 00";
 
     return (
@@ -37,7 +37,8 @@ const ExecutorBlock = ({
                             type="text"
                             placeholder="ФИО"
                             value={full_name}
-                            disabled={mode == "read"}
+                            // disabled={mode == "read"}
+                            readOnly
                         />
                     </div>
                     <div className="p-1 pr-3">
@@ -52,7 +53,8 @@ const ExecutorBlock = ({
                             //     setFormFields({ ...formFields, ["phone"]: el });
                             // }}
                             placeholder="+7 999 999 99 99"
-                            disabled={mode == "read"}
+                            // disabled={mode == "read"}
+                            readOnly
                         />
                     </div>
                 </div>
@@ -69,7 +71,8 @@ const ExecutorBlock = ({
                             type="text"
                             placeholder="Должность"
                             value={position}
-                            disabled={mode == "read"}
+                            // disabled={mode == "read"}
+                            readOnly
                         />
                     </div>
                     <div className="p-1 pr-3">
@@ -78,7 +81,8 @@ const ExecutorBlock = ({
                             type="email"
                             placeholder="mail@mail.ru"
                             value={email}
-                            disabled={mode == "read"}
+                            // disabled={mode == "read"}
+                            readOnly
                         />
                     </div>
                 </div>
@@ -93,8 +97,9 @@ const ExecutorBlock = ({
                     >
                         <select
                             className="w-full"
-                            value={bank_id}
-                            disabled={mode === "read"}
+                            value={creditor_id}
+                            // disabled={mode === "read"}
+                            disabled
                         >
                             {banks?.map((bank) => (
                                 <option value={bank.id} key={bank.id}>

@@ -58,23 +58,22 @@ const ProjectCard = () => {
     const handleBankChange = (e, index) => {
         const selectedId = e.target.value ? +e.target.value : null;
 
+        // Обновляем ID банков (setFormFields)
         setFormFields((prev) => {
             const updatedBanks = prev.creditors ? [...prev.creditors] : [];
 
-            if (selectedId === "") {
-                updatedBanks.splice(index, 1);
+            if (selectedId === null) {
+                updatedBanks.splice(index, 1); // Удаляем банк
             } else {
-                updatedBanks[index] = selectedId;
+                updatedBanks[index] = selectedId; // Добавляем или заменяем банк
             }
 
-            const uniqueBanks = updatedBanks.filter((id) => id !== "");
-            const newState = { ...prev, creditors: uniqueBanks };
-
-            return newState;
+            return { ...prev, creditors: updatedBanks.filter((id) => id) };
         });
 
+        // Обновляем массив объектов (setProjectData)
         setProjectData((prev) => {
-            const updatedCreditors = [...prev.creditors];
+            let updatedCreditors = [...prev.creditors];
 
             if (selectedId === null) {
                 updatedCreditors.splice(index, 1);
@@ -703,58 +702,75 @@ const ProjectCard = () => {
                                     </div>
 
                                     <ul className="flex gap-3 flex-wrap">
-                                        {(projectData.creditors?.length > 0
-                                            ? projectData.creditors
-                                            : [{}]
-                                        ).map((item, index) => (
-                                            <div key={index} className="mb-2">
-                                                <select
-                                                    className="flex-[0_0_30%] bg-gray-200 py-1 px-2 text-center rounded-md"
-                                                    value={item.id || ""}
-                                                    onChange={(e) =>
-                                                        handleBankChange(
-                                                            e,
-                                                            index
-                                                        )
-                                                    }
-                                                    disabled={mode === "read"}
-                                                >
-                                                    <option value="">
-                                                        Банк
-                                                    </option>
-                                                    {banks
-                                                        .filter(
-                                                            (bank) =>
-                                                                !projectData.creditors.some(
-                                                                    (
-                                                                        selectedBank,
-                                                                        idx
-                                                                    ) =>
-                                                                        selectedBank.id ===
-                                                                            bank.id &&
-                                                                        idx !==
-                                                                            index
-                                                                )
-                                                        )
-                                                        .map((bank) => (
-                                                            <option
-                                                                value={bank.id}
-                                                                key={bank.id}
-                                                            >
-                                                                {bank.name}
-                                                            </option>
-                                                        ))}
-                                                </select>
-                                            </div>
-                                        ))}
+                                        {projectData.creditors?.map(
+                                            (item, index) => {
+                                                // Фильтруем доступные банки для каждого селекта
+                                                const availableBanks =
+                                                    banks.filter(
+                                                        (bank) =>
+                                                            !projectData.creditors?.some(
+                                                                (
+                                                                    selectedBank,
+                                                                    idx
+                                                                ) =>
+                                                                    selectedBank.id ===
+                                                                        bank.id &&
+                                                                    idx !==
+                                                                        index
+                                                            )
+                                                    );
 
-                                        {projectData.creditors &&
-                                            projectData.creditors.length > 0 &&
-                                            projectData.creditors.length <
-                                                banks.length &&
+                                                return (
+                                                    <div
+                                                        key={index}
+                                                        className="mb-2"
+                                                    >
+                                                        <select
+                                                            className="flex-[0_0_30%] bg-gray-200 py-1 px-2 text-center rounded-md"
+                                                            value={
+                                                                item.id || ""
+                                                            }
+                                                            onChange={(e) =>
+                                                                handleBankChange(
+                                                                    e,
+                                                                    index
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                mode === "read"
+                                                            }
+                                                        >
+                                                            <option value="">
+                                                                Банк
+                                                            </option>
+                                                            {availableBanks.map(
+                                                                (bank) => (
+                                                                    <option
+                                                                        value={
+                                                                            bank.id
+                                                                        }
+                                                                        key={
+                                                                            bank.id
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            bank.name
+                                                                        }
+                                                                    </option>
+                                                                )
+                                                            )}
+                                                        </select>
+                                                    </div>
+                                                );
+                                            }
+                                        )}
+
+                                        {projectData.creditors?.length <
+                                            banks.length &&
                                             projectData.creditors[
-                                                projectData.creditors.length - 1
-                                            ].id !== "" && (
+                                                projectData.creditors?.length -
+                                                    1
+                                            ]?.id !== "" && (
                                                 <div className="mb-2">
                                                     <select
                                                         className={`flex-[0_0_30%] py-1 px-2 text-center rounded-md ${
@@ -809,7 +825,7 @@ const ProjectCard = () => {
                                         {addLender && (
                                             <EmptyExecutorBlock
                                                 borderClass={"border-gray-300"}
-                                                banks={banks}
+                                                banks={projectData.creditors}
                                                 data={newLender}
                                                 type={"lender"}
                                                 removeBlock={() =>
