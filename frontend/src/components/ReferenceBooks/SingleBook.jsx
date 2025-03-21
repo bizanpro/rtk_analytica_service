@@ -222,15 +222,41 @@ const SingleBook = () => {
                     <table className="table-auto w-full border-collapse border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
-                                {COLUMNS[bookId].map(({ label, key }) => (
-                                    <th
-                                        className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
-                                        rowSpan="2"
-                                        key={key}
-                                    >
-                                        {label}
-                                    </th>
-                                ))}
+                                {bookId != "creditor-responsible-persons" &&
+                                    COLUMNS[bookId].map(({ label, key }) => (
+                                        <th
+                                            className="text-base px-4 py-2 min-w-[180px]"
+                                            rowSpan="2"
+                                            key={key}
+                                        >
+                                            {label}
+                                        </th>
+                                    ))}
+
+                                {bookId == "creditor-responsible-persons" &&
+                                    COLUMNS[bookId].map(
+                                        ({ label, key }, index) => (
+                                            <th
+                                                className="text-base px-4 py-2 min-w-[180px]"
+                                                rowSpan="2"
+                                                key={key}
+                                            >
+                                                <div
+                                                    className={
+                                                        index !==
+                                                        COLUMNS[bookId].length -
+                                                            1
+                                                            ? ""
+                                                            : "flex justify-end"
+                                                    }
+                                                >
+                                                    <span className="block min-w-[210px] max-w-[210px]">
+                                                        {label}
+                                                    </span>
+                                                </div>
+                                            </th>
+                                        )
+                                    )}
                             </tr>
                         </thead>
 
@@ -243,66 +269,72 @@ const SingleBook = () => {
                                 </tr>
                             ) : (
                                 <>
-                                    {mode === "edit" && (
-                                        <tr className="border-gray-300 text-base border-b text-left">
-                                            {columns.map(({ key }) => (
-                                                <td
-                                                    key={key}
-                                                    className="px-4 py-7 min-w-[180px] max-w-[200px]"
-                                                >
-                                                    {key === "name" ||
-                                                    key ===
-                                                        "counterparty_name" ||
-                                                    key === "full_name" ? (
-                                                        <div
-                                                            key={key}
-                                                            className="flex items-center gap-2"
-                                                        >
-                                                            <input
-                                                                type="text"
-                                                                className="w-full"
-                                                                placeholder="Новый элемент"
-                                                                name={key}
-                                                                value={
-                                                                    formFields[
-                                                                        key
-                                                                    ] || ""
-                                                                }
-                                                                onChange={(e) =>
-                                                                    handleNewElementInputChange(
-                                                                        e,
-                                                                        key
-                                                                    )
-                                                                }
-                                                            />
-                                                            <span className="edit-icon"></span>
-
-                                                            {key === "name" && (
-                                                                <button
-                                                                    type="button"
-                                                                    className="save-icon"
-                                                                    style={{
-                                                                        opacity:
-                                                                            formFields
-                                                                                .name
-                                                                                ?.length >
-                                                                            1
-                                                                                ? 1
-                                                                                : 0,
-                                                                    }}
-                                                                    onClick={
-                                                                        addNewElement
+                                    {mode === "edit" &&
+                                        bookId !=
+                                            "creditor-responsible-persons" &&
+                                        bookId != "responsible-persons" && (
+                                            <tr className="border-gray-300 text-base border-b text-left">
+                                                {columns.map(({ key }) => (
+                                                    <td
+                                                        key={key}
+                                                        className="px-4 py-7 min-w-[180px] max-w-[200px]"
+                                                    >
+                                                        {key === "name" ||
+                                                        key ===
+                                                            "counterparty_name" ||
+                                                        key === "full_name" ? (
+                                                            <div
+                                                                key={key}
+                                                                className="flex items-center gap-2"
+                                                            >
+                                                                <input
+                                                                    type="text"
+                                                                    className="w-full"
+                                                                    placeholder="Новый элемент"
+                                                                    name={key}
+                                                                    value={
+                                                                        formFields[
+                                                                            key
+                                                                        ] || ""
                                                                     }
-                                                                ></button>
-                                                            )}
-                                                        </div>
-                                                    ) : (
-                                                        "—"
-                                                    )}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    )}
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        handleNewElementInputChange(
+                                                                            e,
+                                                                            key
+                                                                        )
+                                                                    }
+                                                                />
+                                                                <span className="edit-icon"></span>
+
+                                                                {key ===
+                                                                    "name" && (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="save-icon"
+                                                                        style={{
+                                                                            opacity:
+                                                                                formFields
+                                                                                    .name
+                                                                                    ?.length >
+                                                                                1
+                                                                                    ? 1
+                                                                                    : 0,
+                                                                        }}
+                                                                        onClick={
+                                                                            addNewElement
+                                                                        }
+                                                                    ></button>
+                                                                )}
+                                                            </div>
+                                                        ) : (
+                                                            "—"
+                                                        )}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        )}
 
                                     {filteredProjects?.length > 0 &&
                                         bookId !==

@@ -89,7 +89,7 @@ const ReferenceItemExtended = ({
                                 className="border-b border-gray-300"
                             >
                                 <td
-                                    className="py-3"
+                                    className="py-3 w-[75%]"
                                     style={{
                                         opacity: 0,
                                         pointerEvents: "none",
@@ -129,7 +129,7 @@ const ReferenceItemExtended = ({
                                     </table>
                                 </td>
 
-                                <td className="pr-4">{project.name}</td>
+                                <td className="pr-4 min-w-[210px] max-w-[210px]">{project.name}</td>
                             </tr>
                         ))}
                     </tbody>
