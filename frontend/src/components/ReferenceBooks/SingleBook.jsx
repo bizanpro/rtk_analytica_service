@@ -14,12 +14,12 @@ const SingleBook = () => {
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
         ],
-        types: [
-            { label: "Сокращённое наименование", key: "short_name" },
-            { label: "Полное наименование", key: "name" },
-            { label: "Кол-во проектов", key: "reports_count" },
-            { label: "Последнее изменение", key: "last_changes" },
-            { label: "Автор измнения", key: "edit_author" },
+        "report-types": [
+            { label: "Сокращённое наименование", key: "name" },
+            { label: "Полное наименование", key: "full_name" },
+            { label: "Кол-во проектов", key: "projects_count" },
+            { label: "Последнее изменение", key: "updated_at" },
+            { label: "Автор измнения", key: "author" },
         ],
         roles: [
             { label: "Наименование", key: "name" },
@@ -48,7 +48,7 @@ const SingleBook = () => {
 
     const TITLES = {
         industries: "Отрасли проектов",
-        types: "Типы услуг / отчетов",
+        "report-types": "Типы услуг / отчетов",
         roles: "Роли в проектах",
         banks: "Кредиторы",
         "responsible-persons": "Контакты заказчика",

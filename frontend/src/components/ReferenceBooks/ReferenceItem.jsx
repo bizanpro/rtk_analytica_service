@@ -138,6 +138,7 @@ const ReferenceItem = ({
                             }}
                             className="delete-button"
                             title="Удалить элемент"
+                            id={data.id}
                             disabled={data.projects_count > 0}
                         >
                             <span className="delete-icon"></span>

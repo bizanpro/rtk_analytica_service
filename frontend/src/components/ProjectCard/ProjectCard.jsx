@@ -26,6 +26,7 @@ const ProjectCard = () => {
     const [industries, setIndustries] = useState([]);
     const [contragents, setContragents] = useState([]);
     const [banks, setBanks] = useState([]);
+    const [reportTypes, setReportTypes] = useState([]);
 
     const [lenders, setLenders] = useState([]);
     const [customers, setCustomers] = useState([]);
@@ -54,24 +55,22 @@ const ProjectCard = () => {
         setProjectData({ ...projectData, [name]: e.target.value });
     };
 
-    // Обработчик назначения банков
+    // Обработка привязки банков к проекту
     const handleBankChange = (e, index) => {
         const selectedId = e.target.value ? +e.target.value : null;
 
-        // Обновляем ID банков (setFormFields)
         setFormFields((prev) => {
             const updatedBanks = prev.creditors ? [...prev.creditors] : [];
 
             if (selectedId === null) {
-                updatedBanks.splice(index, 1); // Удаляем банк
+                updatedBanks.splice(index, 1);
             } else {
-                updatedBanks[index] = selectedId; // Добавляем или заменяем банк
+                updatedBanks[index] = selectedId;
             }
 
             return { ...prev, creditors: updatedBanks.filter((id) => id) };
         });
 
-        // Обновляем массив объектов (setProjectData)
         setProjectData((prev) => {
             let updatedCreditors = [...prev.creditors];
 
@@ -154,6 +153,14 @@ const ProjectCard = () => {
         setBanks(response.data.data);
     };
 
+    // Получение Типов отчета
+    const fetchReportTypes = async () => {
+        const response = await getData(
+            `${import.meta.env.VITE_API_URL}report-types`
+        );
+        setReportTypes(response.data.data);
+    };
+
     // Получение проекта
     const getProject = async (id) => {
         try {
@@ -176,6 +183,7 @@ const ProjectCard = () => {
                 fetchIndustries(),
                 fetchContragents(),
                 fetchBanks(),
+                fetchReportTypes(),
             ]);
         } catch (error) {
             console.error("Ошибка при загрузке проекта:", error);
@@ -704,7 +712,6 @@ const ProjectCard = () => {
                                     <ul className="flex gap-3 flex-wrap">
                                         {projectData.creditors?.map(
                                             (item, index) => {
-                                                // Фильтруем доступные банки для каждого селекта
                                                 const availableBanks =
                                                     banks.filter(
                                                         (bank) =>
@@ -884,7 +891,7 @@ const ProjectCard = () => {
                                     )}
                                 </div>
 
-                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow">
+                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
                                     {!reportWindowsState ? (
                                         <ul className="grid gap-3">
                                             <li className="grid items-center grid-cols-[24%_24%_49%] gap-3 mb-2 text-gray-400">
@@ -897,9 +904,10 @@ const ProjectCard = () => {
                                         </ul>
                                     ) : (
                                         <ProjectReportWindow
-                                            ReportWindowsState={
+                                            reportWindowsState={
                                                 setReportWindowsState
                                             }
+                                            reportTypes={reportTypes}
                                         />
                                     )}
                                 </div>

@@ -2,17 +2,18 @@ import { useState, useEffect } from "react";
 
 import DatePicker from "react-datepicker";
 
-const ProjectReportWindow = ({ ReportWindowsState }) => {
+const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
     const [agreementStatus, setAgreementStatus] = useState("запланирован");
     const [teammates, setTeammates] = useState([]);
     const [contractors, setContractors] = useState([]);
-    const [dateRanges, setDateRanges] = useState(defaultRanges);
 
     const defaultRanges = {
         picker1: { start: new Date("2024-08-01"), end: new Date("2024-10-01") },
         picker2: { start: new Date("2024-06-01"), end: new Date("2024-07-01") },
         picker3: { start: new Date("2024-06-01"), end: new Date("2024-07-01") },
     };
+
+    const [dateRanges, setDateRanges] = useState(defaultRanges);
 
     // Добавление блока заказчика или кредитора
     const addBlock = (type) => {
@@ -60,6 +61,12 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
         }
     };
 
+    // Форматируем стоимость
+    const formatPrice = (price) =>
+        new Intl.NumberFormat("ru-RU", { minimumFractionDigits: 0 }).format(
+            price
+        );
+
     useEffect(() => {
         updateStatus();
     }, [dateRanges]);
@@ -69,12 +76,11 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
             <div className="grid gap-3 grid-cols-[50%_50%]">
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Тип отчёта</span>
-                    <div className="border-2 border-gray-300 p-1">
-                        <select className="w-full" disabled>
-                            <option value="ФТА">ФТА</option>
-                            <option value="ФТМ">ФТМ</option>
-                            <option value="ФМ">ФМ</option>
-                            <option value="ИЗ">ИЗ</option>
+                    <div className="border-2 border-gray-300 p-1 h-[32px]">
+                        <select className="w-full">
+                            {reportTypes.length > 0 && reportTypes.map(type => (
+                                <option key={type.id} value={type.id}>{type.name}</option>
+                            ))}
                         </select>
                     </div>
                 </div>
@@ -82,7 +88,7 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Отчетный период</span>
                     <DatePicker
-                        className="border-2 border-gray-300 p-1 w-full"
+                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
                         selected={dateRanges.picker1.start}
                         startDate={dateRanges.picker1.start}
                         endDate={dateRanges.picker1.end}
@@ -105,7 +111,7 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
                     <span className="text-gray-400">
                         Бюджет проекта, млрд руб.
                     </span>
-                    <div className="border-2 border-gray-300 p-1">
+                    <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <input
                             type="number"
                             className="w-full"
@@ -118,7 +124,7 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Период реализации</span>
                     <DatePicker
-                        className="border-2 border-gray-300 p-1 w-full"
+                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
                         selected={dateRanges.picker2.start}
                         startDate={dateRanges.picker2.start}
                         endDate={dateRanges.picker2.end}
@@ -136,10 +142,10 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
                 </div>
             </div>
 
-            <div className="grid gap-3 grid-cols-1">
+            {/* <div className="grid gap-3 grid-cols-1">
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Договор</span>
-                    <div className="border-2 border-gray-300 p-1">
+                    <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select className="w-full" disabled>
                             <option value="Договор 45222 от 12.01.2025">
                                 Договор 45222 от 12.01.2025
@@ -150,17 +156,18 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
                         </select>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             <div className="grid gap-3 grid-cols-[50%_50%]">
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Стоимость услуг, руб.</span>
-                    <div className="border-2 border-gray-300 p-1">
+                    <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <input
-                            type="number"
+                            type="text"
                             className="w-full"
                             placeholder="0,0"
-                            readOnly
+                            value={formatPrice(3000000)}
+                            
                         />
                     </div>
                 </div>
@@ -168,7 +175,7 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Период выполнения</span>
                     <DatePicker
-                        className="border-2 border-gray-300 p-1 w-full"
+                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
                         selected={dateRanges.picker3.start}
                         startDate={dateRanges.picker3.start}
                         endDate={dateRanges.picker3.end}
@@ -195,7 +202,7 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
             >
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Статус</span>
-                    <div className="border-2 border-gray-300 p-1">
+                    <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
                             className="w-full"
                             value={agreementStatus}
@@ -257,8 +264,8 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
                 teammates.map((id) => (
                     <div className="grid gap-3 grid-cols-2" key={id}>
                         <div className="flex flex-col gap-2 justify-between">
-                            <div className="border-2 border-gray-300 p-1">
-                                <select className="w-full" disabled>
+                            <div className="border-2 border-gray-300 p-1 h-[32px]">
+                                <select className="w-full">
                                     <option value="Прохоров Сергей Викторович">
                                         Прохоров Сергей Викторович
                                     </option>
@@ -269,8 +276,8 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
                             </div>
                         </div>
                         <div className="flex flex-col gap-2 justify-between">
-                            <div className="border-2 border-gray-300 p-1">
-                                <select className="w-full" disabled>
+                            <div className="border-2 border-gray-300 p-1 h-[32px]">
+                                <select className="w-full">
                                     <option value="Руководитель проекта">
                                         Руководитель проекта
                                     </option>
@@ -303,8 +310,8 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
                     <div className="flex flex-col gap-1" key={id}>
                         <div className="grid gap-3 grid-cols-2">
                             <div className="flex flex-col gap-2 justify-between">
-                                <div className="border-2 border-gray-300 p-1">
-                                    <select className="w-full" disabled>
+                                <div className="border-2 border-gray-300 p-1 h-[32px]">
+                                    <select className="w-full">
                                         <option value="ООО 'ИЭС'">
                                             ООО 'ИЭС'
                                         </option>
@@ -315,8 +322,8 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2 justify-between">
-                                <div className="border-2 border-gray-300 p-1">
-                                    <select className="w-full" disabled>
+                                <div className="border-2 border-gray-300 p-1 h-[32px]">
+                                    <select className="w-full">
                                         <option value="Технология">
                                             Технология
                                         </option>
@@ -331,8 +338,8 @@ const ProjectReportWindow = ({ ReportWindowsState }) => {
                         <div className="grid gap-3 grid-cols-1">
                             <div className="flex flex-col gap-2 justify-between">
                                 <span className="text-gray-400"></span>
-                                <div className="border-2 border-gray-300 p-1">
-                                    <select className="w-full" disabled>
+                                <div className="border-2 border-gray-300 p-1 h-[32px]">
+                                    <select className="w-full">
                                         <option value="Договор 45222 от 12.01.2025">
                                             Договор 45222 от 12.01.2025
                                         </option>
