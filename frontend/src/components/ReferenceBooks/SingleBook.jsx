@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
-import Select from "../Select";
+// import Select from "../Select";
 import ReferenceItem from "./ReferenceItem";
 import ReferenceItemExtended from "./ReferenceItemExtended";
 
@@ -35,13 +35,9 @@ const SingleBook = () => {
             { label: "Автор измнения", key: "author" },
         ],
         "responsible-persons": [
-            { label: "Наименование контрагента", key: "name" },
-            { label: "Тип контрагента", key: "role" },
-            { label: "ФИО / должность", key: "contact_persons" },
-            { label: "Кол-во проектов", key: "projects_count" },
-            { label: "Контакты", key: "contact_persons" },
-            { label: "Последнее изменение", key: "updated_at" },
-            { label: "Автор измнения", key: "author" },
+            { label: "Наименование контрагента", key: "contragent" },
+            { label: "Проект", key: "project_name" },
+            { label: "ФИО / должность", key: "responsible_persons" },
         ],
         "creditor-responsible-persons": [
             { label: "Банк", key: "" },

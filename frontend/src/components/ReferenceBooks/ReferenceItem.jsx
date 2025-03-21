@@ -36,62 +36,36 @@ const ReferenceItem = ({
                                 <tbody className="flex flex-col gap-3">
                                     {Array.isArray(value) ? (
                                         value.map((item, index) => (
-                                            <tr key={`${key}_${index}`}>
+                                            <tr
+                                                className={`${
+                                                    index !== value.length - 1
+                                                        ? "border-b border-gray-300 pb-2"
+                                                        : ""
+                                                }`}
+                                                key={`${key}_${index}`}
+                                            >
                                                 <td className="px-4">
                                                     {typeof item === "object" &&
                                                         item !== null && (
                                                             <div className="flex flex-col gap-1">
-                                                                {Object.entries(
-                                                                    item
-                                                                ).map(
-                                                                    ([
-                                                                        field,
-                                                                        val,
-                                                                    ]) =>
-                                                                        (field ===
-                                                                            "name" ||
-                                                                            field ===
-                                                                                "full_name" ||
-                                                                            field ===
-                                                                                "phone") &&
-                                                                        mode ===
-                                                                            "edit" ? (
-                                                                            <div
-                                                                                key={
-                                                                                    field
-                                                                                }
-                                                                                className="flex items-center gap-2"
-                                                                            >
-                                                                                <input
-                                                                                    type="text"
-                                                                                    className="w-full"
-                                                                                    value={
-                                                                                        val?.toString() ||
-                                                                                        "—"
-                                                                                    }
-                                                                                    onChange={(
-                                                                                        e
-                                                                                    ) =>
-                                                                                        handleInputChange(
-                                                                                            e,
-                                                                                            field,
-                                                                                            data.id
-                                                                                        )
-                                                                                    }
-                                                                                />
-                                                                                <span className="edit-icon"></span>
-                                                                            </div>
-                                                                        ) : (
-                                                                            <div
-                                                                                className="text-sm"
-                                                                                key={
-                                                                                    field
-                                                                                }
-                                                                            >
-                                                                                {val?.toString() ||
-                                                                                    "—"}
+                                                                {Object.entries(item).map(([field, val]) =>
+                                                                    (field !== "id" && field !== "updated_at" && (field === "name" || field === "full_name" || field === "phone") && mode === "edit") ? (
+                                                                        <div key={field} className="flex items-center gap-2">
+                                                                            <input
+                                                                                type="text"
+                                                                                className="w-full"
+                                                                                value={val?.toString() || "—"}
+                                                                                onChange={(e) => handleInputChange(e, field, data.id)}
+                                                                            />
+                                                                            <span className="edit-icon"></span>
+                                                                        </div>
+                                                                    ) : (
+                                                                        field !== "id" && field !== "updated_at" && (
+                                                                            <div className="text-sm" key={field}>
+                                                                                {val?.toString() || "—"}
                                                                             </div>
                                                                         )
+                                                                    )
                                                                 )}
                                                             </div>
                                                         )}
@@ -141,32 +115,34 @@ const ReferenceItem = ({
             })}
 
             {mode === "edit" && (
-                <td className="flex items-center gap-2 px-4 py-7 min-w-[50px] text-center">
-                    <button
-                        onClick={() => {
-                            editElement(data.id);
-                        }}
-                        className="delete-button"
-                        title="Изменить элемент"
-                    >
-                        <span className="update-icon"></span>
-                    </button>
-                    <button
-                        onClick={() => {
-                            if (data.projects_count) {
-                                if (data.projects_count < 1) {
+                <td className="px-4 py-7 min-w-[50px] text-center">
+                    <div className="flex items-center justify-end gap-2">
+                        <button
+                            onClick={() => {
+                                editElement(data.id);
+                            }}
+                            className="delete-button"
+                            title="Изменить элемент"
+                        >
+                            <span className="update-icon"></span>
+                        </button>
+                        <button
+                            onClick={() => {
+                                if (data.projects_count) {
+                                    if (data.projects_count < 1) {
+                                        deleteElement(data.id);
+                                    }
+                                } else {
                                     deleteElement(data.id);
                                 }
-                            } else {
-                                deleteElement(data.id);
-                            }
-                        }}
-                        className="delete-button"
-                        title="Удалить элемент"
-                        disabled={data.projects_count > 0}
-                    >
-                        <span className="delete-icon"></span>
-                    </button>
+                            }}
+                            className="delete-button"
+                            title="Удалить элемент"
+                            disabled={data.projects_count > 0}
+                        >
+                            <span className="delete-icon"></span>
+                        </button>
+                    </div>
                 </td>
             )}
         </tr>
