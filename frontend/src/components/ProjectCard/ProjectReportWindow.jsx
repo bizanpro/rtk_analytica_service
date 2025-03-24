@@ -409,7 +409,7 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
 
                 <button
                     type="button"
-                    onClick={() => ReportWindowsState(false)}
+                    onClick={() => reportWindowsState(false)}
                     className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
                 >
                     Отменить
