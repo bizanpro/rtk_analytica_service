@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 
-const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
+const ProjectReportWindow = ({
+    sendReport,
+    reportWindowsState,
+    reportTypes,
+}) => {
     const [reportData, setReportData] = useState({
         "agreement-status": "запланирован",
-        type: "",
+        type: 1,
         budget: "",
         "services-cost": 3000000,
         "porting-period": {
@@ -33,6 +37,7 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
         }
     };
 
+    // Обработка дат
     const handleChangeDateRange =
         (id) =>
         ([newStartDate, newEndDate]) => {
@@ -111,6 +116,7 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                         <select
                             className="w-full"
                             onChange={(e) => handleInputChange(e, "type")}
+                            value={reportData.type}
                         >
                             {reportTypes.length > 0 &&
                                 reportTypes.map((type) => (
@@ -122,20 +128,16 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-2 justify-between">
-                    <span className="text-gray-400">Отчетный период</span>
+                <div className="flex flex-col">
+                    <span className="block mb-2 text-gray-400">
+                        Отчетный период
+                    </span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
                         selected={reportData["porting-period"].start}
                         startDate={reportData["porting-period"].start}
                         endDate={reportData["porting-period"].end}
                         onChange={handleChangeDateRange("porting-period")}
-                        excludeDates={[
-                            new Date("2024-05-01"),
-                            new Date("2024-02-01"),
-                            new Date("2024-01-01"),
-                            new Date("2024-11-01"),
-                        ]}
                         dateFormat="dd.MM.yyyy"
                         placeholderText=""
                         selectsRange
@@ -159,8 +161,10 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-2 justify-between">
-                    <span className="text-gray-400">Период реализации</span>
+                <div className="flex flex-col">
+                    <span className="block mb-2 text-gray-400">
+                        Период реализации
+                    </span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
                         selected={reportData["implementation-period"].start}
@@ -169,12 +173,6 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                         onChange={handleChangeDateRange(
                             "implementation-period"
                         )}
-                        excludeDates={[
-                            new Date("2024-05-01"),
-                            new Date("2024-02-01"),
-                            new Date("2024-01-01"),
-                            new Date("2024-11-01"),
-                        ]}
                         dateFormat="dd.MM.yyyy"
                         placeholderText=""
                         selectsRange
@@ -214,20 +212,16 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-2 justify-between">
-                    <span className="text-gray-400">Период выполнения</span>
+                <div className="flex flex-col">
+                    <span className="block mb-2 text-gray-400">
+                        Период выполнения
+                    </span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
                         selected={reportData["completion-period"].start}
                         startDate={reportData["completion-period"].start}
                         endDate={reportData["completion-period"].end}
                         onChange={handleChangeDateRange("completion-period")}
-                        excludeDates={[
-                            new Date("2024-05-01"),
-                            new Date("2024-02-01"),
-                            new Date("2024-01-01"),
-                            new Date("2024-11-01"),
-                        ]}
                         dateFormat="dd.MM.yyyy"
                         placeholderText=""
                         selectsRange
@@ -248,9 +242,6 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                         <select
                             className="w-full"
                             value={reportData["agreement-status"]}
-                            // onChange={(evt) =>
-                            //     setAgreementStatus(evt.target.value)
-                            // }
                             onChange={(e) =>
                                 handleInputChange(e, "agreement-status")
                             }
@@ -402,7 +393,8 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                 <button
                     type="button"
                     className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                    // onClick={}
+                    onClick={() => sendReport(reportData)}
+                    title="Сохранить отчёт"
                 >
                     Сохранить
                 </button>
@@ -411,6 +403,7 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                     type="button"
                     onClick={() => reportWindowsState(false)}
                     className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
+                    title="Отменить сохранение отчёта"
                 >
                     Отменить
                 </button>

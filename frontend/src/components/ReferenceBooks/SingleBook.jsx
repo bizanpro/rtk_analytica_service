@@ -23,9 +23,9 @@ const SingleBook = () => {
         ],
         roles: [
             { label: "Наименование", key: "name" },
-            { label: "Кол-во ролей в отчётах", key: "roles_count" },
-            { label: "Последнее изменение", key: "last_changes" },
-            { label: "Автор измнения", key: "edit_author" },
+            { label: "Кол-во ролей в отчётах", key: "reports_count" },
+            { label: "Последнее изменение", key: "updated_at" },
+            { label: "Автор измнения", key: "author" },
         ],
         banks: [
             { label: "Сокращённое наименование", key: "name" },

@@ -8,6 +8,7 @@ import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
 import ProjectReportWindow from "./ProjectReportWindow";
 import ProjectReportItem from "./ProjectReportItem";
+import ProjectReportEditor from "./ProjectReportEditor";
 import ProjectStatisticsBlock from "./ProjectStatisticsBlock";
 
 import "./ProjectCard.scss";
@@ -48,7 +49,31 @@ const ProjectCard = () => {
         email: "",
     });
 
+    const [reports, setReports] = useState([
+        {
+            id: 1,
+            name: "ФТМ 1Q25",
+            status: "завершён",
+            create_date_start: "01.01.25",
+            create_date_end: "31.03.25",
+            period: "180 дней",
+            completion_period_start: "01.04.25",
+            completion_period_end: "20.05.25",
+        },
+        {
+            id: 2,
+            name: "ФТМ 1Q25",
+            status: "в работе",
+            create_date_start: "01.01.25",
+            create_date_end: "31.03.25",
+            period: "180 дней",
+            completion_period_start: "01.04.25",
+            completion_period_end: "20.05.25",
+        },
+    ]);
+
     const [reportWindowsState, setReportWindowsState] = useState(false);
+    const [reportEditorState, setReportEditorState] = useState(false);
 
     const handleInputChange = (e, name) => {
         setFormFields({ ...formFields, [name]: e.target.value });
@@ -316,6 +341,19 @@ const ProjectCard = () => {
             console.error("Ошибка при обновлении проекта:", error);
             throw error;
         }
+    };
+
+    // Отправка отчёта
+    const sendReport = (data) => {
+        // postData("POST", `${import.meta.env.VITE_API_URL}`, data).then(
+        //     (response) => {
+        //         if (response) {
+        //             console.log(response);
+        //         }
+        //     }
+        // );
+
+        console.log(data);
     };
 
     useEffect(() => {
@@ -867,51 +905,75 @@ const ProjectCard = () => {
                         </div>
 
                         <div className="flex flex-col">
-                            <ProjectStatisticsBlock />
+                            {reportEditorState ? (
+                                <ProjectReportEditor />
+                            ) : (
+                                <>
+                                    <ProjectStatisticsBlock />
 
-                            <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        История проекта
-                                    </span>
+                                    <div className="flex flex-col gap-2 flex-grow">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-gray-400">
+                                                История проекта
+                                            </span>
 
-                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                        ?
-                                    </span>
-                                    {mode == "edit" && (
-                                        <button
-                                            type="button"
-                                            className="add-button"
-                                            onClick={() =>
-                                                setReportWindowsState(true)
-                                            }
-                                        >
-                                            <span></span>
-                                        </button>
-                                    )}
-                                </div>
+                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                ?
+                                            </span>
+                                            {mode == "edit" && (
+                                                <button
+                                                    type="button"
+                                                    className="add-button"
+                                                    onClick={() =>
+                                                        setReportWindowsState(
+                                                            true
+                                                        )
+                                                    }
+                                                >
+                                                    <span></span>
+                                                </button>
+                                            )}
+                                        </div>
 
-                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                    {!reportWindowsState ? (
-                                        <ul className="grid gap-3">
-                                            <li className="grid items-center grid-cols-[24%_24%_49%] gap-3 mb-2 text-gray-400">
-                                                <span>Отчет</span>
-                                                <span>Статус</span>
-                                                <span>Период выполнения</span>
-                                            </li>
+                                        <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                            {!reportWindowsState ? (
+                                                <ul className="grid gap-3">
+                                                    <li className="grid items-center grid-cols-[24%_24%_49%] gap-3 mb-2 text-gray-400">
+                                                        <span>Отчет</span>
+                                                        <span>Статус</span>
+                                                        <span>
+                                                            Период выполнения
+                                                        </span>
+                                                    </li>
 
-                                            <ProjectReportItem />
-                                        </ul>
-                                    ) : (
-                                        <ProjectReportWindow
-                                            reportWindowsState={
-                                                setReportWindowsState
-                                            }
-                                            reportTypes={reportTypes}
-                                        />
-                                    )}
-                                </div>
-                            </div>
+                                                    {reports.length > 0 &&
+                                                        reports.map(
+                                                            (report) => (
+                                                                <ProjectReportItem
+                                                                    {...report}
+                                                                    setReportEditorState={
+                                                                        setReportEditorState
+                                                                    }
+                                                                    key={
+                                                                        report.id
+                                                                    }
+                                                                />
+                                                            )
+                                                        )}
+                                                </ul>
+                                            ) : (
+                                                <ProjectReportWindow
+                                                    reportWindowsState={
+                                                        setReportWindowsState
+                                                    }
+                                                    sendReport={sendReport}
+                                                    reportTypes={reportTypes}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
