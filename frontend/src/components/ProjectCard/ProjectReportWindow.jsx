@@ -1,19 +1,75 @@
 import { useState, useEffect } from "react";
-
 import DatePicker from "react-datepicker";
 
 const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
-    const [agreementStatus, setAgreementStatus] = useState("запланирован");
+    const [reportData, setReportData] = useState({
+        "agreement-status": "запланирован",
+        type: "",
+        budget: "",
+        "services-cost": 3000000,
+        "porting-period": {
+            start: new Date("2025-01-01"),
+            end: new Date("2025-12-31"),
+        },
+        "implementation-period": {
+            start: new Date("2025-01-01"),
+            end: new Date("2025-12-31"),
+        },
+        "completion-period": {
+            start: new Date("2025-01-01"),
+            end: new Date("2025-12-31"),
+        },
+    });
+
     const [teammates, setTeammates] = useState([]);
     const [contractors, setContractors] = useState([]);
 
-    const defaultRanges = {
-        picker1: { start: new Date("2024-08-01"), end: new Date("2024-10-01") },
-        picker2: { start: new Date("2024-06-01"), end: new Date("2024-07-01") },
-        picker3: { start: new Date("2024-06-01"), end: new Date("2024-07-01") },
+    const handleInputChange = (e, name) => {
+        if (name === "services-cost") {
+            const value = e.target.value.replace(/\s/g, "");
+            setReportData({ ...reportData, [name]: Number(value) || 0 });
+        } else {
+            setReportData({ ...reportData, [name]: e.target.value });
+        }
     };
 
-    const [dateRanges, setDateRanges] = useState(defaultRanges);
+    const handleChangeDateRange =
+        (id) =>
+        ([newStartDate, newEndDate]) => {
+            setReportData((prev) => ({
+                ...prev,
+                [id]: { start: newStartDate, end: newEndDate },
+            }));
+        };
+
+    // Обновление статуса проекта в отчете
+    const updateStatus = () => {
+        const today = new Date();
+        const { start, end } = reportData["completion-period"];
+
+        if (start <= today && (end === null || today < end)) {
+            setReportData({
+                ...reportData,
+                "agreement-status": "в работе",
+            });
+        } else if (start > today) {
+            setReportData({
+                ...reportData,
+                "agreement-status": "запланирован",
+            });
+        } else if (end && end < today) {
+            setReportData({
+                ...reportData,
+                "agreement-status": "завершён",
+            });
+        }
+    };
+
+    // Форматируем стоимость
+    const formatPrice = (price) =>
+        new Intl.NumberFormat("ru-RU", { minimumFractionDigits: 0 }).format(
+            price
+        );
 
     // Добавление блока заказчика или кредитора
     const addBlock = (type) => {
@@ -38,38 +94,13 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
         }
     };
 
-    const handleChangeDateRange =
-        (id) =>
-        ([newStartDate, newEndDate]) => {
-            setDateRanges((prev) => ({
-                ...prev,
-                [id]: { start: newStartDate, end: newEndDate },
-            }));
-        };
-
-    // Обновление статуса проекта в отчете
-    const updateStatus = () => {
-        const today = new Date();
-        const { start, end } = dateRanges.picker3;
-
-        if (end && end < today) {
-            setAgreementStatus("завершён");
-        } else if (start > today) {
-            setAgreementStatus("запланирован");
-        } else if (start <= today && !end) {
-            setAgreementStatus("в работе");
-        }
-    };
-
-    // Форматируем стоимость
-    const formatPrice = (price) =>
-        new Intl.NumberFormat("ru-RU", { minimumFractionDigits: 0 }).format(
-            price
-        );
+    useEffect(() => {
+        console.log(reportData);
+    }, [reportData]);
 
     useEffect(() => {
         updateStatus();
-    }, [dateRanges]);
+    }, [reportData["completion-period"]]);
 
     return (
         <div className="grid gap-6">
@@ -77,10 +108,16 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Тип отчёта</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
-                        <select className="w-full">
-                            {reportTypes.length > 0 && reportTypes.map(type => (
-                                <option key={type.id} value={type.id}>{type.name}</option>
-                            ))}
+                        <select
+                            className="w-full"
+                            onChange={(e) => handleInputChange(e, "type")}
+                        >
+                            {reportTypes.length > 0 &&
+                                reportTypes.map((type) => (
+                                    <option key={type.id} value={type.id}>
+                                        {type.name}
+                                    </option>
+                                ))}
                         </select>
                     </div>
                 </div>
@@ -89,10 +126,10 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                     <span className="text-gray-400">Отчетный период</span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        selected={dateRanges.picker1.start}
-                        startDate={dateRanges.picker1.start}
-                        endDate={dateRanges.picker1.end}
-                        onChange={handleChangeDateRange("picker1")}
+                        selected={reportData["porting-period"].start}
+                        startDate={reportData["porting-period"].start}
+                        endDate={reportData["porting-period"].end}
+                        onChange={handleChangeDateRange("porting-period")}
                         excludeDates={[
                             new Date("2024-05-01"),
                             new Date("2024-02-01"),
@@ -116,7 +153,8 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                             type="number"
                             className="w-full"
                             placeholder="0,0"
-                            readOnly
+                            value={reportData.budget}
+                            onChange={(e) => handleInputChange(e, "budget")}
                         />
                     </div>
                 </div>
@@ -125,10 +163,12 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                     <span className="text-gray-400">Период реализации</span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        selected={dateRanges.picker2.start}
-                        startDate={dateRanges.picker2.start}
-                        endDate={dateRanges.picker2.end}
-                        onChange={handleChangeDateRange("picker2")}
+                        selected={reportData["implementation-period"].start}
+                        startDate={reportData["implementation-period"].start}
+                        endDate={reportData["implementation-period"].end}
+                        onChange={handleChangeDateRange(
+                            "implementation-period"
+                        )}
                         excludeDates={[
                             new Date("2024-05-01"),
                             new Date("2024-02-01"),
@@ -165,9 +205,11 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                         <input
                             type="text"
                             className="w-full"
-                            placeholder="0,0"
-                            value={formatPrice(3000000)}
-                            
+                            placeholder="0"
+                            value={formatPrice(reportData["services-cost"])}
+                            onChange={(e) =>
+                                handleInputChange(e, "services-cost")
+                            }
                         />
                     </div>
                 </div>
@@ -176,10 +218,10 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                     <span className="text-gray-400">Период выполнения</span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        selected={dateRanges.picker3.start}
-                        startDate={dateRanges.picker3.start}
-                        endDate={dateRanges.picker3.end}
-                        onChange={handleChangeDateRange("picker3")}
+                        selected={reportData["completion-period"].start}
+                        startDate={reportData["completion-period"].start}
+                        endDate={reportData["completion-period"].end}
+                        onChange={handleChangeDateRange("completion-period")}
                         excludeDates={[
                             new Date("2024-05-01"),
                             new Date("2024-02-01"),
@@ -195,7 +237,7 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
 
             <div
                 className={`grid gap-3 ${
-                    agreementStatus == "завершён"
+                    reportData["agreement-status"] == "завершён"
                         ? "grid-cols-[50%_50%]"
                         : "grid-cols-1"
                 }`}
@@ -205,9 +247,12 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
                             className="w-full"
-                            value={agreementStatus}
-                            onChange={(evt) =>
-                                setAgreementStatus(evt.target.value)
+                            value={reportData["agreement-status"]}
+                            // onChange={(evt) =>
+                            //     setAgreementStatus(evt.target.value)
+                            // }
+                            onChange={(e) =>
+                                handleInputChange(e, "agreement-status")
                             }
                         >
                             <option value="запланирован">запланирован</option>
@@ -217,7 +262,7 @@ const ProjectReportWindow = ({ reportWindowsState, reportTypes }) => {
                     </div>
                 </div>
 
-                {agreementStatus == "завершён" && (
+                {reportData["agreement-status"] == "завершён" && (
                     <div className="flex flex-col gap-2 justify-between">
                         <span className="text-gray-400">Добавить отчет</span>
 

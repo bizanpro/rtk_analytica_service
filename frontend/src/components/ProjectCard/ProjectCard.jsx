@@ -156,7 +156,7 @@ const ProjectCard = () => {
     // Получение Типов отчета
     const fetchReportTypes = async () => {
         const response = await getData(
-            `${import.meta.env.VITE_API_URL}report-types`
+            `${import.meta.env.VITE_API_URL}report-types?=with-count=true`
         );
         setReportTypes(response.data.data);
     };
