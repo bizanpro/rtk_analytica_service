@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 
-const ProjectReportWindow = ({
-    sendReport,
-    reportWindowsState,
-    reportTypes,
-}) => {
+import getData from "../../utils/getData";
+
+const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
     const [reportData, setReportData] = useState({
         "agreement-status": "запланирован",
         type: 1,
@@ -23,10 +21,15 @@ const ProjectReportWindow = ({
             start: new Date("2025-01-01"),
             end: new Date("2025-12-31"),
         },
+        "physical-persons": [],
     });
 
     const [teammates, setTeammates] = useState([]);
     const [contractors, setContractors] = useState([]);
+    const [reportTypes, setReportTypes] = useState([]);
+    const [physicalPersons, setPhysicalPersons] = useState([]);
+    const [roles, setRoles] = useState([]);
+    const [suppliers, setSuppliers] = useState([]);
 
     const handleInputChange = (e, name) => {
         if (name === "services-cost") {
@@ -79,25 +82,66 @@ const ProjectReportWindow = ({
     // Добавление блока заказчика или кредитора
     const addBlock = (type) => {
         if (type === "teammate") {
-            if (teammates.length < 1) {
-                setTeammates([
-                    ...teammates,
-                    {
-                        id: Date.now(),
-                    },
-                ]);
-            }
+            setTeammates([
+                ...teammates,
+                {
+                    id: Date.now(),
+                },
+            ]);
         } else if (type === "contractor") {
-            if (contractors.length < 1) {
-                setContractors([
-                    ...contractors,
-                    {
-                        id: Date.now(),
-                    },
-                ]);
-            }
+            setContractors([
+                ...contractors,
+                {
+                    id: Date.now(),
+                },
+            ]);
         }
     };
+
+    // Обработка селектов команды проекта и подрядчиков
+    const selectHandler = (evt, name) => {
+        setReportData((prev) => ({
+            ...prev,
+            [name]: [...prev[name], evt.target.value],
+        }));
+    };
+
+    // Получение Типов отчета
+    const fetchReportTypes = async () => {
+        const response = await getData(
+            `${import.meta.env.VITE_API_URL}report-types?=with-count=true`
+        );
+        setReportTypes(response.data.data);
+    };
+
+    // Получение физ. лиц для команды проекта
+    const fetchPhysicalPersons = async () => {
+        const response = await getData(
+            `${import.meta.env.VITE_API_URL}physical-persons`
+        );
+        setPhysicalPersons(response.data);
+    };
+
+    // Получение ролей
+    const fetchRoles = async () => {
+        const response = await getData(`${import.meta.env.VITE_API_URL}roles`);
+        setRoles(response.data.data);
+    };
+
+    // Получение подрядчиков
+    const fetchSuppliers = async () => {
+        const response = await getData(
+            `${import.meta.env.VITE_API_URL}suppliers`
+        );
+        setSuppliers(response.data);
+    };
+
+    useEffect(() => {
+        fetchReportTypes();
+        fetchPhysicalPersons();
+        fetchSuppliers();
+        fetchRoles();
+    }, []);
 
     useEffect(() => {
         console.log(reportData);
@@ -180,21 +224,24 @@ const ProjectReportWindow = ({
                 </div>
             </div>
 
-            {/* <div className="grid gap-3 grid-cols-1">
+            <div className="grid gap-3 grid-cols-1">
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Договор</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
-                        <select className="w-full" disabled>
-                            <option value="Договор 45222 от 12.01.2025">
-                                Договор 45222 от 12.01.2025
-                            </option>
-                            <option value="Договор 45222 от 12.01.2025">
-                                Договор 45222 от 13.01.2025
-                            </option>
+                        <select className="w-full">
+                            {contracts.length > 0 &&
+                                contracts.map((contract) => (
+                                    <option
+                                        value={contract.id}
+                                        key={contract.id}
+                                    >
+                                        {contract.counterparty_name}
+                                    </option>
+                                ))}
                         </select>
                     </div>
                 </div>
-            </div> */}
+            </div>
 
             <div className="grid gap-3 grid-cols-[50%_50%]">
                 <div className="flex flex-col gap-2 justify-between">
@@ -301,25 +348,41 @@ const ProjectReportWindow = ({
                     <div className="grid gap-3 grid-cols-2" key={id}>
                         <div className="flex flex-col gap-2 justify-between">
                             <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                <select className="w-full">
-                                    <option value="Прохоров Сергей Викторович">
-                                        Прохоров Сергей Викторович
-                                    </option>
-                                    <option value="Прохоров Сергей Викторович">
-                                        Прохоров Сергей Викторович
-                                    </option>
+                                <select
+                                    className="w-full"
+                                    // onChange={(e) =>
+                                    //     selectHandler(e, "physical-persons")
+                                    // }
+                                >
+                                    {physicalPersons?.length > 0 &&
+                                        physicalPersons.map((person) => (
+                                            <option
+                                                value={person.id}
+                                                key={person.id}
+                                            >
+                                                {person.name}
+                                            </option>
+                                        ))}
                                 </select>
                             </div>
                         </div>
                         <div className="flex flex-col gap-2 justify-between">
                             <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                <select className="w-full">
-                                    <option value="Руководитель проекта">
-                                        Руководитель проекта
-                                    </option>
-                                    <option value="Руководитель проекта">
-                                        Руководитель проекта
-                                    </option>
+                                <select
+                                    className="w-full"
+                                    // onChange={(e) =>
+                                    //     selectHandler(e, "physical-persons")
+                                    // }
+                                >
+                                    {roles?.length > 0 &&
+                                        roles.map((person) => (
+                                            <option
+                                                value={person.id}
+                                                key={person.id}
+                                            >
+                                                {person.name}
+                                            </option>
+                                        ))}
                                 </select>
                             </div>
                         </div>
@@ -347,25 +410,41 @@ const ProjectReportWindow = ({
                         <div className="grid gap-3 grid-cols-2">
                             <div className="flex flex-col gap-2 justify-between">
                                 <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                    <select className="w-full">
-                                        <option value="ООО 'ИЭС'">
-                                            ООО 'ИЭС'
-                                        </option>
-                                        <option value="ООО 'ИЭС'">
-                                            ООО 'ИЭС'
-                                        </option>
+                                    <select
+                                        className="w-full"
+                                        // onChange={(e) =>
+                                        //     selectHandler(e, "physical-persons")
+                                        // }
+                                    >
+                                        {suppliers?.length > 0 &&
+                                            suppliers.map((supplier) => (
+                                                <option
+                                                    value={supplier.id}
+                                                    key={supplier.id}
+                                                >
+                                                    {supplier.program_name}
+                                                </option>
+                                            ))}
                                     </select>
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2 justify-between">
                                 <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                    <select className="w-full">
-                                        <option value="Технология">
-                                            Технология
-                                        </option>
-                                        <option value="Технология">
-                                            Технология
-                                        </option>
+                                    <select
+                                        className="w-full"
+                                        // onChange={(e) =>
+                                        //     selectHandler(e, "physical-persons")
+                                        // }
+                                    >
+                                        {roles?.length > 0 &&
+                                            roles.map((person) => (
+                                                <option
+                                                    value={person.id}
+                                                    key={person.id}
+                                                >
+                                                    {person.name}
+                                                </option>
+                                            ))}
                                     </select>
                                 </div>
                             </div>
@@ -378,9 +457,6 @@ const ProjectReportWindow = ({
                                     <select className="w-full">
                                         <option value="Договор 45222 от 12.01.2025">
                                             Договор 45222 от 12.01.2025
-                                        </option>
-                                        <option value="Договор 45222 от 12.01.2025">
-                                            Договор 45222 от 13.01.2025
                                         </option>
                                     </select>
                                 </div>

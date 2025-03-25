@@ -27,7 +27,7 @@ const ProjectCard = () => {
     const [industries, setIndustries] = useState([]);
     const [contragents, setContragents] = useState([]);
     const [banks, setBanks] = useState([]);
-    const [reportTypes, setReportTypes] = useState([]);
+    const [contracts, setContracts] = useState([]);
 
     const [lenders, setLenders] = useState([]);
     const [customers, setCustomers] = useState([]);
@@ -62,7 +62,7 @@ const ProjectCard = () => {
         },
         {
             id: 2,
-            name: "ФТМ 1Q25",
+            name: "ФТМ 1Q26",
             status: "в работе",
             create_date_start: "01.01.25",
             create_date_end: "31.03.25",
@@ -72,8 +72,9 @@ const ProjectCard = () => {
         },
     ]);
 
-    const [reportWindowsState, setReportWindowsState] = useState(false);
+    const [reportWindowsState, setReportWindowsState] = useState(true);
     const [reportEditorState, setReportEditorState] = useState(false);
+    const [reportEditorName, setReportEditorName] = useState("");
 
     const handleInputChange = (e, name) => {
         setFormFields({ ...formFields, [name]: e.target.value });
@@ -178,12 +179,18 @@ const ProjectCard = () => {
         setBanks(response.data.data);
     };
 
-    // Получение Типов отчета
-    const fetchReportTypes = async () => {
-        const response = await getData(
-            `${import.meta.env.VITE_API_URL}report-types?=with-count=true`
-        );
-        setReportTypes(response.data.data);
+    // Получение договоров
+    const fetchContracts = async () => {
+        if (projectData.contragent_id) {
+            const response = await getData(
+                `${import.meta.env.VITE_API_URL}contragents/${
+                    projectData.contragent_id
+                }/contracts`
+            );
+            setContracts(response.data);
+        } else {
+            alert("Необходимо назначить заказчика");
+        }
     };
 
     // Получение проекта
@@ -208,7 +215,6 @@ const ProjectCard = () => {
                 fetchIndustries(),
                 fetchContragents(),
                 fetchBanks(),
-                fetchReportTypes(),
             ]);
         } catch (error) {
             console.error("Ошибка при загрузке проекта:", error);
@@ -371,6 +377,14 @@ const ProjectCard = () => {
         }
     }, [projectData.creditors]);
 
+    useEffect(() => {
+        if (projectData.contragent_id) {
+            fetchContracts();
+        } else {
+            setReportWindowsState(false);
+        }
+    }, [projectData.contragent_id]);
+
     return (
         <main className="page">
             <div className="new-project pt-8 pb-15">
@@ -391,6 +405,7 @@ const ProjectCard = () => {
                                     <button
                                         type="button"
                                         className="update-icon"
+                                        title="Обновить данные проекта"
                                         onClick={() => updateProject(projectId)}
                                     ></button>
                                 )}
@@ -906,7 +921,9 @@ const ProjectCard = () => {
 
                         <div className="flex flex-col">
                             {reportEditorState ? (
-                                <ProjectReportEditor />
+                                <ProjectReportEditor
+                                    reportEditorName={reportEditorName}
+                                />
                             ) : (
                                 <>
                                     <ProjectStatisticsBlock />
@@ -928,6 +945,16 @@ const ProjectCard = () => {
                                                         setReportWindowsState(
                                                             true
                                                         )
+                                                    }
+                                                    disabled={
+                                                        projectData.contragent_id
+                                                            ? false
+                                                            : true
+                                                    }
+                                                    title={
+                                                        projectData.contragent_id
+                                                            ? "Открыть конструктор отчёта"
+                                                            : "Необходимо назначить заказчика"
                                                     }
                                                 >
                                                     <span></span>
@@ -954,6 +981,9 @@ const ProjectCard = () => {
                                                                     setReportEditorState={
                                                                         setReportEditorState
                                                                     }
+                                                                    setReportEditorName={
+                                                                        setReportEditorName
+                                                                    }
                                                                     key={
                                                                         report.id
                                                                     }
@@ -967,7 +997,7 @@ const ProjectCard = () => {
                                                         setReportWindowsState
                                                     }
                                                     sendReport={sendReport}
-                                                    reportTypes={reportTypes}
+                                                    contracts={contracts}
                                                 />
                                             )}
                                         </div>

@@ -8,6 +8,7 @@ const ProjectReportItem = ({
     completion_period_start,
     completion_period_end,
     setReportEditorState,
+    setReportEditorName,
 }) => {
     return (
         <li className="grid items-center grid-cols-[24%_24%_49%] gap-3">
@@ -30,7 +31,10 @@ const ProjectReportItem = ({
                 <button
                     type="button"
                     className="flex-none w-[15px] h-[20px] border border-gray-400"
-                    onClick={() => setReportEditorState(true)}
+                    onClick={() => {
+                        setReportEditorName(name);
+                        setReportEditorState(true);
+                    }}
                 ></button>
                 <button
                     type="button"

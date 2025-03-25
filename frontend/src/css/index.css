@@ -166,6 +166,7 @@ button {
     grid-template-columns: minmax(100px, auto) minmax(100px, auto);
 }
 
+.radio-field_tab input,
 .radio-field input,
 .switch input {
     position: absolute;
@@ -174,6 +175,7 @@ button {
     visibility: hidden;
 }
 
+.radio-field_tab label,
 .radio-field label,
 .switch label {
     display: block;
@@ -191,6 +193,7 @@ button {
     text-align: left;
 }
 
+.radio-field_tab input:checked + label,
 .radio-field input:checked + label,
 .switch input:checked + label {
     pointer-events: none;
