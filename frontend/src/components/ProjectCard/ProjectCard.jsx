@@ -42,6 +42,7 @@ const ProjectCard = () => {
         email: "",
         creditor_id: 1,
     });
+
     const [newCustomer, setNewCustomer] = useState({
         full_name: "",
         phone: "",
@@ -75,6 +76,10 @@ const ProjectCard = () => {
     const [reportWindowsState, setReportWindowsState] = useState(true);
     const [reportEditorState, setReportEditorState] = useState(false);
     const [reportEditorName, setReportEditorName] = useState("");
+
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString("ru-RU");
+    };
 
     const handleInputChange = (e, name) => {
         setFormFields({ ...formFields, [name]: e.target.value });
@@ -351,13 +356,23 @@ const ProjectCard = () => {
 
     // Отправка отчёта
     const sendReport = (data) => {
-        // postData("POST", `${import.meta.env.VITE_API_URL}`, data).then(
-        //     (response) => {
-        //         if (response) {
-        //             console.log(response);
-        //         }
-        //     }
-        // );
+        data.report_period = `${formatDate(
+            data.report_period.start
+        )} - ${formatDate(data.report_period.end)}`;
+        data.implementation_period = `${formatDate(
+            data.implementation_period.start
+        )} - ${formatDate(data.implementation_period.end)}`;
+        data.execution_period = `${formatDate(
+            data.execution_period.start
+        )} - ${formatDate(data.execution_period.end)}`;
+
+        postData("POST", `${import.meta.env.VITE_API_URL}reports`, data).then(
+            (response) => {
+                if (response) {
+                    console.log(response);
+                }
+            }
+        );
 
         console.log(data);
     };

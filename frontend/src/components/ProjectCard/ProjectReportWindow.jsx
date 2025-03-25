@@ -5,23 +5,25 @@ import getData from "../../utils/getData";
 
 const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
     const [reportData, setReportData] = useState({
-        "agreement-status": "запланирован",
-        type: 1,
-        budget: "",
-        "services-cost": 3000000,
-        "porting-period": {
+        report_status_id: 1,
+        report_type_id: 1,
+        budget_in_billions: 0,
+        service_cost_in_rubles: 3000000,
+        contract_id: 1,
+        report_period: {
             start: new Date("2025-01-01"),
             end: new Date("2025-12-31"),
         },
-        "implementation-period": {
+        implementation_period: {
             start: new Date("2025-01-01"),
             end: new Date("2025-12-31"),
         },
-        "completion-period": {
+        execution_period: {
             start: new Date("2025-01-01"),
             end: new Date("2025-12-31"),
         },
-        "physical-persons": [],
+        responsible_persons: [],
+        contragents: [],
     });
 
     const [teammates, setTeammates] = useState([]);
@@ -32,7 +34,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
     const [suppliers, setSuppliers] = useState([]);
 
     const handleInputChange = (e, name) => {
-        if (name === "services-cost") {
+        if (name === "service_cost_in_rubles") {
             const value = e.target.value.replace(/\s/g, "");
             setReportData({ ...reportData, [name]: Number(value) || 0 });
         } else {
@@ -53,22 +55,22 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
     // Обновление статуса проекта в отчете
     const updateStatus = () => {
         const today = new Date();
-        const { start, end } = reportData["completion-period"];
+        const { start, end } = reportData["execution_period"];
 
         if (start <= today && (end === null || today < end)) {
             setReportData({
                 ...reportData,
-                "agreement-status": "в работе",
+                report_status_id: 1,
             });
         } else if (start > today) {
             setReportData({
                 ...reportData,
-                "agreement-status": "запланирован",
+                report_status_id: 2,
             });
         } else if (end && end < today) {
             setReportData({
                 ...reportData,
-                "agreement-status": "завершён",
+                report_status_id: 4,
             });
         }
     };
@@ -98,12 +100,34 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
         }
     };
 
-    // Обработка селектов команды проекта и подрядчиков
-    const selectHandler = (evt, name) => {
-        setReportData((prev) => ({
-            ...prev,
-            [name]: [...prev[name], evt.target.value],
-        }));
+    // Обработка селектов команды проекта
+    const handleTeammateChange = (index, key, value) => {
+        setReportData((prev) => {
+            const updatedPersons = [...prev.responsible_persons];
+            if (!updatedPersons[index]) {
+                updatedPersons[index] = {
+                    physical_person_id: null,
+                    role_id: null,
+                };
+            }
+            updatedPersons[index][key] = value;
+            return { ...prev, responsible_persons: updatedPersons };
+        });
+    };
+
+    // Обработка селектов подрядчиков
+    const handleContractorChange = (index, key, value) => {
+        setReportData((prev) => {
+            const updatedContractors = [...prev.contragents];
+            if (!updatedContractors[index]) {
+                updatedContractors[index] = {
+                    contragent_id: null,
+                    role_id: null,
+                };
+            }
+            updatedContractors[index][key] = value;
+            return { ...prev, contragents: updatedContractors };
+        });
     };
 
     // Получение Типов отчета
@@ -149,7 +173,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
 
     useEffect(() => {
         updateStatus();
-    }, [reportData["completion-period"]]);
+    }, [reportData["execution_period"]]);
 
     return (
         <div className="grid gap-6">
@@ -159,7 +183,9 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
                             className="w-full"
-                            onChange={(e) => handleInputChange(e, "type")}
+                            onChange={(e) =>
+                                handleInputChange(e, "report_type_id")
+                            }
                             value={reportData.type}
                         >
                             {reportTypes.length > 0 &&
@@ -178,12 +204,11 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                     </span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        selected={reportData["porting-period"].start}
-                        startDate={reportData["porting-period"].start}
-                        endDate={reportData["porting-period"].end}
-                        onChange={handleChangeDateRange("porting-period")}
+                        selected={reportData["report_period"].start}
+                        startDate={reportData["report_period"].start}
+                        endDate={reportData["report_period"].end}
+                        onChange={handleChangeDateRange("report_period")}
                         dateFormat="dd.MM.yyyy"
-                        placeholderText=""
                         selectsRange
                     />
                 </div>
@@ -200,7 +225,9 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                             className="w-full"
                             placeholder="0,0"
                             value={reportData.budget}
-                            onChange={(e) => handleInputChange(e, "budget")}
+                            onChange={(e) =>
+                                handleInputChange(e, "budget_in_billions")
+                            }
                         />
                     </div>
                 </div>
@@ -211,14 +238,13 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                     </span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        selected={reportData["implementation-period"].start}
-                        startDate={reportData["implementation-period"].start}
-                        endDate={reportData["implementation-period"].end}
+                        selected={reportData["implementation_period"].start}
+                        startDate={reportData["implementation_period"].start}
+                        endDate={reportData["implementation_period"].end}
                         onChange={handleChangeDateRange(
-                            "implementation-period"
+                            "implementation_period"
                         )}
                         dateFormat="dd.MM.yyyy"
-                        placeholderText=""
                         selectsRange
                     />
                 </div>
@@ -228,7 +254,12 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Договор</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
-                        <select className="w-full">
+                        <select
+                            className="w-full"
+                            onChange={(e) =>
+                                handleInputChange(e, "contract_id")
+                            }
+                        >
                             {contracts.length > 0 &&
                                 contracts.map((contract) => (
                                     <option
@@ -251,9 +282,11 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                             type="text"
                             className="w-full"
                             placeholder="0"
-                            value={formatPrice(reportData["services-cost"])}
+                            value={formatPrice(
+                                reportData["service_cost_in_rubles"]
+                            )}
                             onChange={(e) =>
-                                handleInputChange(e, "services-cost")
+                                handleInputChange(e, "service_cost_in_rubles")
                             }
                         />
                     </div>
@@ -265,12 +298,11 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                     </span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        selected={reportData["completion-period"].start}
-                        startDate={reportData["completion-period"].start}
-                        endDate={reportData["completion-period"].end}
-                        onChange={handleChangeDateRange("completion-period")}
+                        selected={reportData["execution_period"].start}
+                        startDate={reportData["execution_period"].start}
+                        endDate={reportData["execution_period"].end}
+                        onChange={handleChangeDateRange("execution_period")}
                         dateFormat="dd.MM.yyyy"
-                        placeholderText=""
                         selectsRange
                     />
                 </div>
@@ -278,7 +310,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
 
             <div
                 className={`grid gap-3 ${
-                    reportData["agreement-status"] == "завершён"
+                    reportData["report_status_id"] == 4
                         ? "grid-cols-[50%_50%]"
                         : "grid-cols-1"
                 }`}
@@ -288,19 +320,20 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
                             className="w-full"
-                            value={reportData["agreement-status"]}
+                            value={reportData["report_status_id"]}
                             onChange={(e) =>
-                                handleInputChange(e, "agreement-status")
+                                handleInputChange(e, "report_status_id")
                             }
                         >
-                            <option value="запланирован">запланирован</option>
-                            <option value="в работе">в работе</option>
-                            <option value="завершён">завершён</option>
+                            <option value="1">в работе</option>
+                            <option value="2">запланирован</option>
+                            <option value="3">отменён</option>
+                            <option value="4">завершён</option>
                         </select>
                     </div>
                 </div>
 
-                {reportData["agreement-status"] == "завершён" && (
+                {reportData["report_status_id"] == 4 && (
                     <div className="flex flex-col gap-2 justify-between">
                         <span className="text-gray-400">Добавить отчет</span>
 
@@ -343,51 +376,52 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                 </div>
             </div>
 
-            {teammates.length > 0 &&
-                teammates.map((id) => (
-                    <div className="grid gap-3 grid-cols-2" key={id}>
-                        <div className="flex flex-col gap-2 justify-between">
-                            <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                <select
-                                    className="w-full"
-                                    // onChange={(e) =>
-                                    //     selectHandler(e, "physical-persons")
-                                    // }
-                                >
-                                    {physicalPersons?.length > 0 &&
-                                        physicalPersons.map((person) => (
-                                            <option
-                                                value={person.id}
-                                                key={person.id}
-                                            >
-                                                {person.name}
-                                            </option>
-                                        ))}
-                                </select>
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-2 justify-between">
-                            <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                <select
-                                    className="w-full"
-                                    // onChange={(e) =>
-                                    //     selectHandler(e, "physical-persons")
-                                    // }
-                                >
-                                    {roles?.length > 0 &&
-                                        roles.map((person) => (
-                                            <option
-                                                value={person.id}
-                                                key={person.id}
-                                            >
-                                                {person.name}
-                                            </option>
-                                        ))}
-                                </select>
-                            </div>
+            {teammates.map((id, index) => (
+                <div className="grid gap-3 grid-cols-2" key={id}>
+                    <div className="flex flex-col gap-2 justify-between">
+                        <div className="border-2 border-gray-300 p-1 h-[32px]">
+                            <select
+                                className="w-full"
+                                onChange={(e) =>
+                                    handleTeammateChange(
+                                        index,
+                                        "physical_person_id",
+                                        Number(e.target.value)
+                                    )
+                                }
+                            >
+                                <option value="">Выберите сотрудника</option>
+                                {physicalPersons.map((person) => (
+                                    <option value={person.id} key={person.id}>
+                                        {person.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
-                ))}
+                    <div className="flex flex-col gap-2 justify-between">
+                        <div className="border-2 border-gray-300 p-1 h-[32px]">
+                            <select
+                                className="w-full"
+                                onChange={(e) =>
+                                    handleTeammateChange(
+                                        index,
+                                        "role_id",
+                                        Number(e.target.value)
+                                    )
+                                }
+                            >
+                                <option value="">Выберите роль</option>
+                                {roles.map((role) => (
+                                    <option value={role.id} key={role.id}>
+                                        {role.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            ))}
 
             <div className="grid gap-3 grid-cols-1">
                 <div className="flex flex-col gap-2 justify-between">
@@ -405,26 +439,32 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
             </div>
 
             {contractors.length > 0 &&
-                contractors.map((id) => (
+                contractors.map((id, index) => (
                     <div className="flex flex-col gap-1" key={id}>
                         <div className="grid gap-3 grid-cols-2">
                             <div className="flex flex-col gap-2 justify-between">
                                 <div className="border-2 border-gray-300 p-1 h-[32px]">
                                     <select
                                         className="w-full"
-                                        // onChange={(e) =>
-                                        //     selectHandler(e, "physical-persons")
-                                        // }
+                                        onChange={(e) =>
+                                            handleContractorChange(
+                                                index,
+                                                "contragent_id",
+                                                Number(e.target.value)
+                                            )
+                                        }
                                     >
-                                        {suppliers?.length > 0 &&
-                                            suppliers.map((supplier) => (
-                                                <option
-                                                    value={supplier.id}
-                                                    key={supplier.id}
-                                                >
-                                                    {supplier.program_name}
-                                                </option>
-                                            ))}
+                                        <option value="">
+                                            Выберите контрагента
+                                        </option>
+                                        {suppliers.map((supplier) => (
+                                            <option
+                                                value={supplier.id}
+                                                key={supplier.id}
+                                            >
+                                                {supplier.program_name}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>
@@ -432,19 +472,23 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                                 <div className="border-2 border-gray-300 p-1 h-[32px]">
                                     <select
                                         className="w-full"
-                                        // onChange={(e) =>
-                                        //     selectHandler(e, "physical-persons")
-                                        // }
+                                        onChange={(e) =>
+                                            handleContractorChange(
+                                                index,
+                                                "role_id",
+                                                Number(e.target.value)
+                                            )
+                                        }
                                     >
-                                        {roles?.length > 0 &&
-                                            roles.map((person) => (
-                                                <option
-                                                    value={person.id}
-                                                    key={person.id}
-                                                >
-                                                    {person.name}
-                                                </option>
-                                            ))}
+                                        <option value="">Выберите роль</option>
+                                        {roles.map((role) => (
+                                            <option
+                                                value={role.id}
+                                                key={role.id}
+                                            >
+                                                {role.name}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>
