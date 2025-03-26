@@ -9,7 +9,6 @@ const ContractorsSection = ({
 }) => {
     const [localContracts, setLocalContracts] = useState([]);
 
-    // Получение договоров подрядчика
     const fetchContracts = (id) => {
         getData(
             `${import.meta.env.VITE_API_URL}contragents/${id}/contracts`
@@ -18,7 +17,6 @@ const ContractorsSection = ({
         });
     };
 
-    // Обработчик изменения контрагента
     const handleContragentChange = async (e) => {
         const contragentId = Number(e.target.value);
         handleContractorChange(index, "contragent_id", contragentId);

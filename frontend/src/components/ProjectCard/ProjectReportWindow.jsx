@@ -35,6 +35,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
     const [roles, setRoles] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [reportStatuses, setReportStatuses] = useState([]);
+    const [addReport, setAddReport] = useState(false);
 
     // Валидация полей
     const validateFields = () => {
@@ -95,7 +96,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
         const newErrors = validateFields();
 
         if (Object.keys(newErrors).length === 0) {
-            sendReport(reportData);
+            sendReport(reportData, addReport);
         } else {
             alert(
                 "Исправьте ошибки перед сохранением:\n" +
@@ -422,7 +423,8 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                                     type="radio"
                                     name="add_report"
                                     id="addReportYes"
-                                    readOnly
+                                    onChange={() => setAddReport(true)}
+                                    checked={addReport ? true : false}
                                 />
                                 <label htmlFor="addReportYes">Да</label>
                             </div>
@@ -431,7 +433,8 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                                     type="radio"
                                     name="add_report"
                                     id="addReportNo"
-                                    readOnly
+                                    onChange={() => setAddReport(false)}
+                                    checked={addReport ? false : true}
                                 />
                                 <label htmlFor="addReportNo">Нет</label>
                             </div>

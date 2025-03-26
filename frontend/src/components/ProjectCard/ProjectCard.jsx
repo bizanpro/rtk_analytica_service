@@ -342,7 +342,7 @@ const ProjectCard = () => {
     };
 
     // Отправка отчёта
-    const sendReport = (data) => {
+    const sendReport = (data, addReport) => {
         data.report_period = `${formatDate(
             data.report_period.start
         )} - ${formatDate(data.report_period.end)}`;
@@ -355,15 +355,34 @@ const ProjectCard = () => {
 
         data.project_id = projectId;
 
-        postData("POST", `${import.meta.env.VITE_API_URL}reports`, data).then(
-            (response) => {
+        if (!addReport) {
+            postData(
+                "POST",
+                `${import.meta.env.VITE_API_URL}reports`,
+                data
+            ).then((response) => {
                 if (response) {
-                    console.log(response);
+                    alert(response.message);
+                    setReports((prevReports) => [
+                        ...prevReports,
+                        response.data,
+                    ]);
+                    setReportWindowsState(false);
                 }
-            }
-        );
+            });
+        }
+    };
 
-        console.log(data);
+    const deleteReport = (id) => {
+        postData(
+            "DELETE",
+            `${import.meta.env.VITE_API_URL}reports/${id}`,
+            {}
+        ).then((response) => {
+            if (response) {
+                setReports(reports.filter((report) => report.id !== id));
+            }
+        });
     };
 
     useEffect(() => {
@@ -981,6 +1000,10 @@ const ProjectCard = () => {
                                                         reports.map(
                                                             (report, index) => (
                                                                 <ProjectReportItem
+                                                                    key={
+                                                                        report.id ||
+                                                                        index
+                                                                    }
                                                                     {...report}
                                                                     setReportEditorState={
                                                                         setReportEditorState
@@ -988,10 +1011,10 @@ const ProjectCard = () => {
                                                                     setReportEditorName={
                                                                         setReportEditorName
                                                                     }
-                                                                    key={
-                                                                        report.id ||
-                                                                        index
+                                                                    deleteReport={
+                                                                        deleteReport
                                                                     }
+                                                                    mode={mode}
                                                                 />
                                                             )
                                                         )}
