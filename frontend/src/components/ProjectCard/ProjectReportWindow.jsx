@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import DatePicker from "react-datepicker";
-
 import getData from "../../utils/getData";
+
+import TeammatesSection from "../TeammatesSection";
+import ContractorsSection from "../ContractorsSection";
 
 const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
     const [reportData, setReportData] = useState({
         report_status_id: 1,
         report_type_id: 1,
         budget_in_billions: 0,
-        service_cost_in_rubles: 3000000,
+        service_cost_in_rubles: 0,
         contract_id: 1,
         report_period: {
             start: new Date("2025-01-01"),
@@ -32,25 +34,100 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
     const [physicalPersons, setPhysicalPersons] = useState([]);
     const [roles, setRoles] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
+    const [reportStatuses, setReportStatuses] = useState([]);
 
-    const handleInputChange = (e, name) => {
-        if (name === "service_cost_in_rubles") {
-            const value = e.target.value.replace(/\s/g, "");
-            setReportData({ ...reportData, [name]: Number(value) || 0 });
+    // Валидация полей
+    const validateFields = () => {
+        const newErrors = {};
+
+        if (!reportData.report_type_id) {
+            newErrors.report_type_id = "Тип отчёта обязателен";
+        }
+
+        if (
+            !reportData.budget_in_billions ||
+            reportData.budget_in_billions <= 0
+        ) {
+            newErrors.budget_in_billions = "Бюджет должен быть больше 0";
+        }
+
+        if (
+            !reportData.service_cost_in_rubles ||
+            reportData.service_cost_in_rubles <= 0
+        ) {
+            newErrors.service_cost_in_rubles =
+                "Стоимость услуг должна быть больше 0";
+        }
+
+        if (!reportData.contract_id) {
+            newErrors.contract_id = "Договор обязателен";
+        }
+
+        if (!reportData.report_period.start || !reportData.report_period.end) {
+            newErrors.report_period = "Укажите полный отчетный период";
+        }
+
+        if (
+            !reportData.implementation_period.start ||
+            !reportData.implementation_period.end
+        ) {
+            newErrors.implementation_period =
+                "Укажите полный период реализации";
+        }
+
+        if (!reportData.execution_period.start) {
+            newErrors.execution_period = "Укажите начало периода выполнения";
+        }
+
+        if (reportData.responsible_persons.length === 0) {
+            newErrors.responsible_persons =
+                "Добавьте хотя бы одного сотрудника";
+        }
+
+        if (reportData.contragents.length === 0) {
+            newErrors.contragents = "Добавьте хотя бы одного подрядчика";
+        }
+
+        return newErrors;
+    };
+
+    const handleSave = () => {
+        const newErrors = validateFields();
+
+        if (Object.keys(newErrors).length === 0) {
+            sendReport(reportData);
         } else {
-            setReportData({ ...reportData, [name]: e.target.value });
+            alert(
+                "Исправьте ошибки перед сохранением:\n" +
+                    Object.values(newErrors).join("\n")
+            );
         }
     };
 
+    // Обработка инпутов
+    const handleInputChange = useCallback((e, name) => {
+        const value =
+            name === "service_cost_in_rubles"
+                ? Number(e.target.value.replace(/\s/g, "")) || 0
+                : e.target.value;
+
+        setReportData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    }, []);
+
     // Обработка дат
-    const handleChangeDateRange =
+    const handleChangeDateRange = useCallback(
         (id) =>
-        ([newStartDate, newEndDate]) => {
-            setReportData((prev) => ({
-                ...prev,
-                [id]: { start: newStartDate, end: newEndDate },
-            }));
-        };
+            ([newStartDate, newEndDate]) => {
+                setReportData((prev) => ({
+                    ...prev,
+                    [id]: { start: newStartDate, end: newEndDate },
+                }));
+            },
+        []
+    );
 
     // Обновление статуса проекта в отчете
     const updateStatus = () => {
@@ -82,23 +159,13 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
         );
 
     // Добавление блока заказчика или кредитора
-    const addBlock = (type) => {
+    const addBlock = useCallback((type) => {
         if (type === "teammate") {
-            setTeammates([
-                ...teammates,
-                {
-                    id: Date.now(),
-                },
-            ]);
+            setTeammates((prev) => [...prev, { id: Date.now() }]);
         } else if (type === "contractor") {
-            setContractors([
-                ...contractors,
-                {
-                    id: Date.now(),
-                },
-            ]);
+            setContractors((prev) => [...prev, { id: Date.now() }]);
         }
-    };
+    }, []);
 
     // Обработка селектов команды проекта
     const handleTeammateChange = (index, key, value) => {
@@ -123,6 +190,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                 updatedContractors[index] = {
                     contragent_id: null,
                     role_id: null,
+                    contract_id: null,
                 };
             }
             updatedContractors[index][key] = value;
@@ -152,10 +220,18 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
         setRoles(response.data.data);
     };
 
+    // Получение статусов отчета
+    const fetchReportStatuses = async () => {
+        const response = await getData(
+            `${import.meta.env.VITE_API_URL}report-statuses`
+        );
+        setReportStatuses(response.data);
+    };
+
     // Получение подрядчиков
     const fetchSuppliers = async () => {
         const response = await getData(
-            `${import.meta.env.VITE_API_URL}suppliers`
+            `${import.meta.env.VITE_API_URL}/contragents/suppliers`
         );
         setSuppliers(response.data);
     };
@@ -165,19 +241,20 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
         fetchPhysicalPersons();
         fetchSuppliers();
         fetchRoles();
+        fetchReportStatuses();
     }, []);
-
-    useEffect(() => {
-        console.log(reportData);
-    }, [reportData]);
 
     useEffect(() => {
         updateStatus();
     }, [reportData["execution_period"]]);
 
+    useEffect(() => {
+        console.log(reportData);
+    }, [reportData]);
+
     return (
         <div className="grid gap-6">
-            <div className="grid gap-3 grid-cols-[50%_50%]">
+            <div className="grid gap-3 grid-cols-2">
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Тип отчёта</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
@@ -214,7 +291,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                 </div>
             </div>
 
-            <div className="grid gap-3 grid-cols-[50%_50%]">
+            <div className="grid gap-3 grid-cols-2">
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">
                         Бюджет проекта, млрд руб.
@@ -259,6 +336,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                             onChange={(e) =>
                                 handleInputChange(e, "contract_id")
                             }
+                            value={reportData.contract_id}
                         >
                             {contracts.length > 0 &&
                                 contracts.map((contract) => (
@@ -266,7 +344,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                                         value={contract.id}
                                         key={contract.id}
                                     >
-                                        {contract.counterparty_name}
+                                        {contract.contract_name}
                                     </option>
                                 ))}
                         </select>
@@ -274,7 +352,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                 </div>
             </div>
 
-            <div className="grid gap-3 grid-cols-[50%_50%]">
+            <div className="grid gap-3 grid-cols-2">
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Стоимость услуг, руб.</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
@@ -311,7 +389,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
             <div
                 className={`grid gap-3 ${
                     reportData["report_status_id"] == 4
-                        ? "grid-cols-[50%_50%]"
+                        ? "grid-cols-2"
                         : "grid-cols-1"
                 }`}
             >
@@ -320,15 +398,16 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
                             className="w-full"
-                            value={reportData["report_status_id"]}
+                            value={reportData.report_status_id}
                             onChange={(e) =>
                                 handleInputChange(e, "report_status_id")
                             }
                         >
-                            <option value="1">в работе</option>
-                            <option value="2">запланирован</option>
-                            <option value="3">отменён</option>
-                            <option value="4">завершён</option>
+                            {reportStatuses.map((status) => (
+                                <option value={status.id} key={status.id}>
+                                    {status.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
                 </div>
@@ -369,6 +448,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                             type="button"
                             className="add-button"
                             onClick={() => addBlock("teammate")}
+                            title="Добавить сотрудника"
                         >
                             <span></span>
                         </button>
@@ -377,50 +457,13 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
             </div>
 
             {teammates.map((id, index) => (
-                <div className="grid gap-3 grid-cols-2" key={id}>
-                    <div className="flex flex-col gap-2 justify-between">
-                        <div className="border-2 border-gray-300 p-1 h-[32px]">
-                            <select
-                                className="w-full"
-                                onChange={(e) =>
-                                    handleTeammateChange(
-                                        index,
-                                        "physical_person_id",
-                                        Number(e.target.value)
-                                    )
-                                }
-                            >
-                                <option value="">Выберите сотрудника</option>
-                                {physicalPersons.map((person) => (
-                                    <option value={person.id} key={person.id}>
-                                        {person.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="flex flex-col gap-2 justify-between">
-                        <div className="border-2 border-gray-300 p-1 h-[32px]">
-                            <select
-                                className="w-full"
-                                onChange={(e) =>
-                                    handleTeammateChange(
-                                        index,
-                                        "role_id",
-                                        Number(e.target.value)
-                                    )
-                                }
-                            >
-                                <option value="">Выберите роль</option>
-                                {roles.map((role) => (
-                                    <option value={role.id} key={role.id}>
-                                        {role.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                <TeammatesSection
+                    key={id}
+                    index={index}
+                    handleTeammateChange={handleTeammateChange}
+                    physicalPersons={physicalPersons}
+                    roles={roles}
+                />
             ))}
 
             <div className="grid gap-3 grid-cols-1">
@@ -431,6 +474,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                             type="button"
                             className="add-button"
                             onClick={() => addBlock("contractor")}
+                            title="Добавить подрядчика"
                         >
                             <span></span>
                         </button>
@@ -440,80 +484,21 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
 
             {contractors.length > 0 &&
                 contractors.map((id, index) => (
-                    <div className="flex flex-col gap-1" key={id}>
-                        <div className="grid gap-3 grid-cols-2">
-                            <div className="flex flex-col gap-2 justify-between">
-                                <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                    <select
-                                        className="w-full"
-                                        onChange={(e) =>
-                                            handleContractorChange(
-                                                index,
-                                                "contragent_id",
-                                                Number(e.target.value)
-                                            )
-                                        }
-                                    >
-                                        <option value="">
-                                            Выберите контрагента
-                                        </option>
-                                        {suppliers.map((supplier) => (
-                                            <option
-                                                value={supplier.id}
-                                                key={supplier.id}
-                                            >
-                                                {supplier.program_name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-2 justify-between">
-                                <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                    <select
-                                        className="w-full"
-                                        onChange={(e) =>
-                                            handleContractorChange(
-                                                index,
-                                                "role_id",
-                                                Number(e.target.value)
-                                            )
-                                        }
-                                    >
-                                        <option value="">Выберите роль</option>
-                                        {roles.map((role) => (
-                                            <option
-                                                value={role.id}
-                                                key={role.id}
-                                            >
-                                                {role.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="grid gap-3 grid-cols-1">
-                            <div className="flex flex-col gap-2 justify-between">
-                                <span className="text-gray-400"></span>
-                                <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                    <select className="w-full">
-                                        <option value="Договор 45222 от 12.01.2025">
-                                            Договор 45222 от 12.01.2025
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <ContractorsSection
+                        key={id}
+                        index={index}
+                        handleContractorChange={handleContractorChange}
+                        suppliers={suppliers}
+                        roles={roles}
+                        getData={getData}
+                    />
                 ))}
 
             <div className="mt-5 flex items-center gap-6 justify-between">
                 <button
                     type="button"
                     className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                    onClick={() => sendReport(reportData)}
+                    onClick={() => handleSave()}
                     title="Сохранить отчёт"
                 >
                     Сохранить

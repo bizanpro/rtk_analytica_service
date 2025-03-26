@@ -50,30 +50,9 @@ const ProjectCard = () => {
         email: "",
     });
 
-    const [reports, setReports] = useState([
-        {
-            id: 1,
-            name: "ФТМ 1Q25",
-            status: "завершён",
-            create_date_start: "01.01.25",
-            create_date_end: "31.03.25",
-            period: "180 дней",
-            completion_period_start: "01.04.25",
-            completion_period_end: "20.05.25",
-        },
-        {
-            id: 2,
-            name: "ФТМ 1Q26",
-            status: "в работе",
-            create_date_start: "01.01.25",
-            create_date_end: "31.03.25",
-            period: "180 дней",
-            completion_period_start: "01.04.25",
-            completion_period_end: "20.05.25",
-        },
-    ]);
+    const [reports, setReports] = useState([]);
 
-    const [reportWindowsState, setReportWindowsState] = useState(true);
+    const [reportWindowsState, setReportWindowsState] = useState(false);
     const [reportEditorState, setReportEditorState] = useState(false);
     const [reportEditorName, setReportEditorName] = useState("");
 
@@ -81,10 +60,10 @@ const ProjectCard = () => {
         return new Date(date).toLocaleDateString("ru-RU");
     };
 
-    const handleInputChange = (e, name) => {
-        setFormFields({ ...formFields, [name]: e.target.value });
-        setProjectData({ ...projectData, [name]: e.target.value });
-    };
+    const handleInputChange = useCallback((e, name) => {
+        setFormFields((prev) => ({ ...prev, [name]: e.target.value }));
+        setProjectData((prev) => ({ ...prev, [name]: e.target.value }));
+    }, []);
 
     // Обработка привязки банков к проекту
     const handleBankChange = (e, index) => {
@@ -198,6 +177,13 @@ const ProjectCard = () => {
         }
     };
 
+    const getReports = async () => {
+        const response = await getData(
+            `${import.meta.env.VITE_API_URL}projects/${projectId}/reports`
+        );
+        setReports(response.data);
+    };
+
     // Получение проекта
     const getProject = async (id) => {
         try {
@@ -220,6 +206,7 @@ const ProjectCard = () => {
                 fetchIndustries(),
                 fetchContragents(),
                 fetchBanks(),
+                getReports(),
             ]);
         } catch (error) {
             console.error("Ошибка при загрузке проекта:", error);
@@ -365,6 +352,8 @@ const ProjectCard = () => {
         data.execution_period = `${formatDate(
             data.execution_period.start
         )} - ${formatDate(data.execution_period.end)}`;
+
+        data.project_id = projectId;
 
         postData("POST", `${import.meta.env.VITE_API_URL}reports`, data).then(
             (response) => {
@@ -990,7 +979,7 @@ const ProjectCard = () => {
 
                                                     {reports.length > 0 &&
                                                         reports.map(
-                                                            (report) => (
+                                                            (report, index) => (
                                                                 <ProjectReportItem
                                                                     {...report}
                                                                     setReportEditorState={
@@ -1000,7 +989,8 @@ const ProjectCard = () => {
                                                                         setReportEditorName
                                                                     }
                                                                     key={
-                                                                        report.id
+                                                                        report.id ||
+                                                                        index
                                                                     }
                                                                 />
                                                             )

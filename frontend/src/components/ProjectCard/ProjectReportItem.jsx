@@ -1,21 +1,19 @@
 const ProjectReportItem = ({
     id,
-    name,
+    report_name,
     status,
-    create_date_start,
-    create_date_end,
-    period,
-    completion_period_start,
-    completion_period_end,
+    report_period,
+    days,
+    execution_period,
     setReportEditorState,
     setReportEditorName,
 }) => {
     return (
         <li className="grid items-center grid-cols-[24%_24%_49%] gap-3">
             <div className="flex flex-col">
-                <div className="text-lg">{name}</div>
+                <div className="text-lg">{report_name}</div>
                 <span className="text-sm">
-                    {create_date_start} - {create_date_end}
+                    {report_period}
                 </span>
             </div>
             <div className="bg-gray-200 py-1 px-2 text-center rounded-md">
@@ -23,16 +21,16 @@ const ProjectReportItem = ({
             </div>
             <div className="flex gap-3 items-center">
                 <div className="flex flex-col flex-grow">
-                    <div className="text-lg">{period}</div>
+                    <div className="text-lg">{days}</div>
                     <span className="text-sm">
-                        {completion_period_start} - {completion_period_end}
+                        {execution_period}
                     </span>
                 </div>
                 <button
                     type="button"
                     className="flex-none w-[15px] h-[20px] border border-gray-400"
                     onClick={() => {
-                        setReportEditorName(name);
+                        setReportEditorName(report_name);
                         setReportEditorState(true);
                     }}
                 ></button>
