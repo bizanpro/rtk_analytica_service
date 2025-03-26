@@ -55,6 +55,7 @@ const ProjectCard = () => {
     const [reportWindowsState, setReportWindowsState] = useState(false);
     const [reportEditorState, setReportEditorState] = useState(false);
     const [reportEditorName, setReportEditorName] = useState("");
+    const [reportData, setReportData] = useState({});
 
     const formatDate = (date) => {
         return new Date(date).toLocaleDateString("ru-RU");
@@ -355,6 +356,8 @@ const ProjectCard = () => {
 
         data.project_id = projectId;
 
+        setReportData(data);
+
         if (!addReport) {
             postData(
                 "POST",
@@ -370,9 +373,15 @@ const ProjectCard = () => {
                     setReportWindowsState(false);
                 }
             });
+        } else {
+            if (Object.keys(data).length > 0) {
+                setReportWindowsState(false);
+                setReportEditorState(true);
+            }
         }
     };
 
+    // Удаление отчёта
     const deleteReport = (id) => {
         postData(
             "DELETE",
@@ -945,7 +954,14 @@ const ProjectCard = () => {
                         <div className="flex flex-col">
                             {reportEditorState ? (
                                 <ProjectReportEditor
+                                    reportData={reportData}
+                                    postData={postData}
+                                    setReports={setReports}
                                     reportEditorName={reportEditorName}
+                                    setReportWindowsState={
+                                        setReportWindowsState
+                                    }
+                                    setReportEditorState={setReportEditorState}
                                 />
                             ) : (
                                 <>

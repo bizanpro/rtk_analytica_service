@@ -1,25 +1,58 @@
 import { useState, useEffect } from "react";
 import RateBlock from "../RateBlock";
 
-const ProjectReportEditor = ({ reportEditorName }) => {
-    const rateTitles = ["Общая", "Банк", "Заказчик", "Команда"];
-    const [reportData, setReportData] = useState({ resume: "Text" });
-    const [currentTab, setCurrentTab] = useState("resume");
+const ProjectReportEditor = ({
+    reportData,
+    reportEditorName,
+    postData,
+    setReports,
+    setReportWindowsState,
+    setReportEditorState,
+}) => {
+    console.log(reportData);
+
+    const rateTitles = [
+        { id: "general_assessment", label: "Общая" },
+        { id: "bank_assessment", label: "Банк" },
+        { id: "customer_assessment", label: "Заказчик" },
+        { id: "team_assessment", label: "Команда" },
+    ];
+    const [extendReportData, setExtendReportData] = useState(reportData || {});
+    const [currentTab, setCurrentTab] = useState("general_summary");
     const tabOptions = [
-        { id: "resume", label: "Резюме" },
-        { id: "bank", label: "Банк" },
-        { id: "customer", label: "Заказчик" },
-        { id: "team", label: "Команда" },
-        { id: "risks", label: "Риски" },
+        { id: "general_summary", label: "Резюме" },
+        { id: "bank_summary", label: "Банк" },
+        { id: "customer_summary", label: "Заказчик" },
+        { id: "team_summary", label: "Команда" },
+        { id: "risk_summary", label: "Риски" },
     ];
 
     const handleTextArea = (e, name) => {
-        setReportData({ ...reportData, [name]: e.target.value });
+        setExtendReportData({ ...extendReportData, [name]: e.target.value });
+    };
+
+    const handleTRating = (name, value) => {
+        setExtendReportData({ ...extendReportData, [name]: +value });
+    };
+
+    const sendReport = () => {
+        postData(
+            "POST",
+            `${import.meta.env.VITE_API_URL}reports`,
+            extendReportData
+        ).then((response) => {
+            if (response) {
+                alert(response.message);
+                setReports((prevReports) => [...prevReports, response.data]);
+                setReportWindowsState(false);
+                setReportEditorState(false);
+            }
+        });
     };
 
     useEffect(() => {
-        console.log(reportData);
-    }, [reportData]);
+        console.log(extendReportData);
+    }, [extendReportData]);
 
     return (
         <div className="border border-gray-400 py-5 px-3">
@@ -50,8 +83,13 @@ const ProjectReportEditor = ({ reportEditorName }) => {
                 <span className="text-gray-400 block mb-3">Оценка</span>
 
                 <div className="flex flex-col gap-2">
-                    {rateTitles.map((title) => (
-                        <RateBlock title={title} key={title} />
+                    {rateTitles.map(({ id, label }) => (
+                        <RateBlock
+                            name={id}
+                            title={label}
+                            key={id}
+                            handleTRating={handleTRating}
+                        />
                     ))}
                 </div>
             </div>
@@ -92,10 +130,30 @@ const ProjectReportEditor = ({ reportEditorName }) => {
                         placeholder="Опишите ситуацию"
                         type="text"
                         name={currentTab}
-                        value={reportData[currentTab] || ""}
+                        value={extendReportData[currentTab] || ""}
                         onChange={(e) => handleTextArea(e, currentTab)}
                     ></textarea>
                 </div>
+            </div>
+
+            <div className="mt-5 flex items-center gap-6 justify-between">
+                <button
+                    type="button"
+                    className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
+                    onClick={() => sendReport()}
+                    title="Сохранить отчёт"
+                >
+                    Сохранить
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setReportEditorState(false)}
+                    className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
+                    title="Отменить сохранение отчёта"
+                >
+                    Отменить
+                </button>
             </div>
         </div>
     );

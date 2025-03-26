@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const RateBlock = ({ title }) => {
+const RateBlock = ({ name, title, handleTRating }) => {
     const [rating, setRating] = useState(null);
     const totalBlocks = 10;
+
+    useEffect(() => {
+        handleTRating(name, rating);
+    }, [rating]);
 
     return (
         <div className="flex items-center">
