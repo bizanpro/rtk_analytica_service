@@ -56,11 +56,14 @@ const ProjectCard = () => {
     const [reportEditorState, setReportEditorState] = useState(false);
     const [reportEditorName, setReportEditorName] = useState("");
     const [reportData, setReportData] = useState({});
+    const [reportId, setReportId] = useState(null);
 
+    // Форматирование даты
     const formatDate = (date) => {
         return new Date(date).toLocaleDateString("ru-RU");
     };
 
+    // Обработка ввода данных проекта
     const handleInputChange = useCallback((e, name) => {
         setFormFields((prev) => ({ ...prev, [name]: e.target.value }));
         setProjectData((prev) => ({ ...prev, [name]: e.target.value }));
@@ -178,6 +181,7 @@ const ProjectCard = () => {
         }
     };
 
+    // Получение отчётов
     const getReports = async () => {
         const response = await getData(
             `${import.meta.env.VITE_API_URL}projects/${projectId}/reports`
@@ -228,7 +232,7 @@ const ProjectCard = () => {
                             "POST",
                             `${
                                 import.meta.env.VITE_API_URL
-                            }creditor-responsible-persons`,
+                            }responsible-persons/creditor`,
                             updatedLender
                         ).then((response) => {
                             if (response) {
@@ -268,7 +272,7 @@ const ProjectCard = () => {
                             "POST",
                             `${
                                 import.meta.env.VITE_API_URL
-                            }responsible-persons`,
+                            }responsible-persons/contragent`,
                             updatedCustomer
                         ).then((response) => {
                             if (response) {
@@ -302,7 +306,7 @@ const ProjectCard = () => {
     const deleteLender = (id) => {
         postData(
             "DELETE",
-            `${import.meta.env.VITE_API_URL}creditor-responsible-persons/${id}`,
+            `${import.meta.env.VITE_API_URL}responsible-persons/creditor/${id}`,
             {}
         ).then((response) => {
             if (response) {
@@ -315,7 +319,9 @@ const ProjectCard = () => {
     const deleteCustomer = (id) => {
         postData(
             "DELETE",
-            `${import.meta.env.VITE_API_URL}responsible-persons/${id}`,
+            `${
+                import.meta.env.VITE_API_URL
+            }responsible-persons/contragent/${id}`,
             {}
         ).then((response) => {
             if (response) {
@@ -381,6 +387,53 @@ const ProjectCard = () => {
         }
     };
 
+    // Открытие окна редактирования отчёта
+    const openReportEditor = (id) => {
+        setReportId(id);
+        if (id) {
+            setReportWindowsState(true);
+        }
+    };
+
+    // Обновление отчёта
+    const updateReport = (data, reportId) => {
+        data.report_period = `${formatDate(
+            data.report_period.start
+        )} - ${formatDate(data.report_period.end)}`;
+        data.implementation_period = `${formatDate(
+            data.implementation_period.start
+        )} - ${formatDate(data.implementation_period.end)}`;
+        data.execution_period = `${formatDate(
+            data.execution_period.start
+        )} - ${formatDate(data.execution_period.end)}`;
+
+        data.project_id = projectId;
+
+        setReportData(data);
+
+        // if (!addReport) {
+        postData(
+            "PATCH",
+            `${import.meta.env.VITE_API_URL}reports/${reportId}`,
+            data
+        ).then((response) => {
+            if (response) {
+                alert(response.message);
+                // setReports((prevReports) => [
+                //     ...prevReports,
+                //     response.data,
+                // ]);
+                // setReportWindowsState(false);
+            }
+        });
+        // } else {
+        // if (Object.keys(data).length > 0) {
+        //     setReportWindowsState(false);
+        //     setReportEditorState(true);
+        // }
+        // }
+    };
+
     // Удаление отчёта
     const deleteReport = (id) => {
         postData(
@@ -393,12 +446,6 @@ const ProjectCard = () => {
             }
         });
     };
-
-    useEffect(() => {
-        if (projectId) {
-            getProject(projectId);
-        }
-    }, []);
 
     useEffect(() => {
         if (projectData.creditors) {
@@ -416,6 +463,12 @@ const ProjectCard = () => {
             setReportWindowsState(false);
         }
     }, [projectData.contragent_id]);
+
+    useEffect(() => {
+        if (projectId) {
+            getProject(projectId);
+        }
+    }, []);
 
     return (
         <main className="page">
@@ -1030,6 +1083,9 @@ const ProjectCard = () => {
                                                                     deleteReport={
                                                                         deleteReport
                                                                     }
+                                                                    openReportEditor={
+                                                                        openReportEditor
+                                                                    }
                                                                     mode={mode}
                                                                 />
                                                             )
@@ -1042,6 +1098,8 @@ const ProjectCard = () => {
                                                     }
                                                     sendReport={sendReport}
                                                     contracts={contracts}
+                                                    updateReport={updateReport}
+                                                    reportId={reportId}
                                                 />
                                             )}
                                         </div>

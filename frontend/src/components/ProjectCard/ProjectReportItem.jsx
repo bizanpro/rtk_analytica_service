@@ -5,8 +5,8 @@ const ProjectReportItem = ({
     report_period,
     days,
     execution_period,
-    setReportEditorState,
     setReportEditorName,
+    openReportEditor,
     deleteReport,
     mode,
 }) => {
@@ -32,7 +32,7 @@ const ProjectReportItem = ({
                             title="Редактировать отчёт"
                             onClick={() => {
                                 setReportEditorName(report_name);
-                                setReportEditorState(true);
+                                openReportEditor(id);
                             }}
                         ></button>
 

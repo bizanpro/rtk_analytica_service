@@ -9,8 +9,6 @@ const ProjectReportEditor = ({
     setReportWindowsState,
     setReportEditorState,
 }) => {
-    console.log(reportData);
-
     const rateTitles = [
         { id: "general_assessment", label: "Общая" },
         { id: "bank_assessment", label: "Банк" },
@@ -65,7 +63,9 @@ const ProjectReportEditor = ({
                         name="create_report"
                         id="createReportYes"
                     />
-                    <label htmlFor="createReportYes">Создать отчёт</label>
+                    <label htmlFor="createReportYes">
+                        Создать заключение по отчё1ту
+                    </label>
                 </div>
                 <div className="radio-field">
                     <input
@@ -74,7 +74,7 @@ const ProjectReportEditor = ({
                         id="createReportNo"
                     />
                     <label htmlFor="createReportNo">
-                        Запросить у руководителя
+                        Запросить заключение по отчёту у руководителя
                     </label>
                 </div>
             </div>

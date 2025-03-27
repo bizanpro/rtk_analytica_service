@@ -5,7 +5,13 @@ import getData from "../../utils/getData";
 import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
 
-const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
+const ProjectReportWindow = ({
+    sendReport,
+    reportWindowsState,
+    contracts,
+    reportId,
+    updateReport,
+}) => {
     const [reportData, setReportData] = useState({
         report_status_id: 1,
         report_type_id: 1,
@@ -36,6 +42,8 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
     const [suppliers, setSuppliers] = useState([]);
     const [reportStatuses, setReportStatuses] = useState([]);
     const [addReport, setAddReport] = useState(false);
+
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     // Валидация полей
     const validateFields = () => {
@@ -92,6 +100,7 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
         return newErrors;
     };
 
+    // Сохранение отчета
     const handleSave = () => {
         const newErrors = validateFields();
 
@@ -106,17 +115,33 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
     };
 
     // Обработка инпутов
-    const handleInputChange = useCallback((e, name) => {
-        const value =
-            name === "service_cost_in_rubles"
-                ? Number(e.target.value.replace(/\s/g, "")) || 0
-                : e.target.value;
+    const handleInputChange = useCallback(
+        (e, name) => {
+            let value =
+                name === "service_cost_in_rubles"
+                    ? Number(e.target.value.replace(/\s/g, "")) || 0
+                    : e.target.value;
 
-        setReportData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    }, []);
+            if (name === "budget_in_billions") {
+                value = value.replace(/[^0-9.]/g, "");
+
+                const parts = value.split(".");
+                if (parts.length > 2) {
+                    value = parts[0] + "." + parts[1];
+                }
+
+                if (parts[1]?.length > 5) {
+                    value = `${parts[0]}.${parts[1].slice(0, 5)}`;
+                }
+            }
+
+            setReportData((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        },
+        [setReportData]
+    );
 
     // Обработка дат
     const handleChangeDateRange = useCallback(
@@ -127,31 +152,8 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                     [id]: { start: newStartDate, end: newEndDate },
                 }));
             },
-        []
+        [setReportData]
     );
-
-    // Обновление статуса проекта в отчете
-    const updateStatus = () => {
-        const today = new Date();
-        const { start, end } = reportData["execution_period"];
-
-        if (start <= today && (end === null || today < end)) {
-            setReportData({
-                ...reportData,
-                report_status_id: 1,
-            });
-        } else if (start > today) {
-            setReportData({
-                ...reportData,
-                report_status_id: 2,
-            });
-        } else if (end && end < today) {
-            setReportData({
-                ...reportData,
-                report_status_id: 4,
-            });
-        }
-    };
 
     // Форматируем стоимость
     const formatPrice = (price) =>
@@ -199,55 +201,136 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
         });
     };
 
-    // Получение Типов отчета
-    const fetchReportTypes = async () => {
-        const response = await getData(
-            `${import.meta.env.VITE_API_URL}report-types?=with-count=true`
-        );
-        setReportTypes(response.data.data);
+    // Удаление сотрудника из teammates
+    const removeTeammate = (index) => {
+        setTeammates((prev) => {
+            const updatedTeammates = [...prev];
+            updatedTeammates.splice(index, 1);
+            return updatedTeammates;
+        });
+
+        setReportData((prev) => {
+            const updatedPersons = [...prev.responsible_persons];
+            updatedPersons.splice(index, 1);
+            return { ...prev, responsible_persons: updatedPersons };
+        });
     };
 
-    // Получение физ. лиц для команды проекта
-    const fetchPhysicalPersons = async () => {
-        const response = await getData(
-            `${import.meta.env.VITE_API_URL}physical-persons`
-        );
-        setPhysicalPersons(response.data);
-    };
+    // Удаление подрядчика из contractors
+    const removeContractor = (index) => {
+        setContractors((prev) => {
+            const updatedContractors = [...prev];
+            updatedContractors.splice(index, 1);
+            return updatedContractors;
+        });
 
-    // Получение ролей
-    const fetchRoles = async () => {
-        const response = await getData(`${import.meta.env.VITE_API_URL}roles`);
-        setRoles(response.data.data);
+        setReportData((prev) => {
+            const updatedContragents = [...prev.contragents];
+            updatedContragents.splice(index, 1);
+            return { ...prev, contragents: updatedContragents };
+        });
     };
-
-    // Получение статусов отчета
-    const fetchReportStatuses = async () => {
-        const response = await getData(
-            `${import.meta.env.VITE_API_URL}report-statuses`
-        );
-        setReportStatuses(response.data);
-    };
-
-    // Получение подрядчиков
-    const fetchSuppliers = async () => {
-        const response = await getData(
-            `${import.meta.env.VITE_API_URL}/contragents/suppliers`
-        );
-        setSuppliers(response.data);
+    const parseDate = (dateString) => {
+        const [day, month, year] = dateString.split(".");
+        return new Date(`${year}-${month}-${day}`);
     };
 
     useEffect(() => {
-        fetchReportTypes();
-        fetchPhysicalPersons();
-        fetchSuppliers();
-        fetchRoles();
-        fetchReportStatuses();
+        const fetchData = async () => {
+            const [
+                reportTypesRes,
+                physicalPersonsRes,
+                suppliersRes,
+                rolesRes,
+                reportStatusesRes,
+            ] = await Promise.all([
+                getData(
+                    `${
+                        import.meta.env.VITE_API_URL
+                    }report-types?=with-count=true`
+                ),
+                getData(`${import.meta.env.VITE_API_URL}physical-persons`),
+                getData(
+                    `${import.meta.env.VITE_API_URL}/contragents/suppliers`
+                ),
+                getData(`${import.meta.env.VITE_API_URL}roles`),
+                getData(`${import.meta.env.VITE_API_URL}report-statuses`),
+            ]);
+
+            setReportTypes(reportTypesRes.data.data); // Получение Типов отчета
+            setPhysicalPersons(physicalPersonsRes.data); // Получение физ. лиц для команды проекта
+            setSuppliers(suppliersRes.data); // Получение подрядчиков
+            setRoles(rolesRes.data.data); // Получение ролей
+            setReportStatuses(reportStatusesRes.data); // Получение статусов отчета
+
+            setIsDataLoaded(true);
+        };
+
+        fetchData();
     }, []);
 
     useEffect(() => {
+        // Обновление статуса проекта в отчете
+        const updateStatus = () => {
+            const today = new Date();
+            const { start, end } = reportData["execution_period"];
+            let newStatus = reportData.report_status_id;
+
+            if (start <= today && (end === null || today < end)) {
+                newStatus = 1;
+            } else if (start > today) {
+                newStatus = 2;
+            } else if (end && end < today) {
+                newStatus = 4;
+            }
+
+            if (newStatus !== reportData.report_status_id) {
+                setReportData((prev) => ({
+                    ...prev,
+                    report_status_id: newStatus,
+                }));
+            }
+        };
+
         updateStatus();
     }, [reportData["execution_period"]]);
+
+    useEffect(() => {
+        if (isDataLoaded && reportId) {
+            getData(`${import.meta.env.VITE_API_URL}reports/${reportId}`).then(
+                (response) => {
+                    setReportData(response.data);
+
+                    [
+                        "implementation_period",
+                        "execution_period",
+                        "report_period",
+                    ].forEach((key) => {
+                        setReportData((prev) => ({
+                            ...prev,
+                            [key]: {
+                                start:
+                                    parseDate(
+                                        response.data[key]
+                                            ?.split("-")[0]
+                                            ?.trim()
+                                    ) || "",
+                                end:
+                                    parseDate(
+                                        response.data[key]
+                                            ?.split("-")[1]
+                                            ?.trim()
+                                    ) || "",
+                            },
+                        }));
+                    });
+
+                    setTeammates(response.data.responsible_persons);
+                    setContractors(response.data.contragents);
+                }
+            );
+        }
+    }, [isDataLoaded, reportId]);
 
     useEffect(() => {
         console.log(reportData);
@@ -299,10 +382,10 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                     </span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <input
-                            type="number"
+                            type="text"
                             className="w-full"
-                            placeholder="0,0"
-                            value={reportData.budget}
+                            placeholder="0.0"
+                            value={reportData.budget_in_billions}
                             onChange={(e) =>
                                 handleInputChange(e, "budget_in_billions")
                             }
@@ -415,7 +498,9 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
 
                 {reportData["report_status_id"] == 4 && (
                     <div className="flex flex-col gap-2 justify-between">
-                        <span className="text-gray-400">Добавить отчет</span>
+                        <span className="text-gray-400">
+                            Добавить заключение по отчёту
+                        </span>
 
                         <div className="grid gap-3 grid-cols-2">
                             <div className="radio-field">
@@ -459,13 +544,15 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                 </div>
             </div>
 
-            {teammates.map((id, index) => (
+            {teammates.map((person, index) => (
                 <TeammatesSection
-                    key={id}
+                    key={person}
                     index={index}
+                    person={person}
                     handleTeammateChange={handleTeammateChange}
                     physicalPersons={physicalPersons}
                     roles={roles}
+                    removeTeammate={removeTeammate}
                 />
             ))}
 
@@ -486,14 +573,16 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
             </div>
 
             {contractors.length > 0 &&
-                contractors.map((id, index) => (
+                contractors.map((person, index) => (
                     <ContractorsSection
-                        key={id}
+                        key={person}
                         index={index}
+                        person={person}
                         handleContractorChange={handleContractorChange}
                         suppliers={suppliers}
                         roles={roles}
                         getData={getData}
+                        removeContractor={removeContractor}
                     />
                 ))}
 
@@ -501,7 +590,11 @@ const ProjectReportWindow = ({ sendReport, reportWindowsState, contracts }) => {
                 <button
                     type="button"
                     className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                    onClick={() => handleSave()}
+                    onClick={() =>
+                        reportId
+                            ? updateReport(reportData, reportId)
+                            : handleSave()
+                    }
                     title="Сохранить отчёт"
                 >
                     Сохранить
