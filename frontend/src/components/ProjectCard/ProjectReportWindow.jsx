@@ -105,7 +105,9 @@ const ProjectReportWindow = ({
         const newErrors = validateFields();
 
         if (Object.keys(newErrors).length === 0) {
-            sendReport(reportData, addReport);
+            reportId
+                ? updateReport(reportData, reportId)
+                : sendReport(reportData, addReport);
         } else {
             alert(
                 "Исправьте ошибки перед сохранением:\n" +
@@ -590,11 +592,7 @@ const ProjectReportWindow = ({
                 <button
                     type="button"
                     className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                    onClick={() =>
-                        reportId
-                            ? updateReport(reportData, reportId)
-                            : handleSave()
-                    }
+                    onClick={() => handleSave()}
                     title="Сохранить отчёт"
                 >
                     Сохранить

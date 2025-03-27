@@ -423,7 +423,7 @@ const ProjectCard = () => {
                 //     ...prevReports,
                 //     response.data,
                 // ]);
-                // setReportWindowsState(false);
+                setReportWindowsState(false);
             }
         });
         // } else {
