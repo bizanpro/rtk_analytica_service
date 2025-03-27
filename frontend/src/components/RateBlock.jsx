@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-const RateBlock = ({ name, title, handleTRating }) => {
-    const [rating, setRating] = useState(null);
+const RateBlock = ({ name, title, handleTRating, value }) => {
+    const [rating, setRating] = useState(value || null);
     const totalBlocks = 10;
 
     useEffect(() => {

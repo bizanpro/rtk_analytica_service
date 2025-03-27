@@ -10,6 +10,7 @@ import ProjectReportWindow from "./ProjectReportWindow";
 import ProjectReportItem from "./ProjectReportItem";
 import ProjectReportEditor from "./ProjectReportEditor";
 import ProjectStatisticsBlock from "./ProjectStatisticsBlock";
+import ProjectLastReport from "./ProjectLastReport";
 
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -57,6 +58,7 @@ const ProjectCard = () => {
     const [reportEditorName, setReportEditorName] = useState("");
     const [reportData, setReportData] = useState({});
     const [reportId, setReportId] = useState(null);
+    const [lastReport, setLastReport] = useState({});
 
     // Форматирование даты
     const formatDate = (date) => {
@@ -396,7 +398,7 @@ const ProjectCard = () => {
     };
 
     // Обновление отчёта
-    const updateReport = (data, reportId) => {
+    const updateReport = (data, reportId, addReport) => {
         data.report_period = `${formatDate(
             data.report_period.start
         )} - ${formatDate(data.report_period.end)}`;
@@ -411,27 +413,27 @@ const ProjectCard = () => {
 
         setReportData(data);
 
-        // if (!addReport) {
-        postData(
-            "PATCH",
-            `${import.meta.env.VITE_API_URL}reports/${reportId}`,
-            data
-        ).then((response) => {
-            if (response) {
-                alert(response.message);
-                // setReports((prevReports) => [
-                //     ...prevReports,
-                //     response.data,
-                // ]);
+        if (!addReport) {
+            postData(
+                "PATCH",
+                `${import.meta.env.VITE_API_URL}reports/${reportId}`,
+                data
+            ).then((response) => {
+                if (response) {
+                    alert(response.message);
+                    // setReports((prevReports) => [
+                    //     ...prevReports,
+                    //     response.data,
+                    // ]);
+                    setReportWindowsState(false);
+                }
+            });
+        } else {
+            if (Object.keys(data).length > 0) {
                 setReportWindowsState(false);
+                setReportEditorState(true);
             }
-        });
-        // } else {
-        // if (Object.keys(data).length > 0) {
-        //     setReportWindowsState(false);
-        //     setReportEditorState(true);
-        // }
-        // }
+        }
     };
 
     // Удаление отчёта
@@ -715,40 +717,15 @@ const ProjectCard = () => {
                                     <span className="text-gray-400">
                                         Команда проекта
                                     </span>
-                                    <ul className="flex gap-3 flex-wrap">
-                                        <li className="border rounded border-gray-300 border-dashed p-2 flex-[1_0_30%]"></li>
-                                        <li className="border rounded border-gray-300 border-dashed p-2 flex-[1_0_30%]"></li>
-                                        <li className="border rounded border-gray-300 border-dashed p-2 flex-[1_0_30%]"></li>
-                                    </ul>
-                                    {/* <div className="grid gap-8 mt-10">
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="flex flex-col gap-1">
-                                                <div className="text-lg">
-                                                    Прохоров Серей Викторович
-                                                </div>
-                                                <span className="text-sm">
-                                                    Сотрудник
-                                                </span>
-                                            </div>
-                                            <div className="text-lg">
-                                                Руководитель проекта
-                                            </div>
+                                    {lastReport.length > 0 ? (
+                                        <ProjectLastReport
+                                            lastReport={lastReport}
+                                        />
+                                    ) : (
+                                        <div className="grid grid-col-3 gap-3">
+                                            <div className="border rounded border-gray-300 border-dashed p-2 w-[33%]"></div>
                                         </div>
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="flex flex-col gap-1">
-                                                <div className="text-lg">
-                                                    ООО "ИЭС"
-                                                </div>
-                                                <span className="text-sm">
-                                                    Подрядчик
-                                                </span>
-                                            </div>
-                                            <div className="text-lg">
-                                                Технология
-                                            </div>
-                                        </div>
-                                    </div> */}
+                                    )}
                                 </div>
                             </div>
 
@@ -1015,6 +992,7 @@ const ProjectCard = () => {
                                         setReportWindowsState
                                     }
                                     setReportEditorState={setReportEditorState}
+                                    reportId={reportId}
                                 />
                             ) : (
                                 <>

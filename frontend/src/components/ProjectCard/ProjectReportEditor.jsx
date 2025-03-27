@@ -5,6 +5,7 @@ const ProjectReportEditor = ({
     reportData,
     reportEditorName,
     postData,
+    reportId,
     setReports,
     setReportWindowsState,
     setReportEditorState,
@@ -42,6 +43,20 @@ const ProjectReportEditor = ({
             if (response) {
                 alert(response.message);
                 setReports((prevReports) => [...prevReports, response.data]);
+                setReportWindowsState(false);
+                setReportEditorState(false);
+            }
+        });
+    };
+
+    const updateReport = () => {
+        postData(
+            "PATCH",
+            `${import.meta.env.VITE_API_URL}reports/${reportId}`,
+            extendReportData
+        ).then((response) => {
+            if (response) {
+                alert(response.message);
                 setReportWindowsState(false);
                 setReportEditorState(false);
             }
@@ -88,6 +103,7 @@ const ProjectReportEditor = ({
                             name={id}
                             title={label}
                             key={id}
+                            value={extendReportData[id]}
                             handleTRating={handleTRating}
                         />
                     ))}
@@ -140,7 +156,7 @@ const ProjectReportEditor = ({
                 <button
                     type="button"
                     className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                    onClick={() => sendReport()}
+                    onClick={() => (reportId ? updateReport() : sendReport())}
                     title="Сохранить отчёт"
                 >
                     Сохранить

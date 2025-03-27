@@ -106,7 +106,7 @@ const ProjectReportWindow = ({
 
         if (Object.keys(newErrors).length === 0) {
             reportId
-                ? updateReport(reportData, reportId)
+                ? updateReport(reportData, reportId, addReport)
                 : sendReport(reportData, addReport);
         } else {
             alert(
