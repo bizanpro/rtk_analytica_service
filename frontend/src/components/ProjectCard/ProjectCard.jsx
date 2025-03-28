@@ -381,6 +381,7 @@ const ProjectCard = () => {
                         response.data,
                     ]);
                     setReportWindowsState(false);
+                    setReportId(null);
                 } else {
                     alert("Ошибка при отправке отчёта");
                 }
@@ -425,10 +426,13 @@ const ProjectCard = () => {
             ).then((response) => {
                 if (response) {
                     alert(response.message);
-                    // setReports((prevReports) => [
-                    //     ...prevReports,
-                    //     response.data,
-                    // ]);
+                    // setReports((prevReports) =>
+                    //     prevReports.map((report) => {
+                    //         report.id === reportId ? response.data : report;
+                    //     })
+                    // );
+                    getReports();
+                    setReportId(null);
                     setReportWindowsState(false);
                 }
             });
@@ -471,18 +475,16 @@ const ProjectCard = () => {
     }, [projectData.contragent_id]);
 
     useEffect(() => {
-        if (reportData && reportData.length > 0) {
-            const filteredReports = reportData.filter(
+        if (reports && reports.length > 0) {
+            const filteredReports = reports.filter(
                 (report) =>
-                    report.report_status_id === 1 ||
-                    report.report_status_id === 4
+                    report.status === "Завершен" || report.status === "В работе"
             );
 
             const last = filteredReports.pop();
-
             setLastReport(last || {});
         }
-    }, [reportData]);
+    }, [reports]);
 
     useEffect(() => {
         if (projectId) {
@@ -735,7 +737,7 @@ const ProjectCard = () => {
                                     <span className="text-gray-400">
                                         Команда проекта
                                     </span>
-                                    {lastReport.length > 0 ? (
+                                    {lastReport ? (
                                         <ProjectLastReport
                                             lastReport={lastReport}
                                         />
@@ -1096,6 +1098,7 @@ const ProjectCard = () => {
                                                     contracts={contracts}
                                                     updateReport={updateReport}
                                                     reportId={reportId}
+                                                    setReportId={setReportId}
                                                 />
                                             )}
                                         </div>

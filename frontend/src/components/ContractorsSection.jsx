@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ContractorsSection = ({
     index,
@@ -34,6 +34,12 @@ const ContractorsSection = ({
             setLocalContracts([]);
         }
     };
+
+    useEffect(() => {
+        if (person?.contragent_id) {
+            fetchContracts(person?.contragent_id);
+        }
+    }, [person?.contragent_id]);
 
     return (
         <div className="flex items-center gap-3">

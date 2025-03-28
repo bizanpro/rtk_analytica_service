@@ -11,6 +11,7 @@ const ProjectReportWindow = ({
     contracts,
     reportId,
     updateReport,
+    setReportId,
 }) => {
     const [reportData, setReportData] = useState({
         report_status_id: 1,
@@ -44,6 +45,7 @@ const ProjectReportWindow = ({
     const [addReport, setAddReport] = useState(false);
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const [isApiDataLoaded, setIsApiDataLoaded] = useState(false);
 
     // Валидация полей
     const validateFields = () => {
@@ -272,6 +274,8 @@ const ProjectReportWindow = ({
     }, []);
 
     useEffect(() => {
+        if (!isApiDataLoaded) return;
+
         // Обновление статуса проекта в отчете
         const updateStatus = () => {
             const today = new Date();
@@ -295,7 +299,7 @@ const ProjectReportWindow = ({
         };
 
         updateStatus();
-    }, [reportData["execution_period"]]);
+    }, [reportData["execution_period"], isApiDataLoaded]);
 
     useEffect(() => {
         if (isDataLoaded && reportId) {
@@ -329,14 +333,16 @@ const ProjectReportWindow = ({
 
                     setTeammates(response.data.responsible_persons);
                     setContractors(response.data.contragents);
+
+                    setIsApiDataLoaded(true);
                 }
             );
         }
     }, [isDataLoaded, reportId]);
 
-    useEffect(() => {
-        console.log(reportData);
-    }, [reportData]);
+    // useEffect(() => {
+    //     console.log(reportData);
+    // }, [reportData]);
 
     return (
         <div className="grid gap-6">
@@ -600,7 +606,10 @@ const ProjectReportWindow = ({
 
                 <button
                     type="button"
-                    onClick={() => reportWindowsState(false)}
+                    onClick={() => {
+                        setReportId(null);
+                        reportWindowsState(false);
+                    }}
                     className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
                     title="Отменить сохранение отчёта"
                 >
