@@ -358,9 +358,9 @@ const ProjectCard = () => {
         data.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
-        data.execution_period = `${formatDate(
-            data.execution_period.start
-        )} - ${formatDate(data.execution_period.end)}`;
+        data.execution_period = data.execution_period.end
+            ? `${formatDate(data.execution_period.start)} - ${formatDate(data.execution_period.end)}`
+            : formatDate(data.execution_period.start);
 
         data.project_id = projectId;
 
@@ -368,23 +368,25 @@ const ProjectCard = () => {
 
         if (!addReport) {
             postData(
-                "POST",
-                `${import.meta.env.VITE_API_URL}reports`,
-                data
+            "POST",
+            `${import.meta.env.VITE_API_URL}reports`,
+            data
             ).then((response) => {
-                if (response) {
-                    alert(response.message);
-                    setReports((prevReports) => [
-                        ...prevReports,
-                        response.data,
-                    ]);
-                    setReportWindowsState(false);
-                }
+            if (response?.status === 200) {
+                alert(response.message);
+                setReports((prevReports) => [
+                ...prevReports,
+                response.data,
+                ]);
+                setReportWindowsState(false);
+            } else {
+                alert("Ошибка при отправке отчёта");
+            }
             });
         } else {
             if (Object.keys(data).length > 0) {
-                setReportWindowsState(false);
-                setReportEditorState(true);
+            setReportWindowsState(false);
+            setReportEditorState(true);
             }
         }
     };

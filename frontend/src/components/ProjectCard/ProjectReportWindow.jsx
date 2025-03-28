@@ -151,7 +151,7 @@ const ProjectReportWindow = ({
             ([newStartDate, newEndDate]) => {
                 setReportData((prev) => ({
                     ...prev,
-                    [id]: { start: newStartDate, end: newEndDate },
+                    [id]: { start: newStartDate, end: newEndDate || "" },
                 }));
             },
         [setReportData]
