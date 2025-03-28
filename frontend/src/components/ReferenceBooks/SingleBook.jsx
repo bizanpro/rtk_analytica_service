@@ -34,12 +34,12 @@ const SingleBook = () => {
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
         ],
-        "responsible-persons": [
+        contragent: [
             { label: "Наименование контрагента", key: "contragent" },
             { label: "Проект", key: "project_name" },
             { label: "ФИО / должность", key: "responsible_persons" },
         ],
-        "creditor-responsible-persons": [
+        creditor: [
             { label: "Банк", key: "" },
             { label: "Контакт", key: "" },
             { label: "Проект", key: "" },
@@ -51,15 +51,18 @@ const SingleBook = () => {
         "report-types": "Типы услуг / отчетов",
         roles: "Роли в проектах",
         banks: "Кредиторы",
-        "responsible-persons": "Контакты заказчика",
-        "creditor-responsible-persons": "Контакты кредитора",
+        contragent: "Контакты заказчика",
+        creditor: "Контакты кредитора",
     };
 
     const { bookId } = useParams();
 
     const columns = bookId ? COLUMNS[bookId] : COLUMNS;
 
-    const URL = `${import.meta.env.VITE_API_URL}${bookId ? bookId : "books"}`;
+    const URL =
+        bookId === "creditor" || bookId === "contragent"
+            ? `${import.meta.env.VITE_API_URL}responsible-persons/${bookId}`
+            : `${import.meta.env.VITE_API_URL}${bookId ? bookId : "books"}`;
 
     const [booksItems, setBooksItems] = useState([]);
     const [mode, setMode] = useState("edit");
@@ -337,8 +340,7 @@ const SingleBook = () => {
                                         )}
 
                                     {filteredProjects?.length > 0 &&
-                                        bookId !==
-                                            "creditor-responsible-persons" &&
+                                        bookId !== "creditor" &&
                                         filteredProjects.map((item) => (
                                             <ReferenceItem
                                                 key={item.id}
@@ -355,8 +357,7 @@ const SingleBook = () => {
                                         ))}
 
                                     {filteredProjects?.length > 0 &&
-                                        bookId ==
-                                            "creditor-responsible-persons" &&
+                                        bookId == "creditor" &&
                                         filteredProjects.map((item) => (
                                             <ReferenceItemExtended
                                                 key={item.id}

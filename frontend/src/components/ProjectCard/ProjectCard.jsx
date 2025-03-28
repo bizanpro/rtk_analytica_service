@@ -467,6 +467,20 @@ const ProjectCard = () => {
     }, [projectData.contragent_id]);
 
     useEffect(() => {
+        if (reportData && reportData.length > 0) {
+            const filteredReports = reportData.filter(
+                (report) =>
+                    report.report_status_id === 1 ||
+                    report.report_status_id === 4
+            );
+
+            const last = filteredReports.pop();
+
+            setLastReport(last || {});
+        }
+    }, [reportData]);
+
+    useEffect(() => {
         if (projectId) {
             getProject(projectId);
         }

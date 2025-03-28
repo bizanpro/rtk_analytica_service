@@ -28,14 +28,14 @@
       "author": "-"
     },
     {
-      "id": "responsible-persons",
+      "id": "contragent",
       "name": "Контакты заказчика",
       "totalCount": "-",
       "updated_at": "2025-03-14T08:36:09.000000Z",
       "author": "-"
     },
     {
-      "id": "creditor-responsible-persons",
+      "id": "creditor",
       "name": "Контакты кредитора",
       "totalCount": "-",
       "updated_at": "2025-03-14T08:36:09.000000Z",
