@@ -71,15 +71,19 @@ const ProjectReportEditor = ({
         <div className="border border-gray-400 py-5 px-3">
             <div className="text-2xl w-full mb-3">{reportEditorName}</div>
 
-            <div className="grid gap-3 grid-cols-2 mb-5">
+            <div className="grid gap-3 grid-cols-2 mb-5 items-stretch">
                 <div className="radio-field">
                     <input
                         type="radio"
                         name="create_report"
                         id="createReportYes"
                     />
-                    <label htmlFor="createReportYes">
-                        Создать заключение по отчё1ту
+                    <label
+                        className="flex items-center h-[100%]"
+                        style={{ display: "flex" }}
+                        htmlFor="createReportYes"
+                    >
+                        Создать заключение по отчёту
                     </label>
                 </div>
                 <div className="radio-field">
@@ -88,7 +92,11 @@ const ProjectReportEditor = ({
                         name="create_report"
                         id="createReportNo"
                     />
-                    <label htmlFor="createReportNo">
+                    <label
+                        className="flex items-center h-[100%]"
+                        style={{ display: "flex" }}
+                        htmlFor="createReportNo"
+                    >
                         Запросить заключение по отчёту у руководителя
                     </label>
                 </div>

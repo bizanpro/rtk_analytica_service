@@ -16,8 +16,8 @@ const ProjectReportWindow = ({
     const [reportData, setReportData] = useState({
         report_status_id: 1,
         report_type_id: 1,
-        budget_in_billions: 0,
-        service_cost_in_rubles: 0,
+        budget_in_billions:'',
+        service_cost_in_rubles: '',
         contract_id: 1,
         report_period: {
             start: new Date("2025-01-01"),
@@ -45,7 +45,6 @@ const ProjectReportWindow = ({
     const [addReport, setAddReport] = useState(false);
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
-    const [isApiDataLoaded, setIsApiDataLoaded] = useState(false);
 
     // Валидация полей
     const validateFields = () => {
@@ -274,8 +273,6 @@ const ProjectReportWindow = ({
     }, []);
 
     useEffect(() => {
-        if (!isApiDataLoaded) return;
-
         // Обновление статуса проекта в отчете
         const updateStatus = () => {
             const today = new Date();
@@ -299,7 +296,7 @@ const ProjectReportWindow = ({
         };
 
         updateStatus();
-    }, [reportData["execution_period"], isApiDataLoaded]);
+    }, [reportData["execution_period"]]);
 
     useEffect(() => {
         if (isDataLoaded && reportId) {
@@ -333,8 +330,6 @@ const ProjectReportWindow = ({
 
                     setTeammates(response.data.responsible_persons);
                     setContractors(response.data.contragents);
-
-                    setIsApiDataLoaded(true);
                 }
             );
         }
@@ -355,7 +350,7 @@ const ProjectReportWindow = ({
                             onChange={(e) =>
                                 handleInputChange(e, "report_type_id")
                             }
-                            value={reportData.type}
+                            value={reportData.report_type_id}
                         >
                             {reportTypes.length > 0 &&
                                 reportTypes.map((type) => (
