@@ -24,8 +24,11 @@ const ProjectLastReport = ({ lastReport }) => {
             </div>
 
             <div className="grid gap-8 mt-10">
-                {reportData.responsible_persons?.map((person, index) => (
-                    <div key={index} className="grid grid-cols-2 gap-4">
+                {reportData.responsible_persons?.map((person) => (
+                    <div
+                        key={person.physical_person_id}
+                        className="grid grid-cols-2 gap-4"
+                    >
                         <div className="flex flex-col gap-1">
                             <div className="text-lg">{person.full_name}</div>
                             <span className="text-sm">Сотрудник</span>
@@ -34,10 +37,13 @@ const ProjectLastReport = ({ lastReport }) => {
                     </div>
                 ))}
 
-                {reportData.contragents?.map((person, index) => (
-                    <div key={index} className="grid grid-cols-2 gap-4">
+                {reportData.contragents?.map((person) => (
+                    <div
+                        key={person.contragent_id}
+                        className="grid grid-cols-2 gap-4"
+                    >
                         <div className="flex flex-col gap-1">
-                            <div className="text-lg">{person.full_name}</div>
+                            <div className="text-lg">{person.program_name}</div>
                             <span className="text-sm">Подрядчик</span>
                         </div>
                         <div className="text-lg">{person.role_name}</div>
