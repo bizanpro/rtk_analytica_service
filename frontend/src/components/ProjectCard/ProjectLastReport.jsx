@@ -23,7 +23,7 @@ const ProjectLastReport = ({ lastReport }) => {
                 </div>
             </div>
 
-            <div className="grid gap-8 mt-10">
+            <div className="grid gap-8 mt-10 max-h-[250px] overflow-y-auto">
                 {reportData.responsible_persons?.map((person) => (
                     <div
                         key={person.physical_person_id}
