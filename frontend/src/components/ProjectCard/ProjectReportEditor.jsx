@@ -9,6 +9,7 @@ const ProjectReportEditor = ({
     setReports,
     setReportWindowsState,
     setReportEditorState,
+    setReportId,
 }) => {
     const rateTitles = [
         { id: "general_assessment", label: "Общая" },
@@ -172,7 +173,10 @@ const ProjectReportEditor = ({
 
                 <button
                     type="button"
-                    onClick={() => setReportEditorState(false)}
+                    onClick={() => {
+                        setReportEditorState(false);
+                        setReportId(null);
+                    }}
                     className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
                     title="Отменить сохранение отчёта"
                 >

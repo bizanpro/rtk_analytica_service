@@ -737,7 +737,7 @@ const ProjectCard = () => {
                                     <span className="text-gray-400">
                                         Команда проекта
                                     </span>
-                                    {/* {lastReport ? (
+                                    {lastReport && Object.keys(lastReport).length > 0 ? (
                                         <ProjectLastReport
                                             lastReport={lastReport}
                                         />
@@ -745,7 +745,7 @@ const ProjectCard = () => {
                                         <div className="grid grid-col-3 gap-3">
                                             <div className="border rounded border-gray-300 border-dashed p-2 w-[33%]"></div>
                                         </div>
-                                    )} */}
+                                    )}
                                 </div>
                             </div>
 
@@ -1013,6 +1013,7 @@ const ProjectCard = () => {
                                     }
                                     setReportEditorState={setReportEditorState}
                                     reportId={reportId}
+                                    setReportId={setReportId}
                                 />
                             ) : (
                                 <>
