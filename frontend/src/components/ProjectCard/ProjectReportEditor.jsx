@@ -41,7 +41,7 @@ const ProjectReportEditor = ({
             `${import.meta.env.VITE_API_URL}reports`,
             extendReportData
         ).then((response) => {
-            if (response) {
+            if (response?.ok) {
                 alert(response.message);
                 setReports((prevReports) => [...prevReports, response.data]);
                 setReportWindowsState(false);
@@ -56,7 +56,7 @@ const ProjectReportEditor = ({
             `${import.meta.env.VITE_API_URL}reports/${reportId}`,
             extendReportData
         ).then((response) => {
-            if (response) {
+            if (response?.ok) {
                 alert(response.message);
                 setReportWindowsState(false);
                 setReportEditorState(false);

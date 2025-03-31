@@ -16,8 +16,8 @@ const ProjectReportWindow = ({
     const [reportData, setReportData] = useState({
         report_status_id: 1,
         report_type_id: 1,
-        budget_in_billions:'',
-        service_cost_in_rubles: '',
+        budget_in_billions: "",
+        service_cost_in_rubles: "",
         contract_id: 1,
         report_period: {
             start: new Date("2025-01-01"),

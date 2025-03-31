@@ -13,14 +13,14 @@ async function postData(method = "POST", url = "", data = {}) {
             throw new Error(`${errorData.err || "Unknown Error"}`);
         }
 
-        return await response.json();
+        const responseData = await response.json();
+        return {
+            ok: true,
+            ...responseData,
+        };
     } catch (error) {
-        if (error.name === "AbortError") {
-            console.log("Request was aborted");
-        } else {
-            console.error("Ошибка запроса: ", error);
-            throw error;
-        }
+        console.error("Ошибка запроса: ", error);
+        throw error;
     }
 }
 

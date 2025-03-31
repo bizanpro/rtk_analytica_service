@@ -237,7 +237,7 @@ const ProjectCard = () => {
                             }responsible-persons/creditor`,
                             updatedLender
                         ).then((response) => {
-                            if (response) {
+                            if (response?.ok) {
                                 if (response?.responsible_person) {
                                     setLenders((prevLenders) => [
                                         ...prevLenders,
@@ -277,7 +277,7 @@ const ProjectCard = () => {
                             }responsible-persons/contragent`,
                             updatedCustomer
                         ).then((response) => {
-                            if (response) {
+                            if (response?.ok) {
                                 if (response?.responsible_person) {
                                     setCustomers((prevCustomer) => [
                                         ...prevCustomer,
@@ -311,7 +311,7 @@ const ProjectCard = () => {
             `${import.meta.env.VITE_API_URL}responsible-persons/creditor/${id}`,
             {}
         ).then((response) => {
-            if (response) {
+            if (response?.ok) {
                 setLenders(lenders.filter((item) => item.id !== id));
             }
         });
@@ -326,7 +326,7 @@ const ProjectCard = () => {
             }responsible-persons/contragent/${id}`,
             {}
         ).then((response) => {
-            if (response) {
+            if (response?.ok) {
                 setCustomers(customers.filter((item) => item.id !== id));
             }
         });
@@ -340,7 +340,7 @@ const ProjectCard = () => {
                 `${URL}/${id}`,
                 formFields
             );
-            if (response && showMessage) {
+            if (response?.ok && showMessage) {
                 alert("Проект успешно обновлен");
             }
             return response;
@@ -352,21 +352,23 @@ const ProjectCard = () => {
 
     // Отправка отчёта
     const sendReport = (data, addReport) => {
-        data.report_period = `${formatDate(
+        let reportData = data;
+        
+        reportData.report_period = `${formatDate(
             data.report_period.start
         )} - ${formatDate(data.report_period.end)}`;
-        data.implementation_period = `${formatDate(
+        reportData.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
-        data.execution_period = data.execution_period.end
+        reportData.execution_period = data.execution_period.end
             ? `${formatDate(data.execution_period.start)} - ${formatDate(
                   data.execution_period.end
               )}`
             : formatDate(data.execution_period.start);
 
-        data.project_id = projectId;
+            reportData.project_id = projectId;
 
-        setReportData(data);
+        // setReportData(data);
 
         if (!addReport) {
             postData(
@@ -374,7 +376,7 @@ const ProjectCard = () => {
                 `${import.meta.env.VITE_API_URL}reports`,
                 data
             ).then((response) => {
-                if (response) {
+                if (response?.ok) {
                     alert(response.message);
                     setReports((prevReports) => [
                         ...prevReports,
@@ -404,27 +406,29 @@ const ProjectCard = () => {
 
     // Обновление отчёта
     const updateReport = (data, reportId, addReport) => {
-        data.report_period = `${formatDate(
+        let reportData = data;
+
+        reportData.report_period = `${formatDate(
             data.report_period.start
         )} - ${formatDate(data.report_period.end)}`;
-        data.implementation_period = `${formatDate(
+        reportData.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
-        data.execution_period = `${formatDate(
+        reportData.execution_period = `${formatDate(
             data.execution_period.start
         )} - ${formatDate(data.execution_period.end)}`;
 
-        data.project_id = projectId;
+        reportData.project_id = projectId;
 
-        setReportData(data);
+        // setReportData(data);
 
         if (!addReport) {
             postData(
                 "PATCH",
                 `${import.meta.env.VITE_API_URL}reports/${reportId}`,
-                data
+                reportData
             ).then((response) => {
-                if (response) {
+                if (response?.ok) {
                     alert(response.message);
                     // setReports((prevReports) =>
                     //     prevReports.map((report) => {
@@ -451,7 +455,7 @@ const ProjectCard = () => {
             `${import.meta.env.VITE_API_URL}reports/${id}`,
             {}
         ).then((response) => {
-            if (response) {
+            if (response?.ok) {
                 setReports(reports.filter((report) => report.id !== id));
             }
         });
@@ -737,7 +741,8 @@ const ProjectCard = () => {
                                     <span className="text-gray-400">
                                         Команда проекта
                                     </span>
-                                    {lastReport && Object.keys(lastReport).length > 0 ? (
+                                    {lastReport &&
+                                    Object.keys(lastReport).length > 0 ? (
                                         <ProjectLastReport
                                             lastReport={lastReport}
                                         />
