@@ -353,7 +353,7 @@ const ProjectCard = () => {
     // Отправка отчёта
     const sendReport = (data, addReport) => {
         let reportData = data;
-        
+
         reportData.report_period = `${formatDate(
             data.report_period.start
         )} - ${formatDate(data.report_period.end)}`;
@@ -366,9 +366,9 @@ const ProjectCard = () => {
               )}`
             : formatDate(data.execution_period.start);
 
-            reportData.project_id = projectId;
+        reportData.project_id = projectId;
 
-        // setReportData(data);
+        setReportData(data);
 
         if (!addReport) {
             postData(
@@ -420,7 +420,7 @@ const ProjectCard = () => {
 
         reportData.project_id = projectId;
 
-        // setReportData(data);
+        setReportData(data);
 
         if (!addReport) {
             postData(
