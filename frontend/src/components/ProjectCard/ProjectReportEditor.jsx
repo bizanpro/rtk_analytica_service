@@ -18,6 +18,7 @@ const ProjectReportEditor = ({
         { id: "team_assessment", label: "Команда" },
     ];
     const [extendReportData, setExtendReportData] = useState(reportData || {});
+    
     const [currentTab, setCurrentTab] = useState("general_summary");
     const tabOptions = [
         { id: "general_summary", label: "Резюме" },

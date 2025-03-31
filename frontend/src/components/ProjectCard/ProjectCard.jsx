@@ -350,23 +350,42 @@ const ProjectCard = () => {
         }
     };
 
+    // Открытие окна редактирования отчёта
+    const openReportEditor = (id) => {
+        setReportId(id);
+        if (id) {
+            setReportWindowsState(true);
+        }
+    };
+
+    // Удаление отчёта
+    const deleteReport = (id) => {
+        postData(
+            "DELETE",
+            `${import.meta.env.VITE_API_URL}reports/${id}`,
+            {}
+        ).then((response) => {
+            if (response?.ok) {
+                setReports(reports.filter((report) => report.id !== id));
+            }
+        });
+    };
+
     // Отправка отчёта
     const sendReport = (data, addReport) => {
-        let reportData = data;
-
-        reportData.report_period = `${formatDate(
+        data.report_period = `${formatDate(
             data.report_period.start
         )} - ${formatDate(data.report_period.end)}`;
-        reportData.implementation_period = `${formatDate(
+        data.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
-        reportData.execution_period = data.execution_period.end
+        data.execution_period = data.execution_period.end
             ? `${formatDate(data.execution_period.start)} - ${formatDate(
                   data.execution_period.end
               )}`
             : formatDate(data.execution_period.start);
 
-        reportData.project_id = projectId;
+        data.project_id = projectId;
 
         setReportData(data);
 
@@ -383,7 +402,6 @@ const ProjectCard = () => {
                         response.data,
                     ]);
                     setReportWindowsState(false);
-                    setReportId(null);
                 } else {
                     alert("Ошибка при отправке отчёта");
                 }
@@ -396,29 +414,19 @@ const ProjectCard = () => {
         }
     };
 
-    // Открытие окна редактирования отчёта
-    const openReportEditor = (id) => {
-        setReportId(id);
-        if (id) {
-            setReportWindowsState(true);
-        }
-    };
-
     // Обновление отчёта
     const updateReport = (data, reportId, addReport) => {
-        let reportData = data;
-
-        reportData.report_period = `${formatDate(
+        data.report_period = `${formatDate(
             data.report_period.start
         )} - ${formatDate(data.report_period.end)}`;
-        reportData.implementation_period = `${formatDate(
+        data.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
-        reportData.execution_period = `${formatDate(
+        data.execution_period = `${formatDate(
             data.execution_period.start
         )} - ${formatDate(data.execution_period.end)}`;
 
-        reportData.project_id = projectId;
+        data.project_id = projectId;
 
         setReportData(data);
 
@@ -426,7 +434,7 @@ const ProjectCard = () => {
             postData(
                 "PATCH",
                 `${import.meta.env.VITE_API_URL}reports/${reportId}`,
-                reportData
+                data
             ).then((response) => {
                 if (response?.ok) {
                     alert(response.message);
@@ -436,7 +444,6 @@ const ProjectCard = () => {
                     //     })
                     // );
                     getReports();
-                    setReportId(null);
                     setReportWindowsState(false);
                 }
             });
@@ -446,19 +453,6 @@ const ProjectCard = () => {
                 setReportEditorState(true);
             }
         }
-    };
-
-    // Удаление отчёта
-    const deleteReport = (id) => {
-        postData(
-            "DELETE",
-            `${import.meta.env.VITE_API_URL}reports/${id}`,
-            {}
-        ).then((response) => {
-            if (response?.ok) {
-                setReports(reports.filter((report) => report.id !== id));
-            }
-        });
     };
 
     useEffect(() => {
@@ -489,6 +483,12 @@ const ProjectCard = () => {
             setLastReport(last || {});
         }
     }, [reports]);
+
+    useEffect(() => {
+        if (!reportWindowsState) {
+            setReportId(null);
+        }
+    }, [reportWindowsState]);
 
     useEffect(() => {
         if (projectId) {
