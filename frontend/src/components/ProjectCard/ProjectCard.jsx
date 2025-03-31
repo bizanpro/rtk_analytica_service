@@ -11,6 +11,7 @@ import ProjectReportItem from "./ProjectReportItem";
 import ProjectReportEditor from "./ProjectReportEditor";
 import ProjectStatisticsBlock from "./ProjectStatisticsBlock";
 import ProjectLastReport from "./ProjectLastReport";
+import ReportServices from "./ReportServices";
 
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -367,6 +368,7 @@ const ProjectCard = () => {
         ).then((response) => {
             if (response?.ok) {
                 setReports(reports.filter((report) => report.id !== id));
+                getProject(projectId);
             }
         });
     };
@@ -402,6 +404,7 @@ const ProjectCard = () => {
                         response.data,
                     ]);
                     setReportWindowsState(false);
+                    getProject(projectId);
                 } else {
                     alert("Ошибка при отправке отчёта");
                 }
@@ -438,13 +441,9 @@ const ProjectCard = () => {
             ).then((response) => {
                 if (response?.ok) {
                     alert(response.message);
-                    // setReports((prevReports) =>
-                    //     prevReports.map((report) => {
-                    //         report.id === reportId ? response.data : report;
-                    //     })
-                    // );
                     getReports();
                     setReportWindowsState(false);
+                    getProject(projectId);
                 }
             });
         } else {
@@ -556,62 +555,209 @@ const ProjectCard = () => {
 
                     <div className="new-project__wrapper mt-15">
                         <div>
-                            <div className="grid gap-6 grid-cols-[20%_40%_40%] mb-10">
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-gray-400">
-                                        Бюджет проекта
-                                    </span>
-                                    <input
-                                        className="py-5"
-                                        type="text"
-                                        value={
-                                            projectId && projectData
-                                                ? projectData.service_cost
-                                                : "Нет данных"
-                                        }
-                                        readOnly
-                                        disabled={mode == "read" ? true : false}
-                                    />
-                                </div>
+                            <div className="grid gap-6 grid-cols-[60%_40%]">
+                                <div className="flex flex-col">
+                                    <div className="flex items-center justify-between gap-6 mb-10">
+                                        <div className="flex flex-col gap-3 min-w-[150px] flex-shrink-0">
+                                            <span className="text-gray-400">
+                                                Бюджет проекта
+                                            </span>
+                                            <div className="flex items-end gap-5 min-h-[42px]">
+                                                <div className="flex items-end gap-2">
+                                                    {projectData?.project_budget >
+                                                        0 && (
+                                                        <>
+                                                            <strong className="text-4xl font-normal">
+                                                                {
+                                                                    projectData.project_budget
+                                                                }
+                                                            </strong>
+                                                            <span className="text-1xl leading-6">
+                                                                млрд <br /> руб.
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                </div>
 
-                                <div className="flex flex-col gap-2">
-                                    <span className="flex items-center gap-2 text-gray-400">
-                                        Заказчик{" "}
-                                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                            ?
-                                        </span>
-                                    </span>
-                                    <div className="border-2 border-gray-300 p-5">
-                                        <select
-                                            className="w-full h-[21px]"
-                                            value={
-                                                projectId
-                                                    ? projectData?.contragent_id
-                                                    : ""
-                                            }
-                                            onChange={(e) =>
-                                                handleInputChange(
-                                                    e,
-                                                    "contragent_id"
-                                                )
-                                            }
-                                            disabled={
-                                                mode == "read" ? true : false
-                                            }
-                                        >
-                                            <option value="">
-                                                Выбрать заказчика
-                                            </option>
-                                            {contragents.length > 0 &&
-                                                contragents.map((item) => (
-                                                    <option
-                                                        value={item.id}
-                                                        key={item.id}
-                                                    >
-                                                        {item.program_name}
+                                                <div className="flex flex-col gap-2">
+                                                    {projectData?.budget_difference_percentage >
+                                                        0 && (
+                                                        <div className="flex gap-1 text-red-400">
+                                                            +
+                                                            {
+                                                                projectData.budget_difference_percentage
+                                                            }
+                                                            15
+                                                            <span>%</span>
+                                                        </div>
+                                                    )}
+                                                    {projectData?.fta_budget >
+                                                        0 && (
+                                                        <div className="flex gap-1">
+                                                            {
+                                                                +projectData.fta_budget
+                                                            }
+                                                            <span>млрд</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2 flex-grow max-w-[495px]">
+                                            <span className="flex items-center gap-2 text-gray-400">
+                                                Заказчик{" "}
+                                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                    ?
+                                                </span>
+                                            </span>
+                                            <div className="border-2 border-gray-300 p-5">
+                                                <select
+                                                    className="w-full h-[21px]"
+                                                    value={
+                                                        projectId
+                                                            ? projectData?.contragent_id
+                                                            : ""
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleInputChange(
+                                                            e,
+                                                            "contragent_id"
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        mode == "read"
+                                                            ? true
+                                                            : false
+                                                    }
+                                                >
+                                                    <option value="">
+                                                        Выбрать заказчика
                                                     </option>
-                                                ))}
-                                        </select>
+                                                    {contragents.length > 0 &&
+                                                        contragents.map(
+                                                            (item) => (
+                                                                <option
+                                                                    value={
+                                                                        item.id
+                                                                    }
+                                                                    key={
+                                                                        item.id
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        item.program_name
+                                                                    }
+                                                                </option>
+                                                            )
+                                                        )}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between gap-6 mb-10">
+                                        <div className="flex flex-col gap-3 min-w-[150px] flex-shrink-0">
+                                            <span className="text-gray-400">
+                                                Срок реализации
+                                            </span>
+
+                                            <div className="flex items-end gap-5 min-h-[42px]">
+                                                <div className="flex items-end gap-2">
+                                                    {/* {projectData?.project_budget >
+                                                        0 && (
+                                                        <>
+                                                            <strong className="text-4xl font-normal">
+                                                                {
+                                                                    projectData.project_budget
+                                                                }
+                                                            </strong>
+                                                            <span className="text-1xl leading-6">
+                                                                млрд <br /> руб.
+                                                            </span>
+                                                        </>
+                                                    )} */}
+                                                </div>
+
+                                                <div className="flex flex-col gap-2">
+                                                    {/* {projectData?.budget_difference_percentage >
+                                                        0 && (
+                                                        <div className="flex gap-1 text-red-400">
+                                                            +
+                                                            {
+                                                                projectData.budget_difference_percentage
+                                                            }
+                                                            15
+                                                            <span>%</span>
+                                                        </div>
+                                                    )}
+                                                    {projectData?.fta_budget >
+                                                        0 && (
+                                                        <div className="flex gap-1">
+                                                            {
+                                                                +projectData.fta_budget
+                                                            }
+                                                            <span>млрд</span>
+                                                        </div>
+                                                    )} */}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2 flex-grow max-w-[495px]">
+                                            <span className="flex items-center gap-2 text-gray-400">
+                                                Отрасль{" "}
+                                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                    ?
+                                                </span>
+                                            </span>
+                                            <div className="border-2 border-gray-300 p-5">
+                                                <select
+                                                    className="w-full h-[21px]"
+                                                    value={
+                                                        projectId
+                                                            ? projectData?.industry_id
+                                                            : ""
+                                                    }
+                                                    onChange={(e) => {
+                                                        setFormFields({
+                                                            ...formFields,
+                                                            industry_id:
+                                                                e.target.value,
+                                                        });
+                                                        setProjectData({
+                                                            ...projectData,
+                                                            industry_id:
+                                                                e.target.value,
+                                                        });
+                                                    }}
+                                                    disabled={
+                                                        mode == "read"
+                                                            ? true
+                                                            : false
+                                                    }
+                                                >
+                                                    <option value="">
+                                                        Выбрать отрасль
+                                                    </option>
+                                                    {industries.length > 0 &&
+                                                        industries.map(
+                                                            (item) => (
+                                                                <option
+                                                                    value={
+                                                                        item.id
+                                                                    }
+                                                                    key={
+                                                                        item.id
+                                                                    }
+                                                                >
+                                                                    {item.name}
+                                                                </option>
+                                                            )
+                                                        )}
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -622,96 +768,10 @@ const ProjectCard = () => {
                                             ?
                                         </span>
                                     </span>
-                                    {/* <ul className="grid gap-3">
-                                        <li className="flex items-center gap-4">
-                                            <div className="text-lg">ФТМ</div>
-                                            <div className="text-lg">
-                                                5,0 млн руб.
-                                            </div>
-                                            <div className="text-lg">
-                                                ежеквартально
-                                            </div>
-                                            <div className="bg-gray-200 py-1 px-2 text-center rounded-md">
-                                                в процессе
-                                            </div>
-                                        </li>
-                                        <li className="flex items-center gap-4">
-                                            <div className="text-lg">ФТМ</div>
-                                            <div className="text-lg">
-                                                5,0 млн руб.
-                                            </div>
-                                            <div className="text-lg">
-                                                ежеквартально
-                                            </div>
-                                            <div className="bg-gray-200 py-1 px-2 text-center rounded-md">
-                                                в процессе
-                                            </div>
-                                        </li>
-                                    </ul> */}
-                                </div>
-                            </div>
 
-                            <div className="grid gap-6 grid-cols-[20%_40%_40%] mb-10">
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-gray-400">
-                                        Срок реализации
-                                    </span>
-                                    <input
-                                        className="py-5"
-                                        type="text"
-                                        value={
-                                            projectId && projectData
-                                                ? projectData.implementation_period_start
-                                                : "ООО 'СГРК'"
-                                        }
-                                        disabled={mode == "read" ? true : false}
-                                        readOnly
-                                    />
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <span className="flex items-center gap-2 text-gray-400">
-                                        Отрасль{" "}
-                                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                            ?
-                                        </span>
-                                    </span>
-                                    <div className="border-2 border-gray-300 p-5">
-                                        <select
-                                            className="w-full h-[21px]"
-                                            value={
-                                                projectId
-                                                    ? projectData?.industry_id
-                                                    : ""
-                                            }
-                                            onChange={(e) => {
-                                                setFormFields({
-                                                    ...formFields,
-                                                    industry_id: e.target.value,
-                                                });
-                                                setProjectData({
-                                                    ...projectData,
-                                                    industry_id: e.target.value,
-                                                });
-                                            }}
-                                            disabled={
-                                                mode == "read" ? true : false
-                                            }
-                                        >
-                                            <option value="">
-                                                Выбрать отрасль
-                                            </option>
-                                            {industries.length > 0 &&
-                                                industries.map((item) => (
-                                                    <option
-                                                        value={item.id}
-                                                        key={item.id}
-                                                    >
-                                                        {item.name}
-                                                    </option>
-                                                ))}
-                                        </select>
-                                    </div>
+                                    {reports.length > 0 && (
+                                        <ReportServices reports={reports} />
+                                    )}
                                 </div>
                             </div>
 
