@@ -92,10 +92,32 @@ const ProjectReportWindow = ({
         if (reportData.responsible_persons.length === 0) {
             newErrors.responsible_persons =
                 "Добавьте хотя бы одного сотрудника";
+        } else {
+            const invalidResponsiblePersons =
+                reportData.responsible_persons.filter(
+                    (person) => !person.physical_person_id || !person.role_id
+                );
+
+            if (invalidResponsiblePersons.length > 0) {
+                newErrors.responsible_persons =
+                    "Убедитесь, что у каждого члена команды заполнены все поля";
+            }
         }
 
         if (reportData.contragents.length === 0) {
             newErrors.contragents = "Добавьте хотя бы одного подрядчика";
+        } else {
+            const invalidContragents = reportData.contragents.filter(
+                (contractor) =>
+                    !contractor.contract_id ||
+                    !contractor.contragent_id ||
+                    !contractor.role_id
+            );
+
+            if (invalidContragents.length > 0) {
+                newErrors.contragents =
+                    "Убедитесь, что у каждого подрядчика заполнены все поля";
+            }
         }
 
         return newErrors;
