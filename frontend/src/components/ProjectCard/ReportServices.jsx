@@ -2,8 +2,6 @@ import React from "react";
 
 // eslint-disable-next-line react/display-name
 const ReportServices = React.memo(({ reports }) => {
-    console.log("рендер");
-
     const filteredReports = reports.filter(
         (report) => report.status === "В работе" || report.status === "Завершен"
     );

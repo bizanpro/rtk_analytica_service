@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
+import getData from "../utils/getData";
 
 const ContractorsSection = ({
     index,
     handleContractorChange,
     suppliers,
     roles,
-    getData,
     person,
     removeContractor,
 }) => {
     const [localContracts, setLocalContracts] = useState([]);
+    const [isMounted, setIsMounted] = useState(false);
 
     const fetchContracts = (id) => {
         getData(
@@ -26,8 +27,7 @@ const ContractorsSection = ({
         if (contragentId > 0) {
             try {
                 fetchContracts(contragentId);
-            } catch (error) {
-                console.error("Ошибка при загрузке договоров:", error);
+            } catch {
                 setLocalContracts([]);
             }
         } else {
@@ -36,10 +36,11 @@ const ContractorsSection = ({
     };
 
     useEffect(() => {
-        if (person?.contragent_id) {
-            fetchContracts(person?.contragent_id);
+        if (!isMounted && person?.contragent_id) {
+            fetchContracts(person.contragent_id);
+            setIsMounted(true);
         }
-    }, [person?.contragent_id]);
+    }, [person?.contragent_id, isMounted]);
 
     return (
         <div className="flex items-center gap-3">

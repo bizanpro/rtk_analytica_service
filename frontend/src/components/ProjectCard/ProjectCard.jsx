@@ -12,6 +12,8 @@ import ProjectReportEditor from "./ProjectReportEditor";
 import ProjectStatisticsBlock from "./ProjectStatisticsBlock";
 import ProjectLastReport from "./ProjectLastReport";
 import ReportServices from "./ReportServices";
+import ProjectImplementationPeriod from "./ProjectImplementationPeriod";
+import ProjectBudget from "./ProjectBudget";
 
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -367,7 +369,7 @@ const ProjectCard = () => {
             {}
         ).then((response) => {
             if (response?.ok) {
-                setReports(reports.filter((report) => report.id !== id));
+                // setReports(reports.filter((report) => report.id !== id));
                 getProject(projectId);
             }
         });
@@ -441,7 +443,7 @@ const ProjectCard = () => {
             ).then((response) => {
                 if (response?.ok) {
                     alert(response.message);
-                    getReports();
+                    // getReports();
                     setReportWindowsState(false);
                     getProject(projectId);
                 }
@@ -562,46 +564,10 @@ const ProjectCard = () => {
                                             <span className="text-gray-400">
                                                 Бюджет проекта
                                             </span>
-                                            <div className="flex items-end gap-5 min-h-[42px]">
-                                                <div className="flex items-end gap-2">
-                                                    {projectData?.project_budget >
-                                                        0 && (
-                                                        <>
-                                                            <strong className="text-4xl font-normal">
-                                                                {
-                                                                    projectData.project_budget
-                                                                }
-                                                            </strong>
-                                                            <span className="text-1xl leading-6">
-                                                                млрд <br /> руб.
-                                                            </span>
-                                                        </>
-                                                    )}
-                                                </div>
 
-                                                <div className="flex flex-col gap-2">
-                                                    {projectData?.budget_difference_percentage >
-                                                        0 && (
-                                                        <div className="flex gap-1 text-red-400">
-                                                            +
-                                                            {
-                                                                projectData.budget_difference_percentage
-                                                            }
-                                                            15
-                                                            <span>%</span>
-                                                        </div>
-                                                    )}
-                                                    {projectData?.fta_budget >
-                                                        0 && (
-                                                        <div className="flex gap-1">
-                                                            {
-                                                                +projectData.fta_budget
-                                                            }
-                                                            <span>млрд</span>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
+                                            <ProjectBudget
+                                                projectData={projectData}
+                                            />
                                         </div>
 
                                         <div className="flex flex-col gap-2 flex-grow max-w-[495px]">
@@ -662,46 +628,9 @@ const ProjectCard = () => {
                                                 Срок реализации
                                             </span>
 
-                                            <div className="flex items-end gap-5 min-h-[42px]">
-                                                <div className="flex items-end gap-2">
-                                                    {/* {projectData?.project_budget >
-                                                        0 && (
-                                                        <>
-                                                            <strong className="text-4xl font-normal">
-                                                                {
-                                                                    projectData.project_budget
-                                                                }
-                                                            </strong>
-                                                            <span className="text-1xl leading-6">
-                                                                млрд <br /> руб.
-                                                            </span>
-                                                        </>
-                                                    )} */}
-                                                </div>
-
-                                                <div className="flex flex-col gap-2">
-                                                    {/* {projectData?.budget_difference_percentage >
-                                                        0 && (
-                                                        <div className="flex gap-1 text-red-400">
-                                                            +
-                                                            {
-                                                                projectData.budget_difference_percentage
-                                                            }
-                                                            15
-                                                            <span>%</span>
-                                                        </div>
-                                                    )}
-                                                    {projectData?.fta_budget >
-                                                        0 && (
-                                                        <div className="flex gap-1">
-                                                            {
-                                                                +projectData.fta_budget
-                                                            }
-                                                            <span>млрд</span>
-                                                        </div>
-                                                    )} */}
-                                                </div>
-                                            </div>
+                                            <ProjectImplementationPeriod
+                                                projectData={projectData}
+                                            />
                                         </div>
 
                                         <div className="flex flex-col gap-2 flex-grow max-w-[495px]">

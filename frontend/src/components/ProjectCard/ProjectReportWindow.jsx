@@ -584,7 +584,6 @@ const ProjectReportWindow = ({
                         handleContractorChange={handleContractorChange}
                         suppliers={suppliers}
                         roles={roles}
-                        getData={getData}
                         removeContractor={removeContractor}
                     />
                 ))}
