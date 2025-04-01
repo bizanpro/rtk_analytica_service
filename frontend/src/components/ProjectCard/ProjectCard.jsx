@@ -55,7 +55,6 @@ const ProjectCard = () => {
     });
 
     const [reports, setReports] = useState([]);
-
     const [reportWindowsState, setReportWindowsState] = useState(false);
     const [reportEditorState, setReportEditorState] = useState(false);
     const [reportEditorName, setReportEditorName] = useState("");
@@ -421,6 +420,7 @@ const ProjectCard = () => {
         }
     };
 
+    // Получаем последний отчет
     const getLastReport = () => {
         if (reports && reports.length > 0) {
             const filteredReports = reports.filter(

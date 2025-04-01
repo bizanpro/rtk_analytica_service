@@ -2,7 +2,7 @@ import ProgressBlock from "../ProgressBlock";
 
 const ProjectImplementationPeriod = ({ projectData }) => {
     const percentage = projectData?.completion_percentage;
-    const date = projectData?.completion_data || "";
+    const date = projectData?.implementation_period_string || "";
 
     return (
         <div>
@@ -12,7 +12,6 @@ const ProjectImplementationPeriod = ({ projectData }) => {
                         <>
                             <strong className="text-4xl font-normal">
                                 {projectData.implementation_period}
-                                60
                             </strong>
                             <span className="text-1xl leading-6">мес.</span>
                         </>
@@ -27,13 +26,11 @@ const ProjectImplementationPeriod = ({ projectData }) => {
                             {
                                 projectData.implementation_period_difference_percentage
                             }
-                            15
                             <span>%</span>
                         </div>
                     )}
                     {projectData?.fta_implementation_period > 0 && (
                         <div className="flex gap-1">
-                            45
                             {+projectData.fta_implementation_period}
                             <span>мес.</span>
                         </div>
