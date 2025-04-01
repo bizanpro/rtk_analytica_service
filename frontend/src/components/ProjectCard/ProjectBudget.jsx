@@ -17,7 +17,6 @@ const ProjectBudget = ({ projectData }) => {
                 {projectData?.budget_difference_percentage > 0 && (
                     <div className="flex gap-1 text-red-400">
                         +{projectData.budget_difference_percentage}
-                        15
                         <span>%</span>
                     </div>
                 )}

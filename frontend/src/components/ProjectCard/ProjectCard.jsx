@@ -705,9 +705,7 @@ const ProjectCard = () => {
                                         </span>
                                     </span>
 
-                                    {reports.length > 0 && (
-                                        <ReportServices reports={reports} />
-                                    )}
+                                    <ReportServices projectId={projectId} />
                                 </div>
                             </div>
 
