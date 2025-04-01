@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useParams, useLocation } from "react-router-dom";
 
 import getData from "../../utils/getData";
@@ -62,6 +62,8 @@ const ProjectCard = () => {
     const [reportData, setReportData] = useState({});
     const [reportId, setReportId] = useState(null);
     const [lastReport, setLastReport] = useState({});
+
+    const memoizedLastReport = useMemo(() => lastReport, [lastReport]);
 
     // Форматирование даты
     const formatDate = (date) => {
@@ -419,6 +421,19 @@ const ProjectCard = () => {
         }
     };
 
+    const getLastReport = () => {
+        if (reports && reports.length > 0) {
+            const filteredReports = reports.filter(
+                (report) =>
+                    report.status === "Завершен" || report.status === "В работе"
+            );
+
+            const last = filteredReports.pop();
+
+            setLastReport(last || {});
+        }
+    };
+
     // Обновление отчёта
     const updateReport = (data, reportId, addReport) => {
         data.report_period = `${formatDate(
@@ -474,16 +489,8 @@ const ProjectCard = () => {
     }, [projectData.contragent_id]);
 
     useEffect(() => {
-        if (reports && reports.length > 0) {
-            const filteredReports = reports.filter(
-                (report) =>
-                    report.status === "Завершен" || report.status === "В работе"
-            );
-
-            const last = filteredReports.pop();
-            setLastReport(last || {});
-        }
-    }, [reports]);
+        getLastReport();
+    }, [reports, projectData]);
 
     useEffect(() => {
         if (!reportWindowsState) {
@@ -730,10 +737,11 @@ const ProjectCard = () => {
                                     <span className="text-gray-400">
                                         Команда проекта
                                     </span>
-                                    {lastReport &&
-                                    Object.keys(lastReport).length > 0 ? (
+                                    {memoizedLastReport &&
+                                    Object.keys(memoizedLastReport).length >
+                                        0 ? (
                                         <ProjectLastReport
-                                            lastReport={lastReport}
+                                            lastReport={memoizedLastReport}
                                         />
                                     ) : (
                                         <div className="grid grid-col-3 gap-3">

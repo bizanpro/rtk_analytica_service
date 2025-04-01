@@ -6,14 +6,14 @@ const ProjectLastReport = ({ lastReport }) => {
     const [reportData, setReportData] = useState({});
 
     useEffect(() => {
-        if (lastReport.id) {
+        if (lastReport?.id) {
             getData(
                 `${import.meta.env.VITE_API_URL}reports/${lastReport.id}`
             ).then((response) => {
                 setReportData(response.data);
             });
         }
-    }, [lastReport.id]);
+    }, [lastReport]);
 
     return (
         <>
