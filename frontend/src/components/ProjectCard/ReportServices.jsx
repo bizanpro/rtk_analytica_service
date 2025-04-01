@@ -20,7 +20,7 @@ const ReportServices = ({ projectId }) => {
             {services.map((service, index) => (
                 <li key={index} className="flex items-center gap-4">
                     <div className="text-lg">{service.name}</div>
-                    <div className="text-lg">{service.cost}</div>
+                    <div className="text-lg">{service.cost} млн руб.</div>
                     <div className="text-lg">{service.period}</div>
                     <div className="bg-gray-200 py-1 px-2 text-center rounded-md">
                         {service.status}
