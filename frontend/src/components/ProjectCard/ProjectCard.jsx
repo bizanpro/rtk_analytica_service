@@ -566,7 +566,7 @@ const ProjectCard = () => {
                         <div>
                             <div className="grid gap-6 grid-cols-[60%_40%]">
                                 <div className="flex flex-col">
-                                    <div className="flex items-center justify-between gap-6 mb-10">
+                                    <div className="flex items-start justify-between gap-6 mb-10">
                                         <div className="flex flex-col gap-3 min-w-[150px] flex-shrink-0">
                                             <span className="text-gray-400">
                                                 Бюджет проекта
@@ -577,7 +577,7 @@ const ProjectCard = () => {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col gap-2 flex-grow max-w-[495px]">
+                                        <div className="flex flex-col gap-2 flex-grow max-w-[495px] min-w-[250px]">
                                             <span className="flex items-center gap-2 text-gray-400">
                                                 Заказчик{" "}
                                                 <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
@@ -629,7 +629,7 @@ const ProjectCard = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center justify-between gap-6 mb-10">
+                                    <div className="flex items-start justify-between gap-6 mb-10">
                                         <div className="flex flex-col gap-3 min-w-[150px] flex-shrink-0">
                                             <span className="text-gray-400">
                                                 Срок реализации
@@ -640,7 +640,7 @@ const ProjectCard = () => {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col gap-2 flex-grow max-w-[495px]">
+                                        <div className="flex flex-col gap-2 flex-grow max-w-[495px] min-w-[250px]">
                                             <span className="flex items-center gap-2 text-gray-400">
                                                 Отрасль{" "}
                                                 <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
