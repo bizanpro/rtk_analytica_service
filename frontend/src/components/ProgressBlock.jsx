@@ -3,7 +3,7 @@ const ProgressBlock = ({ percentage, date }) => {
 
     return (
         <div className="flex items-center gap-4">
-            <div className="relative w-full border border-gray-300 overflow-hidden p-2">
+            <div className="relative w-full border border-gray-300 overflow-hidden p-2 text-center">
                 {date}
 
                 <div
