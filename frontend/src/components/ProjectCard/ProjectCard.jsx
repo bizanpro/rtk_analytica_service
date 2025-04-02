@@ -730,16 +730,12 @@ const ProjectCard = () => {
                                         Команда проекта
                                     </span>
                                     {memoizedLastReport &&
-                                    Object.keys(memoizedLastReport).length >
-                                        0 ? (
-                                        <ProjectLastReport
-                                            lastReport={memoizedLastReport}
-                                        />
-                                    ) : (
-                                        <div className="grid grid-col-3 gap-3">
-                                            <div className="border rounded border-gray-300 border-dashed p-2 w-[33%]"></div>
-                                        </div>
-                                    )}
+                                        Object.keys(memoizedLastReport).length >
+                                            0 && (
+                                            <ProjectLastReport
+                                                lastReport={memoizedLastReport}
+                                            />
+                                        )}
                                 </div>
                             </div>
 

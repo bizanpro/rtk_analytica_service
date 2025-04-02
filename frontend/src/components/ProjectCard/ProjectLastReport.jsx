@@ -17,12 +17,6 @@ const ProjectLastReport = ({ lastReport }) => {
 
     return (
         <>
-            <div className="grid grid-col-3 gap-3">
-                <div className="rounded-md bg-gray-200 text-center px-2 py-1 w-[33%]">
-                    {reportData.report_name}
-                </div>
-            </div>
-
             <div className="grid gap-8 mt-10 max-h-[250px] overflow-y-auto">
                 {reportData.responsible_persons?.map((person) => (
                     <div
