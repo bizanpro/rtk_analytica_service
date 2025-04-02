@@ -106,7 +106,21 @@ const SingleBook = () => {
         );
     };
 
+    // Добавление записи
     const addNewElement = () => {
+        if (
+            !formFields.name ||
+            ((bookId === "report-types" || bookId === "banks") &&
+                !formFields.full_name)
+        ) {
+            alert(
+                bookId === "report-types" || bookId === "banks"
+                    ? "'Полное наименование' должно быть заполнено."
+                    : "'Наименование' должно быть заполнено."
+            );
+            return;
+        }
+
         postData("POST", URL, formFields).then((response) => {
             if (response) {
                 setFormFields((prev) => ({
@@ -120,10 +134,24 @@ const SingleBook = () => {
         });
     };
 
+    // Изменение записи
     const editElement = (id) => {
         const data = booksItems.find((book) => book.id === id);
         delete data?.projects_count;
         delete data?.updated_at;
+
+        if (
+            !data.name ||
+            ((bookId === "report-types" || bookId === "banks") &&
+                !data.full_name)
+        ) {
+            alert(
+                bookId === "report-types" || bookId === "banks"
+                    ? "'Полное наименование' должно быть заполнено."
+                    : "'Наименование' должно быть заполнено."
+            );
+            return;
+        }
 
         postData("PATCH", URL, data).then((response) => {
             if (response) {
@@ -132,6 +160,7 @@ const SingleBook = () => {
         });
     };
 
+    // Удаление записи
     const deleteElement = (id) => {
         postData("DELETE", `${URL}/${id}`, {}).then((response) => {
             if (response) {
@@ -309,33 +338,32 @@ const SingleBook = () => {
                                                                         )
                                                                     }
                                                                 />
-                                                                <span className="save-icon"></span>
-
-                                                                {key ===
-                                                                    "name" && (
-                                                                    <button
-                                                                        type="button"
-                                                                        className="save-icon"
-                                                                        style={{
-                                                                            opacity:
-                                                                                formFields
-                                                                                    .name
-                                                                                    ?.length >
-                                                                                1
-                                                                                    ? 1
-                                                                                    : 0,
-                                                                        }}
-                                                                        onClick={
-                                                                            addNewElement
-                                                                        }
-                                                                    ></button>
-                                                                )}
                                                             </div>
                                                         ) : (
                                                             "—"
                                                         )}
                                                     </td>
                                                 ))}
+                                                <td className="px-4 py-7 min-w-[50px] text-center">
+                                                    <div className="flex items-center justify-end gap-3">
+                                                        <button
+                                                            type="button"
+                                                            className="save-icon"
+                                                            style={{
+                                                                opacity:
+                                                                    formFields
+                                                                        .name
+                                                                        ?.length >
+                                                                    1
+                                                                        ? 1
+                                                                        : 0,
+                                                            }}
+                                                            onClick={
+                                                                addNewElement
+                                                            }
+                                                        ></button>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         )}
 
