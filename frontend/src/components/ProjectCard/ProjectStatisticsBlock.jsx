@@ -8,7 +8,7 @@ const ProjectStatisticsBlock = () => {
                             type="radio"
                             name="time_sort"
                             id="this_year"
-                            readOnly
+                            disabled
                             checked
                         />
                         <label
@@ -23,7 +23,7 @@ const ProjectStatisticsBlock = () => {
                             type="radio"
                             name="time_sort"
                             id="all_time"
-                            readOnly
+                            disabled
                         />
                         <label
                             className="bg-gray-200 py-1 px-2 text-center rounded-md"
@@ -87,7 +87,7 @@ const ProjectStatisticsBlock = () => {
                             ?
                         </span>
                     </div>
-                    <input type="text" value="Нет данных" readOnly />
+                    Нет данных
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-gray-400">
@@ -112,12 +112,7 @@ const ProjectStatisticsBlock = () => {
                             ?
                         </span>
                     </div>
-                    <input
-                        className="flex-grow"
-                        type="text"
-                        value="Нет данных"
-                        readOnly
-                    />
+                    Нет данных
                 </div>
             </div>
         </div>

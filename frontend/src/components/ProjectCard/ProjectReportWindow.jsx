@@ -571,7 +571,7 @@ const ProjectReportWindow = ({
 
             {teammates.map((person, index) => (
                 <TeammatesSection
-                    key={person}
+                    key={`${index}_${Date.now()}`}
                     index={index}
                     person={person}
                     handleTeammateChange={handleTeammateChange}
@@ -600,7 +600,7 @@ const ProjectReportWindow = ({
             {contractors.length > 0 &&
                 contractors.map((person, index) => (
                     <ContractorsSection
-                        key={person}
+                        key={`${index}_${Date.now()}`}
                         index={index}
                         person={person}
                         handleContractorChange={handleContractorChange}

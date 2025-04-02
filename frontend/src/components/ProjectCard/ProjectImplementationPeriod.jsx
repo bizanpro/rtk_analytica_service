@@ -23,9 +23,11 @@ const ProjectImplementationPeriod = ({ projectData }) => {
                         0 && (
                         <div className="flex gap-1 text-red-400">
                             +
-                            {
-                                projectData.implementation_period_difference_percentage
-                            }
+                            <div className="max-w-[50px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                {
+                                    projectData.implementation_period_difference_percentage
+                                }
+                            </div>
                             <span>%</span>
                         </div>
                     )}

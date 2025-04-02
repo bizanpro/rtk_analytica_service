@@ -564,10 +564,10 @@ const ProjectCard = () => {
 
                     <div className="new-project__wrapper mt-15">
                         <div>
-                            <div className="grid gap-6 grid-cols-[60%_40%]">
+                            <div className="grid gap-[20px] grid-cols-2">
                                 <div className="flex flex-col">
                                     <div className="flex items-start justify-between gap-6 mb-10">
-                                        <div className="flex flex-col gap-3 min-w-[150px] flex-shrink-0">
+                                        <div className="flex flex-col gap-3 min-w-[130px]">
                                             <span className="text-gray-400">
                                                 Бюджет проекта
                                             </span>
@@ -577,7 +577,7 @@ const ProjectCard = () => {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col gap-2 flex-grow max-w-[495px] min-w-[250px]">
+                                        <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[300px] max-w-[300px]">
                                             <span className="flex items-center gap-2 text-gray-400">
                                                 Заказчик{" "}
                                                 <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
@@ -588,9 +588,8 @@ const ProjectCard = () => {
                                                 <select
                                                     className="w-full h-[21px]"
                                                     value={
-                                                        projectId
-                                                            ? projectData?.contragent_id
-                                                            : ""
+                                                        projectData?.contragent_id ||
+                                                        ""
                                                     }
                                                     onChange={(e) =>
                                                         handleInputChange(
@@ -630,7 +629,7 @@ const ProjectCard = () => {
                                     </div>
 
                                     <div className="flex items-start justify-between gap-6 mb-10">
-                                        <div className="flex flex-col gap-3 min-w-[150px] flex-shrink-0">
+                                        <div className="flex flex-col gap-3 min-w-[130px] ">
                                             <span className="text-gray-400">
                                                 Срок реализации
                                             </span>
@@ -640,7 +639,7 @@ const ProjectCard = () => {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col gap-2 flex-grow max-w-[495px] min-w-[250px]">
+                                        <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[300px] max-w-[300px]">
                                             <span className="flex items-center gap-2 text-gray-400">
                                                 Отрасль{" "}
                                                 <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
@@ -651,9 +650,8 @@ const ProjectCard = () => {
                                                 <select
                                                     className="w-full h-[21px]"
                                                     value={
-                                                        projectId
-                                                            ? projectData?.industry_id
-                                                            : ""
+                                                        projectData?.industry_id ||
+                                                        ""
                                                     }
                                                     onChange={(e) => {
                                                         setFormFields({
@@ -709,7 +707,7 @@ const ProjectCard = () => {
                                 </div>
                             </div>
 
-                            <div className="grid gap-6 grid-cols-[60%_40%] mb-5">
+                            <div className="grid gap-[20px] grid-cols-2 mb-5">
                                 <div className="flex flex-col gap-2">
                                     <span className="text-gray-400">
                                         Краткое описание
@@ -720,11 +718,7 @@ const ProjectCard = () => {
                                         type="text"
                                         name="description"
                                         disabled={mode == "read" ? true : false}
-                                        value={
-                                            projectId && projectData
-                                                ? projectData?.description
-                                                : ""
-                                        }
+                                        value={projectData?.description || ""}
                                         onChange={(e) =>
                                             handleInputChange(e, "description")
                                         }
@@ -749,7 +743,7 @@ const ProjectCard = () => {
                                 </div>
                             </div>
 
-                            <div className="grid gap-6 grid-cols-[50%_50%]">
+                            <div className="grid gap-[20px] grid-cols-2">
                                 <div className="flex flex-col gap-2">
                                     <div className="flex items-center gap-2">
                                         <span className="text-gray-400">
