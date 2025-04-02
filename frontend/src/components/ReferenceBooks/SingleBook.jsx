@@ -65,7 +65,7 @@ const SingleBook = () => {
             : `${import.meta.env.VITE_API_URL}${bookId ? bookId : "books"}`;
 
     const [booksItems, setBooksItems] = useState([]);
-    const [mode, setMode] = useState("edit");
+    const [mode, setMode] = useState("read");
     const [formFields, setFormFields] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
@@ -309,7 +309,7 @@ const SingleBook = () => {
                                                                         )
                                                                     }
                                                                 />
-                                                                <span className="edit-icon"></span>
+                                                                <span className="save-icon"></span>
 
                                                                 {key ===
                                                                     "name" && (
