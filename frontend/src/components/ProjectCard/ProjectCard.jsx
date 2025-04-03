@@ -494,6 +494,14 @@ const ProjectCard = () => {
     }, [reportWindowsState]);
 
     useEffect(() => {
+        setAddLender(false);
+        setAddCustomer(false);
+        setReportWindowsState(false);
+        setReportEditorState(false);
+        setReportId(null);
+    }, [mode]);
+
+    useEffect(() => {
         if (projectId) {
             getProject(projectId);
         }
@@ -533,9 +541,6 @@ const ProjectCard = () => {
                                     id="read_mode"
                                     onChange={() => {
                                         setMode("read");
-                                        setAddLender(false);
-                                        setAddCustomer(false);
-                                        setReportWindowsState(false);
                                     }}
                                     checked={mode === "read" ? true : false}
                                 />
