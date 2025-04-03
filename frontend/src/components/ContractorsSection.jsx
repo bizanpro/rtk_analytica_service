@@ -8,6 +8,7 @@ const ContractorsSection = ({
     roles,
     person,
     removeContractor,
+    mode,
 }) => {
     const [localContracts, setLocalContracts] = useState([]);
     const [isMounted, setIsMounted] = useState(false);
@@ -49,9 +50,10 @@ const ContractorsSection = ({
                     <div className="flex flex-col gap-2 justify-between">
                         <div className="border-2 border-gray-300 p-1 h-[32px]">
                             <select
-                                className="w-full"
+                                className="w-full h-full"
                                 onChange={handleContragentChange}
                                 value={person?.contragent_id}
+                                disabled={mode === "read" ? true : false}
                             >
                                 <option value="0">Выберите контрагента</option>
                                 {suppliers?.map((supplier) => (
@@ -68,7 +70,7 @@ const ContractorsSection = ({
                     <div className="flex flex-col gap-2 justify-between">
                         <div className="border-2 border-gray-300 p-1 h-[32px]">
                             <select
-                                className="w-full"
+                                className="w-full h-full"
                                 value={person?.role_id}
                                 onChange={(e) =>
                                     handleContractorChange(
@@ -77,6 +79,7 @@ const ContractorsSection = ({
                                         Number(e.target.value)
                                     )
                                 }
+                                disabled={mode === "read" ? true : false}
                             >
                                 <option value="0">Выберите роль</option>
                                 {roles?.map((role) => (
@@ -94,7 +97,7 @@ const ContractorsSection = ({
                         <span className="text-gray-400"></span>
                         <div className="border-2 border-gray-300 p-1 h-[32px]">
                             <select
-                                className="w-full"
+                                className="w-full h-full"
                                 value={person?.contract_id}
                                 onChange={(e) =>
                                     handleContractorChange(
@@ -103,6 +106,7 @@ const ContractorsSection = ({
                                         Number(e.target.value)
                                     )
                                 }
+                                disabled={mode === "read" ? true : false}
                             >
                                 <option value="0">Выберите договор</option>
                                 {localContracts?.map((contract) => (
@@ -119,11 +123,13 @@ const ContractorsSection = ({
                 </div>
             </div>
 
-            <button
-                className="delete-icon w-[30px] h-[32px]"
-                title="Удалить исполнителя"
-                onClick={() => removeContractor(index)}
-            ></button>
+            {mode === "edit" && (
+                <button
+                    className="delete-icon w-[30px] h-[32px]"
+                    title="Удалить исполнителя"
+                    onClick={() => removeContractor(index)}
+                ></button>
+            )}
         </div>
     );
 };

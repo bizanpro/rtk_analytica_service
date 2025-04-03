@@ -8,10 +8,12 @@ import ContractorsSection from "../ContractorsSection";
 const ProjectReportWindow = ({
     sendReport,
     reportWindowsState,
+    setReportEditorState,
     contracts,
     reportId,
     updateReport,
     setReportId,
+    mode,
 }) => {
     const [reportData, setReportData] = useState({
         report_status_id: 1,
@@ -368,11 +370,12 @@ const ProjectReportWindow = ({
                     <span className="text-gray-400">Тип отчёта</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
-                            className="w-full"
+                            className="w-full h-full"
                             onChange={(e) =>
                                 handleInputChange(e, "report_type_id")
                             }
                             value={reportData.report_type_id}
+                            disabled={mode === "read" ? true : false}
                         >
                             {reportTypes.length > 0 &&
                                 reportTypes.map((type) => (
@@ -396,6 +399,7 @@ const ProjectReportWindow = ({
                         onChange={handleChangeDateRange("report_period")}
                         dateFormat="dd.MM.yyyy"
                         selectsRange
+                        disabled={mode === "read" ? true : false}
                     />
                 </div>
             </div>
@@ -414,6 +418,7 @@ const ProjectReportWindow = ({
                             onChange={(e) =>
                                 handleInputChange(e, "budget_in_billions")
                             }
+                            disabled={mode === "read" ? true : false}
                         />
                     </div>
                 </div>
@@ -432,6 +437,7 @@ const ProjectReportWindow = ({
                         )}
                         dateFormat="dd.MM.yyyy"
                         selectsRange
+                        disabled={mode === "read" ? true : false}
                     />
                 </div>
             </div>
@@ -441,11 +447,12 @@ const ProjectReportWindow = ({
                     <span className="text-gray-400">Договор</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
-                            className="w-full"
+                            className="w-full h-full"
                             onChange={(e) =>
                                 handleInputChange(e, "contract_id")
                             }
                             value={reportData.contract_id}
+                            disabled={mode === "read" ? true : false}
                         >
                             {contracts.length > 0 &&
                                 contracts.map((contract) => (
@@ -475,6 +482,7 @@ const ProjectReportWindow = ({
                             onChange={(e) =>
                                 handleInputChange(e, "service_cost_in_rubles")
                             }
+                            disabled={mode === "read" ? true : false}
                         />
                     </div>
                 </div>
@@ -491,6 +499,7 @@ const ProjectReportWindow = ({
                         onChange={handleChangeDateRange("execution_period")}
                         dateFormat="dd.MM.yyyy"
                         selectsRange
+                        disabled={mode === "read" ? true : false}
                     />
                 </div>
             </div>
@@ -506,11 +515,12 @@ const ProjectReportWindow = ({
                     <span className="text-gray-400">Статус</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
-                            className="w-full"
+                            className="w-full h-full"
                             value={reportData.report_status_id}
                             onChange={(e) =>
                                 handleInputChange(e, "report_status_id")
                             }
+                            disabled={mode === "read" ? true : false}
                         >
                             {reportStatuses.map((status) => (
                                 <option value={status.id} key={status.id}>
@@ -521,7 +531,7 @@ const ProjectReportWindow = ({
                     </div>
                 </div>
 
-                {reportData["report_status_id"] == 4 && (
+                {reportData["report_status_id"] == 4 && mode === "edit" && (
                     <div className="flex flex-col gap-2 justify-between">
                         <span className="text-gray-400">
                             Добавить заключение по отчёту
@@ -557,14 +567,16 @@ const ProjectReportWindow = ({
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400 flex items-center gap-2">
                         Команда проекта
-                        <button
-                            type="button"
-                            className="add-button"
-                            onClick={() => addBlock("teammate")}
-                            title="Добавить сотрудника"
-                        >
-                            <span></span>
-                        </button>
+                        {mode === "edit" && (
+                            <button
+                                type="button"
+                                className="add-button"
+                                onClick={() => addBlock("teammate")}
+                                title="Добавить сотрудника"
+                            >
+                                <span></span>
+                            </button>
+                        )}
                     </span>
                 </div>
             </div>
@@ -578,6 +590,7 @@ const ProjectReportWindow = ({
                     physicalPersons={physicalPersons}
                     roles={roles}
                     removeTeammate={removeTeammate}
+                    mode={mode}
                 />
             ))}
 
@@ -585,14 +598,16 @@ const ProjectReportWindow = ({
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400 flex items-center gap-2">
                         Подрядчики
-                        <button
-                            type="button"
-                            className="add-button"
-                            onClick={() => addBlock("contractor")}
-                            title="Добавить подрядчика"
-                        >
-                            <span></span>
-                        </button>
+                        {mode === "edit" && (
+                            <button
+                                type="button"
+                                className="add-button"
+                                onClick={() => addBlock("contractor")}
+                                title="Добавить подрядчика"
+                            >
+                                <span></span>
+                            </button>
+                        )}
                     </span>
                 </div>
             </div>
@@ -607,30 +622,62 @@ const ProjectReportWindow = ({
                         suppliers={suppliers}
                         roles={roles}
                         removeContractor={removeContractor}
+                        mode={mode}
                     />
                 ))}
 
             <div className="mt-5 flex items-center gap-6 justify-between">
-                <button
-                    type="button"
-                    className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                    onClick={() => handleSave()}
-                    title="Сохранить отчёт"
-                >
-                    Сохранить
-                </button>
+                {mode === "edit" ? (
+                    <>
+                        <button
+                            type="button"
+                            className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
+                            onClick={() => handleSave()}
+                            title="Сохранить отчёт"
+                        >
+                            Сохранить
+                        </button>
 
-                <button
-                    type="button"
-                    onClick={() => {
-                        setReportId(null);
-                        reportWindowsState(false);
-                    }}
-                    className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
-                    title="Отменить сохранение отчёта"
-                >
-                    Отменить
-                </button>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setReportId(null);
+                                reportWindowsState(false);
+                            }}
+                            className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
+                            title="Отменить сохранение отчёта"
+                        >
+                            Отменить
+                        </button>
+                    </>
+                ) : (
+                    <div className="grid grid-cols-2 gap-2 flex-grow">
+                        {reportData["report_status_id"] == 4 && (
+                            <button
+                                type="button"
+                                className="border rounded-lg py-3 px-5 bg-black text-white"
+                                onClick={() => {
+                                    updateReport(reportData, reportId, true);
+                                }}
+                                title="Перейти к заключению по отчёту"
+                            >
+                                Заключение по отчёту
+                            </button>
+                        )}
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setReportId(null);
+                                reportWindowsState(false);
+                            }}
+                            className="border rounded-lg py-3 px-5"
+                            title="Закрыть отчёт"
+                        >
+                            Закрыть
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

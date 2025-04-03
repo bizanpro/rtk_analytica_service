@@ -10,6 +10,7 @@ const ProjectReportEditor = ({
     setReportWindowsState,
     setReportEditorState,
     setReportId,
+    mode,
 }) => {
     const rateTitles = [
         { id: "general_assessment", label: "Общая" },
@@ -17,8 +18,9 @@ const ProjectReportEditor = ({
         { id: "customer_assessment", label: "Заказчик" },
         { id: "team_assessment", label: "Команда" },
     ];
-    const [extendReportData, setExtendReportData] = useState(reportData || {});
     
+    const [extendReportData, setExtendReportData] = useState(reportData || {});
+
     const [currentTab, setCurrentTab] = useState("general_summary");
     const tabOptions = [
         { id: "general_summary", label: "Резюме" },
@@ -65,10 +67,6 @@ const ProjectReportEditor = ({
         });
     };
 
-    useEffect(() => {
-        console.log(extendReportData);
-    }, [extendReportData]);
-
     return (
         <div className="border border-gray-400 py-5 px-3">
             <div className="text-2xl w-full mb-3">{reportEditorName}</div>
@@ -79,6 +77,7 @@ const ProjectReportEditor = ({
                         type="radio"
                         name="create_report"
                         id="createReportYes"
+                        disabled={mode === "read" ? true : false}
                     />
                     <label
                         className="flex items-center h-[100%]"
@@ -93,6 +92,7 @@ const ProjectReportEditor = ({
                         type="radio"
                         name="create_report"
                         id="createReportNo"
+                        disabled={mode === "read" ? true : false}
                     />
                     <label
                         className="flex items-center h-[100%]"
@@ -115,6 +115,7 @@ const ProjectReportEditor = ({
                             key={id}
                             value={extendReportData[id]}
                             handleTRating={handleTRating}
+                            mode={mode}
                         />
                     ))}
                 </div>
@@ -158,31 +159,50 @@ const ProjectReportEditor = ({
                         name={currentTab}
                         value={extendReportData[currentTab] || ""}
                         onChange={(e) => handleTextArea(e, currentTab)}
+                        disabled={mode === "read" ? true : false}
                     ></textarea>
                 </div>
             </div>
 
             <div className="mt-5 flex items-center gap-6 justify-between">
-                <button
-                    type="button"
-                    className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                    onClick={() => (reportId ? updateReport() : sendReport())}
-                    title="Сохранить отчёт"
-                >
-                    Сохранить
-                </button>
+                {mode === "edit" ? (
+                    <>
+                        <button
+                            type="button"
+                            className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
+                            onClick={() =>
+                                reportId ? updateReport() : sendReport()
+                            }
+                            title="Сохранить отчёт"
+                        >
+                            Сохранить
+                        </button>
 
-                <button
-                    type="button"
-                    onClick={() => {
-                        setReportEditorState(false);
-                        setReportId(null);
-                    }}
-                    className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
-                    title="Отменить сохранение отчёта"
-                >
-                    Отменить
-                </button>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setReportEditorState(false);
+                                setReportId(null);
+                            }}
+                            className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
+                            title="Отменить сохранение отчёта"
+                        >
+                            Отменить
+                        </button>
+                    </>
+                ) : (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setReportEditorState(false);
+                            setReportId(null);
+                        }}
+                        className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
+                        title="Закрыть отчёт"
+                    >
+                        Закрыть
+                    </button>
+                )}
             </div>
         </div>
     );

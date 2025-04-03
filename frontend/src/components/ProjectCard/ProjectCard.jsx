@@ -448,6 +448,8 @@ const ProjectCard = () => {
         setReportData(data);
 
         if (!addReport) {
+            if (mode === "read") return;
+
             postData(
                 "PATCH",
                 `${import.meta.env.VITE_API_URL}reports/${reportId}`,
@@ -986,6 +988,7 @@ const ProjectCard = () => {
                                     setReportEditorState={setReportEditorState}
                                     reportId={reportId}
                                     setReportId={setReportId}
+                                    mode={mode}
                                 />
                             ) : (
                                 <>
@@ -1070,11 +1073,15 @@ const ProjectCard = () => {
                                                     reportWindowsState={
                                                         setReportWindowsState
                                                     }
+                                                    setReportEditorState={
+                                                        setReportEditorState
+                                                    }
                                                     sendReport={sendReport}
                                                     contracts={contracts}
                                                     updateReport={updateReport}
                                                     reportId={reportId}
                                                     setReportId={setReportId}
+                                                    mode={mode}
                                                 />
                                             )}
                                         </div>

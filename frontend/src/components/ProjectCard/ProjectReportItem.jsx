@@ -12,7 +12,19 @@ const ProjectReportItem = ({
     mode,
 }) => {
     return (
-        <li className="grid items-center grid-cols-[25%_18%_25%_15%_6%] gap-3">
+        <li
+            className={`grid items-center grid-cols-[25%_18%_25%_15%_6%] gap-3 ${
+                mode === "read" ? "cursor-pointer" : ""
+            }`}
+            onClick={
+                mode === "read"
+                    ? () => {
+                          setReportEditorName(report_name);
+                          openReportEditor(id);
+                      }
+                    : undefined
+            }
+        >
             <div className="flex flex-col">
                 <div className="text-lg">{report_name}</div>
                 <span className="text-sm">{report_period}</span>
