@@ -20,11 +20,15 @@ const RateBlock = ({ name, title, handleTRating, value }) => {
                 {[...Array(totalBlocks)].map((_, index) => (
                     <div
                         key={index}
-                        className={`min-w-[20px] h-[20px] cursor-pointer transition-colors border border-gray-300 ${
-                            index + 1 <= rating ? "bg-green-800" : "bg-white"
+                        className={`flex items-center justify-center min-w-[20px] h-[20px] cursor-pointer transition-colors border border-gray-300 ${
+                            index + 1 <= rating
+                                ? "bg-green-800 text-white"
+                                : "bg-white"
                         }`}
                         onClick={() => setRating(index + 1)}
-                    />
+                    >
+                        {index + 1 <= rating ? index + 1 : ""}
+                    </div>
                 ))}
             </div>
         </div>

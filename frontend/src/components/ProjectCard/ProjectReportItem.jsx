@@ -4,6 +4,7 @@ const ProjectReportItem = ({
     status,
     report_period,
     days,
+    general_assessment,
     execution_period,
     setReportEditorName,
     openReportEditor,
@@ -11,7 +12,7 @@ const ProjectReportItem = ({
     mode,
 }) => {
     return (
-        <li className="grid items-center grid-cols-[24%_24%_49%] gap-3">
+        <li className="grid items-center grid-cols-[25%_18%_25%_15%_6%] gap-3">
             <div className="flex flex-col">
                 <div className="text-lg">{report_name}</div>
                 <span className="text-sm">{report_period}</span>
@@ -24,26 +25,33 @@ const ProjectReportItem = ({
                     <div className="text-lg">{days}</div>
                     <span className="text-sm">{execution_period}</span>
                 </div>
-                {mode === "edit" && (
-                    <>
-                        <button
-                            type="button"
-                            className="edit-icon flex-none w-[15px] h-[20px]"
-                            title="Редактировать отчёт"
-                            onClick={() => {
-                                setReportEditorName(report_name);
-                                openReportEditor(id);
-                            }}
-                        ></button>
+            </div>
 
-                        <button
-                            className="delete-icon flex-none w-[20px] h-[20px]"
-                            title="Удалить отчёт"
-                            onClick={() => deleteReport(id)}
-                        ></button>
-                    </>
+            <div className="flex justify-center">
+                {general_assessment && (
+                    <div className="text-lg">{general_assessment}/10</div>
                 )}
             </div>
+
+            {mode === "edit" && (
+                <div className="flex items-center gap-2">
+                    <button
+                        type="button"
+                        className="edit-icon flex-none w-[15px] h-[20px]"
+                        title="Редактировать отчёт"
+                        onClick={() => {
+                            setReportEditorName(report_name);
+                            openReportEditor(id);
+                        }}
+                    ></button>
+
+                    <button
+                        className="delete-icon flex-none w-[20px] h-[20px]"
+                        title="Удалить отчёт"
+                        onClick={() => deleteReport(id)}
+                    ></button>
+                </div>
+            )}
         </li>
     );
 };

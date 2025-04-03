@@ -10,7 +10,7 @@ import ProjectReportWindow from "./ProjectReportWindow";
 import ProjectReportItem from "./ProjectReportItem";
 import ProjectReportEditor from "./ProjectReportEditor";
 import ProjectStatisticsBlock from "./ProjectStatisticsBlock";
-import ProjectLastReport from "./ProjectLastReport";
+import ProjectTeam from "./ProjectTeam";
 import ReportServices from "./ReportServices";
 import ProjectImplementationPeriod from "./ProjectImplementationPeriod";
 import ProjectBudget from "./ProjectBudget";
@@ -59,10 +59,9 @@ const ProjectCard = () => {
     const [reportEditorState, setReportEditorState] = useState(false);
     const [reportEditorName, setReportEditorName] = useState("");
     const [reportData, setReportData] = useState({});
-    const [reportId, setReportId] = useState(null);
-    const [lastReport, setLastReport] = useState({});
 
-    const memoizedLastReport = useMemo(() => lastReport, [lastReport]);
+    const [teamData, setTeamData] = useState([]);
+    const [reportId, setReportId] = useState(null);
 
     // Форматирование даты
     const formatDate = (date) => {
@@ -195,6 +194,17 @@ const ProjectCard = () => {
         setReports(response.data);
     };
 
+    // Получение команды проекта
+    const getTeam = () => {
+        getData(
+            `${import.meta.env.VITE_API_URL}projects/${projectId}/team`
+        ).then((response) => {
+            if (response.status == 200) {
+                setTeamData(response.data.team);
+            }
+        });
+    };
+
     // Получение проекта
     const getProject = async (id) => {
         try {
@@ -218,6 +228,7 @@ const ProjectCard = () => {
                 fetchContragents(),
                 fetchBanks(),
                 getReports(),
+                getTeam(),
             ]);
         } catch (error) {
             console.error("Ошибка при загрузке проекта:", error);
@@ -420,20 +431,6 @@ const ProjectCard = () => {
         }
     };
 
-    // Получаем последний отчет
-    const getLastReport = () => {
-        if (reports && reports.length > 0) {
-            const filteredReports = reports.filter(
-                (report) =>
-                    report.status === "Завершен" || report.status === "В работе"
-            );
-
-            const last = filteredReports.pop();
-
-            setLastReport(last || {});
-        }
-    };
-
     // Обновление отчёта
     const updateReport = (data, reportId, addReport) => {
         data.report_period = `${formatDate(
@@ -487,10 +484,6 @@ const ProjectCard = () => {
             setReportWindowsState(false);
         }
     }, [projectData.contragent_id]);
-
-    useEffect(() => {
-        getLastReport();
-    }, [reports, projectData]);
 
     useEffect(() => {
         if (!reportWindowsState) {
@@ -577,7 +570,7 @@ const ProjectCard = () => {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[300px] max-w-[300px]">
+                                        <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
                                             <span className="flex items-center gap-2 text-gray-400">
                                                 Заказчик{" "}
                                                 <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
@@ -639,7 +632,7 @@ const ProjectCard = () => {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[300px] max-w-[300px]">
+                                        <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
                                             <span className="flex items-center gap-2 text-gray-400">
                                                 Отрасль{" "}
                                                 <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
@@ -725,18 +718,7 @@ const ProjectCard = () => {
                                     />
                                 </div>
 
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-gray-400">
-                                        Команда проекта
-                                    </span>
-                                    {memoizedLastReport &&
-                                        Object.keys(memoizedLastReport).length >
-                                            0 && (
-                                            <ProjectLastReport
-                                                lastReport={memoizedLastReport}
-                                            />
-                                        )}
-                                </div>
+                                <ProjectTeam teamData={teamData} />
                             </div>
 
                             <div className="grid gap-[20px] grid-cols-2">
@@ -873,7 +855,7 @@ const ProjectCard = () => {
                                                             }
                                                         >
                                                             <option value="">
-                                                                Банк
+                                                                Добавить банк
                                                             </option>
                                                             {availableBanks.map(
                                                                 (bank) => (
@@ -923,7 +905,7 @@ const ProjectCard = () => {
                                                         }
                                                     >
                                                         <option value="">
-                                                            Банк
+                                                            Добавить банк
                                                         </option>
                                                         {banks
                                                             .filter(
@@ -1046,11 +1028,14 @@ const ProjectCard = () => {
                                         <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
                                             {!reportWindowsState ? (
                                                 <ul className="grid gap-3">
-                                                    <li className="grid items-center grid-cols-[24%_24%_49%] gap-3 mb-2 text-gray-400">
+                                                    <li className="grid items-center grid-cols-[25%_18%_25%_18%] gap-3 mb-2 text-gray-400">
                                                         <span>Отчет</span>
                                                         <span>Статус</span>
                                                         <span>
                                                             Период выполнения
+                                                        </span>
+                                                        <span>
+                                                            Общая оценка
                                                         </span>
                                                     </li>
 
