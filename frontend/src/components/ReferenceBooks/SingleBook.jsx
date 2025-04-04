@@ -257,41 +257,15 @@ const SingleBook = () => {
                     <table className="table-auto w-full border-collapse border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
-                                {bookId != "creditor-responsible-persons" &&
-                                    COLUMNS[bookId].map(({ label, key }) => (
-                                        <th
-                                            className="text-base px-4 py-2 min-w-[180px]"
-                                            rowSpan="2"
-                                            key={key}
-                                        >
-                                            {label}
-                                        </th>
-                                    ))}
-
-                                {bookId == "creditor-responsible-persons" &&
-                                    COLUMNS[bookId].map(
-                                        ({ label, key }, index) => (
-                                            <th
-                                                className="text-base px-4 py-2 min-w-[180px]"
-                                                rowSpan="2"
-                                                key={key}
-                                            >
-                                                <div
-                                                    className={
-                                                        index !==
-                                                        COLUMNS[bookId].length -
-                                                            1
-                                                            ? ""
-                                                            : "flex justify-end"
-                                                    }
-                                                >
-                                                    <span className="block min-w-[210px] max-w-[210px]">
-                                                        {label}
-                                                    </span>
-                                                </div>
-                                            </th>
-                                        )
-                                    )}
+                                {COLUMNS[bookId].map(({ label, key }) => (
+                                    <th
+                                        className="text-base px-4 py-2 min-w-[180px]"
+                                        rowSpan="2"
+                                        key={key}
+                                    >
+                                        {label}
+                                    </th>
+                                ))}
                             </tr>
                         </thead>
 
@@ -305,9 +279,8 @@ const SingleBook = () => {
                             ) : (
                                 <>
                                     {mode === "edit" &&
-                                        bookId !=
-                                            "creditor-responsible-persons" &&
-                                        bookId != "responsible-persons" && (
+                                        bookId != "creditor" &&
+                                        bookId != "contragent" && (
                                             <tr className="border-gray-300 text-base border-b text-left">
                                                 {columns.map(({ key }) => (
                                                     <td
