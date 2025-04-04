@@ -8,6 +8,7 @@ const ProjectReportItem = ({
     execution_period,
     setReportEditorName,
     openReportEditor,
+    openSubReportEditor,
     deleteReport,
     mode,
 }) => {
@@ -41,7 +42,15 @@ const ProjectReportItem = ({
 
             <div className="flex justify-center">
                 {general_assessment && (
-                    <div className="text-lg">{general_assessment}/10</div>
+                    <button
+                        className="text-lg"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            openSubReportEditor(id);
+                        }}
+                    >
+                        {general_assessment}/10
+                    </button>
                 )}
             </div>
 

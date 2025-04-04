@@ -47,6 +47,7 @@ const ProjectReportWindow = ({
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
+    // Проверка на заполненность заключения по отчёту
     const hasNonNullFields = useMemo(() => {
         return [
             reportData.bank_assessment,
@@ -57,7 +58,7 @@ const ProjectReportWindow = ({
             reportData.risk_summary,
             reportData.team_assessment,
             reportData.team_summary,
-        ].some((field) => field !== null);
+        ].some((field) => field !== null && field !== undefined);
     }, [reportData]);
 
     // Валидация полей
@@ -572,6 +573,19 @@ const ProjectReportWindow = ({
                             </div>
                         </div>
                     )}
+
+                {hasNonNullFields && reportData["report_status_id"] == 4 && (
+                    <button
+                        type="button"
+                        className="border rounded-lg p-1 min-h-[32px] mt-auto"
+                        onClick={() => {
+                            updateReport(reportData, reportId, true);
+                        }}
+                        title="Редактировать заключение по отчёту"
+                    >
+                        Редактировать заключение по отчёту
+                    </button>
+                )}
             </div>
 
             <div className="grid gap-3 grid-cols-1">
@@ -640,27 +654,14 @@ const ProjectReportWindow = ({
             <div className="mt-5 flex items-center gap-6 justify-between">
                 {mode === "edit" ? (
                     <>
-                        {hasNonNullFields ? (
-                            <button
-                                type="button"
-                                className="border rounded-lg py-3 px-5 bg-black text-white"
-                                onClick={() => {
-                                    updateReport(reportData, reportId, true);
-                                }}
-                                title="Редактировать заключение по отчёту"
-                            >
-                                Редактировать заключение по отчёту
-                            </button>
-                        ) : (
-                            <button
-                                type="button"
-                                className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                                onClick={() => handleSave()}
-                                title="Сохранить отчёт"
-                            >
-                                Сохранить
-                            </button>
-                        )}
+                        <button
+                            type="button"
+                            className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
+                            onClick={() => handleSave()}
+                            title="Сохранить отчёт"
+                        >
+                            Сохранить
+                        </button>
 
                         <button
                             type="button"

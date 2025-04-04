@@ -21,9 +21,9 @@ const Projects = () => {
         { label: "Проект", key: "name" },
         { label: "Заказчик", key: "contragent" },
         { label: "Банк", key: "creditors" },
-        { label: "Бюджет", key: "budget" },
-        { label: "Срок", key: "term" },
-        { label: "Руководитель проекта", key: "manager" },
+        { label: "Бюджет (млрд руб.)", key: "project_budget" },
+        { label: "Срок (мес.)", key: "implementation_period" },
+        { label: "Руководитель проекта", key: "project_manager" },
         { label: "Статус", key: "status" },
     ];
 

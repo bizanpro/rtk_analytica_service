@@ -6,11 +6,11 @@ const ProjectReportEditor = ({
     reportEditorName,
     postData,
     reportId,
-    setReports,
     setReportWindowsState,
     setReportEditorState,
     setReportId,
-    getReports,
+    getProject,
+    projectId,
     mode,
 }) => {
     const rateTitles = [
@@ -47,7 +47,7 @@ const ProjectReportEditor = ({
         ).then((response) => {
             if (response?.ok) {
                 alert(response.message);
-                setReports((prevReports) => [...prevReports, response.data]);
+                getProject(projectId);
                 setReportWindowsState(false);
                 setReportEditorState(false);
             }
@@ -62,7 +62,7 @@ const ProjectReportEditor = ({
         ).then((response) => {
             if (response?.ok) {
                 alert(response.message);
-                getReports();
+                getProject(projectId);
                 setReportWindowsState(false);
                 setReportEditorState(false);
             }

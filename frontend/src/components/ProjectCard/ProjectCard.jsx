@@ -55,12 +55,13 @@ const ProjectCard = () => {
     });
 
     const [reports, setReports] = useState([]);
-    const [reportWindowsState, setReportWindowsState] = useState(false);
-    const [reportEditorState, setReportEditorState] = useState(false);
+    const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
+    const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
     const [reportEditorName, setReportEditorName] = useState("");
     const [reportData, setReportData] = useState({});
 
     const [teamData, setTeamData] = useState([]);
+    const [services, setServices] = useState([]);
     const [reportId, setReportId] = useState(null);
 
     // Форматирование даты
@@ -205,6 +206,17 @@ const ProjectCard = () => {
         });
     };
 
+    // Получение услуг проекта
+    const getServices = () => {
+        getData(
+            `${import.meta.env.VITE_API_URL}reports/${projectId}/services`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setServices(response.data);
+            }
+        });
+    };
+
     // Получение проекта
     const getProject = async (id) => {
         try {
@@ -229,6 +241,7 @@ const ProjectCard = () => {
                 fetchBanks(),
                 getReports(),
                 getTeam(),
+                getServices(),
             ]);
         } catch (error) {
             console.error("Ошибка при загрузке проекта:", error);
@@ -373,6 +386,22 @@ const ProjectCard = () => {
         }
     };
 
+    // Принудительно отркрытие окна редактирования заключения по отчёту
+    const openSubReportEditor = (id) => {
+        setReportWindowsState(false);
+        getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
+            (response) => {
+                if (response?.status == 200) {
+                    setReportData(response.data);
+                    setReportId(id);
+                    if (id) {
+                        setReportEditorState(true);
+                    }
+                }
+            }
+        );
+    };
+
     // Удаление отчёта
     const deleteReport = (id) => {
         postData(
@@ -457,7 +486,6 @@ const ProjectCard = () => {
             ).then((response) => {
                 if (response?.ok) {
                     alert(response.message);
-                    // getReports();
                     setReportWindowsState(false);
                     getProject(projectId);
                 }
@@ -703,7 +731,7 @@ const ProjectCard = () => {
                                         </span>
                                     </span>
 
-                                    <ReportServices projectId={projectId} />
+                                    <ReportServices services={services} />
                                 </div>
                             </div>
 
@@ -992,8 +1020,9 @@ const ProjectCard = () => {
                                     }
                                     setReportEditorState={setReportEditorState}
                                     reportId={reportId}
+                                    projectId={projectId}
                                     setReportId={setReportId}
-                                    getReports={getReports}
+                                    getProject={getProject}
                                     mode={mode}
                                 />
                             ) : (
@@ -1068,6 +1097,9 @@ const ProjectCard = () => {
                                                                     }
                                                                     openReportEditor={
                                                                         openReportEditor
+                                                                    }
+                                                                    openSubReportEditor={
+                                                                        openSubReportEditor
                                                                     }
                                                                     mode={mode}
                                                                 />

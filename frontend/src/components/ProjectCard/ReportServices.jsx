@@ -1,20 +1,4 @@
-import { useState, useEffect } from "react";
-
-import getData from "../../utils/getData";
-
-const ReportServices = ({ projectId }) => {
-    const [services, setServices] = useState([]);
-
-    useEffect(() => {
-        getData(
-            `${import.meta.env.VITE_API_URL}reports/${projectId}/services`
-        ).then((response) => {
-            if (response?.status == 200) {
-                setServices(response.data);
-            }
-        });
-    }, []);
-
+const ReportServices = ({ services }) => {
     return (
         <ul className="grid gap-3 max-h-[175px] overflow-y-auto">
             {services.map((service, index) => (
