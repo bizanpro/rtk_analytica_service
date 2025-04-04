@@ -756,7 +756,7 @@ const ProjectCard = () => {
                                 <ProjectTeam teamData={teamData} />
                             </div>
 
-                            <div className="grid gap-[20px] grid-cols-2">
+                            <div className="grid gap-[20px] grid-cols-2 items-start">
                                 <div className="flex flex-col gap-2">
                                     <div className="flex items-center gap-2">
                                         <span className="text-gray-400">
@@ -788,7 +788,7 @@ const ProjectCard = () => {
                                         )}
                                     </div>
 
-                                    <ul className="mt-12 grid gap-4">
+                                    <ul className="mt-[55px] grid gap-4 items-start overflow-y-auto h-[205px]">
                                         {addCustomer && (
                                             <EmptyExecutorBlock
                                                 borderClass={"border-gray-300"}
@@ -816,7 +816,9 @@ const ProjectCard = () => {
                                                 />
                                             ))
                                         ) : (
-                                            <p>Нет данных</p>
+                                            <li>
+                                                <p>Нет данных</p>
+                                            </li>
                                         )}
                                     </ul>
                                 </div>
@@ -970,7 +972,7 @@ const ProjectCard = () => {
                                             )}
                                     </ul>
 
-                                    <ul className="mt-3.5 grid gap-4">
+                                    <ul className="mt-[10px] grid gap-4 items-start overflow-y-auto h-[270px]">
                                         {addLender && (
                                             <EmptyExecutorBlock
                                                 borderClass={"border-gray-300"}
@@ -1001,7 +1003,9 @@ const ProjectCard = () => {
                                                 />
                                             ))
                                         ) : (
-                                            <p>Нет данных</p>
+                                            <li>
+                                                <p>Нет данных</p>
+                                            </li>
                                         )}
                                     </ul>
                                 </div>

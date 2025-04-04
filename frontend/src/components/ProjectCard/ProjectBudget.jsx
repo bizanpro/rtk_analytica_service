@@ -14,12 +14,11 @@ const ProjectBudget = ({ projectData }) => {
                 )}
             </div>
             <div className="flex flex-col gap-2">
-                {projectData?.budget_difference_percentage > 0 && (
-                    <div className="flex gap-1 text-red-400 max-w-[50px] overflow-hidden text-ellipsis whitespace-nowrap">
-                        +{projectData.budget_difference_percentage}
-                        <span>%</span>
-                    </div>
-                )}
+                <div className="flex gap-1 text-red-400 max-w-[50px] overflow-hidden text-ellipsis whitespace-nowrap">
+                    +{projectData.budget_difference_percentage}
+                    <span>%</span>
+                </div>
+
                 {projectData?.fta_budget > 0 && (
                     <div className="flex gap-1">
                         <div className="max-w-[50px] overflow-hidden text-ellipsis whitespace-nowrap">
