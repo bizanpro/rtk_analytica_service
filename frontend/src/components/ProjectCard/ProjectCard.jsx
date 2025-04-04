@@ -487,11 +487,11 @@ const ProjectCard = () => {
         }
     }, [projectData.contragent_id]);
 
-    useEffect(() => {
-        if (!reportWindowsState) {
-            setReportId(null);
-        }
-    }, [reportWindowsState]);
+    // useEffect(() => {
+    //     if (!reportWindowsState) {
+    //         setReportId(null);
+    //     }
+    // }, [reportWindowsState]);
 
     useEffect(() => {
         setAddLender(false);
@@ -993,6 +993,7 @@ const ProjectCard = () => {
                                     setReportEditorState={setReportEditorState}
                                     reportId={reportId}
                                     setReportId={setReportId}
+                                    getReports={getReports}
                                     mode={mode}
                                 />
                             ) : (
@@ -1077,9 +1078,6 @@ const ProjectCard = () => {
                                                 <ProjectReportWindow
                                                     reportWindowsState={
                                                         setReportWindowsState
-                                                    }
-                                                    setReportEditorState={
-                                                        setReportEditorState
                                                     }
                                                     sendReport={sendReport}
                                                     contracts={contracts}

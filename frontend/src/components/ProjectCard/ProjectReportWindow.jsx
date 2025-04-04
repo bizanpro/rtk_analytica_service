@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import DatePicker from "react-datepicker";
 import getData from "../../utils/getData";
 
@@ -8,7 +8,6 @@ import ContractorsSection from "../ContractorsSection";
 const ProjectReportWindow = ({
     sendReport,
     reportWindowsState,
-    setReportEditorState,
     contracts,
     reportId,
     updateReport,
@@ -47,6 +46,19 @@ const ProjectReportWindow = ({
     const [addReport, setAddReport] = useState(false);
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+    const hasNonNullFields = useMemo(() => {
+        return [
+            reportData.bank_assessment,
+            reportData.bank_summary,
+            reportData.customer_assessment,
+            reportData.customer_summary,
+            reportData.general_summary,
+            reportData.risk_summary,
+            reportData.team_assessment,
+            reportData.team_summary,
+        ].some((field) => field !== null);
+    }, [reportData]);
 
     // Валидация полей
     const validateFields = () => {
@@ -257,6 +269,7 @@ const ProjectReportWindow = ({
             return { ...prev, contragents: updatedContragents };
         });
     };
+
     const parseDate = (dateString) => {
         const [day, month, year] = dateString.split(".");
         return new Date(`${year}-${month}-${day}`);
@@ -358,10 +371,6 @@ const ProjectReportWindow = ({
             );
         }
     }, [isDataLoaded, reportId]);
-
-    // useEffect(() => {
-    //     console.log(reportData);
-    // }, [reportData]);
 
     return (
         <div className="grid gap-6">
@@ -531,36 +540,38 @@ const ProjectReportWindow = ({
                     </div>
                 </div>
 
-                {reportData["report_status_id"] == 4 && mode === "edit" && (
-                    <div className="flex flex-col gap-2 justify-between">
-                        <span className="text-gray-400">
-                            Добавить заключение по отчёту
-                        </span>
+                {reportData["report_status_id"] == 4 &&
+                    mode === "edit" &&
+                    !hasNonNullFields && (
+                        <div className="flex flex-col gap-2 justify-between">
+                            <span className="text-gray-400">
+                                Добавить заключение по отчёту
+                            </span>
 
-                        <div className="grid gap-3 grid-cols-2">
-                            <div className="radio-field">
-                                <input
-                                    type="radio"
-                                    name="add_report"
-                                    id="addReportYes"
-                                    onChange={() => setAddReport(true)}
-                                    checked={addReport ? true : false}
-                                />
-                                <label htmlFor="addReportYes">Да</label>
-                            </div>
-                            <div className="radio-field">
-                                <input
-                                    type="radio"
-                                    name="add_report"
-                                    id="addReportNo"
-                                    onChange={() => setAddReport(false)}
-                                    checked={addReport ? false : true}
-                                />
-                                <label htmlFor="addReportNo">Нет</label>
+                            <div className="grid gap-3 grid-cols-2">
+                                <div className="radio-field">
+                                    <input
+                                        type="radio"
+                                        name="add_report"
+                                        id="addReportYes"
+                                        onChange={() => setAddReport(true)}
+                                        checked={addReport ? true : false}
+                                    />
+                                    <label htmlFor="addReportYes">Да</label>
+                                </div>
+                                <div className="radio-field">
+                                    <input
+                                        type="radio"
+                                        name="add_report"
+                                        id="addReportNo"
+                                        onChange={() => setAddReport(false)}
+                                        checked={addReport ? false : true}
+                                    />
+                                    <label htmlFor="addReportNo">Нет</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    )}
             </div>
 
             <div className="grid gap-3 grid-cols-1">
@@ -629,14 +640,27 @@ const ProjectReportWindow = ({
             <div className="mt-5 flex items-center gap-6 justify-between">
                 {mode === "edit" ? (
                     <>
-                        <button
-                            type="button"
-                            className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                            onClick={() => handleSave()}
-                            title="Сохранить отчёт"
-                        >
-                            Сохранить
-                        </button>
+                        {hasNonNullFields ? (
+                            <button
+                                type="button"
+                                className="border rounded-lg py-3 px-5 bg-black text-white"
+                                onClick={() => {
+                                    updateReport(reportData, reportId, true);
+                                }}
+                                title="Редактировать заключение по отчёту"
+                            >
+                                Редактировать заключение по отчёту
+                            </button>
+                        ) : (
+                            <button
+                                type="button"
+                                className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
+                                onClick={() => handleSave()}
+                                title="Сохранить отчёт"
+                            >
+                                Сохранить
+                            </button>
+                        )}
 
                         <button
                             type="button"
@@ -652,7 +676,7 @@ const ProjectReportWindow = ({
                     </>
                 ) : (
                     <div className="grid grid-cols-2 gap-2 flex-grow">
-                        {reportData["report_status_id"] == 4 && (
+                        {hasNonNullFields && (
                             <button
                                 type="button"
                                 className="border rounded-lg py-3 px-5 bg-black text-white"

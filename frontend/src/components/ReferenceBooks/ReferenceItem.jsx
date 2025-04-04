@@ -15,7 +15,7 @@ const ReferenceItem = ({
     const navigate = useNavigate();
 
     const handleRowClick = () => {
-        navigate(`/reference-books/${data.id}`);
+        navigate(`/reference-books/${data.alias}`);
     };
 
     return (
@@ -59,6 +59,8 @@ const ReferenceItem = ({
                                                                             "id" &&
                                                                         field !==
                                                                             "updated_at" &&
+                                                                        field !==
+                                                                            "last_updated" &&
                                                                         (field ===
                                                                             "name" ||
                                                                             field ===
@@ -90,13 +92,14 @@ const ReferenceItem = ({
                                                                                         )
                                                                                     }
                                                                                 />
-                                                                                {/* <span className="edit-icon"></span> */}
                                                                             </div>
                                                                         ) : (
                                                                             field !==
                                                                                 "id" &&
                                                                             field !==
-                                                                                "updated_at" && (
+                                                                                "updated_at" &&
+                                                                            field !==
+                                                                                "last_updated" && (
                                                                                 <div
                                                                                     className="text-sm"
                                                                                     key={
@@ -142,9 +145,10 @@ const ReferenceItem = ({
                                             handleInputChange(e, key, data.id)
                                         }
                                     />
-                                    {/* <span className="edit-icon"></span> */}
                                 </div>
-                            ) : key === "updated_at" && value ? (
+                            ) : (key === "updated_at" ||
+                                  key === "last_updated") &&
+                              value ? (
                                 format(parseISO(value), "d MMMM yyyy, HH:mm", {
                                     locale: ru,
                                 }) || "—"

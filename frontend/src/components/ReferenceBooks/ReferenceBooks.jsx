@@ -3,21 +3,22 @@ import getData from "../../utils/getData";
 import ReferenceItem from "./ReferenceItem";
 
 const ReferenceBooks = () => {
-    const URL = import.meta.env.DEV ? "/data/books.json" : "/data/books.json";
-    // : `${import.meta.env.VITE_API_URL}projects`;
     const [booksItems, setBooksItems] = useState([]);
 
     useEffect(() => {
-        getData(URL, { Accept: "application/json" }).then((response) => {
-            setBooksItems(response.data);
+        getData(`${import.meta.env.VITE_API_URL}/dictionaries`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status == 200) {
+                setBooksItems(response.data.dictionaries);
+            }
         });
-        // .finally(() => setIsLoading(false));
     }, []);
 
     const COLUMNS = [
         { label: "Наименование", key: "name" },
-        { label: "Кол-во элементов", key: "totalCount" },
-        { label: "Последнее изменение", key: "updated_at" },
+        { label: "Кол-во элементов", key: "items_count" },
+        { label: "Последнее изменение", key: "last_updated" },
         { label: "Автор измнения", key: "author" },
     ];
 
@@ -48,9 +49,9 @@ const ReferenceBooks = () => {
 
                         <tbody>
                             {booksItems.length > 0 &&
-                                booksItems.map((item) => (
+                                booksItems.map((item, index) => (
                                     <ReferenceItem
-                                        key={item.id}
+                                        key={index}
                                         data={item}
                                         columns={COLUMNS}
                                     />

@@ -171,10 +171,13 @@ const SingleBook = () => {
         });
     };
 
+    // Получение списка записей
     const getBooks = () => {
         getData(URL, { Accept: "application/json" })
             .then((response) => {
-                setBooksItems(response.data.data);
+                if (response.status == 200) {
+                    setBooksItems(response.data.data);
+                }
             })
             .finally(() => setIsLoading(false));
     };

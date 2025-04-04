@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import RateBlock from "../RateBlock";
 
 const ProjectReportEditor = ({
@@ -10,6 +10,7 @@ const ProjectReportEditor = ({
     setReportWindowsState,
     setReportEditorState,
     setReportId,
+    getReports,
     mode,
 }) => {
     const rateTitles = [
@@ -18,7 +19,7 @@ const ProjectReportEditor = ({
         { id: "customer_assessment", label: "Заказчик" },
         { id: "team_assessment", label: "Команда" },
     ];
-    
+
     const [extendReportData, setExtendReportData] = useState(reportData || {});
 
     const [currentTab, setCurrentTab] = useState("general_summary");
@@ -61,6 +62,7 @@ const ProjectReportEditor = ({
         ).then((response) => {
             if (response?.ok) {
                 alert(response.message);
+                getReports();
                 setReportWindowsState(false);
                 setReportEditorState(false);
             }
