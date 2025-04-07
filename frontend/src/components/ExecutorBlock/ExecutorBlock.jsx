@@ -12,7 +12,7 @@ const ExecutorBlock = ({
     const PhoneMask = "+{7}(000) 000 00 00";
 
     return (
-        <li className="flex items-center justify-between gap-6">
+        <li className="flex items-center justify-between gap-6 w-full">
             <div
                 className={`executor-block flex-grow border transition-all ${
                     mode === "edit" ? "border-gray-300" : "border-transparent"

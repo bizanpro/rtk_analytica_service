@@ -36,7 +36,7 @@ const EmptyExecutorBlock = ({
     };
 
     return (
-        <li className="flex items-center justify-between gap-6">
+        <li className="flex items-center justify-between gap-6 w-full">
             <div
                 className={`executor-block flex-grow border transition-all ${borderClass}`}
             >
@@ -127,7 +127,6 @@ const EmptyExecutorBlock = ({
                             onChange={(e) =>
                                 handleNewExecutor(type, e, "creditor_id")
                             }
-                            value={data.creditor_id}
                         >
                             <option value="">Выберите банк</option>
                             {banks?.map((bank) => (

@@ -250,86 +250,79 @@ const ProjectCard = () => {
 
     // Отправляем кредитора и заказчика
     const sendExecutor = (type) => {
-        updateProject(projectId, false).then(() => {
-            if (type === "lender") {
-                if (projectData.creditors?.length > 0) {
-                    setNewLender((prev) => {
-                        const updatedLender = {
-                            ...prev,
-                            project_id: projectId,
-                        };
-                        postData(
-                            "POST",
-                            `${
-                                import.meta.env.VITE_API_URL
-                            }responsible-persons/creditor`,
-                            updatedLender
-                        ).then((response) => {
-                            if (response?.ok) {
-                                if (response?.responsible_person) {
-                                    setLenders((prevLenders) => [
-                                        ...prevLenders,
-                                        response.responsible_person,
-                                    ]);
-                                }
+        if (type === "lender") {
+            if (projectData.creditors?.length > 0) {
+                setNewLender((prev) => {
+                    const updatedLender = {
+                        ...prev,
+                        project_id: projectId,
+                    };
+                    postData(
+                        "POST",
+                        `${
+                            import.meta.env.VITE_API_URL
+                        }responsible-persons/creditor`,
+                        updatedLender
+                    ).then((response) => {
+                        if (response?.ok) {
+                            getProject(projectId);
 
-                                setNewLender({
-                                    full_name: "",
-                                    phone: "",
-                                    position: "",
-                                    email: "",
-                                    creditor_id: 1,
-                                });
+                            setNewLender({
+                                full_name: "",
+                                phone: "",
+                                position: "",
+                                email: "",
+                                creditor_id: 1,
+                            });
 
-                                alert(response.message);
-                            }
-                        });
-                        return updatedLender;
+                            alert(response.message);
+                        }
                     });
-                } else {
-                    alert("Необходимо назначить банк");
-                }
-            } else if (type === "customer") {
-                if (projectData?.contragent_id) {
-                    setNewCustomer((prev) => {
-                        const updatedCustomer = {
-                            ...prev,
-                            project_id: projectId,
-                            contragent_id: projectData?.contragent_id,
-                        };
-
-                        postData(
-                            "POST",
-                            `${
-                                import.meta.env.VITE_API_URL
-                            }responsible-persons/contragent`,
-                            updatedCustomer
-                        ).then((response) => {
-                            if (response?.ok) {
-                                if (response?.responsible_person) {
-                                    setCustomers((prevCustomer) => [
-                                        ...prevCustomer,
-                                        response.responsible_person,
-                                    ]);
-                                }
-
-                                setNewCustomer({
-                                    full_name: "",
-                                    phone: "",
-                                    position: "",
-                                    email: "",
-                                });
-
-                                alert(response.message);
-                            }
-                        });
-                        return updatedCustomer;
-                    });
-                } else {
-                    alert("Необходимо назначить заказчика");
-                }
+                    return updatedLender;
+                });
+            } else {
+                alert("Необходимо назначить банк");
             }
-        });
+        } else if (type === "customer") {
+            if (projectData?.contragent_id) {
+                setNewCustomer((prev) => {
+                    const updatedCustomer = {
+                        ...prev,
+                        project_id: projectId,
+                        contragent_id: projectData?.contragent_id,
+                    };
+
+                    postData(
+                        "POST",
+                        `${
+                            import.meta.env.VITE_API_URL
+                        }responsible-persons/contragent`,
+                        updatedCustomer
+                    ).then((response) => {
+                        if (response?.ok) {
+                            if (response?.responsible_person) {
+                                setCustomers((prevCustomer) => [
+                                    ...prevCustomer,
+                                    response.responsible_person,
+                                ]);
+                            }
+
+                            setNewCustomer({
+                                full_name: "",
+                                phone: "",
+                                position: "",
+                                email: "",
+                            });
+
+                            alert(response.message);
+                        }
+                    });
+                    return updatedCustomer;
+                });
+            } else {
+                alert("Необходимо назначить заказчика");
+            }
+        }
     };
 
     // Удаление кредитора
@@ -340,7 +333,8 @@ const ProjectCard = () => {
             {}
         ).then((response) => {
             if (response?.ok) {
-                setLenders(lenders.filter((item) => item.id !== id));
+                // setLenders(lenders.filter((item) => item.id !== id));
+                getProject(projectId);
             }
         });
     };
@@ -410,7 +404,6 @@ const ProjectCard = () => {
             {}
         ).then((response) => {
             if (response?.ok) {
-                // setReports(reports.filter((report) => report.id !== id));
                 getProject(projectId);
             }
         });
@@ -514,12 +507,6 @@ const ProjectCard = () => {
             setReportWindowsState(false);
         }
     }, [projectData.contragent_id]);
-
-    // useEffect(() => {
-    //     if (!reportWindowsState) {
-    //         setReportId(null);
-    //     }
-    // }, [reportWindowsState]);
 
     useEffect(() => {
         setAddLender(false);
@@ -788,7 +775,7 @@ const ProjectCard = () => {
                                         )}
                                     </div>
 
-                                    <ul className="mt-[55px] grid gap-4 items-start overflow-y-auto h-[205px]">
+                                    <ul className="mt-[55px] flex flex-col gap-4 items-start overflow-y-auto h-[205px]">
                                         {addCustomer && (
                                             <EmptyExecutorBlock
                                                 borderClass={"border-gray-300"}
@@ -853,7 +840,7 @@ const ProjectCard = () => {
                                         )}
                                     </div>
 
-                                    <ul className="flex gap-3 flex-wrap">
+                                    <ul className="flex gap-3 flex-wrap mb-2">
                                         {projectData.creditors?.map(
                                             (item, index) => {
                                                 const availableBanks =
@@ -872,28 +859,14 @@ const ProjectCard = () => {
                                                     );
 
                                                 return (
-                                                    <div
-                                                        key={index}
-                                                        className="mb-2"
-                                                    >
+                                                    <li key={index}>
                                                         <select
-                                                            className="flex-[0_0_30%] bg-gray-200 py-1 px-2 text-center rounded-md"
+                                                            className="bg-gray-200 py-1 px-4 text-center rounded-md"
                                                             value={
                                                                 item.id || ""
                                                             }
-                                                            onChange={(e) =>
-                                                                handleBankChange(
-                                                                    e,
-                                                                    index
-                                                                )
-                                                            }
-                                                            disabled={
-                                                                mode === "read"
-                                                            }
+                                                            disabled
                                                         >
-                                                            <option value="">
-                                                                Добавить банк
-                                                            </option>
                                                             {availableBanks.map(
                                                                 (bank) => (
                                                                     <option
@@ -911,72 +884,17 @@ const ProjectCard = () => {
                                                                 )
                                                             )}
                                                         </select>
-                                                    </div>
+                                                    </li>
                                                 );
                                             }
                                         )}
-
-                                        {projectData.creditors?.length <
-                                            banks.length &&
-                                            projectData.creditors[
-                                                projectData.creditors?.length -
-                                                    1
-                                            ]?.id !== "" && (
-                                                <div className="mb-2">
-                                                    <select
-                                                        className={`flex-[0_0_30%] py-1 px-2 text-center rounded-md ${
-                                                            mode === "read"
-                                                                ? "border border-gray-300 border-dashed"
-                                                                : "bg-gray-200"
-                                                        }`}
-                                                        onChange={(e) =>
-                                                            handleBankChange(
-                                                                e,
-                                                                projectData
-                                                                    .creditors
-                                                                    .length
-                                                            )
-                                                        }
-                                                        disabled={
-                                                            mode === "read"
-                                                        }
-                                                    >
-                                                        <option value="">
-                                                            Добавить банк
-                                                        </option>
-                                                        {banks
-                                                            .filter(
-                                                                (bank) =>
-                                                                    !projectData.creditors.some(
-                                                                        (
-                                                                            selectedBank
-                                                                        ) =>
-                                                                            selectedBank.id ===
-                                                                            bank.id
-                                                                    )
-                                                            )
-                                                            .map((bank) => (
-                                                                <option
-                                                                    value={
-                                                                        bank.id
-                                                                    }
-                                                                    key={
-                                                                        bank.id
-                                                                    }
-                                                                >
-                                                                    {bank.name}
-                                                                </option>
-                                                            ))}
-                                                    </select>
-                                                </div>
-                                            )}
                                     </ul>
 
-                                    <ul className="mt-[10px] grid gap-4 items-start overflow-y-auto h-[270px]">
+                                    <ul className="mt-[10px] flex flex-col gap-4 items-start overflow-y-auto h-[270px]">
                                         {addLender && (
                                             <EmptyExecutorBlock
                                                 borderClass={"border-gray-300"}
-                                                banks={projectData.creditors}
+                                                banks={banks}
                                                 data={newLender}
                                                 type={"lender"}
                                                 removeBlock={() =>
