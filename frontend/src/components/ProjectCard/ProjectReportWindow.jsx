@@ -157,22 +157,22 @@ const ProjectReportWindow = ({
     // Обработка инпутов
     const handleInputChange = useCallback(
         (e, name) => {
-            let value =
-                name === "service_cost_in_rubles"
-                    ? Number(e.target.value.replace(/\s/g, "")) || 0
-                    : e.target.value;
+            let value = e.target.value;
 
             if (name === "budget_in_billions") {
-                value = value.replace(/[^0-9.]/g, "");
+                value = value.replace(/[^0-9.,]/g, "");
+                value = value.replace(".", ",");
 
-                const parts = value.split(".");
+                const parts = value.split(",");
                 if (parts.length > 2) {
-                    value = parts[0] + "." + parts[1];
+                    value = parts[0] + "," + parts[1];
                 }
 
                 if (parts[1]?.length > 5) {
-                    value = `${parts[0]}.${parts[1].slice(0, 5)}`;
+                    value = `${parts[0]},${parts[1].slice(0, 5)}`;
                 }
+            } else if (name === "service_cost_in_rubles") {
+                value = Number(value.replace(/\s/g, "")) || 0;
             }
 
             setReportData((prev) => ({
@@ -424,7 +424,7 @@ const ProjectReportWindow = ({
                             type="text"
                             className="w-full"
                             placeholder="0.0"
-                            value={reportData.budget_in_billions}
+                            value={reportData.budget_in_billions?.replace(".", ",")}
                             onChange={(e) =>
                                 handleInputChange(e, "budget_in_billions")
                             }

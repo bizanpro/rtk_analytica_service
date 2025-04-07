@@ -235,38 +235,34 @@ const ProjectCard = () => {
     // Отправляем кредитора и заказчика
     const sendExecutor = (type) => {
         if (type === "lender") {
-            if (projectData.creditors?.length > 0) {
-                setNewLender((prev) => {
-                    const updatedLender = {
-                        ...prev,
-                        project_id: projectId,
-                    };
-                    postData(
-                        "POST",
-                        `${
-                            import.meta.env.VITE_API_URL
-                        }responsible-persons/creditor`,
-                        updatedLender
-                    ).then((response) => {
-                        if (response?.ok) {
-                            getProject(projectId);
+            setNewLender((prev) => {
+                const updatedLender = {
+                    ...prev,
+                    project_id: projectId,
+                };
+                postData(
+                    "POST",
+                    `${
+                        import.meta.env.VITE_API_URL
+                    }responsible-persons/creditor`,
+                    updatedLender
+                ).then((response) => {
+                    if (response?.ok) {
+                        getProject(projectId);
 
-                            setNewLender({
-                                full_name: "",
-                                phone: "",
-                                position: "",
-                                email: "",
-                                creditor_id: 1,
-                            });
+                        setNewLender({
+                            full_name: "",
+                            phone: "",
+                            position: "",
+                            email: "",
+                            creditor_id: 1,
+                        });
 
-                            alert(response.message);
-                        }
-                    });
-                    return updatedLender;
+                        alert(response.message);
+                    }
                 });
-            } else {
-                alert("Необходимо назначить банк");
-            }
+                return updatedLender;
+            });
         } else if (type === "customer") {
             if (projectData?.contragent_id) {
                 setNewCustomer((prev) => {
@@ -394,6 +390,10 @@ const ProjectCard = () => {
 
     // Отправка отчёта
     const sendReport = (data, addReport) => {
+        if (data.budget_in_billions) {
+            data.budget_in_billions = data.budget_in_billions.replace(",", ".");
+        }
+
         data.report_period = `${formatDate(
             data.report_period.start
         )} - ${formatDate(data.report_period.end)}`;
@@ -438,6 +438,10 @@ const ProjectCard = () => {
 
     // Обновление отчёта
     const updateReport = (data, reportId, addReport) => {
+        if (data.budget_in_billions) {
+            data.budget_in_billions = data.budget_in_billions.replace(",", ".");
+        }
+
         data.report_period = `${formatDate(
             data.report_period.start
         )} - ${formatDate(data.report_period.end)}`;
@@ -803,17 +807,8 @@ const ProjectCard = () => {
                                                 type="button"
                                                 className="add-button"
                                                 onClick={() => {
-                                                    if (
-                                                        projectData.creditors
-                                                            ?.length > 0
-                                                    ) {
-                                                        if (!addLender) {
-                                                            setAddLender(true);
-                                                        }
-                                                    } else {
-                                                        alert(
-                                                            "Необходимо назначить банк"
-                                                        );
+                                                    if (!addLender) {
+                                                        setAddLender(true);
                                                     }
                                                 }}
                                                 title="Добавить Кредитора"
@@ -846,7 +841,6 @@ const ProjectCard = () => {
                                                         Все банки
                                                     </label>
                                                 </li>
-                                                
                                                 {matchedBanks.map((bank) => (
                                                     <li
                                                         key={bank.id}
