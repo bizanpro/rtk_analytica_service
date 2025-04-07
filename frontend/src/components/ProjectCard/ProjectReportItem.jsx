@@ -14,17 +14,11 @@ const ProjectReportItem = ({
 }) => {
     return (
         <li
-            className={`grid items-center grid-cols-[25%_18%_25%_15%_6%] gap-3 ${
-                mode === "read" ? "cursor-pointer" : ""
-            }`}
-            onClick={
-                mode === "read"
-                    ? () => {
-                          setReportEditorName(report_name);
-                          openReportEditor(id);
-                      }
-                    : undefined
-            }
+            className="grid items-center grid-cols-[25%_18%_25%_15%_6%] gap-3 cursor-pointer"
+            onClick={() => {
+                setReportEditorName(report_name);
+                openReportEditor(id);
+            }}
         >
             <div className="flex flex-col">
                 <div className="text-lg">{report_name}</div>
@@ -42,37 +36,31 @@ const ProjectReportItem = ({
 
             <div className="flex justify-center">
                 {general_assessment && (
+                    <div className="text-lg">{general_assessment}/10</div>
+                )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2">
+                {general_assessment && (
                     <button
-                        className="text-lg"
+                        type="button"
+                        className="info-icon flex-none w-[20px]"
+                        title="Посмотреть заключение"
                         onClick={(e) => {
                             e.stopPropagation();
                             openSubReportEditor(id);
                         }}
-                    >
-                        {general_assessment}/10
-                    </button>
-                )}
-            </div>
-
-            {mode === "edit" && (
-                <div className="flex items-center gap-2">
-                    <button
-                        type="button"
-                        className="edit-icon flex-none w-[15px] h-[20px]"
-                        title="Редактировать отчёт"
-                        onClick={() => {
-                            setReportEditorName(report_name);
-                            openReportEditor(id);
-                        }}
                     ></button>
+                )}
 
+                {mode === "edit" && (
                     <button
                         className="delete-icon flex-none w-[20px] h-[20px]"
                         title="Удалить отчёт"
                         onClick={() => deleteReport(id)}
                     ></button>
-                </div>
-            )}
+                )}
+            </div>
         </li>
     );
 };

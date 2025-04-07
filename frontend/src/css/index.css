@@ -166,7 +166,6 @@ button {
     grid-template-columns: minmax(100px, auto) minmax(100px, auto);
 }
 
-
 .radio-field_tab input,
 .radio-field input,
 .switch input {
@@ -250,38 +249,34 @@ button {
 }
 
 .edit-icon {
-    display: block;
-    width: 18px;
-    height: 18px;
-    flex: 0 0 auto;
     background: url("../assets/icons/edit.svg") center no-repeat;
-    background-size: contain;
 }
 
 .save-icon {
-    display: block;
-    width: 18px;
-    height: 18px;
-    flex: 0 0 auto;
     background: url("../assets/icons/save.svg") center no-repeat;
-    background-size: contain;
 }
 
 .update-icon {
+    background: url("../assets/icons/update.svg") center no-repeat;
+}
+
+.delete-icon {
+    background: url("../assets/icons/delete.svg") center no-repeat;
+}
+
+.info-icon {
+    background: url("../assets/icons/info.png") center no-repeat;
+}
+
+.delete-icon,
+.update-icon,
+.save-icon,
+.edit-icon,
+.info-icon {
     display: block;
     width: 18px;
     height: 18px;
     flex: 0 0 auto;
-    background: url("../assets/icons/update.svg") center no-repeat;
-    background-size: contain;
-}
-
-.delete-icon {
-    display: block;
-    width: 20px;
-    height: 20px;
-    flex: 0 0 auto;
-    background: url("../assets/icons/delete.svg") center no-repeat;
     background-size: contain;
 }
 

@@ -424,7 +424,10 @@ const ProjectReportWindow = ({
                             type="text"
                             className="w-full"
                             placeholder="0.0"
-                            value={reportData.budget_in_billions?.replace(".", ",")}
+                            value={reportData.budget_in_billions?.replace(
+                                ".",
+                                ","
+                            )}
                             onChange={(e) =>
                                 handleInputChange(e, "budget_in_billions")
                             }
@@ -676,7 +679,11 @@ const ProjectReportWindow = ({
                         </button>
                     </>
                 ) : (
-                    <div className="grid grid-cols-2 gap-2 flex-grow">
+                    <div
+                        className={`grid gap-2 flex-grow ${
+                            hasNonNullFields ? "grid-cols-2" : "grid-cols-1"
+                        }`}
+                    >
                         {hasNonNullFields && (
                             <button
                                 type="button"
