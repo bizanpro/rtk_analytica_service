@@ -34,6 +34,7 @@ const ProjectCard = () => {
     const [contracts, setContracts] = useState([]);
 
     const [lenders, setLenders] = useState([]);
+    const [filteredLenders, setFilteredLenders] = useState([]);
     const [customers, setCustomers] = useState([]);
 
     const [addLender, setAddLender] = useState(false);
@@ -64,6 +65,23 @@ const ProjectCard = () => {
     const [services, setServices] = useState([]);
     const [reportId, setReportId] = useState(null);
 
+    const matchedBanks = banks.filter((bank) =>
+        projectData.creditors?.some(
+            (selectedBank) => selectedBank.id === bank.id
+        )
+    );
+
+    // Фильтр кредиторов
+    const handleFilterLenders = (evt) => {
+        evt.target.value === ""
+            ? setFilteredLenders(lenders)
+            : setFilteredLenders(
+                  lenders.filter(
+                      (lender) => +lender.creditor_id === +evt.target.value
+                  )
+              );
+    };
+
     // Форматирование даты
     const formatDate = (date) => {
         return new Date(date).toLocaleDateString("ru-RU");
@@ -74,46 +92,6 @@ const ProjectCard = () => {
         setFormFields((prev) => ({ ...prev, [name]: e.target.value }));
         setProjectData((prev) => ({ ...prev, [name]: e.target.value }));
     }, []);
-
-    // Обработка привязки банков к проекту
-    const handleBankChange = (e, index) => {
-        const selectedId = e.target.value ? +e.target.value : null;
-
-        setFormFields((prev) => {
-            const updatedBanks = prev.creditors ? [...prev.creditors] : [];
-
-            if (selectedId === null) {
-                updatedBanks.splice(index, 1);
-            } else {
-                updatedBanks[index] = selectedId;
-            }
-
-            return { ...prev, creditors: updatedBanks.filter((id) => id) };
-        });
-
-        setProjectData((prev) => {
-            let updatedCreditors = [...prev.creditors];
-
-            if (selectedId === null) {
-                updatedCreditors.splice(index, 1);
-            } else {
-                const selectedBank = banks.find(
-                    (bank) => bank.id === selectedId
-                );
-                if (selectedBank) {
-                    updatedCreditors[index] = {
-                        id: selectedBank.id,
-                        name: selectedBank.name,
-                    };
-                }
-            }
-
-            return {
-                ...prev,
-                creditors: updatedCreditors.filter((bank) => bank?.id),
-            };
-        });
-    };
 
     // Обработка состояния добавочного блока при изменении
     const handleChange = useCallback((id, field, value, data, method) => {
@@ -232,6 +210,12 @@ const ProjectCard = () => {
                 ) || []
             );
 
+            setFilteredLenders(
+                response.data?.creditor_responsible_persons?.flatMap(
+                    (item) => item
+                ) || []
+            );
+
             // Получаем ответственные лица заказчика
             setCustomers(response.data?.contragent_responsible_persons || []);
 
@@ -333,7 +317,6 @@ const ProjectCard = () => {
             {}
         ).then((response) => {
             if (response?.ok) {
-                // setLenders(lenders.filter((item) => item.id !== id));
                 getProject(projectId);
             }
         });
@@ -841,52 +824,54 @@ const ProjectCard = () => {
                                     </div>
 
                                     <ul className="flex gap-3 flex-wrap mb-2">
-                                        {projectData.creditors?.map(
-                                            (item, index) => {
-                                                const availableBanks =
-                                                    banks.filter(
-                                                        (bank) =>
-                                                            !projectData.creditors?.some(
-                                                                (
-                                                                    selectedBank,
-                                                                    idx
-                                                                ) =>
-                                                                    selectedBank.id ===
-                                                                        bank.id &&
-                                                                    idx !==
-                                                                        index
-                                                            )
-                                                    );
-
-                                                return (
-                                                    <li key={index}>
-                                                        <select
-                                                            className="bg-gray-200 py-1 px-4 text-center rounded-md"
-                                                            value={
-                                                                item.id || ""
-                                                            }
-                                                            disabled
+                                        {matchedBanks.length > 0 && (
+                                            <>
+                                                <li className="radio-field_tab">
+                                                    <input
+                                                        type="radio"
+                                                        name="active_bank"
+                                                        id="bank_all"
+                                                        value=""
+                                                        defaultChecked
+                                                        onChange={(evt) => {
+                                                            handleFilterLenders(
+                                                                evt
+                                                            );
+                                                        }}
+                                                    />
+                                                    <label
+                                                        htmlFor="bank_all"
+                                                        className="text-gray-700 py-1 px-2 text-center rounded-md"
+                                                    >
+                                                        Все банки
+                                                    </label>
+                                                </li>
+                                                
+                                                {matchedBanks.map((bank) => (
+                                                    <li
+                                                        key={bank.id}
+                                                        className="radio-field_tab"
+                                                    >
+                                                        <input
+                                                            id={`bank_${bank.id}`}
+                                                            type="radio"
+                                                            name="active_bank"
+                                                            value={bank.id}
+                                                            onChange={(evt) => {
+                                                                handleFilterLenders(
+                                                                    evt
+                                                                );
+                                                            }}
+                                                        />
+                                                        <label
+                                                            htmlFor={`bank_${bank.id}`}
+                                                            className="text-gray-700 py-1 px-2 text-center rounded-md"
                                                         >
-                                                            {availableBanks.map(
-                                                                (bank) => (
-                                                                    <option
-                                                                        value={
-                                                                            bank.id
-                                                                        }
-                                                                        key={
-                                                                            bank.id
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            bank.name
-                                                                        }
-                                                                    </option>
-                                                                )
-                                                            )}
-                                                        </select>
+                                                            {bank.name}
+                                                        </label>
                                                     </li>
-                                                );
-                                            }
+                                                ))}{" "}
+                                            </>
                                         )}
                                     </ul>
 
@@ -907,9 +892,9 @@ const ProjectCard = () => {
                                             />
                                         )}
 
-                                        {lenders.length > 0 &&
+                                        {filteredLenders.length > 0 &&
                                         banks.length > 0 ? (
-                                            lenders.map((lender) => (
+                                            filteredLenders.map((lender) => (
                                                 <ExecutorBlock
                                                     key={lender.id}
                                                     contanct={lender}
