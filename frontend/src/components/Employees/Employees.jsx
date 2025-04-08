@@ -1,15 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import getData from "../../utils/getData";
 import EmployeeItem from "./EmployeeItem";
 
 const Employees = () => {
     const [employees, setEmployees] = useState([]);
+    const [selectedType, setSelectedType] = useState("default");
+    const [selectedStatus, setSelectedStatus] = useState("default");
 
-    const COLUMNS = [{ label: "Наименование", key: "employee_full_name" }];
+    const COLUMNS = [
+        { label: "ФИО", key: "name" },
+        { label: "Кол-во проектов", key: "projects_count" },
+        { label: "Квалификация", key: "qualification" },
+        { label: "Телефон", key: "phone_number" },
+        { label: "email", key: "email" },
+        { label: "Тип", key: "is_staff" },
+        { label: "Статус", key: "is_active" },
+    ];
+
+    const filteredEmployees = useMemo(() => {
+        const result = employees.filter((employee) => {
+            return (
+                (selectedType !== "default"
+                    ? employee.is_staff === (selectedType === "true")
+                    : true) &&
+                (selectedStatus !== "default"
+                    ? employee.is_active === (selectedStatus === "true")
+                    : true)
+            );
+        });
+
+        return result;
+    }, [employees, selectedType, selectedStatus]);
 
     useEffect(() => {
-        getData("/data/employees.json", { Accept: "application/json" }).then(
-            (response) => setEmployees(response.data)
+        getData(`${import.meta.env.VITE_API_URL}physical-persons`).then(
+            (response) => {
+                if (response.status == 200) {
+                    setEmployees(response.data);
+                }
+            }
         );
         // .finally(() => setIsLoading(false));
     }, []);
@@ -20,8 +49,39 @@ const Employees = () => {
                 <div className="flex justify-between items-center gap-6 mb-8">
                     <h1 className="text-3xl font-medium">
                         Реестр сотрудников{" "}
-                        {employees.length > 0 && `(${employees.length})`}
+                        {filteredEmployees.length > 0 &&
+                            `(${filteredEmployees.length})`}
                     </h1>
+
+                    <div className="flex items-center gap-6">
+                        <>
+                            <select
+                                className={
+                                    "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                }
+                                onChange={(evt) => {
+                                    setSelectedType(evt.target.value);
+                                }}
+                            >
+                                <option value="default">Тип</option>
+                                <option value="true">штатный</option>
+                                <option value="false">не штатный</option>
+                            </select>
+
+                            <select
+                                className={
+                                    "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                }
+                                onChange={(evt) => {
+                                    setSelectedStatus(evt.target.value);
+                                }}
+                            >
+                                <option value="default">Статус</option>
+                                <option value="true">работает</option>
+                                <option value="false">не работает</option>
+                            </select>
+                        </>
+                    </div>
                 </div>
 
                 <div className="overflow-x-auto w-full">
@@ -40,8 +100,8 @@ const Employees = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {employees.length > 0 &&
-                                employees.map((item) => (
+                            {filteredEmployees.length > 0 &&
+                                filteredEmployees.map((item) => (
                                     <EmployeeItem
                                         key={item.id}
                                         data={item}

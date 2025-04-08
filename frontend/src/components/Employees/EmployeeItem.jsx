@@ -16,7 +16,13 @@ const EmployeeItem = ({ data, columns }) => {
             onClick={handleRowClick}
         >
             {columns.map(({ key }) => {
-                const value = data[key];
+                let value = data[key];
+
+                if (key === "is_staff") {
+                    value = value ? "штатный" : " не штатный";
+                } else if (key === "is_active") {
+                    value = value ? "работает" : " не работает";
+                }
 
                 if (Array.isArray(value) && value.length > 0) {
                     return (
