@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 
 import getData from "../../utils/getData";

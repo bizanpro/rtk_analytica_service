@@ -65,7 +65,7 @@ const Employees = () => {
                             >
                                 <option value="default">Тип</option>
                                 <option value="true">штатный</option>
-                                <option value="false">не штатный</option>
+                                <option value="false">внештатный</option>
                             </select>
 
                             <select

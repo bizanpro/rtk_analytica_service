@@ -19,9 +19,9 @@ const EmployeeItem = ({ data, columns }) => {
                 let value = data[key];
 
                 if (key === "is_staff") {
-                    value = value ? "штатный" : " не штатный";
+                    value = value ? "штатный" : "внештатный";
                 } else if (key === "is_active") {
-                    value = value ? "работает" : " не работает";
+                    value = value ? "работает" : "не работает";
                 }
 
                 if (Array.isArray(value) && value.length > 0) {
