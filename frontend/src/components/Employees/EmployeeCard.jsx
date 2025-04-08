@@ -5,22 +5,48 @@ import getData from "../../utils/getData";
 import { IMaskInput } from "react-imask";
 import DatePicker from "react-datepicker";
 
+import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
+
 const EmployeeCard = () => {
     const { employeeId } = useParams();
     const [employeeData, setEmployeeData] = useState({});
+    const [workload, setworkload] = useState({});
     const [mode, setMode] = useState("read");
 
     const PhoneMask = "+{7}(000) 000 00 00";
 
-    useEffect(() => {
+    const getWorkload = () => {
         getData(
-            `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`
+            `${
+                import.meta.env.VITE_API_URL
+            }physical-persons/${employeeId}/workload`
         ).then((response) => {
             if (response.status == 200) {
-                setEmployeeData(response.data);
+                setworkload(response.data.workload);
             }
         });
-        // .finally(() => setIsLoading(false));
+    };
+
+    const getEmployee = async () => {
+        try {
+            const response = await getData(
+                `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
+                {
+                    Accept: "application/json",
+                }
+            );
+            if (response.status === 200) {
+                setEmployeeData(response.data);
+            }
+
+            await Promise.all([getWorkload()]);
+        } catch (error) {
+            console.error("Ошибка при загрузке сотрудника:", error);
+        }
+    };
+
+    useEffect(() => {
+        getEmployee();
     }, []);
 
     return (
@@ -163,131 +189,18 @@ const EmployeeCard = () => {
                             <div className="flex flex-col gap-2 flex-grow">
                                 <div className="flex items-center gap-2">
                                     <span className="text-gray-400">
-                                        Текущая загрузка (10)
+                                        Текущая загрузка ({workload.length})
                                     </span>
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
                                     <ul className="grid gap-5">
-                                        <li className="grid items-stretch grid-cols-4 gap-4">
-                                            <div className="flex flex-col justify-between gap-2 min-w-[140px]">
-                                                <div className="text-lg">
-                                                    ГОК Светловский
-                                                </div>
-
-                                                <span className="text-gray-400">
-                                                    Золотодобыча
-                                                </span>
-                                            </div>
-
-                                            <div className="flex flex-col justify-between gap-2">
-                                                <div className="text-lg">
-                                                    ФТА 1
-                                                </div>
-                                                <span className="text-xs">
-                                                    01.01.2025 - 31.12.2025
-                                                </span>
-                                            </div>
-                                            <div className="flex flex-col justify-between items-center gap-2">
-                                                <div className="relative h-[20px] w-full border border-gray-200 overflow-hidden text-center flex items-center justify-center">
-                                                    <div className="min-w-min whitespace-nowrap">
-                                                        {85}%
-                                                    </div>
-
-                                                    <div
-                                                        className="absolute top-0 left-0 bottom-0 h-full bg-gray-200 transition-all opacity-60 z-[-1]"
-                                                        style={{
-                                                            width: `${85}%`,
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                                <span className="text-xs">
-                                                    01.01.2025 - 31.12.2025
-                                                </span>
-                                            </div>
-                                            <div className="leading-6">
-                                                Руководитель проекта
-                                            </div>
-                                        </li>
-                                        <li className="grid items-stretch grid-cols-4 gap-4">
-                                            <div className="flex flex-col justify-between gap-2 min-w-[140px]">
-                                                <div className="text-lg">
-                                                    ГОК Светловский
-                                                </div>
-
-                                                <span className="text-gray-400">
-                                                    Золотодобыча
-                                                </span>
-                                            </div>
-
-                                            <div className="flex flex-col justify-between gap-2">
-                                                <div className="text-lg">
-                                                    ФТА 1
-                                                </div>
-                                                <span className="text-xs">
-                                                    01.01.2025 - 31.12.2025
-                                                </span>
-                                            </div>
-                                            <div className="flex flex-col justify-between items-center gap-2">
-                                                <div className="relative h-[20px] w-full border border-gray-200 overflow-hidden text-center flex items-center justify-center">
-                                                    <div className="min-w-min whitespace-nowrap">
-                                                        {85}%
-                                                    </div>
-
-                                                    <div
-                                                        className="absolute top-0 left-0 bottom-0 h-full bg-gray-200 transition-all opacity-60 z-[-1]"
-                                                        style={{
-                                                            width: `${85}%`,
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                                <span className="text-xs">
-                                                    01.01.2025 - 31.12.2025
-                                                </span>
-                                            </div>
-                                            <div className="leading-6">
-                                                Руководитель проекта
-                                            </div>
-                                        </li>
-                                        <li className="grid items-stretch grid-cols-4 gap-4">
-                                            <div className="flex flex-col justify-between gap-2 min-w-[140px]">
-                                                <div className="text-lg">
-                                                    ГОК Светловский
-                                                </div>
-
-                                                <span className="text-gray-400">
-                                                    Золотодобыча
-                                                </span>
-                                            </div>
-
-                                            <div className="flex flex-col justify-between gap-2">
-                                                <div className="text-lg">
-                                                    ФТА 1
-                                                </div>
-                                                <span className="text-xs">
-                                                    01.01.2025 - 31.12.2025
-                                                </span>
-                                            </div>
-                                            <div className="flex flex-col justify-between items-center gap-2">
-                                                <div className="relative h-[20px] w-full border border-gray-200 overflow-hidden text-center flex items-center justify-center">
-                                                    <div className="min-w-min whitespace-nowrap">
-                                                        {85}%
-                                                    </div>
-
-                                                    <div
-                                                        className="absolute top-0 left-0 bottom-0 h-full bg-gray-200 transition-all opacity-60 z-[-1]"
-                                                        style={{
-                                                            width: `${85}%`,
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                                <span className="text-xs">
-                                                    01.01.2025 - 31.12.2025
-                                                </span>
-                                            </div>
-                                            <div className="leading-6">
-                                                Руководитель проекта
-                                            </div>
-                                        </li>
+                                        {workload.length > 0 &&
+                                            workload.map((item, index) => (
+                                                <EmployeeWorkloadItem
+                                                    key={index}
+                                                    workload={item}
+                                                />
+                                            ))}
                                     </ul>
                                 </div>
                             </div>
@@ -301,7 +214,7 @@ const EmployeeCard = () => {
                                     </span>
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
-                                    <div className="flex mb-10">
+                                    <div className="flex mb-8">
                                         <div className="flex flex-col">
                                             <span className="block mb-2 text-gray-400">
                                                 Период
@@ -436,13 +349,114 @@ const EmployeeCard = () => {
                                     <span className="text-gray-400">
                                         Трудозатраты
                                     </span>
-                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[14px] h-[14px]">
+                                    <span className="flex items-center justify-center border border-gray-300 text-gray-400 p-1 rounded-[50%] w-[18px] h-[18px]">
                                         ?
                                     </span>
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
                                     <ul className="grid gap-3">
-                                        <li className="grid items-center grid-cols-[25%_18%_25%_18%] gap-3 mb-2 text-gray-400"></li>
+                                        <li className="grid items-center grid-cols-[45%_35%_15%] gap-3 mb-2 text-gray-400">
+                                            <span>Проект</span>
+                                            <span>Отчет</span>
+                                            <span>% времени</span>
+                                        </li>
+
+                                        <li className="grid items-center grid-cols-[45%_35%_15%] gap-3 mb-2">
+                                            <div className="flex flex-col justify-between gap-2">
+                                                <div className="text-lg">
+                                                    ГОК Светловский
+                                                </div>
+
+                                                <span className="text-gray-400">
+                                                    Золотодобыча
+                                                </span>
+                                            </div>
+
+                                            <div className="flex flex-col justify-between gap-2">
+                                                <div className="text-lg">
+                                                    ФТМ 1Q25
+                                                </div>
+                                                <span className="text-xs">
+                                                    01.04.25 - 15.05.25
+                                                </span>
+                                            </div>
+
+                                            <div className="flex items-center border-2 border-gray-300 p-1">
+                                                <input
+                                                    className="min-w-0"
+                                                    type="number"
+                                                    placeholder="0"
+                                                    max="100"
+                                                    min="0"
+                                                    defaultValue={0}
+                                                />
+                                                %
+                                            </div>
+                                        </li>
+                                        <li className="grid items-center grid-cols-[45%_35%_15%] gap-3 mb-2">
+                                            <div className="flex flex-col justify-between gap-2">
+                                                <div className="text-lg">
+                                                    ГОК Светловский
+                                                </div>
+
+                                                <span className="text-gray-400">
+                                                    Золотодобыча
+                                                </span>
+                                            </div>
+
+                                            <div className="flex flex-col justify-between gap-2">
+                                                <div className="text-lg">
+                                                    ФТМ 1Q25
+                                                </div>
+                                                <span className="text-xs">
+                                                    01.04.25 - 15.05.25
+                                                </span>
+                                            </div>
+
+                                            <div className="flex items-center border-2 border-gray-300 p-1">
+                                                <input
+                                                    className="min-w-0"
+                                                    type="number"
+                                                    placeholder="0"
+                                                    max="100"
+                                                    min="0"
+                                                    defaultValue={0}
+                                                />
+                                                %
+                                            </div>
+                                        </li>
+                                        <li className="grid items-center grid-cols-[45%_35%_15%] gap-3 mb-2">
+                                            <div className="flex flex-col justify-between gap-2">
+                                                <div className="text-lg">
+                                                    ГОК Светловский
+                                                </div>
+
+                                                <span className="text-gray-400">
+                                                    Золотодобыча
+                                                </span>
+                                            </div>
+
+                                            <div className="flex flex-col justify-between gap-2">
+                                                <div className="text-lg">
+                                                    ФТМ 1Q25
+                                                </div>
+                                                <span className="text-xs">
+                                                    01.04.25 - 15.05.25
+                                                </span>
+                                            </div>
+
+                                            <div className="flex items-center border-2 border-gray-300 p-1">
+                                                <input
+                                                    className="min-w-0"
+                                                    type="number"
+                                                    placeholder="0"
+                                                    max="100"
+                                                    min="0"
+                                                    defaultValue={0}
+                                                />
+                                                %
+                                            </div>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
