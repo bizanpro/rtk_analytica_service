@@ -160,6 +160,18 @@ button {
     color: #ffffff !important;
 }
 
+.basic-multi-select .select__control {
+    min-height: 32px;
+    max-height: 32px;
+    border-radius: 0;
+    border-width: 2px;
+    border-color: oklch(0.872 0.01 258.338);
+}
+
+.basic-multi-select .select__indicator {
+    padding: 5px;
+}
+
 .switch {
     display: grid;
     align-items: center;

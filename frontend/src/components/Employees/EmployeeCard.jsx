@@ -4,6 +4,7 @@ import getData from "../../utils/getData";
 
 import { IMaskInput } from "react-imask";
 import DatePicker from "react-datepicker";
+import Select from "react-select";
 
 import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
 
@@ -15,6 +16,14 @@ const EmployeeCard = () => {
 
     const PhoneMask = "+{7}(000) 000 00 00";
 
+    const options = [
+        { value: "0", label: "ФТА" },
+        { value: "1", label: "ФТМ" },
+        { value: "2", label: "ФМ" },
+        { value: "3", label: "ИЗ" },
+    ];
+
+    // Текущая загрузка
     const getWorkload = () => {
         getData(
             `${
@@ -27,6 +36,7 @@ const EmployeeCard = () => {
         });
     };
 
+    // Получаем сотрудника
     const getEmployee = async () => {
         try {
             const response = await getData(
@@ -54,7 +64,7 @@ const EmployeeCard = () => {
             <div className="pt-8 pb-15">
                 <div
                     className="container flex flex-col min-h-full"
-                    style={{ minHeight: "calc(100vh - 135px)" }}
+                    style={{ minHeight: "calc(100vh - 215px)" }}
                 >
                     <div className="flex justify-between items-center gap-10">
                         <div className="flex items-center gap-3 justify-between flex-grow">
@@ -214,7 +224,7 @@ const EmployeeCard = () => {
                                     </span>
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
-                                    <div className="flex mb-8">
+                                    <div className="flex items-center gap-4 mb-8">
                                         <div className="flex flex-col">
                                             <span className="block mb-2 text-gray-400">
                                                 Период
@@ -232,6 +242,20 @@ const EmployeeCard = () => {
                                                         ? true
                                                         : false
                                                 }
+                                            />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="block mb-2 text-gray-400">
+                                                Типы отчётов
+                                            </span>
+                                            <Select
+                                                closeMenuOnSelect={false}
+                                                defaultValue={[options[0]]}
+                                                isMulti
+                                                name="colors"
+                                                options={options}
+                                                className="basic-multi-select min-w-[170px] h-[32px]"
+                                                classNamePrefix="select"
                                             />
                                         </div>
                                     </div>
@@ -354,14 +378,34 @@ const EmployeeCard = () => {
                                     </span>
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
+                                    <div className="grid grid-cols-2 items-center gap-3 mb-5">
+                                        <select
+                                            className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
+                                            name=""
+                                            // defaultValue={employeeData.is_staff}
+                                        >
+                                            <option value="">Год</option>
+                                        </select>
+
+                                        <select
+                                            className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
+                                            name=""
+                                            // defaultValue={
+                                            //     employeeData.is_active
+                                            // }
+                                        >
+                                            <option value="">Месяц</option>
+                                        </select>
+                                    </div>
+
                                     <ul className="grid gap-3">
-                                        <li className="grid items-center grid-cols-[45%_35%_15%] gap-3 mb-2 text-gray-400">
+                                        <li className="grid items-center grid-cols-[45%_35%_15%] gap-3 text-gray-400">
                                             <span>Проект</span>
                                             <span>Отчет</span>
                                             <span>% времени</span>
                                         </li>
 
-                                        <li className="grid items-center grid-cols-[45%_35%_15%] gap-3 mb-2">
+                                        <li className="grid items-center grid-cols-[1fr_35%_15%] gap-3 mb-2">
                                             <div className="flex flex-col justify-between gap-2">
                                                 <div className="text-lg">
                                                     ГОК Светловский
@@ -393,7 +437,7 @@ const EmployeeCard = () => {
                                                 %
                                             </div>
                                         </li>
-                                        <li className="grid items-center grid-cols-[45%_35%_15%] gap-3 mb-2">
+                                        <li className="grid items-center grid-cols-[1fr_35%_15%] gap-3 mb-2">
                                             <div className="flex flex-col justify-between gap-2">
                                                 <div className="text-lg">
                                                     ГОК Светловский
@@ -425,7 +469,7 @@ const EmployeeCard = () => {
                                                 %
                                             </div>
                                         </li>
-                                        <li className="grid items-center grid-cols-[45%_35%_15%] gap-3 mb-2">
+                                        <li className="grid items-center grid-cols-[1fr_35%_15%] gap-3 mb-2">
                                             <div className="flex flex-col justify-between gap-2">
                                                 <div className="text-lg">
                                                     ГОК Светловский
@@ -456,6 +500,30 @@ const EmployeeCard = () => {
                                                 />
                                                 %
                                             </div>
+                                        </li>
+
+                                        <li className="grid items-center grid-cols-[1fr_15%] gap-3 mb-2">
+                                            <div className="text-lg">
+                                                Прочие задачи
+                                            </div>
+
+                                            <div className="flex items-center border-2 border-gray-300 p-1">
+                                                <input
+                                                    className="min-w-0"
+                                                    type="number"
+                                                    placeholder="0"
+                                                    max="100"
+                                                    min="0"
+                                                    defaultValue={0}
+                                                />
+                                                %
+                                            </div>
+                                        </li>
+
+                                        <li className="grid items-center border-t-2 border-b-2 border-gray-300 grid-cols-[1fr_15%] gap-3 py-2">
+                                            <div className="text-lg">Итого</div>
+
+                                            <div>0%</div>
                                         </li>
                                     </ul>
                                 </div>
