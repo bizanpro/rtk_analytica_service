@@ -63,10 +63,14 @@ const EmployeePersonalWorkloadItem = ({ props, employeeId, mode }) => {
                     min="0"
                     value={personalWorkloadData.load_percentage}
                     onChange={(evt) => {
-                        setPersonalWorkloadData((prev) => ({
-                            ...prev,
-                            load_percentage: evt.target.value,
-                        }));
+                        const value = parseInt(evt.target.value, 10);
+                        if (value >= 0) {
+                            setPersonalWorkloadData((prev) => ({
+                                ...prev,
+                                load_percentage: value,
+                            }));
+                        }
+                        console.log(personalWorkloadData)
                     }}
                     disabled={mode == "read" ? true : false}
                 />

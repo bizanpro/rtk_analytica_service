@@ -17,7 +17,7 @@ const EmployeeCard = () => {
     const [personalWorkload, setPersonalWorkload] = useState({});
     const [mode, setMode] = useState("read");
 
-    const PhoneMask = "+{7}(000) 000 00 00";
+    const PhoneMask = "+{7} (000) 000 00 00";
 
     const options = [
         { value: "0", label: "ФТА" },
