@@ -479,6 +479,7 @@ const EmployeeCard = () => {
                                                             employeeId={
                                                                 employeeId
                                                             }
+                                                            mode={mode}
                                                             props={item}
                                                         />
                                                     )

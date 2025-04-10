@@ -1,7 +1,7 @@
 import { useState } from "react";
 import postData from "../../utils/postData";
 
-const EmployeePersonalWorkloadItem = ({ props, employeeId }) => {
+const EmployeePersonalWorkloadItem = ({ props, employeeId, mode }) => {
     const [personalWorkloadData, setPersonalWorkloadData] = useState(props);
 
     const updateLoadPercentage = () => {
@@ -43,12 +43,16 @@ const EmployeePersonalWorkloadItem = ({ props, employeeId }) => {
                 </span>
             </div>
 
-            <button
-                type="button"
-                className="save-icon w-[20px] h-[20px]"
-                onClick={() => updateLoadPercentage()}
-                title="Обновить запись"
-            ></button>
+            {mode == "edit" ? (
+                <button
+                    type="button"
+                    className="save-icon w-[20px] h-[20px]"
+                    onClick={() => updateLoadPercentage()}
+                    title="Обновить запись"
+                ></button>
+            ) : (
+                <div></div>
+            )}
 
             <div className="flex items-center border-2 border-gray-300 p-1">
                 <input
@@ -64,6 +68,7 @@ const EmployeePersonalWorkloadItem = ({ props, employeeId }) => {
                             load_percentage: evt.target.value,
                         }));
                     }}
+                    disabled={mode == "read" ? true : false}
                 />
                 %
             </div>
