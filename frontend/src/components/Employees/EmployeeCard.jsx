@@ -8,11 +8,13 @@ import DatePicker from "react-datepicker";
 import Select from "react-select";
 
 import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
+import EmployeePersonalWorkloadItem from "./EmployeePersonalWorkloadItem";
 
 const EmployeeCard = () => {
     const { employeeId } = useParams();
     const [employeeData, setEmployeeData] = useState({});
     const [workload, setworkload] = useState({});
+    const [personalWorkload, setPersonalWorkload] = useState({});
     const [mode, setMode] = useState("read");
 
     const PhoneMask = "+{7}(000) 000 00 00";
@@ -36,8 +38,6 @@ const EmployeeCard = () => {
             ...prev,
             [name]: value,
         }));
-
-        console.log(employeeData);
     };
 
     // Текущая загрузка
@@ -49,6 +49,19 @@ const EmployeeCard = () => {
         ).then((response) => {
             if (response.status == 200) {
                 setworkload(response.data.workload);
+            }
+        });
+    };
+
+    // Трудозатраты
+    const getPersonalWorkload = () => {
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }physical-persons/${employeeId}/personal-workload`
+        ).then((response) => {
+            if (response.status == 200) {
+                setPersonalWorkload(response.data);
             }
         });
     };
@@ -80,7 +93,7 @@ const EmployeeCard = () => {
                 setEmployeeData(response.data);
             }
 
-            await Promise.all([getWorkload()]);
+            await Promise.all([getWorkload(), getPersonalWorkload()]);
         } catch (error) {
             console.error("Ошибка при загрузке сотрудника:", error);
         }
@@ -269,7 +282,7 @@ const EmployeeCard = () => {
                                             workload.map((item, index) => (
                                                 <EmployeeWorkloadItem
                                                     key={index}
-                                                    workload={item}
+                                                    {...item}
                                                 />
                                             ))}
                                     </ul>
@@ -457,126 +470,47 @@ const EmployeeCard = () => {
                                             <span>% времени</span>
                                         </li>
 
-                                        <li className="grid items-center grid-cols-[1fr_35%_15%] gap-3 mb-2">
-                                            <div className="flex flex-col justify-between gap-2">
-                                                <div className="text-lg">
-                                                    ГОК Светловский
-                                                </div>
+                                        {personalWorkload.length > 0 && (
+                                            <>
+                                                {personalWorkload.map(
+                                                    (item, index) => (
+                                                        <EmployeePersonalWorkloadItem
+                                                            key={index}
+                                                            employeeId={
+                                                                employeeId
+                                                            }
+                                                            props={item}
+                                                        />
+                                                    )
+                                                )}
 
-                                                <span className="text-gray-400">
-                                                    Золотодобыча
-                                                </span>
-                                            </div>
+                                                <li className="grid items-center grid-cols-[1fr_15%] gap-3 mb-2">
+                                                    <div className="text-lg">
+                                                        Прочие задачи
+                                                    </div>
 
-                                            <div className="flex flex-col justify-between gap-2">
-                                                <div className="text-lg">
-                                                    ФТМ 1Q25
-                                                </div>
-                                                <span className="text-xs">
-                                                    01.04.25 - 15.05.25
-                                                </span>
-                                            </div>
+                                                    <div className="flex items-center border-2 border-gray-300 p-1">
+                                                        <input
+                                                            className="min-w-0"
+                                                            type="number"
+                                                            placeholder="0"
+                                                            max="100"
+                                                            min="0"
+                                                            defaultValue={0}
+                                                        />
+                                                        %
+                                                    </div>
+                                                </li>
 
-                                            <div className="flex items-center border-2 border-gray-300 p-1">
-                                                <input
-                                                    className="min-w-0"
-                                                    type="number"
-                                                    placeholder="0"
-                                                    max="100"
-                                                    min="0"
-                                                    defaultValue={0}
-                                                />
-                                                %
-                                            </div>
-                                        </li>
-                                        <li className="grid items-center grid-cols-[1fr_35%_15%] gap-3 mb-2">
-                                            <div className="flex flex-col justify-between gap-2">
-                                                <div className="text-lg">
-                                                    ГОК Светловский
-                                                </div>
+                                                <li className="grid items-center border-t-2 border-b-2 border-gray-300 grid-cols-[1fr_15%] gap-3 py-2">
+                                                    <div className="text-lg">
+                                                        Итого
+                                                    </div>
 
-                                                <span className="text-gray-400">
-                                                    Золотодобыча
-                                                </span>
-                                            </div>
-
-                                            <div className="flex flex-col justify-between gap-2">
-                                                <div className="text-lg">
-                                                    ФТМ 1Q25
-                                                </div>
-                                                <span className="text-xs">
-                                                    01.04.25 - 15.05.25
-                                                </span>
-                                            </div>
-
-                                            <div className="flex items-center border-2 border-gray-300 p-1">
-                                                <input
-                                                    className="min-w-0"
-                                                    type="number"
-                                                    placeholder="0"
-                                                    max="100"
-                                                    min="0"
-                                                    defaultValue={0}
-                                                />
-                                                %
-                                            </div>
-                                        </li>
-                                        <li className="grid items-center grid-cols-[1fr_35%_15%] gap-3 mb-2">
-                                            <div className="flex flex-col justify-between gap-2">
-                                                <div className="text-lg">
-                                                    ГОК Светловский
-                                                </div>
-
-                                                <span className="text-gray-400">
-                                                    Золотодобыча
-                                                </span>
-                                            </div>
-
-                                            <div className="flex flex-col justify-between gap-2">
-                                                <div className="text-lg">
-                                                    ФТМ 1Q25
-                                                </div>
-                                                <span className="text-xs">
-                                                    01.04.25 - 15.05.25
-                                                </span>
-                                            </div>
-
-                                            <div className="flex items-center border-2 border-gray-300 p-1">
-                                                <input
-                                                    className="min-w-0"
-                                                    type="number"
-                                                    placeholder="0"
-                                                    max="100"
-                                                    min="0"
-                                                    defaultValue={0}
-                                                />
-                                                %
-                                            </div>
-                                        </li>
-
-                                        <li className="grid items-center grid-cols-[1fr_15%] gap-3 mb-2">
-                                            <div className="text-lg">
-                                                Прочие задачи
-                                            </div>
-
-                                            <div className="flex items-center border-2 border-gray-300 p-1">
-                                                <input
-                                                    className="min-w-0"
-                                                    type="number"
-                                                    placeholder="0"
-                                                    max="100"
-                                                    min="0"
-                                                    defaultValue={0}
-                                                />
-                                                %
-                                            </div>
-                                        </li>
-
-                                        <li className="grid items-center border-t-2 border-b-2 border-gray-300 grid-cols-[1fr_15%] gap-3 py-2">
-                                            <div className="text-lg">Итого</div>
-
-                                            <div>0%</div>
-                                        </li>
+                                                    <div>0%</div>
+                                                </li>
+                                            </>
+                                        )}
                                     </ul>
                                 </div>
                             </div>
