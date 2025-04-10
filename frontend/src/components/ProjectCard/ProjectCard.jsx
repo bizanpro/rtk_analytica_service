@@ -400,11 +400,8 @@ const ProjectCard = () => {
         data.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
-        data.execution_period = data.execution_period.end
-            ? `${formatDate(data.execution_period.start)} - ${formatDate(
-                  data.execution_period.end
-              )}`
-            : formatDate(data.execution_period.start);
+        data.execution_period.start = formatDate(data.execution_period.start);
+        data.execution_period.end = formatDate(data.execution_period.end);
 
         data.project_id = projectId;
 
@@ -426,6 +423,7 @@ const ProjectCard = () => {
                     getProject(projectId);
                 } else {
                     alert("Ошибка при отправке отчёта");
+                    setReportWindowsState(false);
                 }
             });
         } else {
@@ -448,9 +446,8 @@ const ProjectCard = () => {
         data.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
-        data.execution_period = `${formatDate(
-            data.execution_period.start
-        )} - ${formatDate(data.execution_period.end)}`;
+        data.execution_period.start = formatDate(data.execution_period.start);
+        data.execution_period.end = formatDate(data.execution_period.end);
 
         data.project_id = projectId;
 
@@ -468,6 +465,8 @@ const ProjectCard = () => {
                     alert(response.message);
                     setReportWindowsState(false);
                     getProject(projectId);
+                } else {
+                    setReportWindowsState(false);
                 }
             });
         } else {

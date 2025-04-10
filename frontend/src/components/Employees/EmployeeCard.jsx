@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import getData from "../../utils/getData";
+import postData from "../../utils/postData";
 
 import { IMaskInput } from "react-imask";
 import DatePicker from "react-datepicker";
@@ -23,6 +24,15 @@ const EmployeeCard = () => {
         { value: "3", label: "ИЗ" },
     ];
 
+    const handleInputChange = (e, name) => {
+        setEmployeeData((prev) => ({
+            ...prev,
+            [name]: name === "phone_number" ? e : e.target.value,
+        }));
+
+        console.log(employeeData);
+    };
+
     // Текущая загрузка
     const getWorkload = () => {
         getData(
@@ -32,6 +42,20 @@ const EmployeeCard = () => {
         ).then((response) => {
             if (response.status == 200) {
                 setworkload(response.data.workload);
+            }
+        });
+    };
+
+    const updateEmployee = () => {
+        postData(
+            "PATCH",
+            `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
+            employeeData
+        ).then((response) => {
+            if (response?.ok) {
+                alert("Успешно обновлено!");
+            } else {
+                alert("Ошибка обновления данных");
             }
         });
     };
@@ -78,6 +102,19 @@ const EmployeeCard = () => {
                                         className="border-2 h-[32px] p-1 border border-gray-300 min-w-[120px] cursor-pointer"
                                         name=""
                                         defaultValue={employeeData.is_staff}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                {
+                                                    target: {
+                                                        value: JSON.parse(
+                                                            e.target.value
+                                                        ),
+                                                    },
+                                                },
+                                                "is_staff"
+                                            )
+                                        }
+                                        disabled={mode == "read" ? true : false}
                                     >
                                         <option value="true">штатный</option>
                                         <option value="false">
@@ -89,6 +126,19 @@ const EmployeeCard = () => {
                                         className="border-2 h-[32px] p-1 border border-gray-300 min-w-[120px] cursor-pointer"
                                         name=""
                                         defaultValue={employeeData.is_active}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                {
+                                                    target: {
+                                                        value: JSON.parse(
+                                                            e.target.value
+                                                        ),
+                                                    },
+                                                },
+                                                "is_active"
+                                            )
+                                        }
+                                        disabled={mode == "read" ? true : false}
                                     >
                                         <option value="true">работает</option>
                                         <option value="false">
@@ -103,7 +153,9 @@ const EmployeeCard = () => {
                                     type="button"
                                     className="update-icon"
                                     title="Обновить данные сотрудника"
-                                    onClick={() => {}}
+                                    onClick={() => {
+                                        updateEmployee();
+                                    }}
                                 ></button>
                             )}
                         </div>
@@ -150,9 +202,16 @@ const EmployeeCard = () => {
                                         placeholder="Заполните квалификацию"
                                         type="text"
                                         name="qualification"
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                e,
+                                                "qualification"
+                                            )
+                                        }
                                         defaultValue={
                                             employeeData.qualification
                                         }
+                                        disabled={mode == "read" ? true : false}
                                     ></textarea>
                                 </div>
 
@@ -168,10 +227,21 @@ const EmployeeCard = () => {
                                                 name="phone"
                                                 type="tel"
                                                 inputMode="tel"
+                                                onAccept={(value) =>
+                                                    handleInputChange(
+                                                        value || "",
+                                                        "phone_number"
+                                                    )
+                                                }
                                                 value={
                                                     employeeData.phone_number
                                                 }
                                                 placeholder="+7 999 999 99 99"
+                                                disabled={
+                                                    mode == "read"
+                                                        ? true
+                                                        : false
+                                                }
                                             />
                                         </div>
                                     </div>
@@ -185,12 +255,18 @@ const EmployeeCard = () => {
                                                 type="email"
                                                 placeholder="mail@mail.ru"
                                                 value={employeeData.email}
+                                                onChange={(e) =>
+                                                    handleInputChange(
+                                                        e,
+                                                        "email"
+                                                    )
+                                                }
+                                                disabled={
+                                                    mode == "read"
+                                                        ? true
+                                                        : false
+                                                }
                                             />
-                                            {/* {errors.email && (
-                                                <p className="text-red-500 text-sm">
-                                                    Некорректный email
-                                                </p>
-                                            )} */}
                                         </div>
                                     </div>
                                 </div>
@@ -237,11 +313,6 @@ const EmployeeCard = () => {
                                                 onChange={new Date()}
                                                 dateFormat="dd.MM.yyyy"
                                                 selectsRange
-                                                disabled={
-                                                    mode === "read"
-                                                        ? true
-                                                        : false
-                                                }
                                             />
                                         </div>
                                         <div className="flex flex-col">
@@ -382,7 +453,6 @@ const EmployeeCard = () => {
                                         <select
                                             className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
                                             name=""
-                                            // defaultValue={employeeData.is_staff}
                                         >
                                             <option value="">Год</option>
                                         </select>
@@ -390,9 +460,6 @@ const EmployeeCard = () => {
                                         <select
                                             className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
                                             name=""
-                                            // defaultValue={
-                                            //     employeeData.is_active
-                                            // }
                                         >
                                             <option value="">Месяц</option>
                                         </select>
