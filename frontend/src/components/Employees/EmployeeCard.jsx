@@ -25,9 +25,16 @@ const EmployeeCard = () => {
     ];
 
     const handleInputChange = (e, name) => {
+        const value =
+            name === "phone_number"
+                ? e
+                : name === "is_staff" || name === "is_active"
+                ? JSON.parse(e.target.value)
+                : e.target.value;
+
         setEmployeeData((prev) => ({
             ...prev,
-            [name]: name === "phone_number" ? e : e.target.value,
+            [name]: value,
         }));
 
         console.log(employeeData);
@@ -100,19 +107,9 @@ const EmployeeCard = () => {
                                 <div className="flex items-center gap-3">
                                     <select
                                         className="border-2 h-[32px] p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                        name=""
-                                        defaultValue={employeeData.is_staff}
+                                        value={String(employeeData.is_staff)}
                                         onChange={(e) =>
-                                            handleInputChange(
-                                                {
-                                                    target: {
-                                                        value: JSON.parse(
-                                                            e.target.value
-                                                        ),
-                                                    },
-                                                },
-                                                "is_staff"
-                                            )
+                                            handleInputChange(e, "is_staff")
                                         }
                                         disabled={mode == "read" ? true : false}
                                     >
@@ -124,19 +121,9 @@ const EmployeeCard = () => {
 
                                     <select
                                         className="border-2 h-[32px] p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                        name=""
-                                        defaultValue={employeeData.is_active}
+                                        value={String(employeeData.is_active)}
                                         onChange={(e) =>
-                                            handleInputChange(
-                                                {
-                                                    target: {
-                                                        value: JSON.parse(
-                                                            e.target.value
-                                                        ),
-                                                    },
-                                                },
-                                                "is_active"
-                                            )
+                                            handleInputChange(e, "is_active")
                                         }
                                         disabled={mode == "read" ? true : false}
                                     >
@@ -208,9 +195,7 @@ const EmployeeCard = () => {
                                                 "qualification"
                                             )
                                         }
-                                        defaultValue={
-                                            employeeData.qualification
-                                        }
+                                        value={employeeData.qualification}
                                         disabled={mode == "read" ? true : false}
                                     ></textarea>
                                 </div>
