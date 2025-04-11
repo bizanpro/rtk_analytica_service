@@ -524,13 +524,13 @@ const ProjectCard = () => {
 
         setReportData(data);
 
-        query = toast.loading("Обновление", {
-            containerId: "projectCard",
-            position: "top-center",
-        });
-
         if (!addReport) {
             if (mode === "read") return;
+
+            query = toast.loading("Обновление !", {
+                containerId: "projectCard",
+                position: "top-center",
+            });
 
             postData(
                 "PATCH",
