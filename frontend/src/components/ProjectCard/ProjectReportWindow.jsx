@@ -284,11 +284,11 @@ const ProjectReportWindow = ({
                 suppliersRes,
                 rolesRes,
                 reportStatusesRes,
-            ] = await Promise.all([
+            ] = await Promise.allSettled([
                 getData(
                     `${
                         import.meta.env.VITE_API_URL
-                    }report-types?=with-count=true`
+                    }report-types?with-count=true`
                 ),
                 getData(`${import.meta.env.VITE_API_URL}physical-persons`),
                 getData(
@@ -298,11 +298,21 @@ const ProjectReportWindow = ({
                 getData(`${import.meta.env.VITE_API_URL}report-statuses`),
             ]);
 
-            setReportTypes(reportTypesRes.data.data); // Получение Типов отчета
-            setPhysicalPersons(physicalPersonsRes.data); // Получение физ. лиц для команды проекта
-            setSuppliers(suppliersRes.data); // Получение подрядчиков
-            setRoles(rolesRes.data.data); // Получение ролей
-            setReportStatuses(reportStatusesRes.data); // Получение статусов отчета
+            if (reportTypesRes.status === "fulfilled")
+                setReportTypes(reportTypesRes.value.data.data); // Получение Типов отчета
+
+            if (physicalPersonsRes.status === "fulfilled") {
+                setPhysicalPersons(physicalPersonsRes.value.data); // Получение физ. лиц для команды проекта
+            }
+
+            if (suppliersRes.status === "fulfilled")
+                setSuppliers(suppliersRes.value.data); // Получение подрядчиков
+
+            if (rolesRes.status === "fulfilled")
+                setRoles(rolesRes.value.data.data); // Получение ролей
+
+            if (reportStatusesRes.status === "fulfilled")
+                setReportStatuses(reportStatusesRes.value.data); // Получение статусов отчета
 
             setIsDataLoaded(true);
         };
