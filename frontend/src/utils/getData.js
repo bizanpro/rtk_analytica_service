@@ -1,8 +1,16 @@
-async function getData(url = "", headers = {}) {
+async function getData(url = "", options = {}) {
+    const { headers = {}, params = {} } = options;
+
+    const queryString = new URLSearchParams(params).toString();
+    const fullUrl = queryString ? `${url}?${queryString}` : url;
+
     try {
-        const response = await fetch(url, {
+        const response = await fetch(fullUrl, {
             method: "GET",
-            headers,
+            headers: {
+                "Content-Type": "application/json",
+                ...headers,
+            },
         });
 
         if (!response.ok) {
@@ -19,7 +27,7 @@ async function getData(url = "", headers = {}) {
         if (error.status === undefined && error.response) {
             error.status = error.response.status;
         }
-        console.error("Ошибка получения данных " + error);
+        console.error("Ошибка получения данных: " + error);
         throw error;
     }
 }

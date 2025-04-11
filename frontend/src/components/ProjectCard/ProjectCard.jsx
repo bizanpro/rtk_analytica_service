@@ -442,12 +442,8 @@ const ProjectCard = () => {
         data.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
-        data.execution_start_date = new Date(data.execution_period.start)
-            .toISOString()
-            .split("T")[0];
-        data.execution_end_date = new Date(data.execution_period.end)
-            .toISOString()
-            .split("T")[0];
+        data.execution_start_date = formatDate(data.execution_period.start);
+        data.execution_end_date = formatDate(data.execution_period.end);
 
         data.project_id = projectId;
 
@@ -458,7 +454,7 @@ const ProjectCard = () => {
                 containerId: "projectCard",
                 position: "top-center",
             });
-            
+
             postData(
                 "POST",
                 `${import.meta.env.VITE_API_URL}reports`,
@@ -513,12 +509,8 @@ const ProjectCard = () => {
         data.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
-        data.execution_start_date = new Date(data.execution_period.start)
-            .toISOString()
-            .split("T")[0];
-        data.execution_end_date = new Date(data.execution_period.end)
-            .toISOString()
-            .split("T")[0];
+        data.execution_start_date = formatDate(data.execution_period.start);
+        data.execution_end_date = formatDate(data.execution_period.end);
 
         data.project_id = projectId;
 
@@ -527,7 +519,7 @@ const ProjectCard = () => {
         if (!addReport) {
             if (mode === "read") return;
 
-            query = toast.loading("Обновление !", {
+            query = toast.loading("Обновление", {
                 containerId: "projectCard",
                 position: "top-center",
             });

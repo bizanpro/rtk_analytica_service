@@ -20,6 +20,9 @@ const EmployeeCard = () => {
     const [personalWorkload, setPersonalWorkload] = useState({});
     const [mode, setMode] = useState("read");
     const [errors, setErrors] = useState({});
+    const [availableYears, setAvailableYears] = useState([]);
+    const [selectedYear, setSelectedYear] = useState("");
+    const [selectedMonth, setSelectedMonth] = useState("1");
 
     const PhoneMask = "+{7} (000) 000 00 00";
 
@@ -77,18 +80,29 @@ const EmployeeCard = () => {
         });
     };
 
-    // Трудозатраты
-    const getPersonalWorkload = () => {
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }physical-persons/${employeeId}/personal-workload`
-        ).then((response) => {
-            if (response.status == 200) {
-                setPersonalWorkload(response.data);
+    const getYears = () => {
+        getData(`${import.meta.env.VITE_API_URL}available-years`).then(
+            (response) => {
+                if (response.status == 200) {
+                    setAvailableYears(response.data);
+                    setSelectedYear(response.data[0]);
+                }
             }
-        });
+        );
     };
+
+    // Трудозатраты
+    // const getPersonalWorkload = () => {
+    //     getData(
+    //         `${
+    //             import.meta.env.VITE_API_URL
+    //         }physical-persons/${employeeId}/personal-workload`
+    //     ).then((response) => {
+    //         if (response.status == 200) {
+    //             setPersonalWorkload(response.data);
+    //         }
+    //     });
+    // };
 
     const updateEmployee = () => {
         query = toast.loading("Обновление", {
@@ -137,11 +151,39 @@ const EmployeeCard = () => {
                 setEmployeeData(response.data);
             }
 
-            await Promise.all([getWorkload(), getPersonalWorkload()]);
+            await Promise.all([
+                getWorkload(),
+                // getPersonalWorkload(),
+                getYears(),
+            ]);
         } catch (error) {
             console.error("Ошибка при загрузке сотрудника:", error);
         }
     };
+
+    const personalWorkloadFilter = () => {
+        const payload = {
+            year: selectedYear,
+            month: selectedMonth,
+        };
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }physical-persons/${employeeId}/personal-workload`,
+            { params: payload }
+        ).then((response) => {
+            if (response.status === 200) {
+                setPersonalWorkload(response.data);
+            }
+        });
+    };
+
+    useEffect(() => {
+        if (selectedYear && selectedMonth) {
+            personalWorkloadFilter();
+        }
+    }, [selectedYear, selectedMonth]);
 
     useEffect(() => {
         getEmployee();
@@ -507,16 +549,48 @@ const EmployeeCard = () => {
                                     <div className="grid grid-cols-2 items-center gap-3 mb-5">
                                         <select
                                             className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
-                                            name=""
+                                            onChange={(e) =>
+                                                setSelectedYear(e.target.value)
+                                            }
                                         >
-                                            <option value="">Год</option>
+                                            {availableYears.length > 0 &&
+                                                availableYears.map((item) => (
+                                                    <option
+                                                        value={item}
+                                                        key={item}
+                                                    >
+                                                        {item}
+                                                    </option>
+                                                ))}
                                         </select>
 
                                         <select
                                             className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
-                                            name=""
+                                            onChange={(e) =>
+                                                setSelectedMonth(e.target.value)
+                                            }
                                         >
-                                            <option value="">Месяц</option>
+                                            {[
+                                                "Январь",
+                                                "Февраль",
+                                                "Март",
+                                                "Апрель",
+                                                "Май",
+                                                "Июнь",
+                                                "Июль",
+                                                "Август",
+                                                "Сентябрь",
+                                                "Октябрь",
+                                                "Ноябрь",
+                                                "Декабрь",
+                                            ].map((month, index) => (
+                                                <option
+                                                    value={index + 1}
+                                                    key={index}
+                                                >
+                                                    {month}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
 
