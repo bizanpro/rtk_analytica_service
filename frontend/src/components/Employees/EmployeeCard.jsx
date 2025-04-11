@@ -4,11 +4,14 @@ import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 
 import { IMaskInput } from "react-imask";
+import { ToastContainer, toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import Select from "react-select";
 
 import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
 import EmployeePersonalWorkloadItem from "./EmployeePersonalWorkloadItem";
+
+import "react-toastify/dist/ReactToastify.css";
 
 const EmployeeCard = () => {
     const { employeeId } = useParams();
@@ -16,8 +19,11 @@ const EmployeeCard = () => {
     const [workload, setworkload] = useState({});
     const [personalWorkload, setPersonalWorkload] = useState({});
     const [mode, setMode] = useState("read");
+    const [errors, setErrors] = useState({});
 
     const PhoneMask = "+{7} (000) 000 00 00";
+
+    let query;
 
     const options = [
         { value: "0", label: "ФТА" },
@@ -25,6 +31,24 @@ const EmployeeCard = () => {
         { value: "2", label: "ФМ" },
         { value: "3", label: "ИЗ" },
     ];
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const handleSave = () => {
+        const newErrors = {
+            phone_number: !employeeData.phone_number,
+            email: !employeeData.email || !validateEmail(employeeData.email),
+        };
+
+        setErrors(newErrors);
+
+        if (Object.values(newErrors).some((err) => err)) return;
+
+        updateEmployee();
+    };
 
     const handleInputChange = (e, name) => {
         const value =
@@ -67,15 +91,35 @@ const EmployeeCard = () => {
     };
 
     const updateEmployee = () => {
+        query = toast.loading("Обновление", {
+            containerId: "employee",
+            position: "top-center",
+        });
+
         postData(
             "PATCH",
             `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
             employeeData
         ).then((response) => {
             if (response?.ok) {
-                alert("Успешно обновлено!");
+                toast.update(query, {
+                    render: "Успешно обновлено!",
+                    type: "success",
+                    containerId: "employee",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
             } else {
-                alert("Ошибка обновления данных");
+                toast.error("Ошибка обновления данных", {
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
             }
         });
     };
@@ -110,6 +154,8 @@ const EmployeeCard = () => {
                     className="container flex flex-col min-h-full"
                     style={{ minHeight: "calc(100vh - 215px)" }}
                 >
+                    <ToastContainer containerId="employee" />
+
                     <div className="flex justify-between items-center gap-10">
                         <div className="flex items-center gap-3 justify-between flex-grow">
                             <div className="flex items-center gap-10">
@@ -154,7 +200,7 @@ const EmployeeCard = () => {
                                     className="update-icon"
                                     title="Обновить данные сотрудника"
                                     onClick={() => {
-                                        updateEmployee();
+                                        handleSave();
                                     }}
                                 ></button>
                             )}
@@ -241,6 +287,12 @@ const EmployeeCard = () => {
                                                         : false
                                                 }
                                             />
+
+                                            {errors.phone_number && (
+                                                <p className="text-red-500 text-sm mt-2">
+                                                    Заполните телефон
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="flex flex-col gap-2 justify-between">
@@ -265,6 +317,11 @@ const EmployeeCard = () => {
                                                         : false
                                                 }
                                             />
+                                            {errors.email && (
+                                                <p className="text-red-500 text-sm mt-2">
+                                                    Некорректный email
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

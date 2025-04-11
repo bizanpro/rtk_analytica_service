@@ -1,6 +1,9 @@
 import { useState } from "react";
 import RateBlock from "../RateBlock";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const ProjectReportEditor = ({
     reportData,
     reportEditorName,
@@ -31,6 +34,8 @@ const ProjectReportEditor = ({
         { id: "risk_summary", label: "Риски" },
     ];
 
+    let query;
+
     const handleTextArea = (e, name) => {
         setExtendReportData({ ...extendReportData, [name]: e.target.value });
     };
@@ -40,13 +45,27 @@ const ProjectReportEditor = ({
     };
 
     const sendReport = () => {
+        query = toast.loading("Выполняется отправка", {
+            containerId: "report",
+            position: "top-center",
+        });
+
         postData(
             "POST",
             `${import.meta.env.VITE_API_URL}reports`,
             extendReportData
         ).then((response) => {
             if (response?.ok) {
-                alert(response.message);
+                toast.update(query, {
+                    render: response.message,
+                    type: "success",
+                    containerId: "report",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
                 getProject(projectId);
                 setReportWindowsState(false);
                 setReportEditorState(false);
@@ -55,13 +74,27 @@ const ProjectReportEditor = ({
     };
 
     const updateReport = () => {
+        query = toast.loading("Обновление", {
+            containerId: "report",
+            position: "top-center",
+        });
+
         postData(
             "PATCH",
             `${import.meta.env.VITE_API_URL}reports/${reportId}`,
             extendReportData
         ).then((response) => {
             if (response?.ok) {
-                alert(response.message);
+                toast.update(query, {
+                    render: response.message,
+                    type: "success",
+                    containerId: "report",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
                 getProject(projectId);
                 setReportWindowsState(false);
                 setReportEditorState(false);
@@ -71,6 +104,8 @@ const ProjectReportEditor = ({
 
     return (
         <div className="border border-gray-400 py-5 px-3">
+            <ToastContainer containerId="report" />
+
             <div className="text-2xl w-full mb-3">{reportEditorName}</div>
 
             <div className="grid gap-3 grid-cols-2 mb-5 items-stretch">

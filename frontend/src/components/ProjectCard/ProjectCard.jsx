@@ -18,6 +18,9 @@ import ProjectBudget from "./ProjectBudget";
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const ProjectCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
     const location = useLocation();
@@ -70,6 +73,8 @@ const ProjectCard = () => {
             (selectedBank) => selectedBank.id === bank.id
         )
     );
+
+    let query;
 
     // Фильтр кредиторов
     const handleFilterLenders = (evt) => {
@@ -234,6 +239,11 @@ const ProjectCard = () => {
 
     // Отправляем кредитора и заказчика
     const sendExecutor = (type) => {
+        query = toast.loading("Выполняется отправка", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
+
         if (type === "lender") {
             setNewLender((prev) => {
                 const updatedLender = {
@@ -258,7 +268,16 @@ const ProjectCard = () => {
                             creditor_id: 1,
                         });
 
-                        alert(response.message);
+                        toast.update(query, {
+                            render: response.message,
+                            type: "success",
+                            containerId: "projectCard",
+                            isLoading: false,
+                            autoClose: 1200,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: false,
+                            position: "top-center",
+                        });
                     }
                 });
                 return updatedLender;
@@ -294,7 +313,16 @@ const ProjectCard = () => {
                                 email: "",
                             });
 
-                            alert(response.message);
+                            toast.update(query, {
+                                render: response.message,
+                                type: "success",
+                                containerId: "projectCard",
+                                isLoading: false,
+                                autoClose: 1200,
+                                pauseOnFocusLoss: false,
+                                pauseOnHover: false,
+                                position: "top-center",
+                            });
                         }
                     });
                     return updatedCustomer;
@@ -335,6 +363,11 @@ const ProjectCard = () => {
 
     // Обновление проекта
     const updateProject = async (id, showMessage = true) => {
+        query = toast.loading("Обновление", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
+
         try {
             const response = await postData(
                 "PATCH",
@@ -342,7 +375,16 @@ const ProjectCard = () => {
                 formFields
             );
             if (response?.ok && showMessage) {
-                alert("Проект успешно обновлен");
+                toast.update(query, {
+                    render: "Проект успешно обновлен",
+                    type: "success",
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
             }
             return response;
         } catch (error) {
@@ -400,12 +442,21 @@ const ProjectCard = () => {
         data.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
-        data.execution_period.start = formatDate(data.execution_period.start);
-        data.execution_period.end = formatDate(data.execution_period.end);
+        data.execution_start_date = new Date(data.execution_period.start)
+            .toISOString()
+            .split("T")[0];
+        data.execution_end_date = new Date(data.execution_period.end)
+            .toISOString()
+            .split("T")[0];
 
         data.project_id = projectId;
 
         setReportData(data);
+
+        query = toast.loading("Выполняется отправка", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
 
         if (!addReport) {
             postData(
@@ -414,7 +465,16 @@ const ProjectCard = () => {
                 data
             ).then((response) => {
                 if (response?.ok) {
-                    alert(response.message);
+                    toast.update(query, {
+                        render: response.message,
+                        type: "success",
+                        containerId: "projectCard",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
                     setReports((prevReports) => [
                         ...prevReports,
                         response.data,
@@ -422,7 +482,14 @@ const ProjectCard = () => {
                     setReportWindowsState(false);
                     getProject(projectId);
                 } else {
-                    alert("Ошибка при отправке отчёта");
+                    toast.dismiss(query);
+                    toast.error("Ошибка при отправке отчёта", {
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
                     setReportWindowsState(false);
                 }
             });
@@ -446,12 +513,21 @@ const ProjectCard = () => {
         data.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
-        data.execution_period.start = formatDate(data.execution_period.start);
-        data.execution_period.end = formatDate(data.execution_period.end);
+        data.execution_start_date = new Date(data.execution_period.start)
+            .toISOString()
+            .split("T")[0];
+        data.execution_end_date = new Date(data.execution_period.end)
+            .toISOString()
+            .split("T")[0];
 
         data.project_id = projectId;
 
         setReportData(data);
+
+        query = toast.loading("Обновление", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
 
         if (!addReport) {
             if (mode === "read") return;
@@ -462,7 +538,16 @@ const ProjectCard = () => {
                 data
             ).then((response) => {
                 if (response?.ok) {
-                    alert(response.message);
+                    toast.update(query, {
+                        render: response.message,
+                        type: "success",
+                        containerId: "projectCard",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
                     setReportWindowsState(false);
                     getProject(projectId);
                 } else {
@@ -512,6 +597,8 @@ const ProjectCard = () => {
         <main className="page">
             <div className="new-project pt-8 pb-15">
                 <div className="container">
+                    <ToastContainer containerId="projectCard" />
+
                     <div className="flex justify-between items-center gap-10">
                         <div className="flex items-center gap-3 flex-grow">
                             <input

@@ -310,8 +310,8 @@ const ProjectReportWindow = ({
         fetchData();
     }, []);
 
+    // Обновление статуса проекта в отчете
     useEffect(() => {
-        // Обновление статуса проекта в отчете
         const updateStatus = () => {
             const today = new Date();
             const { start, end } = reportData["execution_period"];
