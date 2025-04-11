@@ -453,12 +453,12 @@ const ProjectCard = () => {
 
         setReportData(data);
 
-        query = toast.loading("Выполняется отправка", {
-            containerId: "projectCard",
-            position: "top-center",
-        });
-
         if (!addReport) {
+            query = toast.loading("Выполняется отправка", {
+                containerId: "projectCard",
+                position: "top-center",
+            });
+            
             postData(
                 "POST",
                 `${import.meta.env.VITE_API_URL}reports`,
