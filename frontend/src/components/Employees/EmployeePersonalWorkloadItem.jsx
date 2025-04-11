@@ -70,7 +70,7 @@ const EmployeePersonalWorkloadItem = ({ props, employeeId, mode }) => {
                                 load_percentage: value,
                             }));
                         }
-                        console.log(personalWorkloadData)
+                        console.log(personalWorkloadData);
                     }}
                     disabled={mode == "read" ? true : false}
                 />

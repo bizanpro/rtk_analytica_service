@@ -17,7 +17,7 @@ const EmployeeCard = () => {
     const { employeeId } = useParams();
     const [employeeData, setEmployeeData] = useState({});
     const [workload, setworkload] = useState({});
-    const [personalWorkload, setPersonalWorkload] = useState({});
+    const [personalWorkload, setPersonalWorkload] = useState([]);
     const [mode, setMode] = useState("read");
     const [errors, setErrors] = useState({});
     const [availableYears, setAvailableYears] = useState([]);
@@ -157,7 +157,7 @@ const EmployeeCard = () => {
             { params: payload }
         ).then((response) => {
             if (response.status === 200) {
-                setPersonalWorkload(response.data);
+                setPersonalWorkload(() => response.data);
             }
         });
     };
@@ -167,6 +167,10 @@ const EmployeeCard = () => {
             personalWorkloadFilter();
         }
     }, [selectedYear, selectedMonth]);
+
+    useEffect(() => {
+        console.log(personalWorkload);
+    }, [personalWorkload]);
 
     useEffect(() => {
         getEmployee();
@@ -588,9 +592,9 @@ const EmployeeCard = () => {
                                         {personalWorkload.length > 0 && (
                                             <>
                                                 {personalWorkload.map(
-                                                    (item, index) => (
+                                                    (item) => (
                                                         <EmployeePersonalWorkloadItem
-                                                            key={index}
+                                                            key={`${item.project_id}-${item.report_id}`}
                                                             employeeId={
                                                                 employeeId
                                                             }
