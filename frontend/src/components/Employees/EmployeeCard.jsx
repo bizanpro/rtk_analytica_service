@@ -85,24 +85,11 @@ const EmployeeCard = () => {
             (response) => {
                 if (response.status == 200) {
                     setAvailableYears(response.data);
-                    setSelectedYear(response.data[0]);
+                    setSelectedYear(response.data[response.data.length - 1]);
                 }
             }
         );
     };
-
-    // Трудозатраты
-    // const getPersonalWorkload = () => {
-    //     getData(
-    //         `${
-    //             import.meta.env.VITE_API_URL
-    //         }physical-persons/${employeeId}/personal-workload`
-    //     ).then((response) => {
-    //         if (response.status == 200) {
-    //             setPersonalWorkload(response.data);
-    //         }
-    //     });
-    // };
 
     const updateEmployee = () => {
         query = toast.loading("Обновление", {
@@ -151,11 +138,7 @@ const EmployeeCard = () => {
                 setEmployeeData(response.data);
             }
 
-            await Promise.all([
-                getWorkload(),
-                // getPersonalWorkload(),
-                getYears(),
-            ]);
+            await Promise.all([getWorkload(), getYears()]);
         } catch (error) {
             console.error("Ошибка при загрузке сотрудника:", error);
         }
@@ -552,6 +535,7 @@ const EmployeeCard = () => {
                                             onChange={(e) =>
                                                 setSelectedYear(e.target.value)
                                             }
+                                            value={selectedYear}
                                         >
                                             {availableYears.length > 0 &&
                                                 availableYears.map((item) => (
