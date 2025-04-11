@@ -6,6 +6,9 @@ import postData from "../../utils/postData";
 import ReferenceItem from "./ReferenceItem";
 import ReferenceItemExtended from "./ReferenceItemExtended";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const SingleBook = () => {
     const COLUMNS = {
         industries: [
@@ -94,6 +97,8 @@ const SingleBook = () => {
     //     return Array.from(new Set(allSectors));
     // }, [booksItems]);
 
+    let query;
+
     const handleNewElementInputChange = (e, name) => {
         setFormFields({ ...formFields, [name]: e.target.value });
     };
@@ -153,9 +158,32 @@ const SingleBook = () => {
             return;
         }
 
+        query = toast.loading("Обновление", {
+            containerId: "singleBook",
+            position: "top-center",
+        });
+
         postData("PATCH", URL, data).then((response) => {
-            if (response) {
-                alert("Запись обновлена");
+            if (response?.ok) {
+                toast.update(query, {
+                    render: "Запись обновлена",
+                    type: "success",
+                    containerId: "singleBook",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            } else {
+                toast.dismiss(query);
+                toast.error("Ошибка обновления записи", {
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
             }
         });
     };
@@ -189,6 +217,8 @@ const SingleBook = () => {
     return (
         <main className="page">
             <div className="container py-8">
+                <ToastContainer containerId="singleBook" />
+
                 <div className="flex justify-between items-center gap-6 mb-8">
                     <h1 className="text-3xl font-medium">
                         {TITLES[bookId]} ({booksItems?.length})
