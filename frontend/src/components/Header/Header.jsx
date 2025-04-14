@@ -45,6 +45,18 @@ const Header = () => {
                         </NavLink>
 
                         <NavLink
+                            to={"/customers"}
+                            className={({ isActive }) =>
+                                isActive
+                                    ? "sidebar__list-item font-medium"
+                                    : "sidebar__list-item"
+                            }
+                            title="Перейти в реестр заказчиков"
+                        >
+                            Заказчики
+                        </NavLink>
+
+                        <NavLink
                             to={"/reports"}
                             className={({ isActive }) =>
                                 isActive

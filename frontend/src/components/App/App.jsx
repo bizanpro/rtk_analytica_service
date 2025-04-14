@@ -9,6 +9,7 @@ import Employees from "../Employees/Employees";
 import EmployeeCard from "../Employees/EmployeeCard";
 import ReferenceBooks from "../ReferenceBooks/ReferenceBooks";
 import SingleBook from "../ReferenceBooks/SingleBook";
+import Customers from "../Customers/Customers";
 
 import "./App.scss";
 
@@ -28,6 +29,12 @@ function App() {
                         element={<ProjectCard />}
                     />
                     <Route path="projects/new" element={<ProjectCard />} />
+
+                    <Route path="customers" element={<Customers />} />
+                    <Route
+                        path="customers/:customerId"
+                        element={<ProjectCard />}
+                    />
 
                     <Route path="employees" element={<Employees />} />
                     <Route

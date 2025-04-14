@@ -589,48 +589,52 @@ const EmployeeCard = () => {
                                             <span>% времени</span>
                                         </li>
 
-                                        {personalWorkload.length > 0 && (
-                                            <>
-                                                {personalWorkload.map(
-                                                    (item) => (
-                                                        <EmployeePersonalWorkloadItem
-                                                            key={`${item.project_id}-${item.report_id}`}
-                                                            employeeId={
-                                                                employeeId
-                                                            }
-                                                            mode={mode}
-                                                            props={item}
-                                                        />
-                                                    )
-                                                )}
+                                        {personalWorkload.length > 0 &&
+                                            personalWorkload !== null &&
+                                            personalWorkload.every(
+                                                (item) => item !== null
+                                            ) && (
+                                                <>
+                                                    {personalWorkload.map(
+                                                        (item) => (
+                                                            <EmployeePersonalWorkloadItem
+                                                                key={`${item?.project_id}-${item?.report_id}`}
+                                                                employeeId={
+                                                                    employeeId
+                                                                }
+                                                                mode={mode}
+                                                                props={item}
+                                                            />
+                                                        )
+                                                    )}
 
-                                                <li className="grid items-center grid-cols-[1fr_15%] gap-3 mb-2">
-                                                    <div className="text-lg">
-                                                        Прочие задачи
-                                                    </div>
+                                                    <li className="grid items-center grid-cols-[1fr_15%] gap-3 mb-2">
+                                                        <div className="text-lg">
+                                                            Прочие задачи
+                                                        </div>
 
-                                                    <div className="flex items-center border-2 border-gray-300 p-1">
-                                                        <input
-                                                            className="min-w-0"
-                                                            type="number"
-                                                            placeholder="0"
-                                                            max="100"
-                                                            min="0"
-                                                            defaultValue={0}
-                                                        />
-                                                        %
-                                                    </div>
-                                                </li>
+                                                        <div className="flex items-center border-2 border-gray-300 p-1">
+                                                            <input
+                                                                className="min-w-0"
+                                                                type="number"
+                                                                placeholder="0"
+                                                                max="100"
+                                                                min="0"
+                                                                defaultValue={0}
+                                                            />
+                                                            %
+                                                        </div>
+                                                    </li>
 
-                                                <li className="grid items-center border-t-2 border-b-2 border-gray-300 grid-cols-[1fr_15%] gap-3 py-2">
-                                                    <div className="text-lg">
-                                                        Итого
-                                                    </div>
+                                                    <li className="grid items-center border-t-2 border-b-2 border-gray-300 grid-cols-[1fr_15%] gap-3 py-2">
+                                                        <div className="text-lg">
+                                                            Итого
+                                                        </div>
 
-                                                    <div>0%</div>
-                                                </li>
-                                            </>
-                                        )}
+                                                        <div>0%</div>
+                                                    </li>
+                                                </>
+                                            )}
                                     </ul>
                                 </div>
                             </div>
