@@ -315,7 +315,8 @@ const SingleBook = () => {
                                 <>
                                     {mode === "edit" &&
                                         bookId != "creditor" &&
-                                        bookId != "contragent" && (
+                                        bookId != "contragent" &&
+                                        bookId != "working-hours" && (
                                             <tr className="border-gray-300 text-base border-b text-left">
                                                 {columns.map(({ key }) => (
                                                     <td
