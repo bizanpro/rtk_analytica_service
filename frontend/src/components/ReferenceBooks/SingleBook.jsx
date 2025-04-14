@@ -47,6 +47,10 @@ const SingleBook = () => {
             { label: "Контакт", key: "" },
             { label: "Проект", key: "" },
         ],
+        "working-hours": [
+            { label: "Месяц", key: "month_name" },
+            { label: "Часы", key: "hours" },
+        ],
     };
 
     const TITLES = {
@@ -56,6 +60,7 @@ const SingleBook = () => {
         banks: "Кредиторы",
         contragent: "Контакты заказчика",
         creditor: "Контакты кредитора",
+        "working-hours": "Рабочие часы",
     };
 
     const { bookId } = useParams();
