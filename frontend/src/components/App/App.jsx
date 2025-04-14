@@ -10,6 +10,7 @@ import EmployeeCard from "../Employees/EmployeeCard";
 import ReferenceBooks from "../ReferenceBooks/ReferenceBooks";
 import SingleBook from "../ReferenceBooks/SingleBook";
 import Customers from "../Customers/Customers";
+import CustomerCard from "../CustomerCard/CustomerCard";
 
 import "./App.scss";
 
@@ -33,7 +34,7 @@ function App() {
                     <Route path="customers" element={<Customers />} />
                     <Route
                         path="customers/:customerId"
-                        element={<ProjectCard />}
+                        element={<CustomerCard />}
                     />
 
                     <Route path="employees" element={<Employees />} />

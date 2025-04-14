@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
-import postData from "../../utils/postData";
 
 const EmployeePersonalWorkloadItem = ({
     props,
-    employeeId,
     mode,
-    selectedYear,
-    selectedMonth,
+    updateLoadPercentage,
 }) => {
     const [personalWorkloadData, setPersonalWorkloadData] = useState(props);
 
@@ -15,29 +12,6 @@ const EmployeePersonalWorkloadItem = ({
             setPersonalWorkloadData(props);
         }
     }, [props]);
-
-    const updateLoadPercentage = () => {
-        const data = {
-            load_percentage: +personalWorkloadData?.load_percentage,
-            year: +selectedYear,
-            month: +selectedMonth,
-            project_id: +personalWorkloadData?.project_id,
-        };
-
-        postData(
-            "PATCH",
-            `${
-                import.meta.env.VITE_API_URL
-            }physical-persons/${employeeId}/personal-workload`,
-            data
-        ).then((response) => {
-            if (response?.ok) {
-                alert("Успешно обновлено!");
-            } else {
-                alert("Ошибка обновления данных");
-            }
-        });
-    };
 
     return (
         <li className="grid items-center grid-cols-[1fr_35%_20px_15%] gap-3 mb-2">
@@ -64,7 +38,7 @@ const EmployeePersonalWorkloadItem = ({
                 <button
                     type="button"
                     className="save-icon w-[20px] h-[20px]"
-                    onClick={() => updateLoadPercentage()}
+                    onClick={() => updateLoadPercentage(personalWorkloadData)}
                     title="Обновить запись"
                 ></button>
             ) : (

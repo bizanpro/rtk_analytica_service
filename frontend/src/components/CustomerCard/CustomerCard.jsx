@@ -3,28 +3,27 @@ import { useParams } from "react-router-dom";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 
-import { IMaskInput } from "react-imask";
 import { ToastContainer, toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import Select from "react-select";
 
-import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
-import EmployeePersonalWorkloadItem from "./EmployeePersonalWorkloadItem";
+import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
+
+// import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
+// import EmployeePersonalWorkloadItem from "./EmployeePersonalWorkloadItem";
 
 import "react-toastify/dist/ReactToastify.css";
 
-const EmployeeCard = () => {
+const CustomerCard = () => {
     const { employeeId } = useParams();
     const [employeeData, setEmployeeData] = useState({});
     const [workload, setworkload] = useState({});
-    const [personalWorkload, setPersonalWorkload] = useState();
+    const [personalWorkload, setPersonalWorkload] = useState([]);
     const [mode, setMode] = useState("read");
     const [errors, setErrors] = useState({});
     const [availableYears, setAvailableYears] = useState([]);
     const [selectedYear, setSelectedYear] = useState("");
     const [selectedMonth, setSelectedMonth] = useState("1");
-
-    const PhoneMask = "+{7} (000) 000 00 00";
 
     let query;
 
@@ -80,7 +79,6 @@ const EmployeeCard = () => {
         });
     };
 
-    // Получаем года для блока Трудозатраты
     const getYears = () => {
         getData(`${import.meta.env.VITE_API_URL}available-years`).then(
             (response) => {
@@ -92,7 +90,6 @@ const EmployeeCard = () => {
         );
     };
 
-    // Обновление данных сотрудника
     const updateEmployee = () => {
         query = toast.loading("Обновление", {
             containerId: "employee",
@@ -146,7 +143,6 @@ const EmployeeCard = () => {
         }
     };
 
-    // Получение трудозатрат
     const personalWorkloadFilter = () => {
         const payload = {
             year: selectedYear,
@@ -161,61 +157,6 @@ const EmployeeCard = () => {
         ).then((response) => {
             if (response.status === 200) {
                 setPersonalWorkload(response.data);
-            }
-        });
-    };
-
-    // Изменение процентов в блоке Трудозатраты
-    const updateLoadPercentage = (
-        personalWorkloadData,
-        isOtherWorkload = false
-    ) => {
-        query = toast.loading("Обновление", {
-            containerId: "employee",
-            position: "top-center",
-        });
-
-        const data = isOtherWorkload
-            ? {
-                  load_percentage: +personalWorkloadData?.other_workload,
-                  year: +selectedYear,
-                  month: +selectedMonth,
-                  is_other_workload: isOtherWorkload,
-              }
-            : {
-                  load_percentage: +personalWorkloadData?.load_percentage,
-                  year: +selectedYear,
-                  month: +selectedMonth,
-                  project_id: +personalWorkloadData?.project_id,
-              };
-
-        postData(
-            "PATCH",
-            `${
-                import.meta.env.VITE_API_URL
-            }physical-persons/${employeeId}/personal-workload`,
-            data
-        ).then((response) => {
-            if (response?.ok) {
-                personalWorkloadFilter();
-                toast.update(query, {
-                    render: "Успешно обновлено!",
-                    type: "success",
-                    containerId: "employee",
-                    isLoading: false,
-                    autoClose: 1200,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-            } else {
-                toast.error("Ошибка обновления данных", {
-                    isLoading: false,
-                    autoClose: 1500,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
             }
         });
     };
@@ -242,38 +183,14 @@ const EmployeeCard = () => {
                     <div className="flex justify-between items-center gap-10">
                         <div className="flex items-center gap-3 justify-between flex-grow">
                             <div className="flex items-center gap-10">
-                                <div className="text-3xl font-medium w-full">
-                                    {employeeData.name}
-                                </div>
-
                                 <div className="flex items-center gap-3">
-                                    <select
-                                        className="border-2 h-[32px] p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                        value={String(employeeData.is_staff)}
-                                        onChange={(e) =>
-                                            handleInputChange(e, "is_staff")
-                                        }
-                                        disabled={mode == "read" ? true : false}
-                                    >
-                                        <option value="true">штатный</option>
-                                        <option value="false">
-                                            внештатный
-                                        </option>
-                                    </select>
+                                    <div className="text-3xl font-medium w-full">
+                                        {employeeData.name}ООО "СГРК"
+                                    </div>
 
-                                    <select
-                                        className="border-2 h-[32px] p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                        value={String(employeeData.is_active)}
-                                        onChange={(e) =>
-                                            handleInputChange(e, "is_active")
-                                        }
-                                        disabled={mode == "read" ? true : false}
-                                    >
-                                        <option value="true">работает</option>
-                                        <option value="false">
-                                            не работает
-                                        </option>
-                                    </select>
+                                    <span className="text-green-500">
+                                        активный
+                                    </span>
                                 </div>
                             </div>
 
@@ -320,15 +237,15 @@ const EmployeeCard = () => {
 
                     <div className="grid grid-cols-3 mt-15 gap-10 flex-grow">
                         <div className="flex flex-col">
-                            <div className="grid grid-cols-2 gap-5 mb-5">
+                            <div className="grid gap-5 mb-5">
                                 <div className="flex flex-col gap-2">
                                     <span className="text-gray-400">
-                                        Квалификация
+                                        Адрес центрального офиса
                                     </span>
                                     <textarea
                                         className="border-2 border-gray-300 p-5 h-[100px]"
                                         style={{ resize: "none" }}
-                                        placeholder="Заполните квалификацию"
+                                        placeholder="Заполните адрес центрального офиса"
                                         type="text"
                                         name="qualification"
                                         onChange={(e) =>
@@ -343,89 +260,56 @@ const EmployeeCard = () => {
                                 </div>
 
                                 <div className="flex flex-col gap-2 justify-between">
-                                    <div className="flex flex-col gap-2 justify-between">
-                                        <span className="text-gray-400">
-                                            Телефон
-                                        </span>
-                                        <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                            <IMaskInput
-                                                mask={PhoneMask}
-                                                className="w-full"
-                                                name="phone"
-                                                type="tel"
-                                                inputMode="tel"
-                                                onAccept={(value) =>
-                                                    handleInputChange(
-                                                        value || "",
-                                                        "phone_number"
-                                                    )
-                                                }
-                                                value={
-                                                    employeeData.phone_number
-                                                }
-                                                placeholder="+7 999 999 99 99"
-                                                disabled={
-                                                    mode == "read"
-                                                        ? true
-                                                        : false
-                                                }
-                                            />
-
-                                            {errors.phone_number && (
-                                                <p className="text-red-500 text-sm mt-2">
-                                                    Заполните телефон
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col gap-2 justify-between">
-                                        <span className="text-gray-400">
-                                            Email
-                                        </span>
-                                        <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                            <input
-                                                className="w-full"
-                                                type="email"
-                                                placeholder="mail@mail.ru"
-                                                value={employeeData.email}
-                                                onChange={(e) =>
-                                                    handleInputChange(
-                                                        e,
-                                                        "email"
-                                                    )
-                                                }
-                                                disabled={
-                                                    mode == "read"
-                                                        ? true
-                                                        : false
-                                                }
-                                            />
-                                            {errors.email && (
-                                                <p className="text-red-500 text-sm mt-2">
-                                                    Некорректный email
-                                                </p>
-                                            )}
-                                        </div>
+                                    <span className="text-gray-400">
+                                        Сайт компании
+                                    </span>
+                                    <div className="border-2 border-gray-300 p-1 h-[32px]">
+                                        <input
+                                            className="w-full"
+                                            type="text"
+                                            placeholder=""
+                                            value={employeeData.email}
+                                            onChange={(e) =>
+                                                handleInputChange(e, "email")
+                                            }
+                                            disabled={
+                                                mode == "read" ? true : false
+                                            }
+                                        />
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        Текущая загрузка ({workload.length})
-                                    </span>
-                                </div>
-                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
-                                    <ul className="grid gap-5">
-                                        {workload.length > 0 &&
-                                            workload.map((item, index) => (
-                                                <EmployeeWorkloadItem
-                                                    key={index}
-                                                    {...item}
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-gray-400">
+                                            Ключевые лица Заказчика
+                                        </span>
+                                    </div>
+
+                                    <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
+                                        <ul className="grid gap-5">
+                                            {[
+                                                [
+                                                    {
+                                                        id: 13,
+                                                        full_name: "у12",
+                                                        email: "frfnj3@ur.ri",
+                                                        phone: "+7(122) 121 21 21",
+                                                        position: "12",
+                                                        creditor_id: 1,
+                                                    },
+                                                ],
+                                            ].map((customer) => (
+                                                <ExecutorBlock
+                                                    key={customer.id}
+                                                    contanct={customer}
+                                                    type={"customer"}
                                                 />
                                             ))}
-                                    </ul>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -643,114 +527,56 @@ const EmployeeCard = () => {
                                             <span>% времени</span>
                                         </li>
 
-                                        {personalWorkload?.workload?.length >
-                                            0 &&
-                                            personalWorkload?.workload?.every(
+                                        {personalWorkload.length > 0 &&
+                                            personalWorkload !== null &&
+                                            personalWorkload.every(
                                                 (item) => item !== null
                                             ) && (
                                                 <>
-                                                    {personalWorkload?.workload?.map(
+                                                    {personalWorkload.map(
                                                         (item) => (
                                                             <EmployeePersonalWorkloadItem
                                                                 key={item?.id}
+                                                                employeeId={
+                                                                    employeeId
+                                                                }
                                                                 mode={mode}
                                                                 props={item}
-                                                                updateLoadPercentage={
-                                                                    updateLoadPercentage
+                                                                selectedYear={
+                                                                    selectedYear
+                                                                }
+                                                                selectedMonth={
+                                                                    selectedMonth
                                                                 }
                                                             />
                                                         )
                                                     )}
 
-                                                    {personalWorkload?.other_workload !==
-                                                        null && (
-                                                        <li className="grid items-center grid-cols-[1fr_35%_20px_15%] gap-3 mb-2">
-                                                            <div className="text-lg">
-                                                                Прочие задачи
-                                                            </div>
+                                                    <li className="grid items-center grid-cols-[1fr_15%] gap-3 mb-2">
+                                                        <div className="text-lg">
+                                                            Прочие задачи
+                                                        </div>
 
-                                                            <div></div>
+                                                        <div className="flex items-center border-2 border-gray-300 p-1">
+                                                            <input
+                                                                className="min-w-0"
+                                                                type="number"
+                                                                placeholder="0"
+                                                                max="100"
+                                                                min="0"
+                                                                defaultValue={0}
+                                                            />
+                                                            %
+                                                        </div>
+                                                    </li>
 
-                                                            {mode == "edit" ? (
-                                                                <button
-                                                                    type="button"
-                                                                    className="save-icon w-[20px] h-[20px]"
-                                                                    onClick={() =>
-                                                                        updateLoadPercentage(
-                                                                            personalWorkload,
-                                                                            true
-                                                                        )
-                                                                    }
-                                                                    title="Обновить запись"
-                                                                ></button>
-                                                            ) : (
-                                                                <div></div>
-                                                            )}
+                                                    <li className="grid items-center border-t-2 border-b-2 border-gray-300 grid-cols-[1fr_15%] gap-3 py-2">
+                                                        <div className="text-lg">
+                                                            Итого
+                                                        </div>
 
-                                                            <div className="flex items-center border-2 border-gray-300 p-1">
-                                                                <input
-                                                                    className="min-w-0"
-                                                                    type="number"
-                                                                    placeholder="0"
-                                                                    max="100"
-                                                                    min="0"
-                                                                    value={
-                                                                        personalWorkload?.other_workload
-                                                                    }
-                                                                    onChange={(
-                                                                        e
-                                                                    ) => {
-                                                                        const value =
-                                                                            parseInt(
-                                                                                e
-                                                                                    .target
-                                                                                    .value,
-                                                                                10
-                                                                            );
-                                                                        if (
-                                                                            value >=
-                                                                                0 &&
-                                                                            value <=
-                                                                                100
-                                                                        ) {
-                                                                            setPersonalWorkload(
-                                                                                (
-                                                                                    prev
-                                                                                ) => ({
-                                                                                    ...prev,
-                                                                                    other_workload:
-                                                                                        value,
-                                                                                })
-                                                                            );
-                                                                        }
-                                                                    }}
-                                                                    disabled={
-                                                                        mode ==
-                                                                        "read"
-                                                                            ? true
-                                                                            : false
-                                                                    }
-                                                                />
-                                                                %
-                                                            </div>
-                                                        </li>
-                                                    )}
-
-                                                    {personalWorkload?.total_workload !==
-                                                        null && (
-                                                        <li className="grid items-center border-t-2 border-b-2 border-gray-300 grid-cols-[1fr_15%] gap-3 py-2">
-                                                            <div className="text-lg">
-                                                                Итого
-                                                            </div>
-
-                                                            <div>
-                                                                {
-                                                                    personalWorkload?.total_workload
-                                                                }
-                                                                %
-                                                            </div>
-                                                        </li>
-                                                    )}
+                                                        <div>0%</div>
+                                                    </li>
                                                 </>
                                             )}
                                     </ul>
@@ -764,4 +590,4 @@ const EmployeeCard = () => {
     );
 };
 
-export default EmployeeCard;
+export default CustomerCard;
