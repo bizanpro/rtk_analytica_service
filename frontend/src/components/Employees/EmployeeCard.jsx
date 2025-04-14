@@ -157,7 +157,7 @@ const EmployeeCard = () => {
             { params: payload }
         ).then((response) => {
             if (response.status === 200) {
-                setPersonalWorkload(() => response.data);
+                setPersonalWorkload(response.data);
             }
         });
     };
@@ -594,7 +594,7 @@ const EmployeeCard = () => {
                                                     {personalWorkload.map(
                                                         (item) => (
                                                             <EmployeePersonalWorkloadItem
-                                                                key={`${item?.project_id}-${item?.report_id}`}
+                                                                key={item?.id}
                                                                 employeeId={
                                                                     employeeId
                                                                 }

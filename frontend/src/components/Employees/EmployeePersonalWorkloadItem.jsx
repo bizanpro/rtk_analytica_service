@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import postData from "../../utils/postData";
 
 const EmployeePersonalWorkloadItem = ({
@@ -9,6 +9,12 @@ const EmployeePersonalWorkloadItem = ({
     selectedMonth,
 }) => {
     const [personalWorkloadData, setPersonalWorkloadData] = useState(props);
+
+    useEffect(() => {
+        if (props) {
+            setPersonalWorkloadData(props);
+        }
+    }, [props]);
 
     const updateLoadPercentage = () => {
         const data = {
@@ -81,7 +87,6 @@ const EmployeePersonalWorkloadItem = ({
                                 load_percentage: value,
                             }));
                         }
-                        console.log(personalWorkloadData);
                     }}
                     disabled={mode == "read" ? true : false}
                 />
