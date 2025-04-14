@@ -169,10 +169,6 @@ const EmployeeCard = () => {
     }, [selectedYear, selectedMonth]);
 
     useEffect(() => {
-        console.log(personalWorkload);
-    }, [personalWorkload]);
-
-    useEffect(() => {
         getEmployee();
     }, []);
 
@@ -604,6 +600,12 @@ const EmployeeCard = () => {
                                                                 }
                                                                 mode={mode}
                                                                 props={item}
+                                                                selectedYear={
+                                                                    selectedYear
+                                                                }
+                                                                selectedMonth={
+                                                                    selectedMonth
+                                                                }
                                                             />
                                                         )
                                                     )}

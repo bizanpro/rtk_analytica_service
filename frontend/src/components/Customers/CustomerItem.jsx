@@ -4,7 +4,7 @@ const CustomerItem = ({ props, columns }) => {
     const navigate = useNavigate();
 
     const handleRowClick = () => {
-        navigate(`/projects/${props.id}`, { state: { mode: "read" } });
+        navigate(`/customers/${props.id}`, { state: { mode: "read" } });
     };
 
     return (

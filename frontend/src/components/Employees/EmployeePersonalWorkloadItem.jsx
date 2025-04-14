@@ -1,18 +1,29 @@
 import { useState } from "react";
 import postData from "../../utils/postData";
 
-const EmployeePersonalWorkloadItem = ({ props, employeeId, mode }) => {
+const EmployeePersonalWorkloadItem = ({
+    props,
+    employeeId,
+    mode,
+    selectedYear,
+    selectedMonth,
+}) => {
     const [personalWorkloadData, setPersonalWorkloadData] = useState(props);
 
     const updateLoadPercentage = () => {
+        const data = {
+            load_percentage: +personalWorkloadData?.load_percentage,
+            year: +selectedYear,
+            month: +selectedMonth,
+            project_id: +personalWorkloadData?.project_id,
+        };
+
         postData(
             "PATCH",
             `${
                 import.meta.env.VITE_API_URL
-            }physical-persons/${employeeId}/personal-workload/${
-                personalWorkloadData.report_id
-            }`,
-            { load_percentage: personalWorkloadData?.load_percentage }
+            }physical-persons/${employeeId}/personal-workload`,
+            data
         ).then((response) => {
             if (response?.ok) {
                 alert("Успешно обновлено!");
