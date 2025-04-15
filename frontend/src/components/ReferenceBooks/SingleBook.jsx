@@ -188,6 +188,7 @@ const SingleBook = () => {
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
                     position: "top-center",
+                    containerId: "singleBook",
                 });
             }
         });

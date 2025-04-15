@@ -363,33 +363,44 @@ const ProjectCard = () => {
 
     // Обновление проекта
     const updateProject = async (id, showMessage = true) => {
-        query = toast.loading("Обновление", {
-            containerId: "projectCard",
-            position: "top-center",
-        });
+        if (projectData?.contragent_id && projectData?.industry_id) {
+            query = toast.loading("Обновление", {
+                containerId: "projectCard",
+                position: "top-center",
+            });
 
-        try {
-            const response = await postData(
-                "PATCH",
-                `${URL}/${id}`,
-                formFields
-            );
-            if (response?.ok && showMessage) {
-                toast.update(query, {
-                    render: "Проект успешно обновлен",
-                    type: "success",
-                    containerId: "projectCard",
-                    isLoading: false,
-                    autoClose: 1200,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
+            try {
+                const response = await postData(
+                    "PATCH",
+                    `${URL}/${id}`,
+                    formFields
+                );
+                if (response?.ok && showMessage) {
+                    toast.update(query, {
+                        render: "Проект успешно обновлен",
+                        type: "success",
+                        containerId: "projectCard",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                }
+                return response;
+            } catch (error) {
+                console.error("Ошибка при обновлении проекта:", error);
+                throw error;
             }
-            return response;
-        } catch (error) {
-            console.error("Ошибка при обновлении проекта:", error);
-            throw error;
+        } else {
+            toast.error("Необходимо назначить заказчика и отрасль", {
+                containerId: "projectCard",
+                isLoading: false,
+                autoClose: 1500,
+                pauseOnFocusLoss: false,
+                pauseOnHover: false,
+                position: "top-center",
+            });
         }
     };
 
@@ -485,6 +496,7 @@ const ProjectCard = () => {
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
                         position: "top-center",
+                        containerId: "projectCard",
                     });
                     setReportWindowsState(false);
                 }

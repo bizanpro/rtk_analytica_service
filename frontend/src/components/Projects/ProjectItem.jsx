@@ -55,14 +55,23 @@ const ProjectItem = ({ props, columns }) => {
                         );
                     }
                 } else if (typeof value === "object" && value !== null) {
-                    return Object.entries(value).map(([subKey, subValue]) => (
-                        <td
-                            className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                            key={subKey}
-                        >
-                            {subValue?.toString()}
-                        </td>
-                    ));
+                    key === "project_manager"
+                        ? Object.entries(value).map(([subKey, subValue]) => (
+                              <td
+                                  className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
+                                  key={subKey}
+                              >
+                                  {subValue?.full_name?.toString() || "—"}
+                              </td>
+                          ))
+                        : Object.entries(value).map(([subKey, subValue]) => (
+                              <td
+                                  className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
+                                  key={subKey}
+                              >
+                                  {subValue?.toString() || "—"}
+                              </td>
+                          ));
                 } else {
                     if (key === "name") {
                         return (

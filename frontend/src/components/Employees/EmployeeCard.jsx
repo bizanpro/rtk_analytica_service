@@ -170,6 +170,7 @@ const EmployeeCard = () => {
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
                     position: "top-center",
+                    containerId: "employee",
                 });
             }
         });
@@ -263,6 +264,7 @@ const EmployeeCard = () => {
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
                     position: "top-center",
+                    containerId: "employee",
                 });
             }
         });
