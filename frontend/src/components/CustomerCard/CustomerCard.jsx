@@ -4,13 +4,9 @@ import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 
 import { ToastContainer, toast } from "react-toastify";
-import DatePicker from "react-datepicker";
-import Select from "react-select";
 
-import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
-
-// import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
-// import EmployeePersonalWorkloadItem from "./EmployeePersonalWorkloadItem";
+import FilledExecutorBlock from "../ExecutorBlock/FilledExecutorBlock";
+import ProjectStatisticsBlock from "../ProjectCard/ProjectStatisticsBlock";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -288,26 +284,20 @@ const CustomerCard = () => {
                                         </span>
                                     </div>
 
-                                    <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
+                                    <div className="border-2 border-gray-300 py-5 px-2 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
                                         <ul className="grid gap-5">
-                                            {[
-                                                [
-                                                    {
-                                                        id: 13,
-                                                        full_name: "у12",
-                                                        email: "frfnj3@ur.ri",
-                                                        phone: "+7(122) 121 21 21",
-                                                        position: "12",
-                                                        creditor_id: 1,
-                                                    },
-                                                ],
-                                            ].map((customer) => (
-                                                <ExecutorBlock
-                                                    key={customer.id}
-                                                    contanct={customer}
-                                                    type={"customer"}
-                                                />
-                                            ))}
+                                            <FilledExecutorBlock
+                                            // key={customer.id}
+                                            // contanct={customer}
+                                            />
+                                            <FilledExecutorBlock
+                                            // key={customer.id}
+                                            // contanct={customer}
+                                            />
+                                            <FilledExecutorBlock
+                                            // key={customer.id}
+                                            // contanct={customer}
+                                            />
                                         </ul>
                                     </div>
                                 </div>
@@ -315,271 +305,107 @@ const CustomerCard = () => {
                         </div>
 
                         <div className="flex flex-col">
-                            <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        Свод по трудозатратам
-                                    </span>
-                                </div>
-                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
-                                    <div className="flex items-center gap-4 mb-8">
-                                        <div className="flex flex-col">
-                                            <span className="block mb-2 text-gray-400">
-                                                Период
-                                            </span>
-                                            <DatePicker
-                                                className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                                                selected={new Date()}
-                                                startDate={new Date()}
-                                                endDate={new Date()}
-                                                onChange={new Date()}
-                                                dateFormat="dd.MM.yyyy"
-                                                selectsRange
-                                            />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="block mb-2 text-gray-400">
-                                                Типы отчётов
-                                            </span>
-                                            <Select
-                                                closeMenuOnSelect={false}
-                                                defaultValue={[options[0]]}
-                                                isMulti
-                                                name="colors"
-                                                options={options}
-                                                className="basic-multi-select min-w-[170px] h-[32px]"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-col">
-                                        <span className="block mb-2 text-gray-400">
-                                            Свод по трудозатратам, часы
-                                        </span>
-                                        <ul className="grid gap-3">
-                                            <li className="flex items-center gap-3">
-                                                <div className="flex items-center justify-center text-lg border border-gray-300 h-[50px] w-[50px]">
-                                                    {50}%
-                                                </div>
-
-                                                <div className="flex-grow">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="text-lg">
-                                                            ГОК Светловский
-                                                        </div>
-
-                                                        <span className="text-gray-400">
-                                                            Золотодобыча
-                                                        </span>
-                                                    </div>
-                                                    <div
-                                                        className="relative h-[20px] w-full overflow-hidden text-center flex items-center justify-start
-                                                px-1"
-                                                    >
-                                                        <div className="min-w-min whitespace-nowrap">
-                                                            50
-                                                        </div>
-
-                                                        <div
-                                                            className="absolute top-0 left-0 bottom-0 h-full bg-gray-200 transition-all opacity-60 z-[-1]"
-                                                            style={{
-                                                                width: `${50}%`,
-                                                            }}
-                                                        ></div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li className="flex items-center gap-3">
-                                                <div className="flex items-center justify-center text-lg border border-gray-300 h-[50px] w-[50px]">
-                                                    {85}%
-                                                </div>
-
-                                                <div className="flex-grow">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="text-lg">
-                                                            ГОК Светловский
-                                                        </div>
-
-                                                        <span className="text-gray-400">
-                                                            Золотодобыча
-                                                        </span>
-                                                    </div>
-                                                    <div
-                                                        className="relative h-[20px] w-full overflow-hidden text-center flex items-center justify-start
-                                                px-1"
-                                                    >
-                                                        <div className="min-w-min whitespace-nowrap">
-                                                            50
-                                                        </div>
-
-                                                        <div
-                                                            className="absolute top-0 left-0 bottom-0 h-full bg-gray-200 transition-all opacity-60 z-[-1]"
-                                                            style={{
-                                                                width: `${85}%`,
-                                                            }}
-                                                        ></div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li className="flex items-center gap-3">
-                                                <div className="flex items-center justify-center text-lg border border-gray-300 h-[50px] w-[50px]">
-                                                    {100}%
-                                                </div>
-
-                                                <div className="flex-grow">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="text-lg">
-                                                            ГОК Светловский
-                                                        </div>
-
-                                                        <span className="text-gray-400">
-                                                            Золотодобыча
-                                                        </span>
-                                                    </div>
-                                                    <div
-                                                        className="relative h-[20px] w-full overflow-hidden text-center flex items-center justify-start
-                                                px-1"
-                                                    >
-                                                        <div className="min-w-min whitespace-nowrap">
-                                                            50
-                                                        </div>
-
-                                                        <div
-                                                            className="absolute top-0 left-0 bottom-0 h-full bg-gray-200 transition-all opacity-60 z-[-1]"
-                                                            style={{
-                                                                width: `${100}%`,
-                                                            }}
-                                                        ></div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                            <div className="flex flex-col gap-2">
+                                <span className="text-gray-400">
+                                    Краткое описание
+                                </span>
+                                <textarea
+                                    className="border-2 border-gray-300 p-5 min-h-[170px] max-h-[170px]"
+                                    style={{ resize: "none" }}
+                                    placeholder="Заполните описание"
+                                    type="text"
+                                    name="description"
+                                    disabled={mode == "read" ? true : false}
+                                    // value={projectData?.description || ""}
+                                    // onChange={(e) =>
+                                    //     handleInputChange(e, "description")
+                                    // }
+                                />
                             </div>
                         </div>
 
                         <div className="flex flex-col">
+                            <ProjectStatisticsBlock />
+
                             <div className="flex flex-col gap-2 flex-grow">
                                 <div className="flex items-center gap-2">
                                     <span className="text-gray-400">
-                                        Трудозатраты
+                                        История проекта
                                     </span>
-                                    <span className="flex items-center justify-center border border-gray-300 text-gray-400 p-1 rounded-[50%] w-[18px] h-[18px]">
+
+                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                         ?
                                     </span>
+                                    {mode == "edit" && (
+                                        <button
+                                            type="button"
+                                            className="add-button"
+                                            onClick={() =>
+                                                setReportWindowsState(true)
+                                            }
+                                            disabled={
+                                                projectData.contragent_id
+                                                    ? false
+                                                    : true
+                                            }
+                                            title={
+                                                projectData.contragent_id
+                                                    ? "Открыть конструктор отчёта"
+                                                    : "Необходимо назначить заказчика"
+                                            }
+                                        >
+                                            <span></span>
+                                        </button>
+                                    )}
                                 </div>
-                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
-                                    <div className="grid grid-cols-2 items-center gap-3 mb-5">
-                                        <select
-                                            className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
-                                            onChange={(e) =>
-                                                setSelectedYear(e.target.value)
-                                            }
-                                            value={selectedYear}
-                                        >
-                                            {availableYears.length > 0 &&
-                                                availableYears.map((item) => (
-                                                    <option
-                                                        value={item}
-                                                        key={item}
-                                                    >
-                                                        {item}
-                                                    </option>
+
+                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                    {!reportWindowsState ? (
+                                        <ul className="grid gap-3">
+                                            <li className="grid items-center grid-cols-[25%_18%_25%_18%] gap-3 mb-2 text-gray-400">
+                                                <span>Отчет</span>
+                                                <span>Статус</span>
+                                                <span>Период выполнения</span>
+                                                <span>Общая оценка</span>
+                                            </li>
+
+                                            {reports.length > 0 &&
+                                                reports.map((report, index) => (
+                                                    <ProjectReportItem
+                                                        key={report.id || index}
+                                                        {...report}
+                                                        setReportEditorState={
+                                                            setReportEditorState
+                                                        }
+                                                        setReportEditorName={
+                                                            setReportEditorName
+                                                        }
+                                                        deleteReport={
+                                                            deleteReport
+                                                        }
+                                                        openReportEditor={
+                                                            openReportEditor
+                                                        }
+                                                        openSubReportEditor={
+                                                            openSubReportEditor
+                                                        }
+                                                        mode={mode}
+                                                    />
                                                 ))}
-                                        </select>
-
-                                        <select
-                                            className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
-                                            onChange={(e) =>
-                                                setSelectedMonth(e.target.value)
+                                        </ul>
+                                    ) : (
+                                        <ProjectReportWindow
+                                            reportWindowsState={
+                                                setReportWindowsState
                                             }
-                                        >
-                                            {[
-                                                "Январь",
-                                                "Февраль",
-                                                "Март",
-                                                "Апрель",
-                                                "Май",
-                                                "Июнь",
-                                                "Июль",
-                                                "Август",
-                                                "Сентябрь",
-                                                "Октябрь",
-                                                "Ноябрь",
-                                                "Декабрь",
-                                            ].map((month, index) => (
-                                                <option
-                                                    value={index + 1}
-                                                    key={index}
-                                                >
-                                                    {month}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <ul className="grid gap-3">
-                                        <li className="grid items-center grid-cols-[45%_35%_15%] gap-3 text-gray-400">
-                                            <span>Проект</span>
-                                            <span>Отчет</span>
-                                            <span>% времени</span>
-                                        </li>
-
-                                        {personalWorkload.length > 0 &&
-                                            personalWorkload !== null &&
-                                            personalWorkload.every(
-                                                (item) => item !== null
-                                            ) && (
-                                                <>
-                                                    {personalWorkload.map(
-                                                        (item) => (
-                                                            <EmployeePersonalWorkloadItem
-                                                                key={item?.id}
-                                                                employeeId={
-                                                                    employeeId
-                                                                }
-                                                                mode={mode}
-                                                                props={item}
-                                                                selectedYear={
-                                                                    selectedYear
-                                                                }
-                                                                selectedMonth={
-                                                                    selectedMonth
-                                                                }
-                                                            />
-                                                        )
-                                                    )}
-
-                                                    <li className="grid items-center grid-cols-[1fr_15%] gap-3 mb-2">
-                                                        <div className="text-lg">
-                                                            Прочие задачи
-                                                        </div>
-
-                                                        <div className="flex items-center border-2 border-gray-300 p-1">
-                                                            <input
-                                                                className="min-w-0"
-                                                                type="number"
-                                                                placeholder="0"
-                                                                max="100"
-                                                                min="0"
-                                                                defaultValue={0}
-                                                            />
-                                                            %
-                                                        </div>
-                                                    </li>
-
-                                                    <li className="grid items-center border-t-2 border-b-2 border-gray-300 grid-cols-[1fr_15%] gap-3 py-2">
-                                                        <div className="text-lg">
-                                                            Итого
-                                                        </div>
-
-                                                        <div>0%</div>
-                                                    </li>
-                                                </>
-                                            )}
-                                    </ul>
+                                            sendReport={sendReport}
+                                            contracts={contracts}
+                                            updateReport={updateReport}
+                                            reportId={reportId}
+                                            setReportId={setReportId}
+                                            mode={mode}
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </div>
