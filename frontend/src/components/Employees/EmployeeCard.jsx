@@ -5,7 +5,6 @@ import postData from "../../utils/postData";
 
 import { IMaskInput } from "react-imask";
 import { ToastContainer, toast } from "react-toastify";
-import DatePicker from "react-datepicker";
 import Select from "react-select";
 
 import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
@@ -23,12 +22,27 @@ const EmployeeCard = () => {
     const [mode, setMode] = useState("read");
     const [errors, setErrors] = useState({});
     const [availableYears, setAvailableYears] = useState([]);
-    const [selectedYear, setSelectedYear] = useState("");
-    const [selectedMonth, setSelectedMonth] = useState("1");
+    const [selectedPesonalYear, setSelectedPesonalYear] = useState("");
+    const [selectedPesonalMonth, setSelectedPesonalMonth] = useState("1");
+    const [selectedSummaryYear, setSelectedSummaryYear] = useState("");
+    const [selectedSummaryMonth, setSelectedSummaryMonth] = useState("1");
+
+    const months = [
+        "Январь",
+        "Февраль",
+        "Март",
+        "Апрель",
+        "Май",
+        "Июнь",
+        "Июль",
+        "Август",
+        "Сентябрь",
+        "Октябрь",
+        "Ноябрь",
+        "Декабрь",
+    ];
 
     const PhoneMask = "+{7} (000) 000 00 00";
-
-    let query;
 
     const options = [
         { value: "0", label: "ФТА" },
@@ -36,6 +50,8 @@ const EmployeeCard = () => {
         { value: "2", label: "ФМ" },
         { value: "3", label: "ИЗ" },
     ];
+
+    let query;
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -88,7 +104,12 @@ const EmployeeCard = () => {
             (response) => {
                 if (response.status == 200) {
                     setAvailableYears(response.data);
-                    setSelectedYear(response.data[response.data.length - 1]);
+                    setSelectedPesonalYear(
+                        response.data[response.data.length - 1]
+                    );
+                    setSelectedSummaryYear(
+                        response.data[response.data.length - 1]
+                    );
                 }
             }
         );
@@ -97,8 +118,8 @@ const EmployeeCard = () => {
     // Получение свода по трудозатратам
     const getWorkloadSummary = () => {
         const payload = {
-            year: 2025,
-            month: 3,
+            year: selectedSummaryYear,
+            month: selectedSummaryMonth,
         };
 
         getData(
@@ -170,8 +191,8 @@ const EmployeeCard = () => {
     // Получение трудозатрат
     const personalWorkloadFilter = () => {
         const payload = {
-            year: selectedYear,
-            month: selectedMonth,
+            year: selectedPesonalYear,
+            month: selectedPesonalMonth,
         };
 
         getData(
@@ -199,14 +220,14 @@ const EmployeeCard = () => {
         const data = isOtherWorkload
             ? {
                   load_percentage: +personalWorkloadData?.other_workload,
-                  year: +selectedYear,
-                  month: +selectedMonth,
+                  year: +selectedPesonalYear,
+                  month: +selectedPesonalMonth,
                   is_other_workload: isOtherWorkload,
               }
             : {
                   load_percentage: +personalWorkloadData?.load_percentage,
-                  year: +selectedYear,
-                  month: +selectedMonth,
+                  year: +selectedPesonalYear,
+                  month: +selectedPesonalMonth,
                   project_id: +personalWorkloadData?.project_id,
               };
 
@@ -242,11 +263,16 @@ const EmployeeCard = () => {
     };
 
     useEffect(() => {
-        if (selectedYear && selectedMonth) {
+        if (selectedPesonalYear && selectedPesonalMonth) {
             personalWorkloadFilter();
+        }
+    }, [selectedPesonalYear, selectedPesonalMonth]);
+
+    useEffect(() => {
+        if (selectedSummaryYear && selectedSummaryMonth) {
             getWorkloadSummary();
         }
-    }, [selectedYear, selectedMonth]);
+    }, [selectedSummaryYear, selectedSummaryMonth]);
 
     useEffect(() => {
         getEmployee();
@@ -461,20 +487,63 @@ const EmployeeCard = () => {
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
                                     <div className="flex items-center gap-4 mb-8">
-                                        <div className="flex flex-col">
-                                            <span className="block mb-2 text-gray-400">
-                                                Период
-                                            </span>
-                                            <DatePicker
-                                                className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                                                selected={new Date()}
-                                                startDate={new Date()}
-                                                endDate={new Date()}
-                                                onChange={new Date()}
-                                                dateFormat="dd.MM.yyyy"
-                                                selectsRange
-                                            />
+                                        <div className="grid grid-cols-2 items-center gap-3">
+                                            <div className="flex flex-col">
+                                                <span className="block mb-2 text-gray-400">
+                                                    Год
+                                                </span>
+                                                <select
+                                                    className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
+                                                    onChange={(e) =>
+                                                        setSelectedSummaryYear(
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    value={selectedSummaryYear}
+                                                >
+                                                    {availableYears.length >
+                                                        0 &&
+                                                        availableYears.map(
+                                                            (item) => (
+                                                                <option
+                                                                    value={item}
+                                                                    key={item}
+                                                                >
+                                                                    {item}
+                                                                </option>
+                                                            )
+                                                        )}
+                                                </select>
+                                            </div>
+
+                                            <div className="flex flex-col">
+                                                <span className="block mb-2 text-gray-400">
+                                                    Месяц
+                                                </span>
+                                                <select
+                                                    className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
+                                                    onChange={(e) =>
+                                                        setSelectedSummaryMonth(
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                >
+                                                    {months.map(
+                                                        (month, index) => (
+                                                            <option
+                                                                value={
+                                                                    index + 1
+                                                                }
+                                                                key={index}
+                                                            >
+                                                                {month}
+                                                            </option>
+                                                        )
+                                                    )}
+                                                </select>
+                                            </div>
                                         </div>
+
                                         <div className="flex flex-col">
                                             <span className="block mb-2 text-gray-400">
                                                 Типы отчётов
@@ -521,52 +590,55 @@ const EmployeeCard = () => {
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
                                     <div className="grid grid-cols-2 items-center gap-3 mb-5">
-                                        <select
-                                            className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
-                                            onChange={(e) =>
-                                                setSelectedYear(e.target.value)
-                                            }
-                                            value={selectedYear}
-                                        >
-                                            {availableYears.length > 0 &&
-                                                availableYears.map((item) => (
+                                        <div className="flex flex-col">
+                                            <span className="block mb-2 text-gray-400">
+                                                Год
+                                            </span>
+                                            <select
+                                                className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
+                                                onChange={(e) =>
+                                                    setSelectedPesonalYear(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                value={selectedPesonalYear}
+                                            >
+                                                {availableYears.length > 0 &&
+                                                    availableYears.map(
+                                                        (item) => (
+                                                            <option
+                                                                value={item}
+                                                                key={item}
+                                                            >
+                                                                {item}
+                                                            </option>
+                                                        )
+                                                    )}
+                                            </select>
+                                        </div>
+
+                                        <div className="flex flex-col">
+                                            <span className="block mb-2 text-gray-400">
+                                                Месяц
+                                            </span>
+                                            <select
+                                                className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
+                                                onChange={(e) =>
+                                                    setSelectedPesonalMonth(
+                                                        e.target.value
+                                                    )
+                                                }
+                                            >
+                                                {months.map((month, index) => (
                                                     <option
-                                                        value={item}
-                                                        key={item}
+                                                        value={index + 1}
+                                                        key={index}
                                                     >
-                                                        {item}
+                                                        {month}
                                                     </option>
                                                 ))}
-                                        </select>
-
-                                        <select
-                                            className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
-                                            onChange={(e) =>
-                                                setSelectedMonth(e.target.value)
-                                            }
-                                        >
-                                            {[
-                                                "Январь",
-                                                "Февраль",
-                                                "Март",
-                                                "Апрель",
-                                                "Май",
-                                                "Июнь",
-                                                "Июль",
-                                                "Август",
-                                                "Сентябрь",
-                                                "Октябрь",
-                                                "Ноябрь",
-                                                "Декабрь",
-                                            ].map((month, index) => (
-                                                <option
-                                                    value={index + 1}
-                                                    key={index}
-                                                >
-                                                    {month}
-                                                </option>
-                                            ))}
-                                        </select>
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <ul className="grid gap-3">
