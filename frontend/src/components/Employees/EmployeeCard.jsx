@@ -10,6 +10,7 @@ import Select from "react-select";
 
 import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
 import EmployeePersonalWorkloadItem from "./EmployeePersonalWorkloadItem";
+import EmployeeWorkloadSummary from "./EmployeeWorkloadSummary";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -18,6 +19,7 @@ const EmployeeCard = () => {
     const [employeeData, setEmployeeData] = useState({});
     const [workload, setworkload] = useState({});
     const [personalWorkload, setPersonalWorkload] = useState();
+    const [workloadSummary, setWorkloadSummary] = useState();
     const [mode, setMode] = useState("read");
     const [errors, setErrors] = useState({});
     const [availableYears, setAvailableYears] = useState([]);
@@ -90,6 +92,25 @@ const EmployeeCard = () => {
                 }
             }
         );
+    };
+
+    // Получение свода по трудозатратам
+    const getWorkloadSummary = () => {
+        const payload = {
+            year: 2025,
+            month: 3,
+        };
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }physical-persons/${employeeId}/workload-summary`,
+            { params: payload }
+        ).then((response) => {
+            if (response.status === 200) {
+                setWorkloadSummary(response.data.projects);
+            }
+        });
     };
 
     // Обновление данных сотрудника
@@ -223,6 +244,7 @@ const EmployeeCard = () => {
     useEffect(() => {
         if (selectedYear && selectedMonth) {
             personalWorkloadFilter();
+            getWorkloadSummary();
         }
     }, [selectedYear, selectedMonth]);
 
@@ -474,102 +496,13 @@ const EmployeeCard = () => {
                                             Свод по трудозатратам, часы
                                         </span>
                                         <ul className="grid gap-3">
-                                            <li className="flex items-center gap-3">
-                                                <div className="flex items-center justify-center text-lg border border-gray-300 h-[50px] w-[50px]">
-                                                    {50}%
-                                                </div>
-
-                                                <div className="flex-grow">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="text-lg">
-                                                            ГОК Светловский
-                                                        </div>
-
-                                                        <span className="text-gray-400">
-                                                            Золотодобыча
-                                                        </span>
-                                                    </div>
-                                                    <div
-                                                        className="relative h-[20px] w-full overflow-hidden text-center flex items-center justify-start
-                                                px-1"
-                                                    >
-                                                        <div className="min-w-min whitespace-nowrap">
-                                                            50
-                                                        </div>
-
-                                                        <div
-                                                            className="absolute top-0 left-0 bottom-0 h-full bg-gray-200 transition-all opacity-60 z-[-1]"
-                                                            style={{
-                                                                width: `${50}%`,
-                                                            }}
-                                                        ></div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li className="flex items-center gap-3">
-                                                <div className="flex items-center justify-center text-lg border border-gray-300 h-[50px] w-[50px]">
-                                                    {85}%
-                                                </div>
-
-                                                <div className="flex-grow">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="text-lg">
-                                                            ГОК Светловский
-                                                        </div>
-
-                                                        <span className="text-gray-400">
-                                                            Золотодобыча
-                                                        </span>
-                                                    </div>
-                                                    <div
-                                                        className="relative h-[20px] w-full overflow-hidden text-center flex items-center justify-start
-                                                px-1"
-                                                    >
-                                                        <div className="min-w-min whitespace-nowrap">
-                                                            50
-                                                        </div>
-
-                                                        <div
-                                                            className="absolute top-0 left-0 bottom-0 h-full bg-gray-200 transition-all opacity-60 z-[-1]"
-                                                            style={{
-                                                                width: `${85}%`,
-                                                            }}
-                                                        ></div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li className="flex items-center gap-3">
-                                                <div className="flex items-center justify-center text-lg border border-gray-300 h-[50px] w-[50px]">
-                                                    {100}%
-                                                </div>
-
-                                                <div className="flex-grow">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="text-lg">
-                                                            ГОК Светловский
-                                                        </div>
-
-                                                        <span className="text-gray-400">
-                                                            Золотодобыча
-                                                        </span>
-                                                    </div>
-                                                    <div
-                                                        className="relative h-[20px] w-full overflow-hidden text-center flex items-center justify-start
-                                                px-1"
-                                                    >
-                                                        <div className="min-w-min whitespace-nowrap">
-                                                            50
-                                                        </div>
-
-                                                        <div
-                                                            className="absolute top-0 left-0 bottom-0 h-full bg-gray-200 transition-all opacity-60 z-[-1]"
-                                                            style={{
-                                                                width: `${100}%`,
-                                                            }}
-                                                        ></div>
-                                                    </div>
-                                                </div>
-                                            </li>
+                                            {workloadSummary?.length > 0 &&
+                                                workloadSummary?.map((item) => (
+                                                    <EmployeeWorkloadSummary
+                                                        key={item.uuid}
+                                                        {...item}
+                                                    />
+                                                ))}
                                         </ul>
                                     </div>
                                 </div>
