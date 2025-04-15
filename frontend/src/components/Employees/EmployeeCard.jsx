@@ -26,6 +26,8 @@ const EmployeeCard = () => {
     const [selectedPesonalMonth, setSelectedPesonalMonth] = useState("1");
     const [selectedSummaryYear, setSelectedSummaryYear] = useState("");
     const [selectedSummaryMonth, setSelectedSummaryMonth] = useState("1");
+    const [selectedTypes, setSelecterTypes] = useState([]);
+    const [reportTypes, setReportTypes] = useState([]);
 
     const months = [
         "Январь",
@@ -43,13 +45,6 @@ const EmployeeCard = () => {
     ];
 
     const PhoneMask = "+{7} (000) 000 00 00";
-
-    const options = [
-        { value: "0", label: "ФТА" },
-        { value: "1", label: "ФТМ" },
-        { value: "2", label: "ФМ" },
-        { value: "3", label: "ИЗ" },
-    ];
 
     let query;
 
@@ -115,11 +110,22 @@ const EmployeeCard = () => {
         );
     };
 
+    const getTypes = () => {
+        getData(
+            `${import.meta.env.VITE_API_URL}report-types?with-count=true`
+        ).then((response) => {
+            if (response.status === 200) {
+                setReportTypes(response.data.data);
+            }
+        });
+    };
+
     // Получение свода по трудозатратам
     const getWorkloadSummary = () => {
         const payload = {
             year: selectedSummaryYear,
             month: selectedSummaryMonth,
+            reports_ids: selectedTypes.join(","),
         };
 
         getData(
@@ -182,7 +188,7 @@ const EmployeeCard = () => {
                 setEmployeeData(response.data);
             }
 
-            await Promise.all([getWorkload(), getYears()]);
+            await Promise.all([getWorkload(), getYears(), getTypes()]);
         } catch (error) {
             console.error("Ошибка при загрузке сотрудника:", error);
         }
@@ -272,11 +278,15 @@ const EmployeeCard = () => {
         if (selectedSummaryYear && selectedSummaryMonth) {
             getWorkloadSummary();
         }
-    }, [selectedSummaryYear, selectedSummaryMonth]);
+    }, [selectedSummaryYear, selectedSummaryMonth, selectedTypes]);
 
     useEffect(() => {
         getEmployee();
     }, []);
+
+    useEffect(() => {
+        console.log(reportTypes);
+    }, [reportTypes]);
 
     return (
         <main className="page">
@@ -486,7 +496,7 @@ const EmployeeCard = () => {
                                     </span>
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
-                                    <div className="flex items-center gap-4 mb-8">
+                                    <div className="grid grid-cols-1 items-start gap-4 mb-8">
                                         <div className="grid grid-cols-2 items-center gap-3">
                                             <div className="flex flex-col">
                                                 <span className="block mb-2 text-gray-400">
@@ -550,12 +560,25 @@ const EmployeeCard = () => {
                                             </span>
                                             <Select
                                                 closeMenuOnSelect={false}
-                                                defaultValue={[options[0]]}
                                                 isMulti
                                                 name="colors"
-                                                options={options}
-                                                className="basic-multi-select min-w-[170px] h-[32px]"
+                                                options={reportTypes.map(
+                                                    (type) => ({
+                                                        value: type.id,
+                                                        label: type.name,
+                                                    })
+                                                )}
+                                                className="basic-multi-select min-w-[170px] min-h-[32px]"
                                                 classNamePrefix="select"
+                                                placeholder="Выбрать тип отчёта"
+                                                onChange={(selectedOptions) => {
+                                                    setSelecterTypes(
+                                                        selectedOptions.map(
+                                                            (option) =>
+                                                                option.value
+                                                        )
+                                                    );
+                                                }}
                                             />
                                         </div>
                                     </div>
