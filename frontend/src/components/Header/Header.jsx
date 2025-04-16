@@ -45,7 +45,7 @@ const Header = () => {
                         </NavLink>
 
                         <NavLink
-                            to={"/customers"}
+                            to={"/contragents"}
                             className={({ isActive }) =>
                                 isActive
                                     ? "sidebar__list-item font-medium"

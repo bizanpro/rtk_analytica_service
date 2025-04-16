@@ -31,9 +31,9 @@ function App() {
                     />
                     <Route path="projects/new" element={<ProjectCard />} />
 
-                    <Route path="customers" element={<Customers />} />
+                    <Route path="contragents" element={<Customers />} />
                     <Route
-                        path="customers/:customerId"
+                        path="contragents/:contragentId"
                         element={<CustomerCard />}
                     />
 

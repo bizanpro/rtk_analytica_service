@@ -1,105 +1,83 @@
 import { useEffect, useState, useMemo } from "react";
 import getData from "../../utils/getData";
-import postData from "../../utils/postData";
 import ProjectItem from "./CustomerItem";
-import Popup from "../Popup/Popup";
 import Select from "../Select";
-import { useNavigate } from "react-router-dom";
 
 const Customers = () => {
-    const URL = `${import.meta.env.VITE_API_URL}projects`;
-    const navigate = useNavigate();
-    const [projects, setProjects] = useState([]);
-    const [popupState, setPopupState] = useState(false);
-    const [newProjectName, setNewProjectName] = useState("");
-    const [selectedSector, setSelectedSector] = useState("");
-    const [selectedBank, setSelectedBank] = useState("");
-    const [selectedManager, setSelectedManager] = useState("");
+    const URL = `${import.meta.env.VITE_API_URL}contragents`;
+    const [customers, setCustomers] = useState([]);
+    const [selectedName, setSelectedName] = useState("");
+    const [selectedStatus, setSelectedStatus] = useState("");
     const [isLoading, setIsLoading] = useState(true);
 
     const COLUMNS = [
-        { label: "Проект", key: "name" },
-        { label: "Заказчик", key: "contragent" },
-        { label: "Банк", key: "creditors" },
-        { label: "Бюджет (млрд руб.)", key: "project_budget" },
-        { label: "Срок (мес.)", key: "implementation_period" },
-        { label: "Руководитель проекта", key: "project_manager" },
+        { label: "Наименование", key: "program_name" },
+        { label: "Кол-во проектов, всего", key: "projects_total_count" },
+        { label: "Кол-во активных проектов", key: "projects_active_count" },
+        { label: "Средняя оценка", key: "average_score" },
+        { label: "Бюджет проектов, млрд руб.", key: "projects_total_budget" },
+        { label: "Выручка, млн руб.", key: "revenue_total" },
+        { label: "Получено оплат, млн руб.", key: "income_total" },
         { label: "Статус", key: "status" },
     ];
 
-    const filteredProjects = useMemo(() => {
-        const result = projects.filter((project) => {
+    const handleStatus = (status) => {
+        switch (status) {
+            case "active":
+                return "Активный";
+
+            case "completed":
+                return "Завершён";
+
+            case "undefined":
+                return "Не установлен";
+
+            default:
+                return "—";
+        }
+    };
+
+    const filteredCustomers = useMemo(() => {
+        const result = customers.filter((customer) => {
             return (
-                (selectedSector && selectedSector !== "default"
-                    ? project.industry === selectedSector
+                (selectedName && selectedName !== "default"
+                    ? customer.program_name === selectedName
                     : true) &&
-                (selectedBank && selectedBank !== "default"
-                    ? Array.isArray(project.creditors)
-                        ? project.creditors?.some(
-                              (bank) => bank.name === selectedBank
-                          )
-                        : false
-                    : true) &&
-                (selectedManager && selectedManager !== "default"
-                    ? project.manager === selectedManager
+                (selectedStatus && selectedStatus !== "default"
+                    ? customer.status === selectedStatus
                     : true)
             );
         });
         return result;
-    }, [projects, selectedSector, selectedBank, selectedManager]);
+    }, [customers, selectedName, selectedStatus]);
 
-    // Заполняем селектор отраслей
-    const sectorOptions = useMemo(() => {
-        const allSectors = projects
-            .map((item) => item.industry)
-            .filter((industry) => industry !== null);
+    // Заполняем селектор заказчиков
+    const nameOptions = useMemo(() => {
+        const allNames = customers
+            .map((item) => item.program_name)
+            .filter((program_name) => program_name !== null);
 
-        return Array.from(new Set(allSectors));
-    }, [projects]);
+        return Array.from(new Set(allNames));
+    }, [customers]);
 
-    // Заполняем селектор банков
-    const bankOptions = useMemo(() => {
-        const allBanks = projects.flatMap((item) =>
-            item.creditors?.map((bank) => bank.name)
-        );
-        return Array.from(new Set(allBanks));
-    }, [projects]);
+    // Заполняем селектор статусов
+    const statusOptions = useMemo(() => {
+        const allStatuses = customers
+            .map((item) => item.status)
+            .filter((status) => status !== null);
 
-    // Заполняем селектор руководителей
-    const projectManagerOptions = useMemo(() => {
-        const allPM = projects
-            .map((item) => item.manager)
-            .filter((manager) => manager !== null);
-        return Array.from(new Set(allPM));
-    }, [projects]);
+        const uniqueStatuses = Array.from(new Set(allStatuses));
 
-    const handleProjectsNameChange = (e) => {
-        setNewProjectName(e.target.value);
-    };
-
-    const openPopup = () => {
-        setPopupState(true);
-    };
-
-    const closePopup = (evt) => {
-        if (evt.currentTarget.classList.contains("popup")) setPopupState(false);
-    };
-
-    // Создание проекта
-    const createProject = () => {
-        postData("POST", URL, { name: newProjectName }).then((response) => {
-            if (response) {
-                navigate(`/projects/${response.id}`, {
-                    state: { mode: "edit" },
-                });
-            }
-        });
-    };
+        return uniqueStatuses.map((status) => ({
+            value: status,
+            label: handleStatus(status),
+        }));
+    }, [customers]);
 
     useEffect(() => {
         getData(URL, { Accept: "application/json" })
             .then((response) => {
-                setProjects(response.data);
+                setCustomers(response.data.data);
             })
             .finally(() => setIsLoading(false));
     }, []);
@@ -109,58 +87,42 @@ const Customers = () => {
             <div className="container py-8">
                 <div className="flex justify-between items-center gap-6 mb-8">
                     <h1 className="text-3xl font-medium">
-                        Реестр проектов{" "}
-                        {filteredProjects.length > 0 &&
-                            `(${filteredProjects.length})`}
+                        Реестр заказчиков{" "}
+                        {filteredCustomers.length > 0 &&
+                            `(${filteredCustomers.length})`}
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        {sectorOptions.length > 0 && (
+                        {nameOptions.length > 0 && (
                             <Select
                                 className={
                                     "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
                                 }
-                                title={"Отрасль"}
-                                items={sectorOptions}
+                                title={"Заказчик"}
+                                items={nameOptions}
                                 onChange={(evt) => {
-                                    setSelectedSector(evt.target.value);
+                                    setSelectedName(evt.target.value);
                                 }}
                             />
                         )}
 
-                        {bankOptions.length > 0 && (
-                            <Select
+                        {statusOptions.length > 0 && (
+                            <select
                                 className={
                                     "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
                                 }
-                                title={"Банк"}
-                                items={bankOptions}
                                 onChange={(evt) =>
-                                    setSelectedBank(evt.target.value)
+                                    setSelectedStatus(evt.target.value)
                                 }
-                            />
+                            >
+                                <option value="">Статус</option>
+                                {statusOptions.map((status, index) => (
+                                    <option value={status.value} key={index}>
+                                        {status.label}
+                                    </option>
+                                ))}
+                            </select>
                         )}
-
-                        {projectManagerOptions.length > 0 && (
-                            <Select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[200px] cursor-pointer"
-                                }
-                                title={"Руководитель проекта"}
-                                items={projectManagerOptions}
-                                onChange={(evt) =>
-                                    setSelectedManager(evt.target.value)
-                                }
-                            />
-                        )}
-
-                        <button
-                            type="button"
-                            className="p-1 px-4 text-gray-900 rounded-lg bg-gray-100 group text-lg"
-                            onClick={openPopup}
-                        >
-                            Создать проект
-                        </button>
                     </div>
                 </div>
 
@@ -188,8 +150,8 @@ const Customers = () => {
                                     </td>
                                 </tr>
                             ) : (
-                                filteredProjects.length > 0 &&
-                                filteredProjects.map((item) => (
+                                filteredCustomers.length > 0 &&
+                                filteredCustomers.map((item) => (
                                     <ProjectItem
                                         key={item.id}
                                         props={item}
@@ -200,48 +162,6 @@ const Customers = () => {
                         </tbody>
                     </table>
                 </div>
-
-                {popupState && (
-                    <Popup onClick={closePopup} title="Создание проекта">
-                        <div className="min-w-[280px]">
-                            <div className="action-form__body">
-                                <label
-                                    htmlFor="project_name"
-                                    className="block mb-3"
-                                >
-                                    Введите наименование проекта
-                                </label>
-                                <input
-                                    type="text"
-                                    name="project_name"
-                                    id="project_name"
-                                    className="border-2 border-gray-300 p-3 w-full"
-                                    value={newProjectName}
-                                    onChange={(e) =>
-                                        handleProjectsNameChange(e)
-                                    }
-                                />
-                            </div>
-                            <div className="action-form__footer mt-5 flex items-center gap-6 justify-between">
-                                <button
-                                    type="button"
-                                    className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
-                                    onClick={createProject}
-                                >
-                                    Создать
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setPopupState(false)}
-                                    className="border rounded-lg py-2 px-5 flex-[1_1_50%]"
-                                >
-                                    Отменить
-                                </button>
-                            </div>
-                        </div>
-                    </Popup>
-                )}
             </div>
         </main>
     );

@@ -7,46 +7,20 @@ import { ToastContainer, toast } from "react-toastify";
 
 import FilledExecutorBlock from "../ExecutorBlock/FilledExecutorBlock";
 import ProjectStatisticsBlock from "../ProjectCard/ProjectStatisticsBlock";
+import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
 
 import "react-toastify/dist/ReactToastify.css";
 
 const CustomerCard = () => {
-    const { employeeId } = useParams();
-    const [employeeData, setEmployeeData] = useState({});
-    const [workload, setworkload] = useState({});
-    const [personalWorkload, setPersonalWorkload] = useState([]);
+    const URL = `${import.meta.env.VITE_API_URL}contragents`;
+    const { contragentId } = useParams();
+    const [customerData, setEmployeeData] = useState({});
     const [mode, setMode] = useState("read");
-    const [errors, setErrors] = useState({});
-    const [availableYears, setAvailableYears] = useState([]);
-    const [selectedYear, setSelectedYear] = useState("");
-    const [selectedMonth, setSelectedMonth] = useState("1");
+    const [reports, setReports] = useState([]);
+    const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
+    const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
 
     let query;
-
-    const options = [
-        { value: "0", label: "ФТА" },
-        { value: "1", label: "ФТМ" },
-        { value: "2", label: "ФМ" },
-        { value: "3", label: "ИЗ" },
-    ];
-
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
-    const handleSave = () => {
-        const newErrors = {
-            phone_number: !employeeData.phone_number,
-            email: !employeeData.email || !validateEmail(employeeData.email),
-        };
-
-        setErrors(newErrors);
-
-        if (Object.values(newErrors).some((err) => err)) return;
-
-        updateEmployee();
-    };
 
     const handleInputChange = (e, name) => {
         const value =
@@ -62,109 +36,46 @@ const CustomerCard = () => {
         }));
     };
 
-    // Текущая загрузка
-    const getWorkload = () => {
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }physical-persons/${employeeId}/workload`
-        ).then((response) => {
-            if (response.status == 200) {
-                setworkload(response.data.workload);
-            }
-        });
-    };
-
-    const getYears = () => {
-        getData(`${import.meta.env.VITE_API_URL}available-years`).then(
-            (response) => {
-                if (response.status == 200) {
-                    setAvailableYears(response.data);
-                    setSelectedYear(response.data[response.data.length - 1]);
-                }
-            }
-        );
-    };
-
-    const updateEmployee = () => {
-        query = toast.loading("Обновление", {
-            containerId: "employee",
-            position: "top-center",
-        });
-
-        postData(
-            "PATCH",
-            `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
-            employeeData
-        ).then((response) => {
-            if (response?.ok) {
-                toast.update(query, {
-                    render: "Успешно обновлено!",
-                    type: "success",
-                    containerId: "employee",
-                    isLoading: false,
-                    autoClose: 1200,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-            } else {
-                toast.error("Ошибка обновления данных", {
-                    isLoading: false,
-                    autoClose: 1500,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-            }
-        });
-    };
-
-    // Получаем сотрудника
-    const getEmployee = async () => {
+    const getCustomer = async (id) => {
         try {
-            const response = await getData(
-                `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
-                {
-                    Accept: "application/json",
-                }
-            );
-            if (response.status === 200) {
-                setEmployeeData(response.data);
-            }
+            const response = await getData(`${URL}/${id}`, {
+                Accept: "application/json",
+            });
+            setEmployeeData(response.data);
 
-            await Promise.all([getWorkload(), getYears()]);
+            // // Получаем кредиторов
+            // setLenders(
+            //     response.data?.creditor_responsible_persons?.flatMap(
+            //         (item) => item
+            //     ) || []
+            // );
+
+            // setFilteredLenders(
+            //     response.data?.creditor_responsible_persons?.flatMap(
+            //         (item) => item
+            //     ) || []
+            // );
+
+            // Получаем ответственные лица заказчика
+            // setCustomers(response.data?.contragent_responsible_persons || []);
+
+            await Promise.all([
+                // fetchIndustries(),
+                // fetchContragents(),
+                // fetchBanks(),
+                // getReports(),
+                // getTeam(),
+                // getServices(),
+            ]);
         } catch (error) {
-            console.error("Ошибка при загрузке сотрудника:", error);
+            console.error("Ошибка при загрузке проекта:", error);
         }
     };
 
-    const personalWorkloadFilter = () => {
-        const payload = {
-            year: selectedYear,
-            month: selectedMonth,
-        };
-
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }physical-persons/${employeeId}/personal-workload`,
-            { params: payload }
-        ).then((response) => {
-            if (response.status === 200) {
-                setPersonalWorkload(response.data);
-            }
-        });
-    };
-
     useEffect(() => {
-        if (selectedYear && selectedMonth) {
-            personalWorkloadFilter();
+        if (contragentId) {
+            getCustomer(contragentId);
         }
-    }, [selectedYear, selectedMonth]);
-
-    useEffect(() => {
-        getEmployee();
     }, []);
 
     return (
@@ -174,14 +85,14 @@ const CustomerCard = () => {
                     className="container flex flex-col min-h-full"
                     style={{ minHeight: "calc(100vh - 215px)" }}
                 >
-                    <ToastContainer containerId="employee" />
+                    <ToastContainer containerId="customer" />
 
                     <div className="flex justify-between items-center gap-10">
                         <div className="flex items-center gap-3 justify-between flex-grow">
                             <div className="flex items-center gap-10">
                                 <div className="flex items-center gap-3">
                                     <div className="text-3xl font-medium w-full">
-                                        {employeeData.name}ООО "СГРК"
+                                        {customerData.name}ООО "СГРК"
                                     </div>
 
                                     <span className="text-green-500">
@@ -195,9 +106,7 @@ const CustomerCard = () => {
                                     type="button"
                                     className="update-icon"
                                     title="Обновить данные сотрудника"
-                                    onClick={() => {
-                                        handleSave();
-                                    }}
+                                    onClick={() => {}}
                                 ></button>
                             )}
                         </div>
@@ -250,7 +159,7 @@ const CustomerCard = () => {
                                                 "qualification"
                                             )
                                         }
-                                        value={employeeData.qualification}
+                                        value={customerData.qualification}
                                         disabled={mode == "read" ? true : false}
                                     ></textarea>
                                 </div>
@@ -259,12 +168,12 @@ const CustomerCard = () => {
                                     <span className="text-gray-400">
                                         Сайт компании
                                     </span>
-                                    <div className="border-2 border-gray-300 p-1 h-[32px]">
+                                    <div className="border-2 border-gray-300 p-1 px-5 h-[32px]">
                                         <input
                                             className="w-full"
                                             type="text"
                                             placeholder=""
-                                            value={employeeData.email}
+                                            value={customerData.email}
                                             onChange={(e) =>
                                                 handleInputChange(e, "email")
                                             }
@@ -277,35 +186,33 @@ const CustomerCard = () => {
                             </div>
 
                             <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-gray-400">
-                                            Ключевые лица Заказчика
-                                        </span>
-                                    </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-400">
+                                        Ключевые лица Заказчика
+                                    </span>
+                                </div>
 
-                                    <div className="border-2 border-gray-300 py-5 px-2 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
-                                        <ul className="grid gap-5">
-                                            <FilledExecutorBlock
-                                            // key={customer.id}
-                                            // contanct={customer}
-                                            />
-                                            <FilledExecutorBlock
-                                            // key={customer.id}
-                                            // contanct={customer}
-                                            />
-                                            <FilledExecutorBlock
-                                            // key={customer.id}
-                                            // contanct={customer}
-                                            />
-                                        </ul>
-                                    </div>
+                                <div className="border-2 border-gray-300 py-5 px-3 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                    <ul className="grid gap-5">
+                                        <FilledExecutorBlock
+                                        // key={customer.id}
+                                        // contanct={customer}
+                                        />
+                                        <FilledExecutorBlock
+                                        // key={customer.id}
+                                        // contanct={customer}
+                                        />
+                                        <FilledExecutorBlock
+                                        // key={customer.id}
+                                        // contanct={customer}
+                                        />
+                                    </ul>
                                 </div>
                             </div>
                         </div>
 
                         <div className="flex flex-col">
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 mb-5">
                                 <span className="text-gray-400">
                                     Краткое описание
                                 </span>
@@ -322,92 +229,113 @@ const CustomerCard = () => {
                                     // }
                                 />
                             </div>
-                        </div>
-
-                        <div className="flex flex-col">
-                            <ProjectStatisticsBlock />
 
                             <div className="flex flex-col gap-2 flex-grow">
                                 <div className="flex items-center gap-2">
                                     <span className="text-gray-400">
-                                        История проекта
+                                        Проекты ()
                                     </span>
-
-                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                        ?
-                                    </span>
-                                    {mode == "edit" && (
-                                        <button
-                                            type="button"
-                                            className="add-button"
-                                            onClick={() =>
-                                                setReportWindowsState(true)
-                                            }
-                                            disabled={
-                                                projectData.contragent_id
-                                                    ? false
-                                                    : true
-                                            }
-                                            title={
-                                                projectData.contragent_id
-                                                    ? "Открыть конструктор отчёта"
-                                                    : "Необходимо назначить заказчика"
-                                            }
-                                        >
-                                            <span></span>
-                                        </button>
-                                    )}
                                 </div>
-
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                    {!reportWindowsState ? (
-                                        <ul className="grid gap-3">
-                                            <li className="grid items-center grid-cols-[25%_18%_25%_18%] gap-3 mb-2 text-gray-400">
-                                                <span>Отчет</span>
-                                                <span>Статус</span>
-                                                <span>Период выполнения</span>
-                                                <span>Общая оценка</span>
-                                            </li>
-
-                                            {reports.length > 0 &&
-                                                reports.map((report, index) => (
-                                                    <ProjectReportItem
-                                                        key={report.id || index}
-                                                        {...report}
-                                                        setReportEditorState={
-                                                            setReportEditorState
-                                                        }
-                                                        setReportEditorName={
-                                                            setReportEditorName
-                                                        }
-                                                        deleteReport={
-                                                            deleteReport
-                                                        }
-                                                        openReportEditor={
-                                                            openReportEditor
-                                                        }
-                                                        openSubReportEditor={
-                                                            openSubReportEditor
-                                                        }
-                                                        mode={mode}
-                                                    />
-                                                ))}
-                                        </ul>
-                                    ) : (
-                                        <ProjectReportWindow
-                                            reportWindowsState={
-                                                setReportWindowsState
-                                            }
-                                            sendReport={sendReport}
-                                            contracts={contracts}
-                                            updateReport={updateReport}
-                                            reportId={reportId}
-                                            setReportId={setReportId}
-                                            mode={mode}
-                                        />
-                                    )}
+                                    <ul className="grid gap-3">
+                                        <li className="grid items-center grid-cols-[1fr_20%_1fr] gap-3 mb-2 text-gray-400">
+                                            <span>Проект</span>
+                                            <span>Бюджет</span>
+                                            <span>Период реализации</span>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
+                        </div>
+
+                        <div className="flex flex-col">
+                            {reportEditorState ? (
+                                <ProjectReportEditor
+                                    reportData={reportData}
+                                    postData={postData}
+                                    setReports={setReports}
+                                    reportEditorName={reportEditorName}
+                                    setReportWindowsState={
+                                        setReportWindowsState
+                                    }
+                                    setReportEditorState={setReportEditorState}
+                                    reportId={reportId}
+                                    projectId={projectId}
+                                    setReportId={setReportId}
+                                    getProject={getProject}
+                                    mode={mode}
+                                />
+                            ) : (
+                                <>
+                                    <ProjectStatisticsBlock />
+
+                                    <div className="flex flex-col gap-2 flex-grow">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-gray-400">
+                                                История проекта
+                                            </span>
+                                        </div>
+
+                                        <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                            {!reportWindowsState ? (
+                                                <ul className="grid gap-3">
+                                                    <li className="grid items-center grid-cols-[25%_18%_25%_18%] gap-3 mb-2 text-gray-400">
+                                                        <span>Отчет</span>
+                                                        <span>Статус</span>
+                                                        <span>
+                                                            Период выполнения
+                                                        </span>
+                                                        <span>
+                                                            Общая оценка
+                                                        </span>
+                                                    </li>
+
+                                                    {reports.length > 0 &&
+                                                        reports.map(
+                                                            (report, index) => (
+                                                                <ProjectReportItem
+                                                                    key={
+                                                                        report.id ||
+                                                                        index
+                                                                    }
+                                                                    {...report}
+                                                                    setReportEditorState={
+                                                                        setReportEditorState
+                                                                    }
+                                                                    setReportEditorName={
+                                                                        setReportEditorName
+                                                                    }
+                                                                    deleteReport={
+                                                                        deleteReport
+                                                                    }
+                                                                    openReportEditor={
+                                                                        openReportEditor
+                                                                    }
+                                                                    openSubReportEditor={
+                                                                        openSubReportEditor
+                                                                    }
+                                                                    mode={mode}
+                                                                />
+                                                            )
+                                                        )}
+                                                </ul>
+                                            ) : (
+                                                <ProjectReportWindow
+                                                    reportWindowsState={
+                                                        setReportWindowsState
+                                                    }
+                                                    sendReport={sendReport}
+                                                    contracts={contracts}
+                                                    updateReport={updateReport}
+                                                    reportId={reportId}
+                                                    setReportId={setReportId}
+                                                    mode={mode}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

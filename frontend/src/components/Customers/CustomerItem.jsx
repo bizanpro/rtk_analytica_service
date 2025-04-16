@@ -4,7 +4,23 @@ const CustomerItem = ({ props, columns }) => {
     const navigate = useNavigate();
 
     const handleRowClick = () => {
-        navigate(`/customers/${props.id}`, { state: { mode: "read" } });
+        navigate(`/contragents/${props.id}`, { state: { mode: "read" } });
+    };
+
+    const handleStatus = (status) => {
+        switch (status) {
+            case "active":
+                return "Активный";
+
+            case "completed":
+                return "Завершён";
+
+            case "undefined":
+                return "Не установлен";
+
+            default:
+                return "—";
+        }
     };
 
     return (
@@ -34,9 +50,7 @@ const CustomerItem = ({ props, columns }) => {
                                                             : "pt-1"
                                                     }`}
                                                 >
-                                                    {key === "creditors"
-                                                        ? item.name
-                                                        : item?.toString()}
+                                                    {item?.toString()}
                                                 </td>
                                             </tr>
                                         ))}
@@ -64,17 +78,13 @@ const CustomerItem = ({ props, columns }) => {
                         </td>
                     ));
                 } else {
-                    if (key === "name") {
+                    if (key === "status") {
                         return (
                             <td
                                 className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
                                 key={key}
                             >
-                                {value?.toString() || "—"}
-                                <br />
-                                <span className="text-gray-400 text-sm">
-                                    {props.industry}
-                                </span>
+                                {handleStatus(value?.toString()) || "—"}
                             </td>
                         );
                     } else {

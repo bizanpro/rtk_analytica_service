@@ -76,6 +76,22 @@ const ProjectCard = () => {
 
     let query;
 
+    const handleStatus = (status) => {
+        switch (status) {
+            case "active":
+                return "Активный";
+
+            case "completed":
+                return "Завершён";
+
+            case "undefined":
+                return "Не установлен";
+
+            default:
+                return "—";
+        }
+    };
+
     // Фильтр кредиторов
     const handleFilterLenders = (evt) => {
         evt.target.value === ""
@@ -605,14 +621,22 @@ const ProjectCard = () => {
 
                     <div className="flex justify-between items-center gap-10">
                         <div className="flex items-center gap-3 flex-grow">
-                            <input
-                                type="text"
-                                className="text-3xl font-medium w-full"
-                                name="name"
-                                value={projectData?.name}
-                                onChange={(e) => handleInputChange(e, "name")}
-                                disabled={mode == "read" ? true : false}
-                            />
+                            <div className="flex flex-col gap-3 w-full">
+                                <input
+                                    type="text"
+                                    className="text-3xl font-medium"
+                                    name="name"
+                                    value={projectData?.name}
+                                    onChange={(e) =>
+                                        handleInputChange(e, "name")
+                                    }
+                                    disabled={mode == "read" ? true : false}
+                                />
+
+                                <span className="text-green-500">
+                                    {handleStatus(projectData?.status)}
+                                </span>
+                            </div>
 
                             {mode === "edit" &&
                                 projectData?.name?.length > 2 && (

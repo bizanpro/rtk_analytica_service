@@ -25,7 +25,7 @@ const EmployeeWorkloadSummary = ({
                     <div
                         className="absolute top-0 left-0 bottom-0 h-full bg-gray-200 transition-all opacity-60 z-[-1]"
                         style={{
-                            width: `${industry_name}%`,
+                            width: `${load_percentage}%`,
                         }}
                     ></div>
                 </div>

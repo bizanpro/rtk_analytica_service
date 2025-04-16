@@ -7,6 +7,22 @@ const ProjectItem = ({ props, columns }) => {
         navigate(`/projects/${props.id}`, { state: { mode: "read" } });
     };
 
+    const handleStatus = (status) => {
+        switch (status) {
+            case "active":
+                return "Активный";
+
+            case "completed":
+                return "Завершён";
+
+            case "undefined":
+                return "Не установлен";
+
+            default:
+                return "—";
+        }
+    };
+
     return (
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
@@ -84,6 +100,15 @@ const ProjectItem = ({ props, columns }) => {
                                 <span className="text-gray-400 text-sm">
                                     {props.industry}
                                 </span>
+                            </td>
+                        );
+                    } else if (key === "status") {
+                        return (
+                            <td
+                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
+                                key={key}
+                            >
+                                {handleStatus(value?.toString()) || "—"}
                             </td>
                         );
                     } else {
