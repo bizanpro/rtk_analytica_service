@@ -75,11 +75,7 @@ const Customers = () => {
             .finally(() => setIsLoading(false));
     }, [page]);
 
-    useInfiniteScroll({
-        isLoading,
-        hasMore: meta ? page < meta.last_page : true,
-        loadMore: () => setPage((prev) => prev + 1),
-    });
+    const loaderRef = useInfiniteScroll({ isLoading, meta, setPage });
 
     return (
         <main className="page">
@@ -153,11 +149,8 @@ const Customers = () => {
                         </tbody>
                     </table>
 
-                    {isLoading && (
-                        <div className="text-center py-4 text-gray-500">
-                            Загрузка...
-                        </div>
-                    )}
+                    <div ref={loaderRef} className="h-4" />
+                    {isLoading && <div className="mt-4">Загрузка...</div>}
                 </div>
             </div>
         </main>
