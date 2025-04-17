@@ -286,10 +286,6 @@ const EmployeeCard = () => {
         getEmployee();
     }, []);
 
-    useEffect(() => {
-        console.log(reportTypes);
-    }, [reportTypes]);
-
     return (
         <main className="page">
             <div className="pt-8 pb-15">

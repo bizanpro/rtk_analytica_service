@@ -143,7 +143,7 @@ const ProjectCard = () => {
     // Получение заказчика
     const fetchContragents = async () => {
         const response = await getData(
-            `${import.meta.env.VITE_API_URL}contragents`,
+            `${import.meta.env.VITE_API_URL}contragents/?all=true`,
             {
                 Accept: "application/json",
             }

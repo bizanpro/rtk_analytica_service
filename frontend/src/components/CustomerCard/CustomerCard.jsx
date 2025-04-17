@@ -6,6 +6,7 @@ import handleStatus from "../../utils/handleStatus";
 
 import { ToastContainer, toast } from "react-toastify";
 
+import CustomerProjectItem from "./CustomerProjectItem";
 import FilledExecutorBlock from "../ExecutorBlock/FilledExecutorBlock";
 import ProjectStatisticsBlock from "../ProjectCard/ProjectStatisticsBlock";
 import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
@@ -16,25 +17,18 @@ const CustomerCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}contragents`;
     const { contragentId } = useParams();
     const [customerData, setEmployeeData] = useState({});
+    const [formFields, setFormFields] = useState({});
     const [mode, setMode] = useState("read");
     const [reports, setReports] = useState([]);
+    const [projects, setProjects] = useState([]);
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
     const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
 
     let query;
 
     const handleInputChange = (e, name) => {
-        const value =
-            name === "phone_number"
-                ? e
-                : name === "is_staff" || name === "is_active"
-                ? JSON.parse(e.target.value)
-                : e.target.value;
-
-        setEmployeeData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        setFormFields((prev) => ({ ...prev, [name]: e.target.value }));
+        setEmployeeData((prev) => ({ ...prev, [name]: e.target.value }));
     };
 
     const getCustomer = async (id) => {
@@ -43,6 +37,7 @@ const CustomerCard = () => {
                 Accept: "application/json",
             });
             setEmployeeData(response.data);
+            setProjects(response.data.projects);
 
             // // Получаем кредиторов
             // setLenders(
@@ -71,6 +66,50 @@ const CustomerCard = () => {
         } catch (error) {
             console.error("Ошибка при загрузке проекта:", error);
         }
+    };
+
+    const updateCustomer = async (showMessage = true) => {
+        query = toast.loading("Обновление", {
+            containerId: "customer",
+            position: "top-center",
+        });
+
+        postData("PATCH", `${URL}/${contragentId}`, formFields)
+            .then((response) => {
+                if (response?.ok && showMessage) {
+                    toast.update(query, {
+                        render: "Данные заказчика обновлены",
+                        type: "success",
+                        containerId: "customer",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                } else {
+                    toast.dismiss(query);
+                    toast.error("Ошибка обновления данных", {
+                        containerId: "customer",
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                }
+            })
+            .catch(() => {
+                toast.dismiss(query);
+                toast.error("Ошибка обновления данных", {
+                    containerId: "customer",
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
     };
 
     useEffect(() => {
@@ -107,7 +146,9 @@ const CustomerCard = () => {
                                     type="button"
                                     className="update-icon"
                                     title="Обновить данные сотрудника"
-                                    onClick={() => {}}
+                                    onClick={() => {
+                                        updateCustomer();
+                                    }}
                                 ></button>
                             )}
                         </div>
@@ -160,7 +201,8 @@ const CustomerCard = () => {
                                             )
                                         }
                                         value={
-                                            customerData?.head_office_address
+                                            customerData?.head_office_address ||
+                                            ""
                                         }
                                         disabled={mode == "read" ? true : false}
                                     ></textarea>
@@ -170,7 +212,7 @@ const CustomerCard = () => {
                                     <span className="text-gray-400">
                                         Сайт компании
                                     </span>
-                                    <div className="border-2 border-gray-300 p-1 px-5 h-[32px]">
+                                    <div className="border-2 border-gray-300 py-1 px-5 min-h-[32px]">
                                         <input
                                             className="w-full"
                                             type="text"
@@ -181,7 +223,7 @@ const CustomerCard = () => {
                                             onChange={(e) =>
                                                 handleInputChange(
                                                     e,
-                                                    "company_website "
+                                                    "company_website"
                                                 )
                                             }
                                             disabled={
@@ -244,7 +286,7 @@ const CustomerCard = () => {
                             <div className="flex flex-col gap-2 flex-grow">
                                 <div className="flex items-center gap-2">
                                     <span className="text-gray-400">
-                                        Проекты ()
+                                        Проекты ({projects.length})
                                     </span>
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
@@ -254,6 +296,14 @@ const CustomerCard = () => {
                                             <span>Бюджет</span>
                                             <span>Период реализации</span>
                                         </li>
+
+                                        {projects.length > 0 &&
+                                            projects.map((project) => (
+                                                <CustomerProjectItem
+                                                    key={project.id}
+                                                    {...project}
+                                                />
+                                            ))}
                                     </ul>
                                 </div>
                             </div>
