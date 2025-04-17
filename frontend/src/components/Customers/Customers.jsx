@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import getData from "../../utils/getData";
+import handleStatus from "../../utils/handleStatus";
 import ProjectItem from "./CustomerItem";
 import Select from "../Select";
 
@@ -20,22 +21,6 @@ const Customers = () => {
         { label: "Получено оплат, млн руб.", key: "income_total" },
         { label: "Статус", key: "status" },
     ];
-
-    const handleStatus = (status) => {
-        switch (status) {
-            case "active":
-                return "Активный";
-
-            case "completed":
-                return "Завершён";
-
-            case "undefined":
-                return "Не установлен";
-
-            default:
-                return "—";
-        }
-    };
 
     const filteredCustomers = useMemo(() => {
         const result = customers.filter((customer) => {

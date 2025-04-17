@@ -1,26 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import handleStatus from "../../utils/handleStatus";
 
 const CustomerItem = ({ props, columns }) => {
     const navigate = useNavigate();
 
     const handleRowClick = () => {
         navigate(`/contragents/${props.id}`, { state: { mode: "read" } });
-    };
-
-    const handleStatus = (status) => {
-        switch (status) {
-            case "active":
-                return "Активный";
-
-            case "completed":
-                return "Завершён";
-
-            case "undefined":
-                return "Не установлен";
-
-            default:
-                return "—";
-        }
     };
 
     return (

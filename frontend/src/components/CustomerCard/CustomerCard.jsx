@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
+import handleStatus from "../../utils/handleStatus";
 
 import { ToastContainer, toast } from "react-toastify";
 
@@ -92,11 +93,11 @@ const CustomerCard = () => {
                             <div className="flex items-center gap-10">
                                 <div className="flex items-center gap-3">
                                     <div className="text-3xl font-medium w-full">
-                                        {customerData.name}ООО "СГРК"
+                                        {customerData?.program_name}
                                     </div>
 
-                                    <span className="text-green-500">
-                                        активный
+                                    <span className="whitespace-nowrap text-green-500">
+                                        {handleStatus(customerData?.status)}
                                     </span>
                                 </div>
                             </div>
@@ -152,14 +153,15 @@ const CustomerCard = () => {
                                         style={{ resize: "none" }}
                                         placeholder="Заполните адрес центрального офиса"
                                         type="text"
-                                        name="qualification"
                                         onChange={(e) =>
                                             handleInputChange(
                                                 e,
-                                                "qualification"
+                                                "head_office_address"
                                             )
                                         }
-                                        value={customerData.qualification}
+                                        value={
+                                            customerData?.head_office_address
+                                        }
                                         disabled={mode == "read" ? true : false}
                                     ></textarea>
                                 </div>
@@ -172,10 +174,15 @@ const CustomerCard = () => {
                                         <input
                                             className="w-full"
                                             type="text"
-                                            placeholder=""
-                                            value={customerData.email}
+                                            placeholder="Введите адрес сайта компании"
+                                            value={
+                                                customerData?.company_website
+                                            }
                                             onChange={(e) =>
-                                                handleInputChange(e, "email")
+                                                handleInputChange(
+                                                    e,
+                                                    "company_website "
+                                                )
                                             }
                                             disabled={
                                                 mode == "read" ? true : false
@@ -221,12 +228,16 @@ const CustomerCard = () => {
                                     style={{ resize: "none" }}
                                     placeholder="Заполните описание"
                                     type="text"
-                                    name="description"
                                     disabled={mode == "read" ? true : false}
-                                    // value={projectData?.description || ""}
-                                    // onChange={(e) =>
-                                    //     handleInputChange(e, "description")
-                                    // }
+                                    value={
+                                        customerData?.description_short || ""
+                                    }
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            e,
+                                            "description_short"
+                                        )
+                                    }
                                 />
                             </div>
 

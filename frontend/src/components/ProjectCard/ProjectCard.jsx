@@ -3,6 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
+import handleStatus from "../../utils/handleStatus";
 
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
@@ -68,29 +69,13 @@ const ProjectCard = () => {
     const [services, setServices] = useState([]);
     const [reportId, setReportId] = useState(null);
 
+    let query;
+
     const matchedBanks = banks.filter((bank) =>
         projectData.creditors?.some(
             (selectedBank) => selectedBank.id === bank.id
         )
     );
-
-    let query;
-
-    const handleStatus = (status) => {
-        switch (status) {
-            case "active":
-                return "Активный";
-
-            case "completed":
-                return "Завершён";
-
-            case "undefined":
-                return "Не установлен";
-
-            default:
-                return "—";
-        }
-    };
 
     // Фильтр кредиторов
     const handleFilterLenders = (evt) => {
@@ -163,7 +148,7 @@ const ProjectCard = () => {
                 Accept: "application/json",
             }
         );
-        setContragents(response.data);
+        setContragents(response.data.data);
     };
 
     // Получение банков
