@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import getData from "../../utils/getData";
-import { useInfiniteScroll } from "../../utils/useInfiniteScroll";
+import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
 import ProjectItem from "./CustomerItem";
 import Select from "../Select";
