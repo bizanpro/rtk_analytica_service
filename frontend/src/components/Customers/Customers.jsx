@@ -1,15 +1,19 @@
 import { useEffect, useState, useMemo } from "react";
 import getData from "../../utils/getData";
+import { useInfiniteScroll } from "../../utils/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
 import ProjectItem from "./CustomerItem";
 import Select from "../Select";
 
 const Customers = () => {
-    const URL = `${import.meta.env.VITE_API_URL}contragents`;
     const [customers, setCustomers] = useState([]);
     const [selectedName, setSelectedName] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [meta, setMeta] = useState(null);
+
+    const URL = `${import.meta.env.VITE_API_URL}contragents`;
 
     const COLUMNS = [
         { label: "Наименование", key: "program_name" },
@@ -23,17 +27,19 @@ const Customers = () => {
     ];
 
     const filteredCustomers = useMemo(() => {
-        const result = customers.filter((customer) => {
-            return (
-                (selectedName && selectedName !== "default"
+        return customers.filter((customer) => {
+            const matchName =
+                selectedName && selectedName !== "default"
                     ? customer.program_name === selectedName
-                    : true) &&
-                (selectedStatus && selectedStatus !== "default"
+                    : true;
+
+            const matchStatus =
+                selectedStatus && selectedStatus !== "default"
                     ? customer.status === selectedStatus
-                    : true)
-            );
+                    : true;
+
+            return matchName && matchStatus;
         });
-        return result;
     }, [customers, selectedName, selectedStatus]);
 
     // Заполняем селектор заказчиков
@@ -60,12 +66,20 @@ const Customers = () => {
     }, [customers]);
 
     useEffect(() => {
-        getData(URL, { Accept: "application/json" })
+        setIsLoading(true);
+        getData(`${URL}/?page=${page}`, { Accept: "application/json" })
             .then((response) => {
-                setCustomers(response.data.data);
+                setCustomers((prev) => [...prev, ...response.data.data]);
+                setMeta(response.data.meta);
             })
             .finally(() => setIsLoading(false));
-    }, []);
+    }, [page]);
+
+    useInfiniteScroll({
+        isLoading,
+        hasMore: meta ? page < meta.last_page : true,
+        loadMore: () => setPage((prev) => prev + 1),
+    });
 
     return (
         <main className="page">
@@ -128,24 +142,22 @@ const Customers = () => {
                         </thead>
 
                         <tbody>
-                            {isLoading ? (
-                                <tr>
-                                    <td className="text-base px-4 py-2">
-                                        Загрузка...
-                                    </td>
-                                </tr>
-                            ) : (
-                                filteredCustomers.length > 0 &&
+                            {filteredCustomers.length > 0 &&
                                 filteredCustomers.map((item) => (
                                     <ProjectItem
                                         key={item.id}
                                         props={item}
                                         columns={COLUMNS}
                                     />
-                                ))
-                            )}
+                                ))}
                         </tbody>
                     </table>
+
+                    {isLoading && (
+                        <div className="text-center py-4 text-gray-500">
+                            Загрузка...
+                        </div>
+                    )}
                 </div>
             </div>
         </main>
