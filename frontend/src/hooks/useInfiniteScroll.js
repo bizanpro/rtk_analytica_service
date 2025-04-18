@@ -1,10 +1,15 @@
 import { useEffect, useRef } from "react";
 
-export const useInfiniteScroll = ({ isLoading, meta, setPage }) => {
+export const useInfiniteScroll = ({
+    isLoading,
+    meta,
+    setPage,
+    isFiltering,
+}) => {
     const ref = useRef(null);
 
     useEffect(() => {
-        if (!ref.current || isLoading || !meta) return;
+        if (isFiltering || !ref.current || isLoading || !meta) return;
 
         const observer = new IntersectionObserver(
             ([entry]) => {
@@ -23,10 +28,16 @@ export const useInfiniteScroll = ({ isLoading, meta, setPage }) => {
         return () => {
             if (ref.current) observer.unobserve(ref.current);
         };
-    }, [isLoading, meta]);
+    }, [isLoading, meta, isFiltering]);
 
     useEffect(() => {
-        if (!meta || isLoading || meta.current_page >= meta.last_page) return;
+        if (
+            isFiltering ||
+            !meta ||
+            isLoading ||
+            meta.current_page >= meta.last_page
+        )
+            return;
 
         const hasScroll =
             document.documentElement.scrollHeight >
@@ -39,7 +50,7 @@ export const useInfiniteScroll = ({ isLoading, meta, setPage }) => {
 
             return () => clearTimeout(timeout);
         }
-    }, [meta, isLoading]);
+    }, [meta, isLoading, isFiltering]);
 
     return ref;
 };

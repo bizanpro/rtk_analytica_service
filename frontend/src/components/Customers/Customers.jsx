@@ -7,9 +7,10 @@ import Select from "../Select";
 
 const Customers = () => {
     const [customers, setCustomers] = useState([]);
-    const [selectedName, setSelectedName] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState("");
+    const [selectedName, setSelectedName] = useState("default");
+    const [selectedStatus, setSelectedStatus] = useState("default");
     const [isLoading, setIsLoading] = useState(true);
+    const [isFiltering, setIsFiltering] = useState(false);
     const [page, setPage] = useState(1);
     const [meta, setMeta] = useState({
         current_page: 1,
@@ -78,7 +79,18 @@ const Customers = () => {
             .finally(() => setIsLoading(false));
     }, [page]);
 
-    const loaderRef = useInfiniteScroll({ isLoading, meta, setPage });
+    useEffect(() => {
+        selectedName === "default" && selectedStatus === "default"
+            ? setIsFiltering(false)
+            : setIsFiltering(true);
+    }, [selectedName, selectedStatus]);
+
+    const loaderRef = useInfiniteScroll({
+        isLoading,
+        meta,
+        setPage,
+        isFiltering,
+    });
 
     return (
         <main className="page">
@@ -113,7 +125,7 @@ const Customers = () => {
                                     setSelectedStatus(evt.target.value)
                                 }
                             >
-                                <option value="">Статус</option>
+                                <option value="default">Статус</option>
                                 {statusOptions.map((status, index) => (
                                     <option value={status.value} key={index}>
                                         {status.label}
