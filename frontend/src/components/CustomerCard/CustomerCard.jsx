@@ -59,7 +59,7 @@ const CustomerCard = () => {
             .then((response) => {
                 if (response?.ok && showMessage) {
                     toast.update(query, {
-                        render: "Данные заказчика обновлены",
+                        render: "Данные обновлены",
                         type: "success",
                         containerId: "customer",
                         isLoading: false,

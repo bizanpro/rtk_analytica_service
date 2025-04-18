@@ -14,7 +14,7 @@ import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
 import "react-toastify/dist/ReactToastify.css";
 
 const SupplierCard = () => {
-    const URL = `${import.meta.env.VITE_API_URL}contragents`;
+    const URL = `${import.meta.env.VITE_API_URL}suppliers`;
     const { supplierId } = useParams();
     const [supplierData, setSupplierData] = useState({});
     const [formFields, setFormFields] = useState({});
@@ -32,15 +32,17 @@ const SupplierCard = () => {
         setSupplierData((prev) => ({ ...prev, [name]: e.target.value }));
     };
 
-    const getResponsiblePesons = () => {
-        getData(`${URL}/${supplierId}/responsible-persons`, {
-            Accept: "application/json",
-        }).then((response) => {
-            setResponsiblePersons(response.data);
-        });
-    };
+    // const getResponsiblePesons = () => {
+    //     getData(`${URL}/${supplierId}/responsible-persons`, {
+    //         Accept: "application/json",
+    //     }).then((response) => {
+    //         setResponsiblePersons(response.data);
+    //     });
+    // };
 
-    const getCustomer = () => {
+    console.log(`${URL}/${supplierId}`)
+
+    const getData = () => {
         getData(`${URL}/${supplierId}`, {
             Accept: "application/json",
         }).then((response) => {
@@ -49,9 +51,9 @@ const SupplierCard = () => {
         });
     };
 
-    const updateCustomer = async (showMessage = true) => {
+    const updateData = async (showMessage = true) => {
         query = toast.loading("Обновление", {
-            containerId: "customer",
+            containerId: "supplier",
             position: "top-center",
         });
 
@@ -59,9 +61,9 @@ const SupplierCard = () => {
             .then((response) => {
                 if (response?.ok && showMessage) {
                     toast.update(query, {
-                        render: "Данные заказчика обновлены",
+                        render: "Данные обновлены",
                         type: "success",
-                        containerId: "customer",
+                        containerId: "supplier",
                         isLoading: false,
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
@@ -71,7 +73,7 @@ const SupplierCard = () => {
                 } else {
                     toast.dismiss(query);
                     toast.error("Ошибка обновления данных", {
-                        containerId: "customer",
+                        containerId: "supplier",
                         isLoading: false,
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
@@ -83,7 +85,7 @@ const SupplierCard = () => {
             .catch(() => {
                 toast.dismiss(query);
                 toast.error("Ошибка обновления данных", {
-                    containerId: "customer",
+                    containerId: "supplier",
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -95,7 +97,7 @@ const SupplierCard = () => {
 
     useEffect(() => {
         if (supplierId) {
-            getCustomer();
+            getData();
             // getResponsiblePesons();
         }
     }, []);
@@ -107,7 +109,7 @@ const SupplierCard = () => {
                     className="container flex flex-col min-h-full"
                     style={{ minHeight: "calc(100vh - 215px)" }}
                 >
-                    <ToastContainer containerId="customer" />
+                    <ToastContainer containerId="supplier" />
 
                     <div className="flex justify-between items-center gap-10">
                         <div className="flex items-center gap-3 justify-between flex-grow">
@@ -129,7 +131,7 @@ const SupplierCard = () => {
                                     className="update-icon"
                                     title="Обновить данные сотрудника"
                                     onClick={() => {
-                                        updateCustomer();
+                                        updateData();
                                     }}
                                 ></button>
                             )}
@@ -267,7 +269,7 @@ const SupplierCard = () => {
                                                 Краткое описание
                                             </span>
                                             <textarea
-                                                className="border-2 border-gray-300 p-5 min-h-[170px] max-h-[170px]"
+                                                className="border-2 border-gray-300 p-5 min-h-[155px] max-h-[155px]"
                                                 style={{ resize: "none" }}
                                                 placeholder="Заполните описание"
                                                 type="text"
@@ -289,27 +291,119 @@ const SupplierCard = () => {
                                             />
                                         </div>
 
-                                        <ProjectStatisticsBlock />
+                                        <div className="flex flex-col gap-2 mb-5">
+                                            <span className="text-gray-400">
+                                                Краткое описание
+                                            </span>
+
+                                            <div className="border-2 border-gray-300 p-5 mb-5">
+                                                <div className="flex flex-col gap-2 justify-between">
+                                                    <div className="switch gap-4 w-[70%] mb-5">
+                                                        <div>
+                                                            <input
+                                                                type="radio"
+                                                                name="time_sort"
+                                                                id="this_year"
+                                                                disabled
+                                                                checked
+                                                            />
+                                                            <label
+                                                                className="bg-gray-200 py-1 px-2 text-center rounded-md"
+                                                                htmlFor="this_year"
+                                                            >
+                                                                Текущий год
+                                                            </label>
+                                                        </div>
+                                                        <div>
+                                                            <input
+                                                                type="radio"
+                                                                name="time_sort"
+                                                                id="all_time"
+                                                                disabled
+                                                            />
+                                                            <label
+                                                                className="bg-gray-200 py-1 px-2 text-center rounded-md"
+                                                                htmlFor="all_time"
+                                                            >
+                                                                За всё время
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="grid items-stretch grid-cols-3 gap-3 mb-3">
+                                                    <div className="flex flex-col gap-2">
+                                                        <div className="flex items-center gap-2 text-gray-400">
+                                                            Выполнено{" "}
+                                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                                ?
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center flex-grow gap-2">
+                                                            <strong className="font-normal text-4xl">
+                                                                10,0
+                                                            </strong>
+                                                            <small className="text-sm">
+                                                                млн
+                                                                <br />
+                                                                руб.
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <div className="text-gray-400">
+                                                            Оплачено
+                                                        </div>
+                                                        <div className="flex items-center flex-grow gap-2">
+                                                            <strong className="font-normal text-4xl">
+                                                                8,0
+                                                            </strong>
+                                                            <small className="text-sm">
+                                                                млн
+                                                                <br />
+                                                                руб.
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <div className="flex items-center gap-2 text-gray-400">
+                                                            КЗ{" "}
+                                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                                ?
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center flex-grow gap-2">
+                                                            <strong className="font-normal text-4xl">
+                                                                2,0
+                                                            </strong>
+                                                            <small className="text-sm">
+                                                                млн
+                                                                <br />
+                                                                руб.
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div className="flex flex-col gap-2 flex-grow">
                                         <div className="flex items-center gap-2">
                                             <span className="text-gray-400">
-                                                История проекта
+                                                История проектов
                                             </span>
                                         </div>
 
                                         <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
                                             {!reportWindowsState ? (
                                                 <ul className="grid gap-3">
-                                                    <li className="grid items-center grid-cols-[25%_18%_25%_18%] gap-3 mb-2 text-gray-400">
+                                                    <li className="grid items-center grid-cols-5 gap-3 mb-2 text-gray-400">
+                                                        <span>Проект</span>
                                                         <span>Отчет</span>
+                                                        <span>Роль</span>
                                                         <span>Статус</span>
                                                         <span>
                                                             Период выполнения
-                                                        </span>
-                                                        <span>
-                                                            Общая оценка
                                                         </span>
                                                     </li>
 
