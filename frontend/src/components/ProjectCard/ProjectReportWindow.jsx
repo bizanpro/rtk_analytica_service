@@ -292,7 +292,7 @@ const ProjectReportWindow = ({
                 ),
                 getData(`${import.meta.env.VITE_API_URL}physical-persons`),
                 getData(
-                    `${import.meta.env.VITE_API_URL}/contragents/suppliers`
+                    `${import.meta.env.VITE_API_URL}suppliers`
                 ),
                 getData(`${import.meta.env.VITE_API_URL}roles`),
                 getData(`${import.meta.env.VITE_API_URL}report-statuses`),

@@ -11,7 +11,10 @@ const Customers = () => {
     const [selectedStatus, setSelectedStatus] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1);
-    const [meta, setMeta] = useState(null);
+    const [meta, setMeta] = useState({
+        current_page: 1,
+        last_page: 1,
+    });
 
     const URL = `${import.meta.env.VITE_API_URL}contragents`;
 
