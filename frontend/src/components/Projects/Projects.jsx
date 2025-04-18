@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 const Projects = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
     const navigate = useNavigate();
-    const [projects, setProjects] = useState([]);
+    const [list, setList] = useState([]);
     const [popupState, setPopupState] = useState(false);
     const [newProjectName, setNewProjectName] = useState("");
     const [selectedSector, setSelectedSector] = useState("");
@@ -28,7 +28,7 @@ const Projects = () => {
     ];
 
     const filteredProjects = useMemo(() => {
-        const result = projects.filter((project) => {
+        const result = list.filter((project) => {
             return (
                 (selectedSector && selectedSector !== "default"
                     ? project.industry === selectedSector
@@ -46,32 +46,32 @@ const Projects = () => {
             );
         });
         return result;
-    }, [projects, selectedSector, selectedBank, selectedManager]);
+    }, [list, selectedSector, selectedBank, selectedManager]);
 
     // Заполняем селектор отраслей
     const sectorOptions = useMemo(() => {
-        const allSectors = projects
+        const allSectors = list
             .map((item) => item.industry)
             .filter((industry) => industry !== null);
 
         return Array.from(new Set(allSectors));
-    }, [projects]);
+    }, [list]);
 
     // Заполняем селектор банков
     const bankOptions = useMemo(() => {
-        const allBanks = projects.flatMap((item) =>
+        const allBanks = list.flatMap((item) =>
             item.creditors?.map((bank) => bank.name)
         );
         return Array.from(new Set(allBanks));
-    }, [projects]);
+    }, [list]);
 
     // Заполняем селектор руководителей
     const projectManagerOptions = useMemo(() => {
-        const allPM = projects
+        const allPM = list
             .map((item) => item.manager)
             .filter((manager) => manager !== null);
         return Array.from(new Set(allPM));
-    }, [projects]);
+    }, [list]);
 
     const handleProjectsNameChange = (e) => {
         setNewProjectName(e.target.value);
@@ -99,7 +99,7 @@ const Projects = () => {
     useEffect(() => {
         getData(URL, { Accept: "application/json" })
             .then((response) => {
-                setProjects(response.data);
+                setList(response.data);
             })
             .finally(() => setIsLoading(false));
     }, []);

@@ -1,18 +1,18 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainLayout from "../MainLayout";
-import Home from "../Home";
-import NotFound from "../NotFound";
-import Header from "../Header/Header";
-import Projects from "../Projects/Projects";
-import ProjectCard from "../ProjectCard/ProjectCard";
-import Employees from "../Employees/Employees";
-import EmployeeCard from "../Employees/EmployeeCard";
-import ReferenceBooks from "../ReferenceBooks/ReferenceBooks";
-import SingleBook from "../ReferenceBooks/SingleBook";
-import Customers from "../Customers/Customers";
-import CustomerCard from "../CustomerCard/CustomerCard";
-
-import "./App.scss";
+import MainLayout from "./MainLayout";
+import Home from "./Home";
+import NotFound from "./NotFound";
+import Header from "./Header/Header";
+import Projects from "./Projects/Projects";
+import ProjectCard from "./ProjectCard/ProjectCard";
+import Employees from "./Employees/Employees";
+import EmployeeCard from "./Employees/EmployeeCard";
+import ReferenceBooks from "./ReferenceBooks/ReferenceBooks";
+import SingleBook from "./ReferenceBooks/SingleBook";
+import Customers from "./Customers/Customers";
+import CustomerCard from "./CustomerCard/CustomerCard";
+import Suppliers from "./Suppliers/Suppliers";
+import SupplierCard from "./SupplierCard/SupplierCard";
 
 function App() {
     return (
@@ -41,6 +41,12 @@ function App() {
                     <Route
                         path="employees/:employeeId"
                         element={<EmployeeCard />}
+                    />
+
+                    <Route path="suppliers" element={<Suppliers />} />
+                    <Route
+                        path="suppliers/:supplierId"
+                        element={<SupplierCard />}
                     />
 
                     <Route

@@ -1,36 +1,26 @@
 import { useEffect, useState, useMemo } from "react";
 import getData from "../../utils/getData";
-import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
-import ProjectItem from "./CustomerItem";
+import SupplierItem from "./SupplierItem";
 import Select from "../Select";
 
-const Customers = () => {
+const Suppliers = () => {
     const [list, setList] = useState([]);
     const [selectedName, setSelectedName] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
     const [isLoading, setIsLoading] = useState(true);
-    const [isFiltering, setIsFiltering] = useState(false);
-    const [page, setPage] = useState(1);
-    const [meta, setMeta] = useState({
-        current_page: 1,
-        last_page: 1,
-    });
 
-    const URL = `${import.meta.env.VITE_API_URL}contragents`;
+    const URL = `${import.meta.env.VITE_API_URL}suppliers`;
 
     const COLUMNS = [
         { label: "Наименование", key: "program_name" },
         { label: "Кол-во проектов, всего", key: "projects_total_count" },
         { label: "Кол-во активных проектов", key: "projects_active_count" },
-        { label: "Средняя оценка", key: "average_score" },
-        { label: "Бюджет проектов, млрд руб.", key: "projects_total_budget" },
-        { label: "Выручка, млн руб.", key: "revenue_total" },
-        { label: "Получено оплат, млн руб.", key: "income_total" },
+        { label: "Роли", key: "role" },
         { label: "Статус", key: "status" },
     ];
 
-    const filteredCustomers = useMemo(() => {
+    const filteredList = useMemo(() => {
         return list.filter((customer) => {
             const matchName =
                 selectedName && selectedName !== "default"
@@ -71,35 +61,20 @@ const Customers = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        getData(`${URL}/?page=${page}`, { Accept: "application/json" })
+        getData(URL, { Accept: "application/json" })
             .then((response) => {
-                setList((prev) => [...prev, ...response.data.data]);
-                setMeta(response.data.meta);
+                setList((prev) => [...prev, ...response.data]);
             })
             .finally(() => setIsLoading(false));
-    }, [page]);
-
-    useEffect(() => {
-        selectedName === "default" && selectedStatus === "default"
-            ? setIsFiltering(false)
-            : setIsFiltering(true);
-    }, [selectedName, selectedStatus]);
-
-    const loaderRef = useInfiniteScroll({
-        isLoading,
-        meta,
-        setPage,
-        isFiltering,
-    });
+    }, []);
 
     return (
         <main className="page">
             <div className="container py-8">
                 <div className="flex justify-between items-center gap-6 mb-8">
                     <h1 className="text-3xl font-medium">
-                        Реестр заказчиков{" "}
-                        {filteredCustomers.length > 0 &&
-                            `(${filteredCustomers.length})`}
+                        Реестр подрядчиков{" "}
+                        {filteredList.length > 0 && `(${filteredList.length})`}
                     </h1>
 
                     <div className="flex items-center gap-6">
@@ -108,7 +83,7 @@ const Customers = () => {
                                 className={
                                     "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
                                 }
-                                title={"Заказчик"}
+                                title={"Подрядчик"}
                                 items={nameOptions}
                                 onChange={(evt) => {
                                     setSelectedName(evt.target.value);
@@ -153,9 +128,9 @@ const Customers = () => {
                         </thead>
 
                         <tbody>
-                            {filteredCustomers.length > 0 &&
-                                filteredCustomers.map((item) => (
-                                    <ProjectItem
+                            {filteredList.length > 0 &&
+                                filteredList.map((item) => (
+                                    <SupplierItem
                                         key={item.id}
                                         props={item}
                                         columns={COLUMNS}
@@ -164,7 +139,6 @@ const Customers = () => {
                         </tbody>
                     </table>
 
-                    <div ref={loaderRef} className="h-4" />
                     {isLoading && <div className="mt-4">Загрузка...</div>}
                 </div>
             </div>
@@ -172,4 +146,4 @@ const Customers = () => {
     );
 };
 
-export default Customers;
+export default Suppliers;

@@ -1,10 +1,9 @@
 const CustomerProjectItem = ({
     name,
-    industry_name,
     project_budget,
     implementation_period,
     implementation_period_string,
-    industry
+    industry,
 }) => {
     return (
         <li className="grid items-center grid-cols-[1fr_25%_1fr] gap-3">

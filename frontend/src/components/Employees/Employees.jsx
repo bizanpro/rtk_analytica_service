@@ -3,7 +3,7 @@ import getData from "../../utils/getData";
 import EmployeeItem from "./EmployeeItem";
 
 const Employees = () => {
-    const [employees, setEmployees] = useState([]);
+    const [list, setList] = useState([]);
     const [selectedType, setSelectedType] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
 
@@ -18,7 +18,7 @@ const Employees = () => {
     ];
 
     const filteredEmployees = useMemo(() => {
-        const result = employees.filter((employee) => {
+        const result = list.filter((employee) => {
             return (
                 (selectedType !== "default"
                     ? employee.is_staff === (selectedType === "true")
@@ -30,13 +30,13 @@ const Employees = () => {
         });
 
         return result;
-    }, [employees, selectedType, selectedStatus]);
+    }, [list, selectedType, selectedStatus]);
 
     useEffect(() => {
         getData(`${import.meta.env.VITE_API_URL}physical-persons`).then(
             (response) => {
                 if (response.status == 200) {
-                    setEmployees(response.data);
+                    setList(response.data);
                 }
             }
         );

@@ -6,17 +6,17 @@ import handleStatus from "../../utils/handleStatus";
 
 import { ToastContainer, toast } from "react-toastify";
 
-import CustomerProjectItem from "./CustomerProjectItem";
+import CustomerProjectItem from "../CustomerCard/CustomerProjectItem";
 import FilledExecutorBlock from "../ExecutorBlock/FilledExecutorBlock";
 import ProjectStatisticsBlock from "../ProjectCard/ProjectStatisticsBlock";
 import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
 
 import "react-toastify/dist/ReactToastify.css";
 
-const CustomerCard = () => {
+const SupplierCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}contragents`;
-    const { contragentId } = useParams();
-    const [customerData, setEmployeeData] = useState({});
+    const { supplierId } = useParams();
+    const [supplierData, setSupplierData] = useState({});
     const [formFields, setFormFields] = useState({});
     const [mode, setMode] = useState("read");
     const [reports, setReports] = useState([]); // История проекта
@@ -29,11 +29,11 @@ const CustomerCard = () => {
 
     const handleInputChange = (e, name) => {
         setFormFields((prev) => ({ ...prev, [name]: e.target.value }));
-        setEmployeeData((prev) => ({ ...prev, [name]: e.target.value }));
+        setSupplierData((prev) => ({ ...prev, [name]: e.target.value }));
     };
 
     const getResponsiblePesons = () => {
-        getData(`${URL}/${contragentId}/responsible-persons`, {
+        getData(`${URL}/${supplierId}/responsible-persons`, {
             Accept: "application/json",
         }).then((response) => {
             setResponsiblePersons(response.data);
@@ -41,10 +41,10 @@ const CustomerCard = () => {
     };
 
     const getCustomer = () => {
-        getData(`${URL}/${contragentId}`, {
+        getData(`${URL}/${supplierId}`, {
             Accept: "application/json",
         }).then((response) => {
-            setEmployeeData(response.data);
+            setSupplierData(response.data);
             setProjects(response.data.projects);
         });
     };
@@ -55,7 +55,7 @@ const CustomerCard = () => {
             position: "top-center",
         });
 
-        postData("PATCH", `${URL}/${contragentId}`, formFields)
+        postData("PATCH", `${URL}/${supplierId}`, formFields)
             .then((response) => {
                 if (response?.ok && showMessage) {
                     toast.update(query, {
@@ -94,9 +94,9 @@ const CustomerCard = () => {
     };
 
     useEffect(() => {
-        if (contragentId) {
+        if (supplierId) {
             getCustomer();
-            getResponsiblePesons();
+            // getResponsiblePesons();
         }
     }, []);
 
@@ -114,11 +114,11 @@ const CustomerCard = () => {
                             <div className="flex items-center gap-10">
                                 <div className="flex items-center gap-3">
                                     <div className="text-3xl font-medium w-full">
-                                        {customerData?.program_name}
+                                        {supplierData?.program_name}
                                     </div>
 
                                     <span className="whitespace-nowrap text-green-500">
-                                        {handleStatus(customerData?.status)}
+                                        {handleStatus(supplierData?.status)}
                                     </span>
                                 </div>
                             </div>
@@ -164,7 +164,7 @@ const CustomerCard = () => {
                         </nav>
                     </div>
 
-                    <div className="grid grid-cols-3 mt-15 gap-10 flex-grow">
+                    <div className="grid grid-cols-[35%_55%] justify-between mt-15 gap-10 flex-grow">
                         <div className="flex flex-col">
                             <div className="grid gap-5 mb-5">
                                 <div className="flex flex-col gap-2">
@@ -183,7 +183,7 @@ const CustomerCard = () => {
                                             )
                                         }
                                         value={
-                                            customerData?.head_office_address ||
+                                            supplierData?.head_office_address ||
                                             ""
                                         }
                                         disabled={mode == "read" ? true : false}
@@ -200,7 +200,7 @@ const CustomerCard = () => {
                                             type="text"
                                             placeholder="Введите адрес сайта компании"
                                             value={
-                                                customerData?.company_website
+                                                supplierData?.company_website
                                             }
                                             onChange={(e) =>
                                                 handleInputChange(
@@ -214,50 +214,6 @@ const CustomerCard = () => {
                                         />
                                     </div>
                                 </div>
-                            </div>
-
-                            <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        Ключевые лица Заказчика
-                                    </span>
-                                </div>
-
-                                <div className="border-2 border-gray-300 py-5 px-3 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                    <ul className="grid gap-5">
-                                        {responsiblePersons.length > 0 &&
-                                            responsiblePersons.map((person) => (
-                                                <FilledExecutorBlock
-                                                    key={person.id}
-                                                    contanct={person}
-                                                />
-                                            ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col">
-                            <div className="flex flex-col gap-2 mb-5">
-                                <span className="text-gray-400">
-                                    Краткое описание
-                                </span>
-                                <textarea
-                                    className="border-2 border-gray-300 p-5 min-h-[170px] max-h-[170px]"
-                                    style={{ resize: "none" }}
-                                    placeholder="Заполните описание"
-                                    type="text"
-                                    disabled={mode == "read" ? true : false}
-                                    value={
-                                        customerData?.description_short || ""
-                                    }
-                                    onChange={(e) =>
-                                        handleInputChange(
-                                            e,
-                                            "description_short"
-                                        )
-                                    }
-                                />
                             </div>
 
                             <div className="flex flex-col gap-2 flex-grow">
@@ -305,7 +261,36 @@ const CustomerCard = () => {
                                 />
                             ) : (
                                 <>
-                                    <ProjectStatisticsBlock />
+                                    <div className="grid grid-cols-2 gap-5">
+                                        <div className="flex flex-col gap-2 mb-5">
+                                            <span className="text-gray-400">
+                                                Краткое описание
+                                            </span>
+                                            <textarea
+                                                className="border-2 border-gray-300 p-5 min-h-[170px] max-h-[170px]"
+                                                style={{ resize: "none" }}
+                                                placeholder="Заполните описание"
+                                                type="text"
+                                                disabled={
+                                                    mode == "read"
+                                                        ? true
+                                                        : false
+                                                }
+                                                value={
+                                                    supplierData?.description_short ||
+                                                    ""
+                                                }
+                                                onChange={(e) =>
+                                                    handleInputChange(
+                                                        e,
+                                                        "description_short"
+                                                    )
+                                                }
+                                            />
+                                        </div>
+
+                                        <ProjectStatisticsBlock />
+                                    </div>
 
                                     <div className="flex flex-col gap-2 flex-grow">
                                         <div className="flex items-center gap-2">
@@ -382,4 +367,4 @@ const CustomerCard = () => {
     );
 };
 
-export default CustomerCard;
+export default SupplierCard;
