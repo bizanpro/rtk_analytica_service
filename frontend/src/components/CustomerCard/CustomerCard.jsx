@@ -10,6 +10,8 @@ import CustomerProjectItem from "./CustomerProjectItem";
 import FilledExecutorBlock from "../ExecutorBlock/FilledExecutorBlock";
 import ProjectStatisticsBlock from "../ProjectCard/ProjectStatisticsBlock";
 import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
+import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
+import CardReportsListItem from "../CardReportsListItem";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -21,9 +23,15 @@ const CustomerCard = () => {
     const [mode, setMode] = useState("read");
     const [reports, setReports] = useState([]); // История проекта
     const [projects, setProjects] = useState([]); // Проекты
+    const [projectData, setProjectData] = useState({
+        id: "",
+        name: "",
+        industry: "",
+    }); // Данные проекта для отображения в колонке отчетов
     const [responsiblePersons, setResponsiblePersons] = useState([]); // Ключевые лица Заказчика
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
     const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
+    const [reportEditorName, setReportEditorName] = useState("");
 
     let query;
 
@@ -32,21 +40,38 @@ const CustomerCard = () => {
         setEmployeeData((prev) => ({ ...prev, [name]: e.target.value }));
     };
 
-    const getResponsiblePesons = () => {
-        getData(`${URL}/${contragentId}/responsible-persons`, {
-            Accept: "application/json",
-        }).then((response) => {
-            setResponsiblePersons(response.data);
-        });
-    };
-
+    // Получаем данные заказчика и его проекты
     const getCustomer = () => {
         getData(`${URL}/${contragentId}`, {
             Accept: "application/json",
         }).then((response) => {
-            setEmployeeData(response.data);
-            setProjects(response.data.projects);
+            if (response.status == 200) {
+                setEmployeeData(response.data);
+                setProjects(response.data.projects);
+            }
         });
+    };
+
+    // Получаем ключевые лица
+    const getResponsiblePesons = () => {
+        getData(`${URL}/${contragentId}/responsible-persons`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status == 200) {
+                setResponsiblePersons(response.data);
+            }
+        });
+    };
+
+    // Получаем отчеты по выбранному проекту
+    const getReports = (id) => {
+        getData(`${import.meta.env.VITE_API_URL}projects/${id}/reports`).then(
+            (response) => {
+                if (response?.status == 200) {
+                    setReports(response.data);
+                }
+            }
+        );
     };
 
     const updateCustomer = async (showMessage = true) => {
@@ -91,6 +116,29 @@ const CustomerCard = () => {
                     position: "top-center",
                 });
             });
+    };
+
+    const openReportEditor = (id) => {
+        setReportId(id);
+        if (id) {
+            setReportWindowsState(true);
+        }
+    };
+
+    // Принудительное открытие окна редактирования заключения по отчёту
+    const openSubReportEditor = (id) => {
+        setReportWindowsState(false);
+        getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
+            (response) => {
+                if (response?.status == 200) {
+                    setReportData(response.data);
+                    setReportId(id);
+                    if (id) {
+                        setReportEditorState(true);
+                    }
+                }
+            }
+        );
     };
 
     useEffect(() => {
@@ -279,9 +327,9 @@ const CustomerCard = () => {
                                         Проекты ({projects.length})
                                     </span>
                                 </div>
-                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                    <ul className="grid gap-3">
-                                        <li className="grid items-center grid-cols-[1fr_20%_1fr] gap-3 mb-2 text-gray-400">
+                                <div className="border-2 border-gray-300 py-5 px-2 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                    <ul className="grid gap-5">
+                                        <li className="grid items-center grid-cols-[1fr_20%_1fr] gap-3 text-gray-400 px-2">
                                             <span>Проект</span>
                                             <span>Бюджет</span>
                                             <span>Период реализации</span>
@@ -292,6 +340,11 @@ const CustomerCard = () => {
                                                 <CustomerProjectItem
                                                     key={project.id}
                                                     {...project}
+                                                    setProjectData={
+                                                        setProjectData
+                                                    }
+                                                    projectData={projectData}
+                                                    getReports={getReports}
                                                 />
                                             ))}
                                     </ul>
@@ -314,7 +367,7 @@ const CustomerCard = () => {
                                     projectId={projectId}
                                     setReportId={setReportId}
                                     getProject={getProject}
-                                    mode={mode}
+                                    mode={"read"}
                                 />
                             ) : (
                                 <>
@@ -330,34 +383,32 @@ const CustomerCard = () => {
                                         <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
                                             {!reportWindowsState ? (
                                                 <ul className="grid gap-3">
-                                                    <li className="grid items-center grid-cols-[25%_18%_25%_18%] gap-3 mb-2 text-gray-400">
+                                                    <li className="grid items-center grid-cols-[1fr_1fr_18%_1fr] gap-3 mb-2 text-gray-400">
+                                                        <span>Проект</span>
                                                         <span>Отчет</span>
-                                                        <span>Статус</span>
-                                                        <span>
-                                                            Период выполнения
+                                                        <span className="block text-center">
+                                                            Статус
                                                         </span>
                                                         <span>
-                                                            Общая оценка
+                                                            Период выполнения
                                                         </span>
                                                     </li>
 
                                                     {reports.length > 0 &&
                                                         reports.map(
                                                             (report, index) => (
-                                                                <ProjectReportItem
+                                                                <CardReportsListItem
                                                                     key={
                                                                         report.id ||
                                                                         index
                                                                     }
                                                                     {...report}
+                                                                    {...projectData}
                                                                     setReportEditorState={
                                                                         setReportEditorState
                                                                     }
                                                                     setReportEditorName={
                                                                         setReportEditorName
-                                                                    }
-                                                                    deleteReport={
-                                                                        deleteReport
                                                                     }
                                                                     openReportEditor={
                                                                         openReportEditor
@@ -365,7 +416,9 @@ const CustomerCard = () => {
                                                                     openSubReportEditor={
                                                                         openSubReportEditor
                                                                     }
-                                                                    mode={mode}
+                                                                    mode={
+                                                                        "read"
+                                                                    }
                                                                 />
                                                             )
                                                         )}
@@ -380,7 +433,7 @@ const CustomerCard = () => {
                                                     updateReport={updateReport}
                                                     reportId={reportId}
                                                     setReportId={setReportId}
-                                                    mode={mode}
+                                                    mode={"read"}
                                                 />
                                             )}
                                         </div>

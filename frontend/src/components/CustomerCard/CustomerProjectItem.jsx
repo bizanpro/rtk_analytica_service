@@ -1,12 +1,24 @@
 const CustomerProjectItem = ({
+    id,
     name,
     project_budget,
     implementation_period,
     implementation_period_string,
     industry,
+    getReports,
+    setProjectData,
+    projectData,
 }) => {
     return (
-        <li className="grid items-center grid-cols-[1fr_25%_1fr] gap-3">
+        <li
+            className={`p-2 grid items-center grid-cols-[1fr_25%_1fr] gap-3 cursor-pointer border-2 transition-all ${
+                projectData.id === id ? "border-gray-300" : "border-transparent"
+            }`}
+            onClick={() => {
+                getReports(id);
+                setProjectData({ id, name, industry });
+            }}
+        >
             <div className="flex flex-col">
                 <div className="text-lg">{name}</div>
                 <span className="text-gray-400">{industry}</span>

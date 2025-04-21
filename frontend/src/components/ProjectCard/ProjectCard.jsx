@@ -130,53 +130,62 @@ const ProjectCard = () => {
     };
 
     // Получение отраслей
-    const fetchIndustries = async () => {
-        const response = await getData(
-            `${import.meta.env.VITE_API_URL}industries`,
-            {
-                Accept: "application/json",
+    const fetchIndustries = () => {
+        getData(`${import.meta.env.VITE_API_URL}industries`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response?.status == 200) {
+                setIndustries(response.data.data);
             }
-        );
-        setIndustries(response.data.data);
+        });
     };
 
     // Получение заказчика
-    const fetchContragents = async () => {
-        const response = await getData(
-            `${import.meta.env.VITE_API_URL}contragents/?all=true`,
-            {
-                Accept: "application/json",
+    const fetchContragents = () => {
+        getData(`${import.meta.env.VITE_API_URL}contragents/?all=true`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response?.status == 200) {
+                setContragents(response.data.data);
             }
-        );
-        setContragents(response.data.data);
+        });
     };
 
     // Получение банков
-    const fetchBanks = async () => {
-        const response = await getData(`${import.meta.env.VITE_API_URL}banks`);
-        setBanks(response.data.data);
+    const fetchBanks = () => {
+        getData(`${import.meta.env.VITE_API_URL}banks`).then((response) => {
+            if (response?.status == 200) {
+                setBanks(response.data.data);
+            }
+        });
     };
 
     // Получение договоров
-    const fetchContracts = async () => {
+    const fetchContracts = () => {
         if (projectData.contragent_id) {
-            const response = await getData(
+            getData(
                 `${import.meta.env.VITE_API_URL}contragents/${
                     projectData.contragent_id
                 }/contracts`
-            );
-            setContracts(response.data);
+            ).then((response) => {
+                if (response?.status == 200) {
+                    setContracts(response.data);
+                }
+            });
         } else {
             alert("Необходимо назначить заказчика");
         }
     };
 
     // Получение отчётов
-    const getReports = async () => {
-        const response = await getData(
+    const getReports = () => {
+        getData(
             `${import.meta.env.VITE_API_URL}projects/${projectId}/reports`
-        );
-        setReports(response.data);
+        ).then((response) => {
+            if (response?.status == 200) {
+                setReports(response.data);
+            }
+        });
     };
 
     // Получение команды проекта
@@ -413,7 +422,7 @@ const ProjectCard = () => {
         }
     };
 
-    // Принудительно отркрытие окна редактирования заключения по отчёту
+    // Принудительное открытие окна редактирования заключения по отчёту
     const openSubReportEditor = (id) => {
         setReportWindowsState(false);
         getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
