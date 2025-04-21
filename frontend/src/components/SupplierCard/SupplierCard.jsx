@@ -40,9 +40,7 @@ const SupplierCard = () => {
     //     });
     // };
 
-    console.log(`${URL}/${supplierId}`)
-
-    const getData = () => {
+    const fetchData = () => {
         getData(`${URL}/${supplierId}`, {
             Accept: "application/json",
         }).then((response) => {
@@ -97,7 +95,7 @@ const SupplierCard = () => {
 
     useEffect(() => {
         if (supplierId) {
-            getData();
+            fetchData();
             // getResponsiblePesons();
         }
     }, []);
@@ -119,7 +117,20 @@ const SupplierCard = () => {
                                         {supplierData?.program_name}
                                     </div>
 
-                                    <span className="whitespace-nowrap text-green-500">
+                                    <span
+                                        className={`
+                                            whitespace-nowrap 
+                                                ${
+                                                    supplierData?.status ===
+                                                    "active"
+                                                        ? "text-green-500"
+                                                        : supplierData?.status ===
+                                                          "completed"
+                                                        ? "text-black"
+                                                        : "text-gray-300"
+                                                }
+                                        `}
+                                    >
                                         {handleStatus(supplierData?.status)}
                                     </span>
                                 </div>

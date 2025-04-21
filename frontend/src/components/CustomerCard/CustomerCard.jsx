@@ -117,7 +117,20 @@ const CustomerCard = () => {
                                         {customerData?.program_name}
                                     </div>
 
-                                    <span className="whitespace-nowrap text-green-500">
+                                    <span
+                                        className={`
+                                            whitespace-nowrap 
+                                                ${
+                                                    customerData?.status ===
+                                                    "active"
+                                                        ? "text-green-500"
+                                                        : customerData?.status ===
+                                                          "completed"
+                                                        ? "text-black"
+                                                        : "text-gray-300"
+                                                }
+                                        `}
+                                    >
                                         {handleStatus(customerData?.status)}
                                     </span>
                                 </div>

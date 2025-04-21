@@ -151,29 +151,41 @@ const EmployeeCard = () => {
             "PATCH",
             `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
             employeeData
-        ).then((response) => {
-            if (response?.ok) {
-                toast.update(query, {
-                    render: "Успешно обновлено!",
-                    type: "success",
-                    containerId: "employee",
-                    isLoading: false,
-                    autoClose: 1200,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-            } else {
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: "Успешно обновлено!",
+                        type: "success",
+                        containerId: "employee",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                } else {
+                    toast.error("Ошибка обновления данных", {
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                        containerId: "employee",
+                    });
+                }
+            })
+            .catch(() => {
+                toast.dismiss(query);
                 toast.error("Ошибка обновления данных", {
+                    containerId: "employee",
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
                     position: "top-center",
-                    containerId: "employee",
                 });
-            }
-        });
+            });
     };
 
     // Получаем сотрудника
@@ -235,7 +247,7 @@ const EmployeeCard = () => {
                   load_percentage: +personalWorkloadData?.load_percentage,
                   year: +selectedPesonalYear,
                   month: +selectedPesonalMonth,
-                  project_id: +personalWorkloadData?.project_id,
+                  project_id: personalWorkloadData?.project_id,
               };
 
         postData(
@@ -244,30 +256,43 @@ const EmployeeCard = () => {
                 import.meta.env.VITE_API_URL
             }physical-persons/${employeeId}/personal-workload`,
             data
-        ).then((response) => {
-            if (response?.ok) {
-                personalWorkloadFilter();
-                toast.update(query, {
-                    render: "Успешно обновлено!",
-                    type: "success",
-                    containerId: "employee",
-                    isLoading: false,
-                    autoClose: 1200,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-            } else {
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    personalWorkloadFilter();
+                    getWorkloadSummary();
+                    toast.update(query, {
+                        render: "Успешно обновлено!",
+                        type: "success",
+                        containerId: "employee",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                } else {
+                    toast.error("Ошибка обновления данных", {
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                        containerId: "employee",
+                    });
+                }
+            })
+            .catch(() => {
+                toast.dismiss(query);
                 toast.error("Ошибка обновления данных", {
+                    containerId: "employee",
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
                     position: "top-center",
-                    containerId: "employee",
                 });
-            }
-        });
+            });
     };
 
     useEffect(() => {

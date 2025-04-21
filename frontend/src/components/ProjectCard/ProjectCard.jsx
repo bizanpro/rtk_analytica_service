@@ -618,7 +618,20 @@ const ProjectCard = () => {
                                     disabled={mode == "read" ? true : false}
                                 />
 
-                                <span className="text-green-500">
+                                <span
+                                    className={`
+                                            whitespace-nowrap 
+                                                ${
+                                                    projectData?.status ===
+                                                    "active"
+                                                        ? "text-green-500"
+                                                        : projectData?.status ===
+                                                          "completed"
+                                                        ? "text-black"
+                                                        : "text-gray-300"
+                                                }
+                                        `}
+                                >
                                     {handleStatus(projectData?.status)}
                                 </span>
                             </div>
