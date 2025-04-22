@@ -81,7 +81,7 @@ const CustomerCard = () => {
     };
 
     // Получение договоров
-    const fetchContracts = () => {
+    const getContracts = () => {
         getData(
             `${
                 import.meta.env.VITE_API_URL
@@ -138,11 +138,6 @@ const CustomerCard = () => {
             });
     };
 
-    // Форматирование даты
-    const formatDate = (date) => {
-        return new Date(date).toLocaleDateString("ru-RU");
-    };
-
     // Открытие окна отчёта
     const openReportEditor = (id) => {
         setReportId(id);
@@ -152,20 +147,7 @@ const CustomerCard = () => {
     };
 
     // Обновляем отчет для открытия заключения
-    const updateReport = (data) => {
-        if (data.budget_in_billions) {
-            data.budget_in_billions = data.budget_in_billions.replace(",", ".");
-        }
-
-        data.report_period = `${formatDate(
-            data.report_period.start
-        )} - ${formatDate(data.report_period.end)}`;
-        data.implementation_period = `${formatDate(
-            data.implementation_period.start
-        )} - ${formatDate(data.implementation_period.end)}`;
-        data.execution_start_date = formatDate(data.execution_period.start);
-        data.execution_end_date = formatDate(data.execution_period.end);
-
+    const openReportConclusion = (data) => {
         data.project_id = projectData.id;
 
         setReportData(data);
@@ -196,7 +178,7 @@ const CustomerCard = () => {
         if (contragentId) {
             getCustomer();
             getResponsiblePesons();
-            fetchContracts();
+            getContracts();
         }
     }, []);
 
@@ -480,7 +462,9 @@ const CustomerCard = () => {
                                                         setReportWindowsState
                                                     }
                                                     contracts={contracts}
-                                                    updateReport={updateReport}
+                                                    updateReport={
+                                                        openReportConclusion
+                                                    }
                                                     reportId={reportId}
                                                     setReportId={setReportId}
                                                     mode={"read"}

@@ -7,9 +7,8 @@ import handleStatus from "../../utils/handleStatus";
 import { ToastContainer, toast } from "react-toastify";
 
 import CustomerProjectItem from "../CustomerCard/CustomerProjectItem";
-import FilledExecutorBlock from "../ExecutorBlock/FilledExecutorBlock";
-import ProjectStatisticsBlock from "../ProjectCard/ProjectStatisticsBlock";
 import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
+import CardReportsListItem from "../CardReportsListItem";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -21,9 +20,17 @@ const SupplierCard = () => {
     const [mode, setMode] = useState("read");
     const [reports, setReports] = useState([]); // История проекта
     const [projects, setProjects] = useState([]); // Проекты
-    const [responsiblePersons, setResponsiblePersons] = useState([]); // Ключевые лица Заказчика
+    const [projectData, setProjectData] = useState({
+        id: "",
+        name: "",
+        industry: "",
+    }); // Данные проекта для отображения в колонке отчетов
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
     const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
+    const [reportEditorName, setReportEditorName] = useState(""); // Имя отчета в заключении
+    const [reportId, setReportId] = useState(null);
+    const [contracts, setContracts] = useState([]);
+    const [reportData, setReportData] = useState({});
 
     let query;
 
@@ -32,14 +39,32 @@ const SupplierCard = () => {
         setSupplierData((prev) => ({ ...prev, [name]: e.target.value }));
     };
 
-    // const getResponsiblePesons = () => {
-    //     getData(`${URL}/${supplierId}/responsible-persons`, {
-    //         Accept: "application/json",
-    //     }).then((response) => {
-    //         setResponsiblePersons(response.data);
-    //     });
-    // };
+    // Получаем отчеты по выбранному проекту
+    const getReports = (id) => {
+        getData(`${import.meta.env.VITE_API_URL}suppliers/${id}/reports`).then(
+            (response) => {
+                if (response?.status == 200) {
+                    setReports(response.data);
+                    setReportWindowsState(false);
+                    setReportEditorState(false);
+                    setReportEditorName("");
+                }
+            }
+        );
+    };
 
+    // Получение договоров
+    const getContracts = () => {
+        getData(
+            `${import.meta.env.VITE_API_URL}contragents/${supplierId}/contracts`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setContracts(response.data);
+            }
+        });
+    };
+
+    // Получаем подрядчика и его проекты
     const fetchData = () => {
         getData(`${URL}/${supplierId}`, {
             Accept: "application/json",
@@ -49,7 +74,7 @@ const SupplierCard = () => {
         });
     };
 
-    const updateData = async (showMessage = true) => {
+    const updateData = (showMessage = true) => {
         query = toast.loading("Обновление", {
             containerId: "supplier",
             position: "top-center",
@@ -93,10 +118,46 @@ const SupplierCard = () => {
             });
     };
 
+    // Открытие окна отчёта
+    const openReportEditor = (id) => {
+        setReportId(id);
+        if (id) {
+            setReportWindowsState(true);
+        }
+    };
+
+    // Обновляем отчет для открытия заключения
+    const openReportConclusion = (data) => {
+        data.project_id = projectData.id;
+
+        setReportData(data);
+
+        if (Object.keys(data).length > 0) {
+            setReportWindowsState(false);
+            setReportEditorState(true);
+        }
+    };
+
+    // Принудительное открытие окна редактирования заключения по отчёту
+    const openSubReportEditor = (id) => {
+        setReportWindowsState(false);
+        getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
+            (response) => {
+                if (response?.status == 200) {
+                    setReportData(response.data);
+                    setReportId(id);
+                    if (id) {
+                        setReportEditorState(true);
+                    }
+                }
+            }
+        );
+    };
+
     useEffect(() => {
         if (supplierId) {
             fetchData();
-            // getResponsiblePesons();
+            getContracts();
         }
     }, []);
 
@@ -248,6 +309,11 @@ const SupplierCard = () => {
                                                 <CustomerProjectItem
                                                     key={project.id}
                                                     {...project}
+                                                    setProjectData={
+                                                        setProjectData
+                                                    }
+                                                    projectData={projectData}
+                                                    getReports={getReports}
                                                 />
                                             ))}
                                     </ul>
@@ -267,10 +333,9 @@ const SupplierCard = () => {
                                     }
                                     setReportEditorState={setReportEditorState}
                                     reportId={reportId}
-                                    projectId={projectId}
+                                    projectId={projectData.id}
                                     setReportId={setReportId}
-                                    getProject={getProject}
-                                    mode={mode}
+                                    mode={"read"}
                                 />
                             ) : (
                                 <>
@@ -421,20 +486,18 @@ const SupplierCard = () => {
                                                     {reports.length > 0 &&
                                                         reports.map(
                                                             (report, index) => (
-                                                                <ProjectReportItem
+                                                                <CardReportsListItem
                                                                     key={
                                                                         report.id ||
                                                                         index
                                                                     }
                                                                     {...report}
+                                                                    {...projectData}
                                                                     setReportEditorState={
                                                                         setReportEditorState
                                                                     }
                                                                     setReportEditorName={
                                                                         setReportEditorName
-                                                                    }
-                                                                    deleteReport={
-                                                                        deleteReport
                                                                     }
                                                                     openReportEditor={
                                                                         openReportEditor
@@ -442,7 +505,9 @@ const SupplierCard = () => {
                                                                     openSubReportEditor={
                                                                         openSubReportEditor
                                                                     }
-                                                                    mode={mode}
+                                                                    mode={
+                                                                        "read"
+                                                                    }
                                                                 />
                                                             )
                                                         )}
@@ -452,12 +517,13 @@ const SupplierCard = () => {
                                                     reportWindowsState={
                                                         setReportWindowsState
                                                     }
-                                                    sendReport={sendReport}
                                                     contracts={contracts}
-                                                    updateReport={updateReport}
+                                                    updateReport={
+                                                        openReportConclusion
+                                                    }
                                                     reportId={reportId}
                                                     setReportId={setReportId}
-                                                    mode={mode}
+                                                    mode={"read"}
                                                 />
                                             )}
                                         </div>
