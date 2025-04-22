@@ -291,9 +291,7 @@ const ProjectReportWindow = ({
                     }report-types?with-count=true`
                 ),
                 getData(`${import.meta.env.VITE_API_URL}physical-persons`),
-                getData(
-                    `${import.meta.env.VITE_API_URL}suppliers`
-                ),
+                getData(`${import.meta.env.VITE_API_URL}suppliers`),
                 getData(`${import.meta.env.VITE_API_URL}roles`),
                 getData(`${import.meta.env.VITE_API_URL}report-statuses`),
             ]);
@@ -587,18 +585,20 @@ const ProjectReportWindow = ({
                         </div>
                     )}
 
-                {hasNonNullFields && reportData["report_status_id"] == 4 && (
-                    <button
-                        type="button"
-                        className="border rounded-lg p-1 min-h-[32px] mt-auto"
-                        onClick={() => {
-                            updateReport(reportData, reportId, true);
-                        }}
-                        title="Редактировать заключение по отчёту"
-                    >
-                        Редактировать заключение по отчёту
-                    </button>
-                )}
+                {hasNonNullFields &&
+                    reportData["report_status_id"] == 4 &&
+                    mode == "edit" && (
+                        <button
+                            type="button"
+                            className="border rounded-lg p-1 min-h-[32px] mt-auto"
+                            onClick={() => {
+                                updateReport(reportData, reportId, true);
+                            }}
+                            title="Редактировать заключение по отчёту"
+                        >
+                            Редактировать заключение по отчёту
+                        </button>
+                    )}
             </div>
 
             <div className="grid gap-3 grid-cols-1">

@@ -31,7 +31,10 @@ const CustomerCard = () => {
     const [responsiblePersons, setResponsiblePersons] = useState([]); // Ключевые лица Заказчика
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
     const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
-    const [reportEditorName, setReportEditorName] = useState("");
+    const [reportEditorName, setReportEditorName] = useState(""); // Имя отчета в заключении
+    const [reportId, setReportId] = useState(null);
+    const [contracts, setContracts] = useState([]);
+    const [reportData, setReportData] = useState({});
 
     let query;
 
@@ -69,12 +72,29 @@ const CustomerCard = () => {
             (response) => {
                 if (response?.status == 200) {
                     setReports(response.data);
+                    setReportWindowsState(false);
+                    setReportEditorState(false);
+                    setReportEditorName("");
                 }
             }
         );
     };
 
-    const updateCustomer = async (showMessage = true) => {
+    // Получение договоров
+    const fetchContracts = () => {
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }contragents/${contragentId}/contracts`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setContracts(response.data);
+            }
+        });
+    };
+
+    // Обновление контрагента
+    const updateCustomer = (showMessage = true) => {
         query = toast.loading("Обновление", {
             containerId: "customer",
             position: "top-center",
@@ -118,10 +138,41 @@ const CustomerCard = () => {
             });
     };
 
+    // Форматирование даты
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString("ru-RU");
+    };
+
+    // Открытие окна отчёта
     const openReportEditor = (id) => {
         setReportId(id);
         if (id) {
             setReportWindowsState(true);
+        }
+    };
+
+    // Обновляем отчет для открытия заключения
+    const updateReport = (data) => {
+        if (data.budget_in_billions) {
+            data.budget_in_billions = data.budget_in_billions.replace(",", ".");
+        }
+
+        data.report_period = `${formatDate(
+            data.report_period.start
+        )} - ${formatDate(data.report_period.end)}`;
+        data.implementation_period = `${formatDate(
+            data.implementation_period.start
+        )} - ${formatDate(data.implementation_period.end)}`;
+        data.execution_start_date = formatDate(data.execution_period.start);
+        data.execution_end_date = formatDate(data.execution_period.end);
+
+        data.project_id = projectData.id;
+
+        setReportData(data);
+
+        if (Object.keys(data).length > 0) {
+            setReportWindowsState(false);
+            setReportEditorState(true);
         }
     };
 
@@ -145,6 +196,7 @@ const CustomerCard = () => {
         if (contragentId) {
             getCustomer();
             getResponsiblePesons();
+            fetchContracts();
         }
     }, []);
 
@@ -364,9 +416,8 @@ const CustomerCard = () => {
                                     }
                                     setReportEditorState={setReportEditorState}
                                     reportId={reportId}
-                                    projectId={projectId}
+                                    projectId={projectData.id}
                                     setReportId={setReportId}
-                                    getProject={getProject}
                                     mode={"read"}
                                 />
                             ) : (
@@ -428,7 +479,6 @@ const CustomerCard = () => {
                                                     reportWindowsState={
                                                         setReportWindowsState
                                                     }
-                                                    sendReport={sendReport}
                                                     contracts={contracts}
                                                     updateReport={updateReport}
                                                     reportId={reportId}
