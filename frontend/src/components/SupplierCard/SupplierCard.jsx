@@ -8,6 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 import CustomerProjectItem from "../CustomerCard/CustomerProjectItem";
 import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
+import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -41,16 +42,15 @@ const SupplierCard = () => {
 
     // Получаем отчеты по выбранному проекту
     const getReports = (id) => {
-        getData(`${import.meta.env.VITE_API_URL}suppliers/${id}/reports`).then(
-            (response) => {
-                if (response?.status == 200) {
-                    setReports(response.data);
-                    setReportWindowsState(false);
-                    setReportEditorState(false);
-                    setReportEditorName("");
-                }
-            }
-        );
+        setReportWindowsState(false);
+        setReportEditorState(false);
+        setReportEditorName("");
+
+        const targetProject = projects.find((project) => project.id === id);
+
+        if (targetProject && targetProject.reports?.length > 0) {
+            setReports(targetProject.reports);
+        }
     };
 
     // Получение договоров
@@ -473,11 +473,12 @@ const SupplierCard = () => {
                                         <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
                                             {!reportWindowsState ? (
                                                 <ul className="grid gap-3">
-                                                    <li className="grid items-center grid-cols-5 gap-3 mb-2 text-gray-400">
+                                                    <li className="grid items-center grid-cols-4 gap-3 mb-2 text-gray-400">
                                                         <span>Проект</span>
-                                                        <span>Отчет</span>
-                                                        <span>Роль</span>
-                                                        <span>Статус</span>
+                                                        <span>Отчёт</span>
+                                                        <span>
+                                                            Статус / Роль
+                                                        </span>
                                                         <span>
                                                             Период выполнения
                                                         </span>
