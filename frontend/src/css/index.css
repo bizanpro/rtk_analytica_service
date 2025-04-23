@@ -41,7 +41,7 @@ button {
 .wrapper {
     position: relative;
     max-width: 100%;
-    min-width: 320px;
+    min-width: 1280px;
     min-height: 100%;
     margin: 0 auto;
     overflow: hidden;
