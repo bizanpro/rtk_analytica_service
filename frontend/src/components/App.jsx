@@ -13,6 +13,7 @@ import Customers from "./Customers/Customers";
 import CustomerCard from "./CustomerCard/CustomerCard";
 import Suppliers from "./Suppliers/Suppliers";
 import SupplierCard from "./SupplierCard/SupplierCard";
+import Reports from "./Reports/Reports";
 
 function App() {
     return (
@@ -36,6 +37,8 @@ function App() {
                         path="contragents/:contragentId"
                         element={<CustomerCard />}
                     />
+
+                    <Route path="reports" element={<Reports />} />
 
                     <Route path="employees" element={<Employees />} />
                     <Route

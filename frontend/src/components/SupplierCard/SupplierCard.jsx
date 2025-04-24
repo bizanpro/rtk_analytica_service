@@ -473,10 +473,10 @@ const SupplierCard = () => {
                                         <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
                                             {!reportWindowsState ? (
                                                 <ul className="grid gap-3">
-                                                    <li className="grid items-center grid-cols-4 gap-3 mb-2 text-gray-400">
+                                                    <li className="grid items-center grid-cols-[1fr_1fr_18%_1fr] gap-4 mb-2 text-gray-400">
                                                         <span>Проект</span>
                                                         <span>Отчёт</span>
-                                                        <span>
+                                                        <span className="text-center">
                                                             Статус / Роль
                                                         </span>
                                                         <span>
@@ -493,7 +493,7 @@ const SupplierCard = () => {
                                                                         index
                                                                     }
                                                                     {...report}
-                                                                    {...projectData}
+                                                                    projectData={projectData}
                                                                     setReportEditorState={
                                                                         setReportEditorState
                                                                     }
