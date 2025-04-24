@@ -44,7 +44,7 @@ const CustomerCard = () => {
     };
 
     // Получаем данные заказчика и его проекты
-    const getCustomer = () => {
+    const fetchData = () => {
         getData(`${URL}/${contragentId}`, {
             Accept: "application/json",
         }).then((response) => {
@@ -68,16 +68,15 @@ const CustomerCard = () => {
 
     // Получаем отчеты по выбранному проекту
     const getReports = (id) => {
-        getData(`${import.meta.env.VITE_API_URL}projects/${id}/reports`).then(
-            (response) => {
-                if (response?.status == 200) {
-                    setReports(response.data);
-                    setReportWindowsState(false);
-                    setReportEditorState(false);
-                    setReportEditorName("");
-                }
-            }
-        );
+        setReportWindowsState(false);
+        setReportEditorState(false);
+        setReportEditorName("");
+
+        const targetProject = projects.find((project) => project.id === id);
+
+        if (targetProject && targetProject.reports?.length > 0) {
+            setReports(targetProject.reports);
+        }
     };
 
     // Получение договоров
@@ -94,7 +93,7 @@ const CustomerCard = () => {
     };
 
     // Обновление контрагента
-    const updateCustomer = (showMessage = true) => {
+    const updateData = (showMessage = true) => {
         query = toast.loading("Обновление", {
             containerId: "customer",
             position: "top-center",
@@ -176,7 +175,7 @@ const CustomerCard = () => {
 
     useEffect(() => {
         if (contragentId) {
-            getCustomer();
+            fetchData();
             getResponsiblePesons();
             getContracts();
         }
@@ -224,7 +223,7 @@ const CustomerCard = () => {
                                     className="update-icon"
                                     title="Обновить данные сотрудника"
                                     onClick={() => {
-                                        updateCustomer();
+                                        updateData();
                                     }}
                                 ></button>
                             )}
@@ -436,7 +435,9 @@ const CustomerCard = () => {
                                                                         index
                                                                     }
                                                                     {...report}
-                                                                    {...projectData}
+                                                                    projectData={
+                                                                        projectData
+                                                                    }
                                                                     setReportEditorState={
                                                                         setReportEditorState
                                                                     }
