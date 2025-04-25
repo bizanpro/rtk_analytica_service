@@ -1,33 +1,50 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
+import getData from "../../utils/getData";
+
+import ReportItem from "./ReportItem";
 
 const Reports = () => {
+    const URL = `${import.meta.env.VITE_API_URL}reports`;
     const [activeTab, setActiveTab] = useState("projects");
+    const [isLoading, setIsLoading] = useState(true);
 
-    // const switchTab = (tab) => {};
+    const [reportsList, setReportsList] = useState([]);
+    const [managementList, setManagementList] = useState([]);
 
-    //   const sectorOptions = useMemo(() => {
-    //         const allSectors = list
-    //             .map((item) => item.industry)
-    //             .filter((industry) => industry !== null);
+    const getReports = () => {
+        getData(URL, { Accept: "application/json" })
+            .then((response) => {
+                if (response.status === 200) {
+                    setReportsList(response.data.reports);
+                }
+            })
+            .finally(() => setIsLoading(false));
+    };
 
-    //         return Array.from(new Set(allSectors));
-    //     }, [list]);
+    const COLUMNS = [
+        [
+            { label: "Отчёт", key: "name" },
+            { label: "Проект", key: "project" },
+            { label: "Заказкчик", key: "contragent" },
+            { label: "Банк", key: "creditors" },
+            { label: "Бюджет", key: "project_budget" },
+            { label: "Срок", key: "implementation_period" },
+            { label: "Руководитель проекта", key: "project_managers" },
+            { label: "Статус", key: "status" },
+            { label: "Период выполнения", key: "days" },
+        ],
+        [
+            { label: "Отчёт", key: "name" },
+            { label: "Отчётный месяц", key: "contragent" },
+            { label: "Отвественный", key: "creditors" },
+            { label: "Дата создания", key: "project_budget" },
+            { label: "Дата изменения", key: "implementation_period" },
+        ],
+    ];
 
-    //     // Заполняем селектор банков
-    //     const bankOptions = useMemo(() => {
-    //         const allBanks = list.flatMap((item) =>
-    //             item.creditors?.map((bank) => bank.name)
-    //         );
-    //         return Array.from(new Set(allBanks));
-    //     }, [list]);
-
-    //     // Заполняем селектор руководителей
-    //     const projectManagerOptions = useMemo(() => {
-    //         const allPM = list
-    //             .map((item) => item.manager)
-    //             .filter((manager) => manager !== null);
-    //         return Array.from(new Set(allPM));
-    //     }, [list]);
+    useEffect(() => {
+        getReports();
+    }, []);
 
     return (
         <main className="page">
@@ -44,8 +61,9 @@ const Reports = () => {
                                     : "border-transparent"
                             }`}
                             onClick={() => setActiveTab("projects")}
+                            title="Перейти на вкладку Проекты"
                         >
-                            Проекты ()
+                            Проекты ({reportsList.length})
                         </button>
                         <button
                             type="button"
@@ -55,8 +73,9 @@ const Reports = () => {
                                     : "border-transparent"
                             }`}
                             onClick={() => setActiveTab("management")}
+                            title="Перейти на вкладку Менеджмент"
                         >
-                            Менеджмент ()
+                            Менеджмент ({managementList.length})
                         </button>
                     </nav>
 
@@ -156,35 +175,48 @@ const Reports = () => {
                     <table className="table-auto w-full border-collapse border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
-                                {/* {COLUMNS.map(({ label, key }) => (
-                                    <th
-                                        className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
-                                        rowSpan="2"
-                                        key={key}
-                                    >
-                                        {label}
-                                    </th>
-                                ))} */}
+                                {COLUMNS[activeTab === "projects" ? 0 : 1].map(
+                                    ({ label, key }) => (
+                                        <th
+                                            className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
+                                            rowSpan="2"
+                                            key={key}
+                                        >
+                                            {label}
+                                        </th>
+                                    )
+                                )}
                             </tr>
                         </thead>
 
                         <tbody>
-                            {/* {isLoading ? (
+                            {isLoading ? (
                                 <tr>
                                     <td className="text-base px-4 py-2">
                                         Загрузка...
                                     </td>
                                 </tr>
-                            ) : (
-                                filteredProjects.length > 0 &&
-                                filteredProjects.map((item) => (
-                                    <ProjectItem
+                            ) : activeTab === "projects" ? (
+                                reportsList.length > 0 &&
+                                reportsList.map((item) => (
+                                    <ReportItem
                                         key={item.id}
+                                        activeTab={"projects"}
+                                        columns={COLUMNS[0]}
                                         props={item}
-                                        columns={COLUMNS}
                                     />
                                 ))
-                            )} */}
+                            ) : (
+                                managementList.length > 0 &&
+                                managementList.map((item) => (
+                                    <ReportItem
+                                        key={item.id}
+                                        activeTab={"management"}
+                                        columns={COLUMNS[1]}
+                                        props={item}
+                                    />
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
