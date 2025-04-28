@@ -13,6 +13,7 @@ const ProjectReportWindow = ({
     updateReport,
     setReportId,
     mode,
+    reportTitle,
 }) => {
     const [reportData, setReportData] = useState({
         report_status_id: 1,
@@ -383,6 +384,7 @@ const ProjectReportWindow = ({
 
     return (
         <div className="grid gap-6">
+            <div className="text-2xl w-full mb-3">{reportTitle}</div>
             <div className="grid gap-3 grid-cols-2">
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Тип отчёта</span>

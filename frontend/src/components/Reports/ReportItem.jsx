@@ -1,8 +1,15 @@
-const ReportItem = ({ columns, props }) => {
+const ReportItem = ({
+    columns,
+    props,
+    openReportEditor,
+    openSubReportEditor,
+}) => {
     return (
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
-            // onClick={handleRowClick}
+            onClick={() => {
+                openReportEditor(props);
+            }}
         >
             {columns.map(({ key }) => {
                 const value = props[key];
@@ -162,12 +169,18 @@ const ReportItem = ({ columns, props }) => {
             })}
 
             <td className="px-4 py-2.5 min-w-[80px]">
-                <button
-                    type="button"
-                    className="info-icon flex-none"
-                    style={{ height: "25px", width: "25px" }}
-                    title="Посмотреть заключение"
-                ></button>
+                {props.has_conclusion && (
+                    <button
+                        type="button"
+                        className="info-icon flex-none"
+                        style={{ height: "25px", width: "25px" }}
+                        title="Посмотреть заключение"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            openSubReportEditor(props.id);
+                        }}
+                    ></button>
+                )}
             </td>
         </tr>
     );

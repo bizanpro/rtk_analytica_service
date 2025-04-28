@@ -4,34 +4,12 @@ import getData from "../../utils/getData";
 import ReportItem from "./ReportItem";
 import ManagementItem from "./ManagementItem";
 
+import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
+import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
+
 const Reports = () => {
     const REPORTS_URL = `${import.meta.env.VITE_API_URL}reports`;
     const MANAGEMENT_URL = `${import.meta.env.VITE_API_URL}management-reports`;
-    const [activeTab, setActiveTab] = useState("projects");
-    const [isLoading, setIsLoading] = useState(true);
-
-    const [reportsList, setReportsList] = useState([]);
-    const [managementList, setManagementList] = useState([]);
-
-    const getReports = () => {
-        getData(REPORTS_URL, { Accept: "application/json" })
-            .then((response) => {
-                if (response.status === 200) {
-                    setReportsList(response.data.reports);
-                }
-            })
-            .finally(() => setIsLoading(false));
-    };
-
-    const getManagementReports = () => {
-        getData(MANAGEMENT_URL, { Accept: "application/json" })
-            .then((response) => {
-                if (response.status === 200) {
-                    setManagementList(response.data);
-                }
-            })
-            .finally(() => setIsLoading(false));
-    };
 
     const COLUMNS = [
         [
@@ -53,6 +31,92 @@ const Reports = () => {
             { label: "Дата изменения", key: "updated_at" },
         ],
     ];
+
+    const [activeTab, setActiveTab] = useState("projects");
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [reportsList, setReportsList] = useState([]);
+    const [managementList, setManagementList] = useState([]);
+
+    const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
+    const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
+    const [reportEditorName, setReportEditorName] = useState(""); // Имя отчета в заключении
+    const [reportId, setReportId] = useState(null);
+    const [contracts, setContracts] = useState([]);
+    const [reportData, setReportData] = useState({});
+
+    const getReports = () => {
+        getData(REPORTS_URL, { Accept: "application/json" })
+            .then((response) => {
+                if (response.status === 200) {
+                    setReportsList(response.data.reports);
+                }
+            })
+            .finally(() => setIsLoading(false));
+    };
+
+    const getManagementReports = () => {
+        getData(MANAGEMENT_URL, { Accept: "application/json" })
+            .then((response) => {
+                if (response.status === 200) {
+                    setManagementList(response.data);
+                }
+            })
+            .finally(() => setIsLoading(false));
+    };
+
+    // Получение договоров для детального отчёта
+    const getContracts = (contragentId) => {
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }contragents/${contragentId}/contracts`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setContracts(response.data);
+            }
+        });
+    };
+
+    // Открытие окна отчёта
+    const openReportEditor = (reportData) => {
+        getContracts(reportData.contragent?.id);
+        setReportId(reportData.id);
+
+        setReportEditorName(`${reportData.project?.name} / ${reportData.name}`);
+
+        if (reportData.id) {
+            setReportWindowsState(true);
+        }
+    };
+
+    // Обновляем отчет для открытия заключения
+    const openReportConclusion = (data) => {
+        data.project_id = data.project?.id;
+
+        setReportData(data);
+
+        if (Object.keys(data).length > 0) {
+            setReportWindowsState(false);
+            setReportEditorState(true);
+        }
+    };
+
+    // Принудительное открытие окна заключения по отчёту
+    const openSubReportEditor = (id) => {
+        setReportWindowsState(false);
+        getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
+            (response) => {
+                if (response?.status == 200) {
+                    setReportData(response.data);
+                    setReportId(id);
+                    if (id) {
+                        setReportEditorState(true);
+                    }
+                }
+            }
+        );
+    };
 
     useEffect(() => {
         getReports();
@@ -184,7 +248,7 @@ const Reports = () => {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto w-full pb-5">
+                <div className="overflow-x-auto w-full pb-5 relative">
                     <table className="table-auto w-full border-collapse border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
@@ -216,6 +280,10 @@ const Reports = () => {
                                         key={item.id}
                                         columns={COLUMNS[0]}
                                         props={item}
+                                        openReportEditor={openReportEditor}
+                                        openSubReportEditor={
+                                            openSubReportEditor
+                                        }
                                     />
                                 ))
                             ) : (
@@ -230,6 +298,44 @@ const Reports = () => {
                             )}
                         </tbody>
                     </table>
+
+                    {activeTab === "projects" && (
+                        <>
+                            {reportWindowsState && (
+                                <div className="bg-white border-2 border-gray-300 py-5 px-4 min-h-full max-h-[300px] overflow-y-auto absolute bottom-0 top-0 right-0 w-[38%]">
+                                    <ProjectReportWindow
+                                        reportWindowsState={
+                                            setReportWindowsState
+                                        }
+                                        contracts={contracts}
+                                        updateReport={openReportConclusion}
+                                        reportId={reportId}
+                                        setReportId={setReportId}
+                                        reportTitle={reportEditorName}
+                                        mode={"read"}
+                                    />
+                                </div>
+                            )}
+
+                            {reportEditorState && (
+                                <div className="bg-white border-2 border-gray-300 py-5 px-4 min-h-full max-h-[300px] overflow-y-auto absolute bottom-0 top-0 right-0 w-[38%]">
+                                    <ProjectReportEditor
+                                        reportData={reportData}
+                                        reportEditorName={reportEditorName}
+                                        setReportWindowsState={
+                                            setReportWindowsState
+                                        }
+                                        setReportEditorState={
+                                            setReportEditorState
+                                        }
+                                        reportId={reportId}
+                                        setReportId={setReportId}
+                                        mode={"read"}
+                                    />
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
                 {/* 
                 {popupState && (
