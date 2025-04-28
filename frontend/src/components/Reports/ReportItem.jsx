@@ -1,4 +1,4 @@
-const ReportItem = ({ activeTab, columns, props }) => {
+const ReportItem = ({ columns, props }) => {
     return (
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
@@ -160,6 +160,15 @@ const ReportItem = ({ activeTab, columns, props }) => {
                     }
                 }
             })}
+
+            <td className="px-4 py-2.5 min-w-[80px]">
+                <button
+                    type="button"
+                    className="info-icon flex-none"
+                    style={{ height: "25px", width: "25px" }}
+                    title="Посмотреть заключение"
+                ></button>
+            </td>
         </tr>
     );
 };

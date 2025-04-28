@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import getData from "../../utils/getData";
 
 import ReportItem from "./ReportItem";
+import ManagementItem from "./ManagementItem";
 
 const Reports = () => {
-    const URL = `${import.meta.env.VITE_API_URL}reports`;
+    const REPORTS_URL = `${import.meta.env.VITE_API_URL}reports`;
+    const MANAGEMENT_URL = `${import.meta.env.VITE_API_URL}management-reports`;
     const [activeTab, setActiveTab] = useState("projects");
     const [isLoading, setIsLoading] = useState(true);
 
@@ -12,10 +14,20 @@ const Reports = () => {
     const [managementList, setManagementList] = useState([]);
 
     const getReports = () => {
-        getData(URL, { Accept: "application/json" })
+        getData(REPORTS_URL, { Accept: "application/json" })
             .then((response) => {
                 if (response.status === 200) {
                     setReportsList(response.data.reports);
+                }
+            })
+            .finally(() => setIsLoading(false));
+    };
+
+    const getManagementReports = () => {
+        getData(MANAGEMENT_URL, { Accept: "application/json" })
+            .then((response) => {
+                if (response.status === 200) {
+                    setManagementList(response.data);
                 }
             })
             .finally(() => setIsLoading(false));
@@ -35,15 +47,16 @@ const Reports = () => {
         ],
         [
             { label: "Отчёт", key: "name" },
-            { label: "Отчётный месяц", key: "contragent" },
-            { label: "Отвественный", key: "creditors" },
-            { label: "Дата создания", key: "project_budget" },
-            { label: "Дата изменения", key: "implementation_period" },
+            { label: "Отчётный месяц", key: "report_month" },
+            { label: "Отвественный", key: "physical_person" },
+            { label: "Дата создания", key: "created_at" },
+            { label: "Дата изменения", key: "updated_at" },
         ],
     ];
 
     useEffect(() => {
         getReports();
+        getManagementReports();
     }, []);
 
     return (
@@ -201,7 +214,6 @@ const Reports = () => {
                                 reportsList.map((item) => (
                                     <ReportItem
                                         key={item.id}
-                                        activeTab={"projects"}
                                         columns={COLUMNS[0]}
                                         props={item}
                                     />
@@ -209,9 +221,8 @@ const Reports = () => {
                             ) : (
                                 managementList.length > 0 &&
                                 managementList.map((item) => (
-                                    <ReportItem
+                                    <ManagementItem
                                         key={item.id}
-                                        activeTab={"management"}
                                         columns={COLUMNS[1]}
                                         props={item}
                                     />
