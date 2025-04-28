@@ -42,11 +42,16 @@ button {
     position: relative;
     max-width: 100%;
     min-width: 1280px;
-    min-height: 100%;
+    min-height: 100vh;
     margin: 0 auto;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+}
+
+.page {
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .container {
@@ -54,12 +59,6 @@ button {
     margin: 0 auto;
     padding-left: 20px;
     padding-right: 20px;
-}
-
-.page {
-    -webkit-box-flex: 1;
-    -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
 }
 
 .image {

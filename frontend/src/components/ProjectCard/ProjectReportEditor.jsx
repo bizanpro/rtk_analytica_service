@@ -103,7 +103,7 @@ const ProjectReportEditor = ({
     };
 
     return (
-        <div className="border border-gray-400 py-5 px-3">
+        <div className="border-2 border-gray-300 py-5 px-3">
             <ToastContainer containerId="report" />
 
             <div className="text-2xl w-full mb-3">{reportEditorName}</div>

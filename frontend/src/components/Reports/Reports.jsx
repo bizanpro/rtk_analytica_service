@@ -6,6 +6,9 @@ import ManagementItem from "./ManagementItem";
 
 import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
 import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
+import ManagementReportEditor from "../ManagementReportEditor";
+
+import Popup from "../Popup/Popup";
 
 const Reports = () => {
     const REPORTS_URL = `${import.meta.env.VITE_API_URL}reports`;
@@ -38,12 +41,26 @@ const Reports = () => {
     const [reportsList, setReportsList] = useState([]);
     const [managementList, setManagementList] = useState([]);
 
+    const [managementEditorState, setManagementEditorState] = useState(false); // Конструктор отчёта
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
     const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
     const [reportEditorName, setReportEditorName] = useState(""); // Имя отчета в заключении
     const [reportId, setReportId] = useState(null);
     const [contracts, setContracts] = useState([]);
     const [reportData, setReportData] = useState({});
+
+    const [popupState, setPopupState] = useState(false);
+
+    const [managementReportData, setManagementReportData] = useState({
+        physical_person_id: 1,
+        report_month: "",
+        status_summary: "",
+        problems: "",
+        prospects: "",
+        team: "",
+        legal_issues: "",
+        misc: "",
+    });
 
     const getReports = () => {
         getData(REPORTS_URL, { Accept: "application/json" })
@@ -118,6 +135,27 @@ const Reports = () => {
         );
     };
 
+    const openManagementReportEditor = (id) => {
+        setManagementEditorState(true);
+    };
+
+    const openPopup = () => {
+        setPopupState(true);
+    };
+
+    const closePopup = (evt) => {
+        if (evt.currentTarget.classList.contains("popup")) setPopupState(false);
+    };
+
+    useEffect(() => {
+        setManagementEditorState(false);
+        setReportWindowsState(false);
+        setReportEditorState(false);
+        setReportEditorName("");
+        setReportId(null);
+        setReportData({});
+    }, [activeTab]);
+
     useEffect(() => {
         getReports();
         getManagementReports();
@@ -125,7 +163,7 @@ const Reports = () => {
 
     return (
         <main className="page">
-            <div className="container py-8">
+            <div className="container pt-8 min-h-screen flex flex-col">
                 <div className="flex flex-col justify-between gap-6 mb-8">
                     <h1 className="text-3xl font-medium">Реестр отчётов</h1>
 
@@ -240,7 +278,11 @@ const Reports = () => {
                                     </button>
                                 </div>
 
-                                <button type="button" className="py-1 px-5">
+                                <button
+                                    type="button"
+                                    className="py-1 px-5"
+                                    onClick={() => openPopup()}
+                                >
                                     Создать отчёт
                                 </button>
                             </>
@@ -248,7 +290,7 @@ const Reports = () => {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto w-full pb-5 relative">
+                <div className="w-full pb-5 relative min-h-full flex-grow overflow-y-auto">
                     <table className="table-auto w-full border-collapse border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
@@ -293,6 +335,9 @@ const Reports = () => {
                                         key={item.id}
                                         columns={COLUMNS[1]}
                                         props={item}
+                                        openManagementReportEditor={
+                                            openManagementReportEditor
+                                        }
                                     />
                                 ))
                             )}
@@ -302,7 +347,7 @@ const Reports = () => {
                     {activeTab === "projects" && (
                         <>
                             {reportWindowsState && (
-                                <div className="bg-white border-2 border-gray-300 py-5 px-4 min-h-full max-h-[300px] overflow-y-auto absolute bottom-0 top-0 right-0 w-[38%]">
+                                <div className="bg-white border-2 border-gray-300 py-5 px-4 min-h-[min-content] max-h-[max-content] overflow-y-auto absolute bottom-0 top-0 right-0 w-[38%]">
                                     <ProjectReportWindow
                                         reportWindowsState={
                                             setReportWindowsState
@@ -318,7 +363,7 @@ const Reports = () => {
                             )}
 
                             {reportEditorState && (
-                                <div className="bg-white border-2 border-gray-300 py-5 px-4 min-h-full max-h-[300px] overflow-y-auto absolute bottom-0 top-0 right-0 w-[38%]">
+                                <div className="bg-white min-h-[min-content] max-h-[max-content] overflow-y-auto absolute bottom-0 top-0 right-0 w-[38%]">
                                     <ProjectReportEditor
                                         reportData={reportData}
                                         reportEditorName={reportEditorName}
@@ -336,34 +381,65 @@ const Reports = () => {
                             )}
                         </>
                     )}
+
+                    {activeTab === "management" && managementEditorState && (
+                        <div className="bg-white min-h-[min-content] max-h-[max-content] overflow-y-auto absolute bottom-0 top-0 right-0 w-[40%]">
+                            <ManagementReportEditor
+                                managementReportData={managementReportData}
+                                setManagementEditorState={
+                                    setManagementEditorState
+                                }
+                            />
+                        </div>
+                    )}
                 </div>
-                {/* 
+
                 {popupState && (
-                    <Popup onClick={closePopup} title="Создание проекта">
+                    <Popup onClick={closePopup} title="Создание отчёта">
                         <div className="min-w-[280px]">
                             <div className="action-form__body">
-                                <label
-                                    htmlFor="project_name"
-                                    className="block mb-3"
-                                >
-                                    Введите наименование проекта
-                                </label>
-                                <input
-                                    type="text"
-                                    name="project_name"
-                                    id="project_name"
-                                    className="border-2 border-gray-300 p-3 w-full"
-                                    value={newProjectName}
-                                    onChange={(e) =>
-                                        handleProjectsNameChange(e)
-                                    }
-                                />
+                                <div className="flex flex-col mb-5">
+                                    <label
+                                        htmlFor="project_name"
+                                        className="block mb-3"
+                                    >
+                                        Введите наименование отчёта
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="project_name"
+                                        id="project_name"
+                                        className="border-2 border-gray-300 p-3 w-full"
+                                        // value={newProjectName}
+                                        // onChange={(e) =>
+                                        //     handleProjectsNameChange(e)
+                                        // }
+                                    />
+                                </div>
+                                <div className="flex flex-col">
+                                    <label
+                                        htmlFor="project_name"
+                                        className="block mb-3"
+                                    >
+                                        Выберите отчётный месяц
+                                    </label>
+                                    <select
+                                        type="text"
+                                        name="project_name"
+                                        id="project_name"
+                                        className="border-2 border-gray-300 p-3 w-full"
+                                        // value={newProjectName}
+                                        // onChange={(e) =>
+                                        //     handleProjectsNameChange(e)
+                                        // }
+                                    ></select>
+                                </div>
                             </div>
                             <div className="action-form__footer mt-5 flex items-center gap-6 justify-between">
                                 <button
                                     type="button"
                                     className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
-                                    onClick={createProject}
+                                    // onClick={createProject}
                                 >
                                     Создать
                                 </button>
@@ -378,7 +454,7 @@ const Reports = () => {
                             </div>
                         </div>
                     </Popup>
-                )} */}
+                )}
             </div>
         </main>
     );

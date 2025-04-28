@@ -1,7 +1,7 @@
 import { format, parseISO } from "date-fns";
 import { ru } from "date-fns/locale";
 
-const ManagementItem = ({ columns, props }) => {
+const ManagementItem = ({ columns, props, openManagementReportEditor }) => {
     const capitalizeFirstLetter = (string) => {
         if (!string) return "";
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -10,7 +10,7 @@ const ManagementItem = ({ columns, props }) => {
     return (
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
-            // onClick={handleRowClick}
+            onClick={() => openManagementReportEditor(props.id)}
         >
             {columns.map(({ key }) => {
                 const value = props[key];
