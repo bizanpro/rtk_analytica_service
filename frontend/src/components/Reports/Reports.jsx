@@ -65,6 +65,8 @@ const Reports = () => {
     const [reportData, setReportData] = useState({});
     const [periods, setPeriods] = useState({});
     const [mode, setMode] = useState("read");
+    const [filterOptionsList, setFilterOptionsList] = useState({}); // Список доступных параметров фильтров
+    const [selectedFilters, setSelectedFilters] = useState({}); // Выбранные параметры фильтров
 
     const [popupState, setPopupState] = useState(false);
 
@@ -79,10 +81,7 @@ const Reports = () => {
         misc: "",
     });
 
-    const [filterOptionsList, setFilterOptionsList] = useState({});
-
-    const [selectedFilters, setSelectedFilters] = useState({});
-
+    // Обработка фильтров
     const handleFilterChange = (filterKey, value) => {
         const filteredValues = value.filter((v) => v !== "");
 
@@ -92,6 +91,7 @@ const Reports = () => {
         }));
     };
 
+    // Получение списка отчетов
     const getFilteredReports = () => {
         setIsLoading(true);
 
@@ -112,6 +112,7 @@ const Reports = () => {
             .finally(() => setIsLoading(false));
     };
 
+    // Получение списка доступных фильтров
     const getUpdatedFilters = () => {
         const queryParams = new URLSearchParams();
 
@@ -132,16 +133,25 @@ const Reports = () => {
         });
     };
 
-    // Получаем список отчетов
-    const getReports = () => {
-        getData(REPORTS_URL, { Accept: "application/json" })
-            .then((response) => {
-                if (response.status === 200) {
-                    setReportsList(response.data.reports);
-                }
-            })
-            .finally(() => setIsLoading(false));
-    };
+    // const getReports = () => {
+    //     getData(REPORTS_URL, { Accept: "application/json" })
+    //         .then((response) => {
+    //             if (response.status === 200) {
+    //                 setReportsList(response.data.reports);
+    //             }
+    //         })
+    //         .finally(() => setIsLoading(false));
+    // };
+
+    // const getFilterOptions = () => {
+    //     getData(`${import.meta.env.VITE_API_URL}reports/filter-options`, {
+    //         Accept: "application/json",
+    //     }).then((response) => {
+    //         if (response.status === 200) {
+    //             setFilterOptionsList(response.data);
+    //         }
+    //     });
+    // };
 
     // Получаем список отчетов Менеджмента
     const getManagementReports = () => {
@@ -152,16 +162,6 @@ const Reports = () => {
                 }
             })
             .finally(() => setIsLoading(false));
-    };
-
-    const getFilterOptions = () => {
-        getData(`${import.meta.env.VITE_API_URL}reports/filter-options`, {
-            Accept: "application/json",
-        }).then((response) => {
-            if (response.status === 200) {
-                setFilterOptionsList(response.data);
-            }
-        });
     };
 
     // Получение договоров для детального отчёта
@@ -357,10 +357,8 @@ const Reports = () => {
     }, [selectedFilters]);
 
     useEffect(() => {
-        // getReports();
         getManagementReports();
         getPeriods();
-        // getFilterOptions();
     }, []);
 
     return (
@@ -414,6 +412,11 @@ const Reports = () => {
                                                 <select
                                                     key={index}
                                                     className="p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                                    value={
+                                                        selectedFilters[
+                                                            filterKey
+                                                        ] || ""
+                                                    }
                                                     onChange={(e) => {
                                                         const selectedValue =
                                                             Array.from(
@@ -451,6 +454,7 @@ const Reports = () => {
                                 <button
                                     type="button"
                                     className="border rounded-lg py-1 px-5"
+                                    onClick={() => setSelectedFilters([])}
                                 >
                                     Очистить
                                 </button>
