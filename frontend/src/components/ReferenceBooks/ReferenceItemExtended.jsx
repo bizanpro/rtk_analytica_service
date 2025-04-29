@@ -16,9 +16,6 @@ const ReferenceItemExtended = ({ data, bookId }) => {
             const target = targetRefs.current[index];
             const destination = destinationRefs.current[index];
 
-            console.log(target);
-            console.log(destination);
-
             if (target && destination) {
                 const targetHeight = target.getBoundingClientRect().height;
                 destination.style.height = `${targetHeight}px`;

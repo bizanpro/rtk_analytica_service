@@ -59,9 +59,9 @@ const SingleBook = () => {
             { label: "Автор измнения", key: "author" },
         ],
         "contragent-contacts": [
-            { label: "Наименование Подрядчика", key: "full_name" },
-            { label: "ФИО / должность", key: "type" },
-            { label: "Контакты", key: "employee_count" },
+            { label: "Наименование Подрядчика", key: "name" },
+            { label: "ФИО / должность", key: "contacts" },
+            { label: "Контакты", key: "contacts" },
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
         ],
