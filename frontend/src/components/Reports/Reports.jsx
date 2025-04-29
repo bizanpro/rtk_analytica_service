@@ -39,6 +39,15 @@ const Reports = () => {
         ],
     ];
 
+    const FILTER_LABELS = [
+        { key: "contragents", label: "Заказчик" },
+        { key: "industries", label: "Отрасль" },
+        { key: "creditors", label: "Банк" },
+        { key: "project_managers", label: "Руководитель проекта" },
+        { key: "report_types", label: "Тип отчёта" },
+        { key: "statuses", label: "Статус" },
+    ];
+
     let query;
 
     const [activeTab, setActiveTab] = useState("projects");
@@ -70,6 +79,60 @@ const Reports = () => {
         misc: "",
     });
 
+    const [filterOptionsList, setFilterOptionsList] = useState({});
+
+    const [selectedFilters, setSelectedFilters] = useState({});
+
+    const handleFilterChange = (filterKey, value) => {
+        const filteredValues = value.filter((v) => v !== "");
+
+        setSelectedFilters((prev) => ({
+            ...prev,
+            [filterKey]: filteredValues.length > 0 ? filteredValues : [],
+        }));
+    };
+
+    const getFilteredReports = () => {
+        setIsLoading(true);
+
+        const queryParams = new URLSearchParams();
+
+        Object.entries(selectedFilters).forEach(([key, values]) => {
+            values.forEach((value) => {
+                queryParams.append(`filters[${key}][]`, value);
+            });
+        });
+
+        getData(`${REPORTS_URL}?${queryParams.toString()}`)
+            .then((response) => {
+                if (response.status === 200) {
+                    setReportsList(response.data.reports);
+                }
+            })
+            .finally(() => setIsLoading(false));
+    };
+
+    const getUpdatedFilters = () => {
+        const queryParams = new URLSearchParams();
+
+        Object.entries(selectedFilters).forEach(([key, values]) => {
+            values.forEach((value) => {
+                queryParams.append(`filters[${key}][]`, value);
+            });
+        });
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }reports/filter-options?${queryParams.toString()}`
+        ).then((response) => {
+            if (response.status === 200) {
+                setFilterOptionsList(response.data);
+            }
+        });
+    };
+
+    // Получаем список отчетов
     const getReports = () => {
         getData(REPORTS_URL, { Accept: "application/json" })
             .then((response) => {
@@ -80,6 +143,7 @@ const Reports = () => {
             .finally(() => setIsLoading(false));
     };
 
+    // Получаем список отчетов Менеджмента
     const getManagementReports = () => {
         getData(MANAGEMENT_URL, { Accept: "application/json" })
             .then((response) => {
@@ -88,6 +152,16 @@ const Reports = () => {
                 }
             })
             .finally(() => setIsLoading(false));
+    };
+
+    const getFilterOptions = () => {
+        getData(`${import.meta.env.VITE_API_URL}reports/filter-options`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status === 200) {
+                setFilterOptionsList(response.data);
+            }
+        });
     };
 
     // Получение договоров для детального отчёта
@@ -103,6 +177,7 @@ const Reports = () => {
         });
     };
 
+    // Получаем доступные периоды для попапа отчета Менеджмента
     const getPeriods = () => {
         getData(
             `${
@@ -166,6 +241,7 @@ const Reports = () => {
         );
     };
 
+    // Открытие окна редактора отчета Менеджмента
     const openManagementReportEditor = (props, mode = "read") => {
         setPopupState(false);
         setManagementReportData(props);
@@ -186,6 +262,7 @@ const Reports = () => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
 
+    // Отправляем новый отчёт Менеджмента
     const sendNewReport = (extendReportData) => {
         query = toast.loading("Выполняется отправка", {
             containerId: "report",
@@ -224,6 +301,7 @@ const Reports = () => {
         });
     };
 
+    // Обновляем  отчёт Менеджмента
     const updateReport = (extendReportData) => {
         query = toast.loading("Обновление", {
             containerId: "report",
@@ -274,9 +352,15 @@ const Reports = () => {
     }, [activeTab]);
 
     useEffect(() => {
-        getReports();
+        getUpdatedFilters();
+        getFilteredReports();
+    }, [selectedFilters]);
+
+    useEffect(() => {
+        // getReports();
         getManagementReports();
         getPeriods();
+        // getFilterOptions();
     }, []);
 
     return (
@@ -318,50 +402,50 @@ const Reports = () => {
                         {activeTab === "projects" && (
                             <>
                                 <div className="flex items-center gap-5">
-                                    <select
-                                        className={
-                                            "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                    {Object.entries(filterOptionsList).map(
+                                        ([filterKey, filterValues], index) => {
+                                            const filterLabel =
+                                                FILTER_LABELS.find(
+                                                    (item) =>
+                                                        item.key === filterKey
+                                                )?.label || filterKey;
+
+                                            return (
+                                                <select
+                                                    key={index}
+                                                    className="p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                                    onChange={(e) => {
+                                                        const selectedValue =
+                                                            Array.from(
+                                                                e.target
+                                                                    .selectedOptions
+                                                            ).map(
+                                                                (option) =>
+                                                                    option.value
+                                                            );
+                                                        handleFilterChange(
+                                                            filterKey,
+                                                            selectedValue
+                                                        );
+                                                    }}
+                                                >
+                                                    <option value="">
+                                                        {filterLabel}
+                                                    </option>
+                                                    {filterValues.map(
+                                                        (item) => (
+                                                            <option
+                                                                key={item.id}
+                                                                value={item.id}
+                                                            >
+                                                                {item.name}
+                                                            </option>
+                                                        )
+                                                    )}
+                                                </select>
+                                            );
                                         }
-                                    >
-                                        <option value="">Заказчик</option>
-                                    </select>
-                                    <select
-                                        className={
-                                            "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                        }
-                                    >
-                                        <option value="">Отрасль</option>
-                                    </select>
-                                    <select
-                                        className={
-                                            "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                        }
-                                    >
-                                        <option value="">Банк</option>
-                                    </select>
-                                    <select
-                                        className={
-                                            "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                        }
-                                    >
-                                        <option value="">
-                                            Руководитель проекта
-                                        </option>
-                                    </select>
-                                    <select
-                                        className={
-                                            "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                        }
-                                    >
-                                        <option value="">Тип отчёта</option>
-                                    </select>
-                                    <select
-                                        className={
-                                            "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                        }
-                                    >
-                                        <option value="">Статус</option>
-                                    </select>
+                                    )}
                                 </div>
 
                                 <button
