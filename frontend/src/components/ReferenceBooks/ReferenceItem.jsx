@@ -146,6 +146,28 @@ const ReferenceItem = ({
                                         }
                                     />
                                 </div>
+                            ) : key === "type" ? (
+                                <select
+                                    className={`w-full min-h-[30px] ${
+                                        mode == "read"
+                                            ? ""
+                                            : "border border-gray-300"
+                                    }`}
+                                    name={key}
+                                    value={value || ""}
+                                    onChange={(e) =>
+                                        handleInputChange(e, key, data.id)
+                                    }
+                                    disabled={mode == "read" ? true : false}
+                                >
+                                    <option value="">Тип</option>
+                                    <option value="one_to_one">
+                                        Один к одному
+                                    </option>
+                                    <option value="one_to_many">
+                                        Один ко многим
+                                    </option>
+                                </select>
                             ) : (key === "updated_at" ||
                                   key === "last_updated") &&
                               value ? (

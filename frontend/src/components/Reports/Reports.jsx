@@ -133,26 +133,6 @@ const Reports = () => {
         });
     };
 
-    // const getReports = () => {
-    //     getData(REPORTS_URL, { Accept: "application/json" })
-    //         .then((response) => {
-    //             if (response.status === 200) {
-    //                 setReportsList(response.data.reports);
-    //             }
-    //         })
-    //         .finally(() => setIsLoading(false));
-    // };
-
-    // const getFilterOptions = () => {
-    //     getData(`${import.meta.env.VITE_API_URL}reports/filter-options`, {
-    //         Accept: "application/json",
-    //     }).then((response) => {
-    //         if (response.status === 200) {
-    //             setFilterOptionsList(response.data);
-    //         }
-    //     });
-    // };
-
     // Получаем список отчетов Менеджмента
     const getManagementReports = () => {
         getData(MANAGEMENT_URL, { Accept: "application/json" })

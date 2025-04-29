@@ -51,6 +51,20 @@ const SingleBook = () => {
             { label: "Месяц", key: "month_name" },
             { label: "Часы", key: "hours" },
         ],
+        positions: [
+            { label: "Наименование", key: "name" },
+            { label: "Тип должности", key: "type" },
+            { label: "Кол-во сотрудников", key: "employee_count" },
+            { label: "Последнее изменение", key: "updated_at" },
+            { label: "Автор измнения", key: "author" },
+        ],
+        "contragent-contacts": [
+            { label: "Наименование Подрядчика", key: "full_name" },
+            { label: "ФИО / должность", key: "type" },
+            { label: "Контакты", key: "employee_count" },
+            { label: "Последнее изменение", key: "updated_at" },
+            { label: "Автор измнения", key: "author" },
+        ],
     };
 
     const TITLES = {
@@ -61,6 +75,8 @@ const SingleBook = () => {
         contragent: "Контакты заказчика",
         creditor: "Контакты кредитора",
         "working-hours": "Рабочие часы",
+        positions: "Должности сотрудников",
+        "contragent-contacts": "Контакты Подрядчиков",
     };
 
     const { bookId } = useParams();
@@ -352,6 +368,34 @@ const SingleBook = () => {
                                                                     }
                                                                 />
                                                             </div>
+                                                        ) : key === "type" ? (
+                                                            <select
+                                                                className="w-full border border-gray-300 min-h-[30px]"
+                                                                name={key}
+                                                                value={
+                                                                    formFields[
+                                                                        key
+                                                                    ] || ""
+                                                                }
+                                                                onChange={(e) =>
+                                                                    handleNewElementInputChange(
+                                                                        e,
+                                                                        key
+                                                                    )
+                                                                }
+                                                            >
+                                                                <option value="">
+                                                                    Тип
+                                                                </option>
+                                                                <option value="one_to_one">
+                                                                    Один к
+                                                                    одному
+                                                                </option>
+                                                                <option value="one_to_many">
+                                                                    Один ко
+                                                                    многим
+                                                                </option>
+                                                            </select>
                                                         ) : (
                                                             "—"
                                                         )}
