@@ -10,7 +10,9 @@ const ManagementItem = ({ columns, props, openManagementReportEditor }) => {
     return (
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
-            onClick={() => openManagementReportEditor(props)}
+            onClick={() => {
+                openManagementReportEditor(props);
+            }}
         >
             {columns.map(({ key }) => {
                 const value = props[key];

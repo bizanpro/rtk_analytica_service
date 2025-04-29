@@ -5,16 +5,12 @@ import { ru } from "date-fns/locale";
 
 const ManagementReportEditor = ({
     managementReportData,
+    setManagementReportData,
     setManagementEditorState,
     mode,
     sendNewReport,
+    updateReport,
 }) => {
-    console.log(managementReportData?.report_month);
-
-    const [extendReportData, setExtendReportData] = useState(
-        managementReportData || {}
-    );
-
     const [currentTab, setCurrentTab] = useState("status_summary");
     const tabOptions = [
         { id: "status_summary", label: "Общий статус" },
@@ -26,7 +22,10 @@ const ManagementReportEditor = ({
     ];
 
     const handleTextArea = (e, name) => {
-        setExtendReportData({ ...extendReportData, [name]: e.target.value });
+        setManagementReportData((prev) => ({
+            ...prev,
+            [name]: e.target.value,
+        }));
     };
 
     const capitalizeFirstLetter = (string) => {
@@ -74,7 +73,7 @@ const ManagementReportEditor = ({
                     placeholder="Добавьте описание"
                     type="text"
                     name={currentTab}
-                    value={extendReportData[currentTab] || ""}
+                    value={managementReportData[currentTab] || ""}
                     onChange={(e) => handleTextArea(e, currentTab)}
                     disabled={mode === "read" ? true : false}
                 ></textarea>
@@ -86,7 +85,11 @@ const ManagementReportEditor = ({
                         <button
                             type="button"
                             className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                            onClick={() => sendNewReport(extendReportData)}
+                            onClick={() =>
+                                managementReportData.id
+                                    ? updateReport(managementReportData)
+                                    : sendNewReport(managementReportData)
+                            }
                             title="Сохранить отчёт"
                         >
                             Сохранить
@@ -96,7 +99,6 @@ const ManagementReportEditor = ({
                             type="button"
                             onClick={() => {
                                 setManagementEditorState(false);
-                                // setReportId(null);
                             }}
                             className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
                             title="Отменить сохранение отчёта"
@@ -109,7 +111,6 @@ const ManagementReportEditor = ({
                         type="button"
                         onClick={() => {
                             setManagementEditorState(false);
-                            // setReportId(null);
                         }}
                         className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
                         title="Закрыть отчёт"

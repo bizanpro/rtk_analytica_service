@@ -208,6 +208,8 @@ const Reports = () => {
                     pauseOnHover: false,
                     position: "top-center",
                 });
+                getManagementReports();
+                setManagementEditorState(false);
             } else {
                 toast.dismiss(query);
                 toast.error("Ошибка сохранения данных", {
@@ -222,44 +224,45 @@ const Reports = () => {
         });
     };
 
-    // const updateReport = () => {
-    //     query = toast.loading("Обновление", {
-    //         containerId: "report",
-    //         position: "top-center",
-    //     });
+    const updateReport = (extendReportData) => {
+        query = toast.loading("Обновление", {
+            containerId: "report",
+            position: "top-center",
+        });
 
-    //     postData(
-    //         "PATCH",
-    //         `${import.meta.env.VITE_API_URL}reports/${reportId}`,
-    //         extendReportData
-    //     ).then((response) => {
-    //         if (response?.ok) {
-    //             toast.update(query, {
-    //                 render: response.message,
-    //                 type: "success",
-    //                 containerId: "report",
-    //                 isLoading: false,
-    //                 autoClose: 1200,
-    //                 pauseOnFocusLoss: false,
-    //                 pauseOnHover: false,
-    //                 position: "top-center",
-    //             });
-    //             getProject(projectId);
-    //             setReportWindowsState(false);
-    //             setReportEditorState(false);
-    //         } else {
-    //             toast.dismiss(query);
-    //             toast.error("Ошибка обновления данных", {
-    //                 containerId: "report",
-    //                 isLoading: false,
-    //                 autoClose: 1500,
-    //                 pauseOnFocusLoss: false,
-    //                 pauseOnHover: false,
-    //                 position: "top-center",
-    //             });
-    //         }
-    //     });
-    // };
+        postData(
+            "PATCH",
+            `${import.meta.env.VITE_API_URL}management-reports/${
+                extendReportData.id
+            }`,
+            extendReportData
+        ).then((response) => {
+            if (response?.ok) {
+                toast.update(query, {
+                    render: "Данные обновлены",
+                    type: "success",
+                    containerId: "report",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+                getManagementReports();
+                setManagementEditorState(false);
+            } else {
+                toast.dismiss(query);
+                toast.error("Ошибка обновления данных", {
+                    containerId: "report",
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            }
+        });
+    };
 
     useEffect(() => {
         setManagementEditorState(false);
@@ -503,10 +506,14 @@ const Reports = () => {
                         <div className="bg-white min-h-[min-content] max-h-[max-content] overflow-y-auto absolute bottom-0 top-0 right-0 w-[40%]">
                             <ManagementReportEditor
                                 managementReportData={managementReportData}
+                                setManagementReportData={
+                                    setManagementReportData
+                                }
                                 setManagementEditorState={
                                     setManagementEditorState
                                 }
                                 sendNewReport={sendNewReport}
+                                updateReport={updateReport}
                                 mode={mode}
                             />
                         </div>
