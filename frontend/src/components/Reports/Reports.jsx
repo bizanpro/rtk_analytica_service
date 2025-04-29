@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import getData from "../../utils/getData";
+import postData from "../../utils/postData";
 
 import ReportItem from "./ReportItem";
 import ManagementItem from "./ManagementItem";
@@ -9,6 +10,9 @@ import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 import ManagementReportEditor from "../ManagementReportEditor";
 
 import Popup from "../Popup/Popup";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Reports = () => {
     const REPORTS_URL = `${import.meta.env.VITE_API_URL}reports`;
@@ -35,6 +39,8 @@ const Reports = () => {
         ],
     ];
 
+    let query;
+
     const [activeTab, setActiveTab] = useState("projects");
     const [isLoading, setIsLoading] = useState(true);
 
@@ -48,6 +54,8 @@ const Reports = () => {
     const [reportId, setReportId] = useState(null);
     const [contracts, setContracts] = useState([]);
     const [reportData, setReportData] = useState({});
+    const [periods, setPeriods] = useState({});
+    const [mode, setMode] = useState("read");
 
     const [popupState, setPopupState] = useState(false);
 
@@ -95,6 +103,29 @@ const Reports = () => {
         });
     };
 
+    const getPeriods = () => {
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }management-reports/available-periods`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setPeriods(response.data);
+
+                const firstYear = Object.keys(response.data)[0];
+                const firstMonth = response.data[firstYear][0].value;
+
+                setManagementReportData((prev) => ({
+                    ...prev,
+                    report_month: `${firstYear}-${String(firstMonth).padStart(
+                        2,
+                        "0"
+                    )}-01`,
+                }));
+            }
+        });
+    };
+
     // Открытие окна отчёта
     const openReportEditor = (reportData) => {
         getContracts(reportData.contragent?.id);
@@ -135,7 +166,10 @@ const Reports = () => {
         );
     };
 
-    const openManagementReportEditor = (id) => {
+    const openManagementReportEditor = (props, mode = "read") => {
+        setPopupState(false);
+        setManagementReportData(props);
+        setMode(mode);
         setManagementEditorState(true);
     };
 
@@ -146,6 +180,86 @@ const Reports = () => {
     const closePopup = (evt) => {
         if (evt.currentTarget.classList.contains("popup")) setPopupState(false);
     };
+
+    const capitalizeFirstLetter = (string) => {
+        if (!string) return "";
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
+    const sendNewReport = (extendReportData) => {
+        query = toast.loading("Выполняется отправка", {
+            containerId: "report",
+            position: "top-center",
+        });
+
+        postData(
+            "POST",
+            `${import.meta.env.VITE_API_URL}management-reports`,
+            extendReportData
+        ).then((response) => {
+            if (response?.ok) {
+                toast.update(query, {
+                    render: "Данные сохранены",
+                    type: "success",
+                    containerId: "report",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            } else {
+                toast.dismiss(query);
+                toast.error("Ошибка сохранения данных", {
+                    containerId: "report",
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            }
+        });
+    };
+
+    // const updateReport = () => {
+    //     query = toast.loading("Обновление", {
+    //         containerId: "report",
+    //         position: "top-center",
+    //     });
+
+    //     postData(
+    //         "PATCH",
+    //         `${import.meta.env.VITE_API_URL}reports/${reportId}`,
+    //         extendReportData
+    //     ).then((response) => {
+    //         if (response?.ok) {
+    //             toast.update(query, {
+    //                 render: response.message,
+    //                 type: "success",
+    //                 containerId: "report",
+    //                 isLoading: false,
+    //                 autoClose: 1200,
+    //                 pauseOnFocusLoss: false,
+    //                 pauseOnHover: false,
+    //                 position: "top-center",
+    //             });
+    //             getProject(projectId);
+    //             setReportWindowsState(false);
+    //             setReportEditorState(false);
+    //         } else {
+    //             toast.dismiss(query);
+    //             toast.error("Ошибка обновления данных", {
+    //                 containerId: "report",
+    //                 isLoading: false,
+    //                 autoClose: 1500,
+    //                 pauseOnFocusLoss: false,
+    //                 pauseOnHover: false,
+    //                 position: "top-center",
+    //             });
+    //         }
+    //     });
+    // };
 
     useEffect(() => {
         setManagementEditorState(false);
@@ -159,10 +273,13 @@ const Reports = () => {
     useEffect(() => {
         getReports();
         getManagementReports();
+        getPeriods();
     }, []);
 
     return (
         <main className="page">
+            <ToastContainer containerId="report" />
+
             <div className="container pt-8 min-h-screen flex flex-col">
                 <div className="flex flex-col justify-between gap-6 mb-8">
                     <h1 className="text-3xl font-medium">Реестр отчётов</h1>
@@ -389,6 +506,8 @@ const Reports = () => {
                                 setManagementEditorState={
                                     setManagementEditorState
                                 }
+                                sendNewReport={sendNewReport}
+                                mode={mode}
                             />
                         </div>
                     )}
@@ -418,28 +537,53 @@ const Reports = () => {
                                 </div>
                                 <div className="flex flex-col">
                                     <label
-                                        htmlFor="project_name"
+                                        htmlFor="report_month"
                                         className="block mb-3"
                                     >
                                         Выберите отчётный месяц
                                     </label>
                                     <select
                                         type="text"
-                                        name="project_name"
-                                        id="project_name"
+                                        id="report_month"
                                         className="border-2 border-gray-300 p-3 w-full"
-                                        // value={newProjectName}
-                                        // onChange={(e) =>
-                                        //     handleProjectsNameChange(e)
-                                        // }
-                                    ></select>
+                                        defaultValue={
+                                            managementReportData.report_month
+                                        }
+                                        onChange={(e) => {
+                                            setManagementReportData({
+                                                ...managementReportData,
+                                                report_month: e.target.value,
+                                            });
+                                        }}
+                                    >
+                                        {Object.entries(periods).map(
+                                            ([year, months]) =>
+                                                months.map((month) => (
+                                                    <option
+                                                        key={`${year}-${month.value}`}
+                                                        value={`${year}-${String(
+                                                            month.value
+                                                        ).padStart(2, "0")}-01`}
+                                                    >
+                                                        {`${capitalizeFirstLetter(
+                                                            month.name
+                                                        )} ${year}`}
+                                                    </option>
+                                                ))
+                                        )}
+                                    </select>
                                 </div>
                             </div>
                             <div className="action-form__footer mt-5 flex items-center gap-6 justify-between">
                                 <button
                                     type="button"
                                     className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
-                                    // onClick={createProject}
+                                    onClick={() => {
+                                        openManagementReportEditor(
+                                            managementReportData,
+                                            "edit"
+                                        );
+                                    }}
                                 >
                                     Создать
                                 </button>

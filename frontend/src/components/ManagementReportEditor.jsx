@@ -1,12 +1,19 @@
 import { useState } from "react";
 
-import postData from "../utils/postData"
+import { format, parseISO } from "date-fns";
+import { ru } from "date-fns/locale";
 
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+const ManagementReportEditor = ({
+    managementReportData,
+    setManagementEditorState,
+    mode,
+    sendNewReport,
+}) => {
+    console.log(managementReportData?.report_month);
 
-const ManagementReportEditor = ({ managementReportData, setManagementEditorState }) => {
-    const [extendReportData, setExtendReportData] = useState(managementReportData || {});
+    const [extendReportData, setExtendReportData] = useState(
+        managementReportData || {}
+    );
 
     const [currentTab, setCurrentTab] = useState("status_summary");
     const tabOptions = [
@@ -18,93 +25,26 @@ const ManagementReportEditor = ({ managementReportData, setManagementEditorState
         { id: "misc", label: "Прочее" },
     ];
 
-    let query;
-
     const handleTextArea = (e, name) => {
         setExtendReportData({ ...extendReportData, [name]: e.target.value });
     };
 
-    const sendReport = () => {
-        query = toast.loading("Выполняется отправка", {
-            containerId: "report",
-            position: "top-center",
-        });
-
-        postData(
-            "POST",
-            `${import.meta.env.VITE_API_URL}management-reports`,
-            extendReportData
-        ).then((response) => {
-            if (response?.ok) {
-                toast.update(query, {
-                    render: response.message,
-                    type: "success",
-                    containerId: "report",
-                    isLoading: false,
-                    autoClose: 1200,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-
-            } else {
-                toast.dismiss(query);
-                toast.error("Ошибка сохранения данных", {
-                    containerId: "report",
-                    isLoading: false,
-                    autoClose: 1500,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-            }
-        });
+    const capitalizeFirstLetter = (string) => {
+        if (!string) return "";
+        return string.charAt(0).toUpperCase() + string.slice(1);
     };
 
-    // const updateReport = () => {
-    //     query = toast.loading("Обновление", {
-    //         containerId: "report",
-    //         position: "top-center",
-    //     });
-
-    //     postData(
-    //         "PATCH",
-    //         `${import.meta.env.VITE_API_URL}reports/${reportId}`,
-    //         extendReportData
-    //     ).then((response) => {
-    //         if (response?.ok) {
-    //             toast.update(query, {
-    //                 render: response.message,
-    //                 type: "success",
-    //                 containerId: "report",
-    //                 isLoading: false,
-    //                 autoClose: 1200,
-    //                 pauseOnFocusLoss: false,
-    //                 pauseOnHover: false,
-    //                 position: "top-center",
-    //             });
-    //             getProject(projectId);
-    //             setReportWindowsState(false);
-    //             setReportEditorState(false);
-    //         } else {
-    //             toast.dismiss(query);
-    //             toast.error("Ошибка обновления данных", {
-    //                 containerId: "report",
-    //                 isLoading: false,
-    //                 autoClose: 1500,
-    //                 pauseOnFocusLoss: false,
-    //                 pauseOnHover: false,
-    //                 position: "top-center",
-    //             });
-    //         }
-    //     });
-    // };
+    const formatted = format(
+        parseISO(managementReportData?.report_month),
+        "LLLL yyyy",
+        { locale: ru }
+    );
 
     return (
         <div className="border-2 border-gray-300 py-5 px-3">
-            <ToastContainer containerId="report" />
-
-            <div className="text-2xl w-full mb-3">{managementReportData.report_month}</div>
+            <div className="text-2xl w-full mb-3">
+                {capitalizeFirstLetter(formatted)}
+            </div>
 
             <div>
                 <div className="flex items-center gap-2 mb-3">
@@ -130,7 +70,7 @@ const ManagementReportEditor = ({ managementReportData, setManagementEditorState
                 </div>
 
                 <textarea
-                    className="w-full border-2 border-gray-300 p-5 min-h-[400px] max-h-[500px]"
+                    className="w-full border-2 border-gray-300 p-5 min-h-[250px] max-h-[500px]"
                     placeholder="Добавьте описание"
                     type="text"
                     name={currentTab}
@@ -146,9 +86,7 @@ const ManagementReportEditor = ({ managementReportData, setManagementEditorState
                         <button
                             type="button"
                             className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                            onClick={() =>
-                                reportId ? updateReport() : sendReport()
-                            }
+                            onClick={() => sendNewReport(extendReportData)}
                             title="Сохранить отчёт"
                         >
                             Сохранить
