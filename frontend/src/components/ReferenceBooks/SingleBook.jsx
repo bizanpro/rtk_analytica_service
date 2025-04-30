@@ -5,6 +5,7 @@ import postData from "../../utils/postData";
 // import Select from "../Select";
 import ReferenceItem from "./ReferenceItem";
 import ReferenceItemExtended from "./ReferenceItemExtended";
+import ReferenceItemExtendedContacts from "./ReferenceItemExtendedContacts";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -59,11 +60,11 @@ const SingleBook = () => {
             { label: "Автор измнения", key: "author" },
         ],
         "contragent-contacts": [
-            { label: "Наименование Подрядчика", key: "name" },
-            { label: "ФИО / должность", key: "contacts" },
-            { label: "Контакты", key: "contacts" },
-            { label: "Последнее изменение", key: "updated_at" },
-            { label: "Автор измнения", key: "author" },
+            { label: "Наименование Подрядчика", key: "" },
+            { label: "ФИО / должность", key: "" },
+            { label: "Контакты", key: "" },
+            { label: "Последнее изменение", key: "" },
+            { label: "Автор измнения", key: "" },
         ],
     };
 
@@ -333,6 +334,7 @@ const SingleBook = () => {
                                     {mode === "edit" &&
                                         bookId != "creditor" &&
                                         bookId != "contragent" &&
+                                        bookId != "contragent-contacts" &&
                                         bookId != "working-hours" && (
                                             <tr className="border-gray-300 text-base border-b text-left">
                                                 {columns.map(({ key }) => (
@@ -426,6 +428,7 @@ const SingleBook = () => {
 
                                     {filteredProjects?.length > 0 &&
                                         bookId !== "creditor" &&
+                                        bookId !== "contragent-contacts" &&
                                         filteredProjects.map((item) => (
                                             <ReferenceItem
                                                 key={item.id}
@@ -455,6 +458,20 @@ const SingleBook = () => {
                                                 }
                                                 deleteElement={deleteElement}
                                                 editElement={editElement}
+                                            />
+                                        ))}
+
+                                    {filteredProjects?.length > 0 &&
+                                        bookId == "contragent-contacts" &&
+                                        filteredProjects.map((item) => (
+                                            <ReferenceItemExtendedContacts
+                                                key={item.id}
+                                                data={item}
+                                                mode={mode}
+                                                handleInputChange={
+                                                    handleInputChange
+                                                }
+                                                deleteElement={deleteElement}
                                             />
                                         ))}
                                 </>
