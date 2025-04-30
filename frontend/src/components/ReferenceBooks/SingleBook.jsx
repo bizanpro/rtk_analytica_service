@@ -161,6 +161,26 @@ const SingleBook = () => {
         });
     };
 
+    const addNewContact = (data) => {
+        postData("POST", URL, data).then((response) => {
+            if (response) {
+                setBooksItems((booksItems) =>
+                    booksItems.map((item) =>
+                        item.id === response.contragent_id
+                            ? {
+                                  ...item,
+                                  contacts: [
+                                      ...(item.contacts || []),
+                                      response,
+                                  ],
+                              }
+                            : item
+                    )
+                );
+            }
+        });
+    };
+
     // Изменение записи
     const editElement = (id) => {
         const data = booksItems.find((book) => book.id === id);
@@ -471,6 +491,7 @@ const SingleBook = () => {
                                                 handleInputChange={
                                                     handleInputChange
                                                 }
+                                                addNewContact={addNewContact}
                                                 deleteElement={deleteElement}
                                             />
                                         ))}
