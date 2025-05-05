@@ -28,6 +28,7 @@ const EmployeeCard = () => {
     const [selectedSummaryMonth, setSelectedSummaryMonth] = useState("1");
     const [selectedTypes, setSelecterTypes] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
+    const [positions, setPositions] = useState([]);
 
     const months = [
         "Январь",
@@ -74,6 +75,9 @@ const EmployeeCard = () => {
                 ? JSON.parse(e.target.value)
                 : e.target.value;
 
+        console.log(value);
+        console.log(name);
+
         setEmployeeData((prev) => ({
             ...prev,
             [name]: value,
@@ -116,6 +120,14 @@ const EmployeeCard = () => {
         ).then((response) => {
             if (response.status === 200) {
                 setReportTypes(response.data.data);
+            }
+        });
+    };
+
+    const getPositions = () => {
+        getData(`${import.meta.env.VITE_API_URL}positions`).then((response) => {
+            if (response.status === 200) {
+                setPositions(response.data.data);
             }
         });
     };
@@ -201,7 +213,12 @@ const EmployeeCard = () => {
                 setEmployeeData(response.data);
             }
 
-            await Promise.all([getWorkload(), getYears(), getTypes()]);
+            await Promise.all([
+                getWorkload(),
+                getPositions(),
+                getYears(),
+                getTypes(),
+            ]);
         } catch (error) {
             console.error("Ошибка при загрузке сотрудника:", error);
         }
@@ -401,26 +418,30 @@ const EmployeeCard = () => {
 
                     <div className="grid grid-cols-3 mt-15 gap-10 flex-grow">
                         <div className="flex flex-col">
-                            <div className="grid grid-cols-2 gap-5 mb-5">
+                            <div className="grid gap-5 mb-5">
                                 <div className="flex flex-col gap-2">
                                     <span className="text-gray-400">
-                                        Квалификация
+                                        Должность
                                     </span>
-                                    <textarea
-                                        className="border-2 border-gray-300 p-5 h-[100px]"
-                                        style={{ resize: "none" }}
-                                        placeholder="Заполните квалификацию"
-                                        type="text"
-                                        name="qualification"
+                                    <select
+                                        className="border-2 border-gray-300 p-1 h-[32px]"
+                                        name="position_id"
                                         onChange={(e) =>
-                                            handleInputChange(
-                                                e,
-                                                "qualification"
-                                            )
+                                            handleInputChange(e, "position_id")
                                         }
-                                        value={employeeData.qualification}
+                                        value={employeeData.position_id}
                                         disabled={mode == "read" ? true : false}
-                                    ></textarea>
+                                    >
+                                        {positions.length > 0 &&
+                                            positions.map((position) => (
+                                                <option
+                                                    key={position.id}
+                                                    value={position.id}
+                                                >
+                                                    {position.name}
+                                                </option>
+                                            ))}
+                                    </select>
                                 </div>
 
                                 <div className="flex flex-col gap-2 justify-between">

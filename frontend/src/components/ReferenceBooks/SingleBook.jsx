@@ -93,6 +93,7 @@ const SingleBook = () => {
     const [mode, setMode] = useState("read");
     const [formFields, setFormFields] = useState({});
     const [isLoading, setIsLoading] = useState(true);
+    const [addNewElem, setAddNewElem] = useState(false);
 
     const [selectedCounterpartyName, setSelectedCounterpartyName] =
         useState("");
@@ -177,6 +178,15 @@ const SingleBook = () => {
                             : item
                     )
                 );
+                setAddNewElem(false);
+                toast("Контакт добавлен", {
+                    type: "success",
+                    containerId: "singleBook",
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
             }
         });
     };
@@ -493,6 +503,8 @@ const SingleBook = () => {
                                                 }
                                                 addNewContact={addNewContact}
                                                 deleteElement={deleteElement}
+                                                addNewElem={addNewElem}
+                                                setAddNewElem={setAddNewElem}
                                             />
                                         ))}
                                 </>
