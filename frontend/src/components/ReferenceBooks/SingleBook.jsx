@@ -59,7 +59,7 @@ const SingleBook = () => {
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
         ],
-        "contragent-contacts": [
+        "suppliers-with-reports": [
             { label: "Наименование Подрядчика", key: "" },
             { label: "ФИО / должность", key: "" },
             { label: "Контакты", key: "" },
@@ -77,7 +77,7 @@ const SingleBook = () => {
         creditor: "Контакты кредитора",
         "working-hours": "Рабочие часы",
         positions: "Должности сотрудников",
-        "contragent-contacts": "Контакты Подрядчиков",
+        "suppliers-with-reports": "Контакты Подрядчиков",
     };
 
     const { bookId } = useParams();
@@ -94,6 +94,7 @@ const SingleBook = () => {
     const [formFields, setFormFields] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [addNewElem, setAddNewElem] = useState(false);
+    const [listLength, setListLength] = useState(0);
 
     const [selectedCounterpartyName, setSelectedCounterpartyName] =
         useState("");
@@ -258,6 +259,24 @@ const SingleBook = () => {
             .then((response) => {
                 if (response.status == 200) {
                     setBooksItems(response.data.data);
+
+                    setListLength(
+                        bookId !== "creditor"
+                            ? response.data.data?.length
+                            : response.data.data.reduce((sum, creditor) => {
+                                  const projectsContacts =
+                                      creditor.projects.reduce(
+                                          (projectSum, project) => {
+                                              return (
+                                                  projectSum +
+                                                  project.contacts.length
+                                              );
+                                          },
+                                          0
+                                      );
+                                  return sum + projectsContacts;
+                              }, 0)
+                    );
                 }
             })
             .finally(() => setIsLoading(false));
@@ -274,7 +293,7 @@ const SingleBook = () => {
 
                 <div className="flex justify-between items-center gap-6 mb-8">
                     <h1 className="text-3xl font-medium">
-                        {TITLES[bookId]} ({booksItems?.length})
+                        {TITLES[bookId]} ({listLength})
                     </h1>
 
                     <div className="flex items-center gap-6">
@@ -364,7 +383,7 @@ const SingleBook = () => {
                                     {mode === "edit" &&
                                         bookId != "creditor" &&
                                         bookId != "contragent" &&
-                                        bookId != "contragent-contacts" &&
+                                        bookId != "suppliers-with-reports" &&
                                         bookId != "working-hours" && (
                                             <tr className="border-gray-300 text-base border-b text-left">
                                                 {columns.map(({ key }) => (
@@ -458,7 +477,7 @@ const SingleBook = () => {
 
                                     {filteredProjects?.length > 0 &&
                                         bookId !== "creditor" &&
-                                        bookId !== "contragent-contacts" &&
+                                        bookId !== "suppliers-with-reports" &&
                                         filteredProjects.map((item) => (
                                             <ReferenceItem
                                                 key={item.id}
@@ -492,7 +511,7 @@ const SingleBook = () => {
                                         ))}
 
                                     {filteredProjects?.length > 0 &&
-                                        bookId == "contragent-contacts" &&
+                                        bookId == "suppliers-with-reports" &&
                                         filteredProjects.map((item) => (
                                             <ReferenceItemExtendedContacts
                                                 key={item.id}
