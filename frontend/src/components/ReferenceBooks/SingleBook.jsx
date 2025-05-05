@@ -3,10 +3,12 @@ import { useParams } from "react-router-dom";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 // import Select from "../Select";
+import Popup from "../Popup/Popup";
 import ReferenceItem from "./ReferenceItem";
 import ReferenceItemExtended from "./ReferenceItemExtended";
 import ReferenceItemExtendedContacts from "./ReferenceItemExtendedContacts";
 
+import { IMaskInput } from "react-imask";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -93,11 +95,21 @@ const SingleBook = () => {
     const [mode, setMode] = useState("read");
     const [formFields, setFormFields] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    const [addNewElem, setAddNewElem] = useState(false);
     const [listLength, setListLength] = useState(0);
+    const [popupState, setPopupState] = useState(false);
 
     const [selectedCounterpartyName, setSelectedCounterpartyName] =
         useState("");
+
+    const [newElem, setnewElem] = useState({
+        contragent_id: "",
+        full_name: "",
+        position: "",
+        email: "",
+        phone: "",
+    });
+
+    const PhoneMask = "+{7} (000) 000 00 00";
 
     const filteredProjects = useMemo(() => {
         const result = booksItems?.filter((book) => {
@@ -128,11 +140,30 @@ const SingleBook = () => {
     };
 
     const handleInputChange = (e, name, id) => {
+        const value = name === "phone" ? e : e.target.value;
+
         setBooksItems((prevBooksItems) =>
             prevBooksItems.map((item) =>
-                item.id === id ? { ...item, [name]: e.target.value } : item
+                item.id === id ? { ...item, [name]: value } : item
             )
         );
+    };
+
+    const handleNewContactElemInputChange = (e, name) => {
+        const value = name === "phone" ? e : e.target.value;
+
+        setnewElem((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const openPopup = () => {
+        setPopupState(true);
+    };
+
+    const closePopup = (evt) => {
+        if (evt.currentTarget.classList.contains("popup")) setPopupState(false);
     };
 
     // Добавление записи
@@ -522,8 +553,7 @@ const SingleBook = () => {
                                                 }
                                                 addNewContact={addNewContact}
                                                 deleteElement={deleteElement}
-                                                addNewElem={addNewElem}
-                                                setAddNewElem={setAddNewElem}
+                                                setPopupState={setPopupState}
                                             />
                                         ))}
                                 </>
@@ -531,6 +561,87 @@ const SingleBook = () => {
                         </tbody>
                     </table>
                 </div>
+
+                {popupState && mode === "edit" && (
+                    <Popup onClick={closePopup} title="Добавить контакт">
+                        <div className="min-w-[300px]">
+                            <div className="action-form__body grid grid-cols-2 gap-3">
+                                <input
+                                    type="text"
+                                    className="w-full text-base border border-gray-300 p-1"
+                                    value={newElem.full_name}
+                                    placeholder="ФИО"
+                                    onChange={(e) =>
+                                        handleNewContactElemInputChange(
+                                            e,
+                                            "full_name"
+                                        )
+                                    }
+                                />
+
+                                <input
+                                    type="text"
+                                    className="w-full text-base border border-gray-300 p-1"
+                                    value={newElem.position}
+                                    placeholder="Должность"
+                                    onChange={(e) =>
+                                        handleNewContactElemInputChange(
+                                            e,
+                                            "position"
+                                        )
+                                    }
+                                />
+
+                                <IMaskInput
+                                    mask={PhoneMask}
+                                    className="w-full text-base border border-gray-300 p-1"
+                                    name="phone"
+                                    type="tel"
+                                    inputMode="tel"
+                                    onAccept={(value) =>
+                                        handleNewContactElemInputChange(
+                                            value || "",
+                                            "phone"
+                                        )
+                                    }
+                                    value={newElem.phone}
+                                    placeholder="+7 999 999 99 99"
+                                />
+
+                                <input
+                                    type="text"
+                                    className="w-full text-base border border-gray-300 p-1"
+                                    value={newElem.email}
+                                    placeholder="Email"
+                                    onChange={(e) =>
+                                        handleNewContactElemInputChange(
+                                            e,
+                                            "email"
+                                        )
+                                    }
+                                />
+                            </div>
+
+                            <div className="action-form__footer mt-5 flex items-center gap-6 justify-between">
+                                <button
+                                    type="button"
+                                    className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
+                                    // onClick={}
+                                >
+                                    Добавить
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setPopupState(false)}
+                                    className="border rounded-lg py-2 px-5 flex-[1_1_50%]"
+                                >
+                                    Отменить
+                                </button>
+                            </div>
+                        </div>
+                    </Popup>
+                )}
             </div>
         </main>
     );

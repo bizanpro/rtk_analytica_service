@@ -75,8 +75,6 @@ const EmployeeCard = () => {
                 ? JSON.parse(e.target.value)
                 : e.target.value;
 
-        console.log(value);
-        console.log(name);
 
         setEmployeeData((prev) => ({
             ...prev,
