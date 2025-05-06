@@ -11,6 +11,7 @@ const ReferenceItem = ({
     deleteElement,
     editElement,
     handleInputChange,
+    positions
 }) => {
     const navigate = useNavigate();
 
@@ -146,7 +147,7 @@ const ReferenceItem = ({
                                         }
                                     />
                                 </div>
-                            ) : key === "type" ? (
+                            ) : key === "type" || key === "position_id" ? (
                                 <select
                                     className={`w-full min-h-[30px] ${
                                         mode == "read"
@@ -160,13 +161,26 @@ const ReferenceItem = ({
                                     }
                                     disabled={mode == "read" ? true : false}
                                 >
-                                    <option value="">Тип</option>
-                                    <option value="one_to_one">
-                                        Один к одному
-                                    </option>
-                                    <option value="one_to_many">
-                                        Один ко многим
-                                    </option>
+                                    {bookId === "management-report-types" ? (
+                                        positions.map((position) => (
+                                            <option
+                                                value={position.id}
+                                                key={position.id}
+                                            >
+                                                {position.name}
+                                            </option>
+                                        ))
+                                    ) : (
+                                        <>
+                                            <option value="">Тип</option>
+                                            <option value="one_to_one">
+                                                Один к одному
+                                            </option>
+                                            <option value="one_to_many">
+                                                Один ко многим
+                                            </option>
+                                        </>
+                                    )}
                                 </select>
                             ) : (key === "updated_at" ||
                                   key === "last_updated") &&

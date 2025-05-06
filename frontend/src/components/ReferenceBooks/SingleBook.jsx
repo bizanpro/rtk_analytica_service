@@ -70,7 +70,7 @@ const SingleBook = () => {
         ],
         "management-report-types": [
             { label: "Наименование", key: "name" },
-            { label: "Должность отвественного", key: "type" },
+            { label: "Должность отвественного", key: "position_id" },
             { label: "Кол-во отчётов", key: "count" },
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
@@ -105,6 +105,7 @@ const SingleBook = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [listLength, setListLength] = useState(0);
     const [popupState, setPopupState] = useState(false);
+    const [positions, setPositions] = useState([]);
 
     const [selectedCounterpartyName, setSelectedCounterpartyName] =
         useState("");
@@ -329,8 +330,23 @@ const SingleBook = () => {
             .finally(() => setIsLoading(false));
     };
 
+    // Получение должностей
+    const getPositions = () => {
+        getData(`${import.meta.env.VITE_API_URL}positions`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status == 200) {
+                setPositions(response.data.data);
+            }
+        });
+    };
+
     useEffect(() => {
         getBooks();
+
+        if (bookId === "management-report-types") {
+            getPositions();
+        }
     }, []);
 
     return (
@@ -482,17 +498,43 @@ const SingleBook = () => {
                                                                     )
                                                                 }
                                                             >
-                                                                <option value="">
-                                                                    Тип
-                                                                </option>
-                                                                <option value="one_to_one">
-                                                                    Один к
-                                                                    одному
-                                                                </option>
-                                                                <option value="one_to_many">
-                                                                    Один ко
-                                                                    многим
-                                                                </option>
+                                                                {bookId ===
+                                                                "management-report-types" ? (
+                                                                    positions.map(
+                                                                        (
+                                                                            position
+                                                                        ) => (
+                                                                            <option
+                                                                                value={
+                                                                                    position.id
+                                                                                }
+                                                                                key={
+                                                                                    position.id
+                                                                                }
+                                                                            >
+                                                                                {
+                                                                                    position.name
+                                                                                }
+                                                                            </option>
+                                                                        )
+                                                                    )
+                                                                ) : (
+                                                                    <>
+                                                                        <option value="">
+                                                                            Тип
+                                                                        </option>
+                                                                        <option value="one_to_one">
+                                                                            Один
+                                                                            к
+                                                                            одному
+                                                                        </option>
+                                                                        <option value="one_to_many">
+                                                                            Один
+                                                                            ко
+                                                                            многим
+                                                                        </option>
+                                                                    </>
+                                                                )}
                                                             </select>
                                                         ) : (
                                                             "—"
@@ -537,6 +579,7 @@ const SingleBook = () => {
                                                 }
                                                 deleteElement={deleteElement}
                                                 editElement={editElement}
+                                                positions={positions}
                                             />
                                         ))}
 
