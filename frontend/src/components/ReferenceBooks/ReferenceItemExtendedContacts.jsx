@@ -9,6 +9,7 @@ const ReferenceItemExtendedContacts = ({
     deleteElement,
     handleInputChange,
     setPopupState,
+    setnewElem,
 }) => {
     const PhoneMask = "+{7} (000) 000 00 00";
 
@@ -18,7 +19,7 @@ const ReferenceItemExtendedContacts = ({
                 <>
                     {data.contacts.map((contact, index) => (
                         <tr
-                            key={contact.id}
+                            key={`${data.id}_${contact.id}`}
                             className="border-b border-gray-300 text-base text-left"
                         >
                             {index === 0 && (
@@ -35,9 +36,12 @@ const ReferenceItemExtendedContacts = ({
                                                 type="button"
                                                 className="add-button flex items-center"
                                                 title="Добавить контакт"
-                                                onClick={() =>
-                                                    setPopupState(true)
-                                                }
+                                                onClick={() => {
+                                                    setnewElem({
+                                                        contragent_id: data.id,
+                                                    });
+                                                    setPopupState(true);
+                                                }}
                                             >
                                                 <span></span>
                                             </button>
@@ -190,7 +194,12 @@ const ReferenceItemExtendedContacts = ({
                                     type="button"
                                     className="add-button flex items-center"
                                     title="Добавить контакт"
-                                    onClick={() => setAddNewElem(true)}
+                                    onClick={() => {
+                                        setnewElem({
+                                            contragent_id: data.id,
+                                        });
+                                        setPopupState(true);
+                                    }}
                                 >
                                     <span></span>
                                 </button>

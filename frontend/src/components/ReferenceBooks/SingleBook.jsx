@@ -142,6 +142,8 @@ const SingleBook = () => {
     const handleInputChange = (e, name, id) => {
         const value = name === "phone" ? e : e.target.value;
 
+        console.log(name + ": " + value);
+
         setBooksItems((prevBooksItems) =>
             prevBooksItems.map((item) =>
                 item.id === id ? { ...item, [name]: value } : item
@@ -158,12 +160,17 @@ const SingleBook = () => {
         }));
     };
 
-    const openPopup = () => {
-        setPopupState(true);
-    };
-
     const closePopup = (evt) => {
-        if (evt.currentTarget.classList.contains("popup")) setPopupState(false);
+        if (evt.currentTarget.classList.contains("popup")) {
+            setPopupState(false);
+            setnewElem({
+                contragent_id: "",
+                full_name: "",
+                position: "",
+                email: "",
+                phone: "",
+            });
+        }
     };
 
     // Добавление записи
@@ -194,8 +201,9 @@ const SingleBook = () => {
         });
     };
 
+    // Добавить новый контакт подрядчику
     const addNewContact = (data) => {
-        postData("POST", URL, data).then((response) => {
+        postData("POST", `${URL}/${data.id}`, data).then((response) => {
             if (response) {
                 setBooksItems((booksItems) =>
                     booksItems.map((item) =>
@@ -210,7 +218,6 @@ const SingleBook = () => {
                             : item
                     )
                 );
-                setAddNewElem(false);
                 toast("Контакт добавлен", {
                     type: "success",
                     containerId: "singleBook",
@@ -219,6 +226,7 @@ const SingleBook = () => {
                     pauseOnHover: false,
                     position: "top-center",
                 });
+                setPopupState(false);
             }
         });
     };
@@ -551,9 +559,9 @@ const SingleBook = () => {
                                                 handleInputChange={
                                                     handleInputChange
                                                 }
-                                                addNewContact={addNewContact}
                                                 deleteElement={deleteElement}
                                                 setPopupState={setPopupState}
+                                                setnewElem={setnewElem}
                                             />
                                         ))}
                                 </>
@@ -626,7 +634,7 @@ const SingleBook = () => {
                                 <button
                                     type="button"
                                     className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
-                                    // onClick={}
+                                    onClick={() => addNewContact(newElem)}
                                 >
                                     Добавить
                                 </button>
