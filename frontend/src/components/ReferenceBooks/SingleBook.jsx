@@ -68,6 +68,13 @@ const SingleBook = () => {
             { label: "Последнее изменение", key: "" },
             { label: "Автор измнения", key: "" },
         ],
+        "management-report-types": [
+            { label: "Наименование", key: "name" },
+            { label: "Должность отвественного", key: "type" },
+            { label: "Кол-во отчётов", key: "count" },
+            { label: "Последнее изменение", key: "updated_at" },
+            { label: "Автор измнения", key: "author" },
+        ],
     };
 
     const TITLES = {
@@ -80,6 +87,7 @@ const SingleBook = () => {
         "working-hours": "Рабочие часы",
         positions: "Должности сотрудников",
         "suppliers-with-reports": "Контакты Подрядчиков",
+        "management-report-types": "Типы отчётов Менеджмента",
     };
 
     const { bookId } = useParams();
