@@ -212,7 +212,7 @@ const SingleBook = () => {
 
     // Добавить новый контакт подрядчику
     const addNewContact = (data) => {
-        postData("POST", `${URL}/${data.id}`, data).then((response) => {
+        postData("POST", `${URL}/${data.contragent_id}`, data).then((response) => {
             if (response) {
                 setBooksItems((booksItems) =>
                     booksItems.map((item) =>
@@ -264,7 +264,7 @@ const SingleBook = () => {
             position: "top-center",
         });
 
-        postData("PATCH", URL, data).then((response) => {
+        postData("PATCH", `${URL}/${data.id}`, data).then((response) => {
             if (response?.ok) {
                 toast.update(query, {
                     render: "Запись обновлена",
@@ -482,7 +482,9 @@ const SingleBook = () => {
                                                                     }
                                                                 />
                                                             </div>
-                                                        ) : key === "type" ? (
+                                                        ) : key === "type" ||
+                                                          key ===
+                                                              "position_id" ? (
                                                             <select
                                                                 className="w-full border border-gray-300 min-h-[30px]"
                                                                 name={key}
@@ -500,24 +502,29 @@ const SingleBook = () => {
                                                             >
                                                                 {bookId ===
                                                                 "management-report-types" ? (
-                                                                    positions.map(
-                                                                        (
-                                                                            position
-                                                                        ) => (
-                                                                            <option
-                                                                                value={
-                                                                                    position.id
-                                                                                }
-                                                                                key={
-                                                                                    position.id
-                                                                                }
-                                                                            >
-                                                                                {
-                                                                                    position.name
-                                                                                }
-                                                                            </option>
-                                                                        )
-                                                                    )
+                                                                    <>
+                                                                        <option value="">
+                                                                            Должность
+                                                                        </option>
+                                                                        {positions.map(
+                                                                            (
+                                                                                position
+                                                                            ) => (
+                                                                                <option
+                                                                                    value={
+                                                                                        position.id
+                                                                                    }
+                                                                                    key={
+                                                                                        position.id
+                                                                                    }
+                                                                                >
+                                                                                    {
+                                                                                        position.name
+                                                                                    }
+                                                                                </option>
+                                                                            )
+                                                                        )}
+                                                                    </>
                                                                 ) : (
                                                                     <>
                                                                         <option value="">
