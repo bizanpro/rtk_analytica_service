@@ -7,7 +7,7 @@ const ReferenceItemExtendedContacts = ({
     data,
     mode = "read",
     deleteElement,
-    handleInputChange,
+    handleContactInputChange,
     setPopupState,
     setnewElem,
 }) => {
@@ -65,7 +65,7 @@ const ReferenceItemExtendedContacts = ({
                                                 "—"
                                             }
                                             onChange={(e) =>
-                                                handleInputChange(
+                                                handleContactInputChange(
                                                     e,
                                                     "full_name",
                                                     data.id
@@ -89,7 +89,7 @@ const ReferenceItemExtendedContacts = ({
                                                 "—"
                                             }
                                             onChange={(e) =>
-                                                handleInputChange(
+                                                handleContactInputChange(
                                                     e,
                                                     "position",
                                                     data.id
@@ -117,7 +117,7 @@ const ReferenceItemExtendedContacts = ({
                                             type="tel"
                                             inputMode="tel"
                                             onAccept={(value) =>
-                                                handleInputChange(
+                                                handleContactInputChange(
                                                     value || "",
                                                     "phone"
                                                 )
@@ -142,7 +142,7 @@ const ReferenceItemExtendedContacts = ({
                                                 contact.email?.toString() || "—"
                                             }
                                             onChange={(e) =>
-                                                handleInputChange(
+                                                handleContactInputChange(
                                                     e,
                                                     "email",
                                                     data.id

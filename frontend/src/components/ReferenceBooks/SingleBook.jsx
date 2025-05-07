@@ -144,11 +144,8 @@ const SingleBook = () => {
 
     let query;
 
-    const handleNewElementInputChange = (e, name) => {
-        setFormFields({ ...formFields, [name]: e.target.value });
-    };
-
-    const handleInputChange = (e, name, id) => {
+    // Обработка существующих полей контактов подрядчиков
+    const handleContactInputChange = (e, name, id) => {
         const value = name === "phone" ? e : e.target.value;
 
         console.log(name + ": " + value);
@@ -160,6 +157,7 @@ const SingleBook = () => {
         );
     };
 
+    // Обработка полей попапа нового контакта подрядчика
     const handleNewContactElemInputChange = (e, name) => {
         const value = name === "phone" ? e : e.target.value;
 
@@ -167,6 +165,22 @@ const SingleBook = () => {
             ...prev,
             [name]: value,
         }));
+    };
+
+    // Обработка полей новой записи в справочнике
+    const handleNewElementInputChange = (e, name) => {
+        setFormFields({ ...formFields, [name]: e.target.value });
+    };
+
+    // Обработка существующих полей справочника
+    const handleInputChange = (e, name, id) => {
+        const value = name === "phone" ? e : e.target.value;
+
+        setBooksItems((prevBooksItems) =>
+            prevBooksItems.map((item) =>
+                item.id === id ? { ...item, [name]: value } : item
+            )
+        );
     };
 
     const closePopup = (evt) => {
@@ -212,32 +226,34 @@ const SingleBook = () => {
 
     // Добавить новый контакт подрядчику
     const addNewContact = (data) => {
-        postData("POST", `${URL}/${data.contragent_id}`, data).then((response) => {
-            if (response) {
-                setBooksItems((booksItems) =>
-                    booksItems.map((item) =>
-                        item.id === response.contragent_id
-                            ? {
-                                  ...item,
-                                  contacts: [
-                                      ...(item.contacts || []),
-                                      response,
-                                  ],
-                              }
-                            : item
-                    )
-                );
-                toast("Контакт добавлен", {
-                    type: "success",
-                    containerId: "singleBook",
-                    autoClose: 1200,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-                setPopupState(false);
+        postData("POST", `${URL}/${data.contragent_id}`, data).then(
+            (response) => {
+                if (response) {
+                    setBooksItems((booksItems) =>
+                        booksItems.map((item) =>
+                            item.id === data.contragent_id
+                                ? {
+                                      ...item,
+                                      contacts: [
+                                          ...(item.contacts || []),
+                                          response,
+                                      ],
+                                  }
+                                : item
+                        )
+                    );
+                    toast("Контакт добавлен", {
+                        type: "success",
+                        containerId: "singleBook",
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                    setPopupState(false);
+                }
             }
-        });
+        );
     };
 
     // Изменение записи
@@ -422,15 +438,17 @@ const SingleBook = () => {
                     <table className="table-auto w-full border-collapse border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
-                                {COLUMNS[bookId].map(({ label, key }) => (
-                                    <th
-                                        className="text-base px-4 py-2 min-w-[180px]"
-                                        rowSpan="2"
-                                        key={key}
-                                    >
-                                        {label}
-                                    </th>
-                                ))}
+                                {COLUMNS[bookId].map(
+                                    ({ label, key, index }) => (
+                                        <th
+                                            className="text-base px-4 py-2 min-w-[180px]"
+                                            rowSpan="2"
+                                            key={key || index}
+                                        >
+                                            {label}
+                                        </th>
+                                    )
+                                )}
                             </tr>
                         </thead>
 
@@ -572,142 +590,157 @@ const SingleBook = () => {
                                         )}
 
                                     {filteredProjects?.length > 0 &&
-                                        bookId !== "creditor" &&
-                                        bookId !== "suppliers-with-reports" &&
-                                        filteredProjects.map((item) => (
-                                            <ReferenceItem
-                                                key={item.id}
-                                                data={item}
-                                                columns={columns}
-                                                mode={mode}
-                                                bookId={bookId}
-                                                handleInputChange={
-                                                    handleInputChange
-                                                }
-                                                deleteElement={deleteElement}
-                                                editElement={editElement}
-                                                positions={positions}
-                                            />
-                                        ))}
+                                        filteredProjects.map((item) => {
+                                            if (bookId === "creditor") {
+                                                return (
+                                                    <ReferenceItemExtended
+                                                        key={item.id}
+                                                        data={item}
+                                                        columns={columns}
+                                                        mode={mode}
+                                                        bookId={bookId}
+                                                        handleInputChange={
+                                                            handleInputChange
+                                                        }
+                                                        deleteElement={
+                                                            deleteElement
+                                                        }
+                                                        editElement={
+                                                            editElement
+                                                        }
+                                                    />
+                                                );
+                                            }
 
-                                    {filteredProjects?.length > 0 &&
-                                        bookId == "creditor" &&
-                                        filteredProjects.map((item) => (
-                                            <ReferenceItemExtended
-                                                key={item.id}
-                                                data={item}
-                                                columns={columns}
-                                                mode={mode}
-                                                bookId={bookId}
-                                                handleInputChange={
-                                                    handleInputChange
-                                                }
-                                                deleteElement={deleteElement}
-                                                editElement={editElement}
-                                            />
-                                        ))}
+                                            if (
+                                                bookId ===
+                                                "suppliers-with-reports"
+                                            ) {
+                                                return (
+                                                    <ReferenceItemExtendedContacts
+                                                        key={item.id}
+                                                        data={item}
+                                                        mode={mode}
+                                                        handleContactInputChange={
+                                                            handleContactInputChange
+                                                        }
+                                                        deleteElement={
+                                                            deleteElement
+                                                        }
+                                                        setPopupState={
+                                                            setPopupState
+                                                        }
+                                                        setnewElem={setnewElem}
+                                                    />
+                                                );
+                                            }
 
-                                    {filteredProjects?.length > 0 &&
-                                        bookId == "suppliers-with-reports" &&
-                                        filteredProjects.map((item) => (
-                                            <ReferenceItemExtendedContacts
-                                                key={item.id}
-                                                data={item}
-                                                mode={mode}
-                                                handleInputChange={
-                                                    handleInputChange
-                                                }
-                                                deleteElement={deleteElement}
-                                                setPopupState={setPopupState}
-                                                setnewElem={setnewElem}
-                                            />
-                                        ))}
+                                            return (
+                                                <ReferenceItem
+                                                    key={item.id}
+                                                    data={item}
+                                                    columns={columns}
+                                                    mode={mode}
+                                                    bookId={bookId}
+                                                    handleInputChange={
+                                                        handleInputChange
+                                                    }
+                                                    deleteElement={
+                                                        deleteElement
+                                                    }
+                                                    editElement={editElement}
+                                                    positions={positions}
+                                                />
+                                            );
+                                        })}
                                 </>
                             )}
                         </tbody>
                     </table>
                 </div>
 
-                {popupState && mode === "edit" && (
-                    <Popup onClick={closePopup} title="Добавить контакт">
-                        <div className="min-w-[300px]">
-                            <div className="action-form__body grid grid-cols-2 gap-3">
-                                <input
-                                    type="text"
-                                    className="w-full text-base border border-gray-300 p-1"
-                                    value={newElem.full_name}
-                                    placeholder="ФИО"
-                                    onChange={(e) =>
-                                        handleNewContactElemInputChange(
-                                            e,
-                                            "full_name"
-                                        )
-                                    }
-                                />
+                {popupState &&
+                    mode === "edit" &&
+                    bookId === "suppliers-with-reports" && (
+                        <Popup onClick={closePopup} title="Добавить контакт">
+                            <div className="min-w-[300px]">
+                                <div className="action-form__body grid grid-cols-2 gap-3">
+                                    <input
+                                        type="text"
+                                        className="w-full text-base border border-gray-300 p-1"
+                                        value={newElem.full_name}
+                                        placeholder="ФИО"
+                                        onChange={(e) =>
+                                            handleNewContactElemInputChange(
+                                                e,
+                                                "full_name"
+                                            )
+                                        }
+                                    />
 
-                                <input
-                                    type="text"
-                                    className="w-full text-base border border-gray-300 p-1"
-                                    value={newElem.position}
-                                    placeholder="Должность"
-                                    onChange={(e) =>
-                                        handleNewContactElemInputChange(
-                                            e,
-                                            "position"
-                                        )
-                                    }
-                                />
+                                    <input
+                                        type="text"
+                                        className="w-full text-base border border-gray-300 p-1"
+                                        value={newElem.position}
+                                        placeholder="Должность"
+                                        onChange={(e) =>
+                                            handleNewContactElemInputChange(
+                                                e,
+                                                "position"
+                                            )
+                                        }
+                                    />
 
-                                <IMaskInput
-                                    mask={PhoneMask}
-                                    className="w-full text-base border border-gray-300 p-1"
-                                    name="phone"
-                                    type="tel"
-                                    inputMode="tel"
-                                    onAccept={(value) =>
-                                        handleNewContactElemInputChange(
-                                            value || "",
-                                            "phone"
-                                        )
-                                    }
-                                    value={newElem.phone}
-                                    placeholder="+7 999 999 99 99"
-                                />
+                                    <IMaskInput
+                                        mask={PhoneMask}
+                                        className="w-full text-base border border-gray-300 p-1"
+                                        name="phone"
+                                        type="tel"
+                                        inputMode="tel"
+                                        onAccept={(value) =>
+                                            handleNewContactElemInputChange(
+                                                value || "",
+                                                "phone"
+                                            )
+                                        }
+                                        value={newElem.phone}
+                                        placeholder="+7 999 999 99 99"
+                                    />
 
-                                <input
-                                    type="text"
-                                    className="w-full text-base border border-gray-300 p-1"
-                                    value={newElem.email}
-                                    placeholder="Email"
-                                    onChange={(e) =>
-                                        handleNewContactElemInputChange(
-                                            e,
-                                            "email"
-                                        )
-                                    }
-                                />
+                                    <input
+                                        type="text"
+                                        className="w-full text-base border border-gray-300 p-1"
+                                        value={newElem.email}
+                                        placeholder="Email"
+                                        onChange={(e) =>
+                                            handleNewContactElemInputChange(
+                                                e,
+                                                "email"
+                                            )
+                                        }
+                                    />
+                                </div>
+
+                                <div className="action-form__footer mt-5 flex items-center gap-6 justify-between">
+                                    <button
+                                        type="button"
+                                        className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
+                                        onClick={() => addNewContact(newElem)}
+                                    >
+                                        Добавить
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setPopupState(false)}
+                                        className="border rounded-lg py-2 px-5 flex-[1_1_50%]"
+                                    >
+                                        Отменить
+                                    </button>
+                                </div>
                             </div>
-
-                            <div className="action-form__footer mt-5 flex items-center gap-6 justify-between">
-                                <button
-                                    type="button"
-                                    className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
-                                    onClick={() => addNewContact(newElem)}
-                                >
-                                    Добавить
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setPopupState(false)}
-                                    className="border rounded-lg py-2 px-5 flex-[1_1_50%]"
-                                >
-                                    Отменить
-                                </button>
-                            </div>
-                        </div>
-                    </Popup>
-                )}
+                        </Popup>
+                    )}
             </div>
         </main>
     );
