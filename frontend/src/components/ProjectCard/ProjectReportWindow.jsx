@@ -20,7 +20,7 @@ const ProjectReportWindow = ({
         report_type_id: 1,
         budget_in_billions: "",
         service_cost_in_rubles: "",
-        contract_id: 1,
+        contract_id: contracts.length > 0 ? contracts[0].id : 1,
         report_period: {
             start: new Date("2025-01-01"),
             end: new Date("2025-12-31"),
