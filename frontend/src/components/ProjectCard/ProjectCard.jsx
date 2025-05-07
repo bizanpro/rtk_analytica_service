@@ -30,7 +30,7 @@ const ProjectCard = () => {
     const [projectData, setProjectData] = useState({});
     const [formFields, setFormFields] = useState({});
 
-    const [mode, setMode] = useState(location.state?.mode);
+    const [mode, setMode] = useState(location.state?.mode || "read");
 
     const [industries, setIndustries] = useState([]);
     const [contragents, setContragents] = useState([]);

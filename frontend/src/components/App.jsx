@@ -14,6 +14,8 @@ import CustomerCard from "./CustomerCard/CustomerCard";
 import Suppliers from "./Suppliers/Suppliers";
 import SupplierCard from "./SupplierCard/SupplierCard";
 import Reports from "./Reports/Reports";
+import Sales from "./Sales/Sales";
+import SaleCard from "./SaleCard/SaleCard";
 
 function App() {
     return (
@@ -60,6 +62,9 @@ function App() {
                         path="reference-books/:bookId"
                         element={<SingleBook />}
                     />
+
+                    <Route path="sales" element={<Sales />} />
+                    <Route path="sales/:saleId" element={<SaleCard />} />
                 </Route>
             </Routes>
         </BrowserRouter>

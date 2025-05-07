@@ -16,6 +16,11 @@ const Header = () => {
             label: "Проекты",
         },
         {
+            url: "/sales",
+            title: "Перейти в реестр продаж",
+            label: "Продажи",
+        },
+        {
             url: "/contragents",
             title: "Перейти в реестр заказчиков",
             label: "Заказчики",
