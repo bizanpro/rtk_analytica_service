@@ -383,7 +383,13 @@ const ProjectReportWindow = ({
     }, [isDataLoaded, reportId]);
 
     return (
-        <div className="grid gap-6">
+        <div className="grid gap-6 relative">
+            {!isDataLoaded && (
+                <div className="loader">
+                    <div className="loader__icon"></div>
+                </div>
+            )}
+
             <div className="text-2xl w-full mb-3">{reportTitle}</div>
             <div className="grid gap-3 grid-cols-2">
                 <div className="flex flex-col gap-2 justify-between">
