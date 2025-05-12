@@ -1,36 +1,36 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 
 import getData from "../../utils/getData";
 
 import Loader from "../Loader";
 
-const ProjectStatisticsBlock = ({ projectId }) => {
+const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
     const [period, setPeriod] = useState("current-year");
     const [revenue, setRevenue] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
-    const fetchData = async () => {
+    const getRevenue = () => {
         setIsDataLoaded(false);
 
-        const [revenueRes] = await Promise.allSettled([
-            getData(
-                `${
-                    import.meta.env.VITE_API_URL
-                }projects/${projectId}/revenue/?period=${period}`
-            ),
-        ]);
-
-        if (revenueRes.status === "fulfilled") {
-            if (revenueRes.value.status == 200) {
-                setRevenue(revenueRes.value.data); // Получение выручки
-            }
-        }
-
-        setIsDataLoaded(true);
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }projects/${projectId}/revenue/?period=${period}`
+        )
+            .then((response) => {
+                if (response.status == 200) {
+                    setRevenue(response.data);
+                }
+            })
+            .finally(() => setIsDataLoaded(true));
     };
 
+    useImperativeHandle(ref, () => ({
+        refreshRevenue: getRevenue,
+    }));
+
     useEffect(() => {
-        fetchData();
+        getRevenue();
     }, [period]);
 
     return (
@@ -81,7 +81,7 @@ const ProjectStatisticsBlock = ({ projectId }) => {
                     </div>
                     <div className="flex items-center flex-grow gap-2">
                         <strong className="font-normal text-4xl">
-                            {revenue.revenue || "0,0"}
+                            {(revenue.revenue ?? 0).toLocaleString("de-DE")}
                         </strong>
                         <small className="text-sm">
                             млн
@@ -93,7 +93,9 @@ const ProjectStatisticsBlock = ({ projectId }) => {
                 <div className="flex flex-col gap-2">
                     <div className="text-gray-400">Поступления</div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">0,0</strong>
+                        <strong className="font-normal text-4xl">
+                            {(revenue.receipts ?? 0).toLocaleString("de-DE")}
+                        </strong>
                         <small className="text-sm">
                             млн
                             <br />
@@ -109,7 +111,9 @@ const ProjectStatisticsBlock = ({ projectId }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">0,0</strong>
+                        <strong className="font-normal text-4xl">
+                            {(revenue.debts ?? 0).toLocaleString("de-DE")}
+                        </strong>
                         <small className="text-sm">
                             млн
                             <br />
@@ -126,7 +130,18 @@ const ProjectStatisticsBlock = ({ projectId }) => {
                             ?
                         </span>
                     </div>
-                    Нет данных
+                    <div className="flex items-center flex-grow gap-2">
+                        <strong className="font-normal text-4xl">
+                            {(revenue.suppliers_expenses ?? 0).toLocaleString(
+                                "de-DE"
+                            )}
+                        </strong>
+                        <small className="text-sm">
+                            млн
+                            <br />
+                            руб.
+                        </small>
+                    </div>
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-gray-400">
@@ -136,7 +151,11 @@ const ProjectStatisticsBlock = ({ projectId }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">0,0</strong>
+                        <strong className="font-normal text-4xl">
+                            {(revenue.gross_profit ?? 0).toLocaleString(
+                                "de-DE"
+                            )}
+                        </strong>
                         <small className="text-sm">
                             млн
                             <br />
@@ -151,11 +170,22 @@ const ProjectStatisticsBlock = ({ projectId }) => {
                             ?
                         </span>
                     </div>
-                    Нет данных
+                    <div className="flex items-center flex-grow gap-2">
+                        <strong className="font-normal text-4xl">
+                            {(revenue.gross_margin ?? 0).toLocaleString(
+                                "de-DE"
+                            )}
+                        </strong>
+                        <small className="text-sm">
+                            млн
+                            <br />
+                            руб.
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
     );
-};
+});
 
 export default ProjectStatisticsBlock;

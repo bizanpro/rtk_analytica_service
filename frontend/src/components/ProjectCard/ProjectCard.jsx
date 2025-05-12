@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useParams, useLocation } from "react-router-dom";
 
 import getData from "../../utils/getData";
@@ -26,6 +26,8 @@ const ProjectCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
     const location = useLocation();
     const { projectId } = useParams();
+
+    const statsRef = useRef();
 
     const [projectData, setProjectData] = useState({});
     const [formFields, setFormFields] = useState({});
@@ -70,6 +72,13 @@ const ProjectCard = () => {
     const [reportId, setReportId] = useState(null);
 
     let query;
+
+    // Обновляем блок ОСВ
+    const handleRefresh = () => {
+        if (statsRef.current) {
+            statsRef.current.refreshRevenue();
+        }
+    };
 
     const matchedBanks = banks.filter((bank) =>
         projectData.creditors?.some(
@@ -241,6 +250,7 @@ const ProjectCard = () => {
                 getReports(),
                 getTeam(),
                 getServices(),
+                handleRefresh(),
             ]);
         } catch (error) {
             console.error("Ошибка при загрузке проекта:", error);
@@ -1050,6 +1060,7 @@ const ProjectCard = () => {
                             ) : (
                                 <>
                                     <ProjectStatisticsBlock
+                                        ref={statsRef}
                                         projectId={projectId}
                                     />
 
