@@ -68,7 +68,8 @@ const ReferenceItemExtendedContacts = ({
                                                 handleContactInputChange(
                                                     e,
                                                     "full_name",
-                                                    data.id
+                                                    data,
+                                                    contact.id
                                                 )
                                             }
                                             disabled={
@@ -92,7 +93,8 @@ const ReferenceItemExtendedContacts = ({
                                                 handleContactInputChange(
                                                     e,
                                                     "position",
-                                                    data.id
+                                                    data,
+                                                    contact.id
                                                 )
                                             }
                                             disabled={
@@ -119,7 +121,9 @@ const ReferenceItemExtendedContacts = ({
                                             onAccept={(value) =>
                                                 handleContactInputChange(
                                                     value || "",
-                                                    "phone"
+                                                    "phone",
+                                                    data,
+                                                    contact.id
                                                 )
                                             }
                                             value={
@@ -145,7 +149,8 @@ const ReferenceItemExtendedContacts = ({
                                                 handleContactInputChange(
                                                     e,
                                                     "email",
-                                                    data.id
+                                                    data,
+                                                    contact.id
                                                 )
                                             }
                                             disabled={

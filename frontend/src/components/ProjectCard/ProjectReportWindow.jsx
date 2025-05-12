@@ -160,7 +160,10 @@ const ProjectReportWindow = ({
         (e, name) => {
             let value = e.target.value;
 
-            if (name === "budget_in_billions") {
+            if (
+                name === "budget_in_billions" ||
+                name === "service_cost_in_rubles"
+            ) {
                 value = value.replace(/[^0-9.,]/g, "");
                 value = value.replace(".", ",");
 
@@ -172,8 +175,6 @@ const ProjectReportWindow = ({
                 if (parts[1]?.length > 5) {
                     value = `${parts[0]},${parts[1].slice(0, 5)}`;
                 }
-            } else if (name === "service_cost_in_rubles") {
-                value = Number(value.replace(/\s/g, "")) || 0;
             }
 
             setReportData((prev) => ({
@@ -195,12 +196,6 @@ const ProjectReportWindow = ({
             },
         [setReportData]
     );
-
-    // Форматируем стоимость
-    const formatPrice = (price) =>
-        new Intl.NumberFormat("ru-RU", { minimumFractionDigits: 0 }).format(
-            price
-        );
 
     // Добавление блока заказчика или кредитора
     const addBlock = useCallback((type) => {
@@ -480,7 +475,7 @@ const ProjectReportWindow = ({
                             onChange={(e) =>
                                 handleInputChange(e, "contract_id")
                             }
-                            value={reportData.contract_id}
+                            value={reportData.contract_id || ""}
                             disabled={mode === "read" ? true : false}
                         >
                             {contracts.length > 0 &&
@@ -504,10 +499,14 @@ const ProjectReportWindow = ({
                         <input
                             type="text"
                             className="w-full"
-                            placeholder="0"
-                            value={formatPrice(
-                                reportData["service_cost_in_rubles"]
+                            placeholder="0.0"
+                            value={reportData.service_cost_in_rubles?.replace(
+                                ".",
+                                ","
                             )}
+                            // value={formatPrice(
+                            //     reportData["service_cost_in_rubles"]
+                            // )}
                             onChange={(e) =>
                                 handleInputChange(e, "service_cost_in_rubles")
                             }

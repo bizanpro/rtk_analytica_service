@@ -145,14 +145,21 @@ const SingleBook = () => {
     let query;
 
     // Обработка существующих полей контактов подрядчиков
-    const handleContactInputChange = (e, name, id) => {
+    const handleContactInputChange = (e, name, item, contactId) => {
         const value = name === "phone" ? e : e.target.value;
 
-        console.log(name + ": " + value);
-
         setBooksItems((prevBooksItems) =>
-            prevBooksItems.map((item) =>
-                item.id === id ? { ...item, [name]: value } : item
+            prevBooksItems.map((book) =>
+                book.id === item.id
+                    ? {
+                          ...book,
+                          contacts: book.contacts.map((contact) =>
+                              contact.id === contactId
+                                  ? { ...contact, [name]: value }
+                                  : contact
+                          ),
+                      }
+                    : book
             )
         );
     };
