@@ -57,7 +57,10 @@ const ProjectReportItem = ({
                     <button
                         className="delete-icon flex-none w-[20px] h-[20px]"
                         title="Удалить отчёт"
-                        onClick={() => deleteReport(id)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            deleteReport(id);
+                        }}
                     ></button>
                 )}
             </div>

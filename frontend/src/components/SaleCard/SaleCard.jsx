@@ -79,7 +79,7 @@ const SaleCard = () => {
                         </nav>
                     </div>
 
-                    <div className="mt-15 grid grid-cols-3">
+                    <div className="mt-15 grid grid-cols-3 gap-10">
                         <div className="flex flex-col gap-3">
                             <div className="flex flex-col gap-2 flex-shrink-0 flex-grow">
                                 <span className="flex items-center gap-2 text-gray-400">
@@ -158,7 +158,7 @@ const SaleCard = () => {
 
                                 <div className="flex flex-col gap-2 flex-shrink-0 flex-grow">
                                     <span className="flex items-center gap-2 text-gray-400">
-                                        Банк{" "}
+                                        Банк
                                         <button
                                             type="button"
                                             className="add-button"
@@ -168,6 +168,142 @@ const SaleCard = () => {
                                         </button>
                                     </span>
                                     <div className="border-2 border-gray-300 p-5 h-full"></div>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2 flex-shrink-0 flex-grow">
+                                <span className="flex items-center gap-2 text-gray-400">
+                                    Местоположение
+                                </span>
+                                <div className="border-2 border-gray-300 p-5">
+                                    <input
+                                        type="text"
+                                        className="w-full"
+                                        placeholder="Заполните местоположение"
+                                        disabled={mode == "read" ? true : false}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <span className="text-gray-400">
+                                    Краткое описание
+                                </span>
+                                <textarea
+                                    className="border-2 border-gray-300 p-5 min-h-[300px]"
+                                    placeholder="Заполните описание проекта"
+                                    style={{ resize: "none" }}
+                                    type="text"
+                                    name="description"
+                                    disabled={mode == "read" ? true : false}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-2 h-[200px]">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-400">
+                                        Услуги
+                                    </span>
+                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                        ?
+                                    </span>
+                                    <button
+                                        type="button"
+                                        className="add-button"
+                                        title="Добавить услугу"
+                                    >
+                                        <span></span>
+                                    </button>
+                                </div>
+
+                                <div className="border-2 border-gray-300 py-5 px-4 h-full overflow-x-hidden overflow-y-auto">
+                                    <ul className="grid gap-3">
+                                        <li className="grid items-center grid-cols-[1fr_40%] gap-3 mb-2 text-gray-400">
+                                            <span>Тип услуги</span>
+                                            <span className="flex items-center gap-2">
+                                                Стоимость
+                                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                    ?
+                                                </span>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2 flex-grow">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-400">
+                                        Воронка продажи
+                                    </span>
+                                </div>
+
+                                <div className="border-2 border-gray-300 py-5 px-4 h-full overflow-x-hidden overflow-y-auto">
+                                    <ul className="grid gap-3">
+                                        <li className="grid items-center grid-cols-[1fr_25%_25%] gap-3 mb-2 text-gray-400">
+                                            <span className="flex items-center gap-2">
+                                                Этап
+                                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                    ?
+                                                </span>
+                                            </span>
+                                            <span className="flex items-center gap-2">
+                                                Дата
+                                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                    ?
+                                                </span>
+                                            </span>
+                                            <span className="flex items-center gap-2">
+                                                Статус
+                                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                    ?
+                                                </span>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-2 h-[200px]">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-400">
+                                        Перечень работ
+                                    </span>
+                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                        ?
+                                    </span>
+                                </div>
+
+                                <textarea
+                                    className="border-2 border-gray-300 p-5 h-full"
+                                    placeholder="Заполните перечень работ"
+                                    style={{ resize: "none" }}
+                                    type="text"
+                                    name="description"
+                                    disabled={mode == "read" ? true : false}
+                                />
+                            </div>
+
+                            <div className="flex flex-col gap-2 flex-grow">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-400">
+                                        Воронка продажи
+                                    </span>
+                                </div>
+
+                                <div className="border-2 border-gray-300 py-5 px-4 h-full">
+                                    <textarea
+                                        className="p-5 h-full w-full"
+                                        placeholder="Оставьте комментарии по этапу"
+                                        style={{ resize: "none" }}
+                                        type="text"
+                                        name="description"
+                                        disabled={mode == "read" ? true : false}
+                                    />
                                 </div>
                             </div>
                         </div>
