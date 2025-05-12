@@ -5,6 +5,8 @@ import getData from "../../utils/getData";
 import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
 
+import Loader from "../Loader";
+
 const ProjectReportWindow = ({
     sendReport,
     reportWindowsState,
@@ -379,11 +381,7 @@ const ProjectReportWindow = ({
 
     return (
         <div className="grid gap-6 relative">
-            {!isDataLoaded && (
-                <div className="loader">
-                    <div className="loader__icon"></div>
-                </div>
-            )}
+            {!isDataLoaded && <Loader />}
 
             <div className="text-2xl w-full mb-3">{reportTitle}</div>
             <div className="grid gap-3 grid-cols-2">
@@ -544,11 +542,11 @@ const ProjectReportWindow = ({
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
                             className="w-full h-full"
-                            value={reportData.report_status_id}
+                            value={reportData?.report_status_id}
                             onChange={(e) =>
                                 handleInputChange(e, "report_status_id")
                             }
-                            disabled={mode === "read" ? true : false}
+                            disabled
                         >
                             {reportStatuses.map((status) => (
                                 <option value={status.id} key={status.id}>

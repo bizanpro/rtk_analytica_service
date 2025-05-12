@@ -1,6 +1,42 @@
-const ProjectStatisticsBlock = () => {
+import { useState, useEffect } from "react";
+
+import getData from "../../utils/getData";
+
+import Loader from "../Loader";
+
+const ProjectStatisticsBlock = ({ projectId }) => {
+    const [period, setPeriod] = useState("current-year");
+    const [revenue, setRevenue] = useState({});
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+    const fetchData = async () => {
+        setIsDataLoaded(false);
+
+        const [revenueRes] = await Promise.allSettled([
+            getData(
+                `${
+                    import.meta.env.VITE_API_URL
+                }projects/${projectId}/revenue/?period=${period}`
+            ),
+        ]);
+
+        if (revenueRes.status === "fulfilled") {
+            if (revenueRes.value.status == 200) {
+                setRevenue(revenueRes.value.data); // Получение выручки
+            }
+        }
+
+        setIsDataLoaded(true);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [period]);
+
     return (
-        <div className="border-2 border-gray-300 p-5 mb-5">
+        <div className="border-2 border-gray-300 p-5 mb-5 relative">
+            {!isDataLoaded && <Loader />}
+
             <div className="flex flex-col gap-2 justify-between">
                 <div className="switch gap-4 w-[70%] mb-5">
                     <div>
@@ -8,8 +44,8 @@ const ProjectStatisticsBlock = () => {
                             type="radio"
                             name="time_sort"
                             id="this_year"
-                            disabled
-                            checked
+                            checked={period === "current-year"}
+                            onChange={() => setPeriod("current-year")}
                         />
                         <label
                             className="bg-gray-200 py-1 px-2 text-center rounded-md"
@@ -23,7 +59,8 @@ const ProjectStatisticsBlock = () => {
                             type="radio"
                             name="time_sort"
                             id="all_time"
-                            disabled
+                            checked={period === "all"}
+                            onChange={() => setPeriod("all")}
                         />
                         <label
                             className="bg-gray-200 py-1 px-2 text-center rounded-md"
@@ -43,7 +80,9 @@ const ProjectStatisticsBlock = () => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">10,0</strong>
+                        <strong className="font-normal text-4xl">
+                            {revenue.revenue || "0,0"}
+                        </strong>
                         <small className="text-sm">
                             млн
                             <br />
@@ -54,7 +93,7 @@ const ProjectStatisticsBlock = () => {
                 <div className="flex flex-col gap-2">
                     <div className="text-gray-400">Поступления</div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">8,0</strong>
+                        <strong className="font-normal text-4xl">0,0</strong>
                         <small className="text-sm">
                             млн
                             <br />
@@ -70,7 +109,7 @@ const ProjectStatisticsBlock = () => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">2,0</strong>
+                        <strong className="font-normal text-4xl">0,0</strong>
                         <small className="text-sm">
                             млн
                             <br />
@@ -97,7 +136,7 @@ const ProjectStatisticsBlock = () => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">1,0</strong>
+                        <strong className="font-normal text-4xl">0,0</strong>
                         <small className="text-sm">
                             млн
                             <br />

@@ -1049,7 +1049,9 @@ const ProjectCard = () => {
                                 />
                             ) : (
                                 <>
-                                    <ProjectStatisticsBlock />
+                                    <ProjectStatisticsBlock
+                                        projectId={projectId}
+                                    />
 
                                     <div className="flex flex-col gap-2 flex-grow">
                                         <div className="flex items-center gap-2">
