@@ -15,6 +15,7 @@ import ProjectTeam from "./ProjectTeam";
 import ReportServices from "./ReportServices";
 import ProjectImplementationPeriod from "./ProjectImplementationPeriod";
 import ProjectBudget from "./ProjectBudget";
+import Loader from "../Loader";
 
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -26,8 +27,6 @@ const ProjectCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
     const location = useLocation();
     const { projectId } = useParams();
-
-    const statsRef = useRef();
 
     const [projectData, setProjectData] = useState({});
     const [formFields, setFormFields] = useState({});
@@ -71,13 +70,15 @@ const ProjectCard = () => {
     const [services, setServices] = useState([]);
     const [reportId, setReportId] = useState(null);
 
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+
     let query;
 
     // Обновляем блок ОСВ
-    const handleRefresh = () => {
-        if (statsRef.current) {
-            statsRef.current.refreshRevenue();
-        }
+    const statRef = useRef(null);
+
+    const handleUpdate = () => {
+        statRef.current?.refreshRevenue();
     };
 
     const matchedBanks = banks.filter((bank) =>
@@ -221,6 +222,8 @@ const ProjectCard = () => {
 
     // Получение проекта
     const getProject = async (id) => {
+        setIsDataLoaded(false);
+
         try {
             const response = await getData(`${URL}/${id}`, {
                 Accept: "application/json",
@@ -250,10 +253,14 @@ const ProjectCard = () => {
                 getReports(),
                 getTeam(),
                 getServices(),
-                handleRefresh(),
+                handleUpdate(),
             ]);
+
+            setIsDataLoaded(true);
         } catch (error) {
             console.error("Ошибка при загрузке проекта:", error);
+
+            setIsDataLoaded(true);
         }
     };
 
@@ -1060,7 +1067,7 @@ const ProjectCard = () => {
                             ) : (
                                 <>
                                     <ProjectStatisticsBlock
-                                        ref={statsRef}
+                                        ref={statRef}
                                         projectId={projectId}
                                     />
 
@@ -1098,9 +1105,13 @@ const ProjectCard = () => {
                                             )}
                                         </div>
 
-                                        <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                        <div className="relative border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
                                             {!reportWindowsState ? (
                                                 <ul className="grid gap-3">
+                                                    {!isDataLoaded && (
+                                                        <Loader />
+                                                    )}
+
                                                     <li className="grid items-center grid-cols-[25%_18%_25%_18%] gap-3 mb-2 text-gray-400">
                                                         <span>Отчет</span>
                                                         <span>Статус</span>

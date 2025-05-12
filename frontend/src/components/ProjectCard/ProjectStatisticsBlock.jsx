@@ -26,7 +26,7 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
     };
 
     useImperativeHandle(ref, () => ({
-        refreshRevenue: getRevenue,
+        refreshRevenue: () => getRevenue(),
     }));
 
     useEffect(() => {
@@ -187,5 +187,7 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
         </div>
     );
 });
+
+ProjectStatisticsBlock.displayName = "ProjectStatisticsBlock";
 
 export default ProjectStatisticsBlock;
