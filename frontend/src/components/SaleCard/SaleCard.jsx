@@ -4,6 +4,8 @@ import { useParams, useLocation } from "react-router-dom";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 
+import NewCustomerWindow from "./NewCustomerWindow";
+
 import "react-datepicker/dist/react-datepicker.css";
 
 import { ToastContainer, toast } from "react-toastify";
@@ -15,6 +17,8 @@ const SaleCard = () => {
     const { saleId } = useParams();
 
     const [mode, setMode] = useState(location.state?.mode || "read");
+
+    const [addCustomer, setAddCustomer] = useState(false);
 
     let query;
 
@@ -59,7 +63,7 @@ const SaleCard = () => {
                                     onChange={() => {
                                         setMode("read");
                                     }}
-                                    checked={mode === "read" ? true : false}
+                                    checked={mode === "read"}
                                 />
                                 <label htmlFor="read_mode">Чтение</label>
                             </div>
@@ -70,7 +74,7 @@ const SaleCard = () => {
                                     name="mode"
                                     id="edit_mode"
                                     onChange={() => setMode("edit")}
-                                    checked={mode === "edit" ? true : false}
+                                    checked={mode === "edit"}
                                 />
                                 <label htmlFor="edit_mode">
                                     Редактирование
@@ -89,20 +93,29 @@ const SaleCard = () => {
                                     </span>
                                 </span>
                                 <div className="border-2 border-gray-300 p-5">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-gray-400">
-                                            Добавьте нового или выберите из
-                                            списка
-                                        </span>
+                                    {addCustomer ? (
+                                        <NewCustomerWindow
+                                            setAddCustomer={setAddCustomer}
+                                        />
+                                    ) : (
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-400">
+                                                Добавьте нового или выберите из
+                                                списка
+                                            </span>
 
-                                        <button
-                                            type="button"
-                                            className="add-button"
-                                            title="Выбрать заказчика"
-                                        >
-                                            <span></span>
-                                        </button>
-                                    </div>
+                                            <button
+                                                type="button"
+                                                className="add-button"
+                                                title="Выбрать заказчика"
+                                                onClick={() =>
+                                                    setAddCustomer(true)
+                                                }
+                                            >
+                                                <span></span>
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div className="grid grid-cols-[1fr_40%] gap-5">
