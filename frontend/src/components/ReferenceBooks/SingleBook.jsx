@@ -164,6 +164,96 @@ const SingleBook = () => {
         );
     };
 
+    const editContactElem = (id, contactId) => {
+        const contractor = booksItems.find((item) => item.id === id);
+
+        const contractorContact = contractor.contacts?.find(
+            (contact) => contact.id === contactId
+        );
+
+        query = toast.loading("Обновление", {
+            containerId: "singleBook",
+            position: "top-center",
+        });
+
+        postData(
+            "PATCH",
+            `${URL}/${id}/contacts/${contactId}`,
+            contractorContact
+        ).then((response) => {
+            if (response?.ok) {
+                toast.update(query, {
+                    render: "Запись обновлена",
+                    type: "success",
+                    containerId: "singleBook",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            } else {
+                toast.dismiss(query);
+                toast.error("Ошибка обновления записи", {
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                    containerId: "singleBook",
+                });
+            }
+        });
+    };
+
+    const deleteContactElem = (id, contactId) => {
+        query = toast.loading("Удаление", {
+            containerId: "singleBook",
+            position: "top-center",
+        });
+
+        postData("DELETE", `${URL}/${id}/contacts/${contactId}`, {}).then(
+            (response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: "Контакт удален",
+                        type: "success",
+                        containerId: "singleBook",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+
+                    setBooksItems((booksItems) =>
+                        booksItems.map((item) => {
+                            if (item.id === id) {
+                                return {
+                                    ...item,
+                                    contacts: item.contacts?.filter(
+                                        (contact) => contact.id !== contactId
+                                    ),
+                                };
+                            }
+                            return item;
+                        })
+                    );
+                } else {
+                    toast.dismiss(query);
+                    toast.error("Ошибка удалении контакта", {
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                        containerId: "singleBook",
+                    });
+                }
+            }
+        );
+    };
+
     // Обработка полей попапа нового контакта подрядчика
     const handleNewContactElemInputChange = (e, name) => {
         const value = name === "phone" ? e : e.target.value;
@@ -631,8 +721,11 @@ const SingleBook = () => {
                                                         handleContactInputChange={
                                                             handleContactInputChange
                                                         }
-                                                        deleteElement={
-                                                            deleteElement
+                                                        deleteContactElem={
+                                                            deleteContactElem
+                                                        }
+                                                        editContactElem={
+                                                            editContactElem
                                                         }
                                                         setPopupState={
                                                             setPopupState

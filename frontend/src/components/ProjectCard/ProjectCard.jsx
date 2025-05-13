@@ -74,9 +74,9 @@ const ProjectCard = () => {
 
     let query;
 
-    // Обновляем блок ОСВ
     const statRef = useRef(null);
 
+    // Обновляем блок ОСВ
     const handleUpdate = () => {
         statRef.current?.refreshRevenue();
     };

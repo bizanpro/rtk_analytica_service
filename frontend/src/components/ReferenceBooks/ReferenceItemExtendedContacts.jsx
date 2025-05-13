@@ -6,7 +6,8 @@ import { ru } from "date-fns/locale";
 const ReferenceItemExtendedContacts = ({
     data,
     mode = "read",
-    deleteElement,
+    editContactElem,
+    deleteContactElem,
     handleContactInputChange,
     setPopupState,
     setnewElem,
@@ -177,11 +178,29 @@ const ReferenceItemExtendedContacts = ({
 
                             <td className="px-4 py-5 min-w-[50px] text-center">
                                 {mode === "edit" && (
-                                    <button
-                                        onClick={() => deleteElement(data.id)}
-                                        className="delete-button delete-icon"
-                                        title="Удалить элемент"
-                                    ></button>
+                                    <div className="flex items-center justify-end gap-3">
+                                        <button
+                                            onClick={() => {
+                                                editContactElem(
+                                                    data.id,
+                                                    contact.id
+                                                );
+                                            }}
+                                            className="delete-button save-icon"
+                                            title="Изменить контакт"
+                                        ></button>
+
+                                        <button
+                                            onClick={() =>
+                                                deleteContactElem(
+                                                    data.id,
+                                                    contact.id
+                                                )
+                                            }
+                                            className="delete-button delete-icon"
+                                            title="Удалить контакт"
+                                        ></button>
+                                    </div>
                                 )}
                             </td>
                         </tr>

@@ -132,7 +132,7 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                     </div>
                     <div className="flex items-center flex-grow gap-2">
                         <strong className="font-normal text-4xl">
-                            {(revenue.suppliers_expenses ?? 0).toLocaleString(
+                            {(revenue.gross_profit ?? 0).toLocaleString(
                                 "de-DE"
                             )}
                         </strong>
@@ -152,7 +152,7 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                     </div>
                     <div className="flex items-center flex-grow gap-2">
                         <strong className="font-normal text-4xl">
-                            {(revenue.gross_profit ?? 0).toLocaleString(
+                            {(revenue.suppliers_expenses ?? 0).toLocaleString(
                                 "de-DE"
                             )}
                         </strong>
