@@ -1,8 +1,10 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
+
+import Select from "react-select";
 
 import NewCustomerWindow from "./NewCustomerWindow";
 
@@ -19,6 +21,30 @@ const SaleCard = () => {
     const [mode, setMode] = useState(location.state?.mode || "read");
 
     const [addCustomer, setAddCustomer] = useState(false);
+    const [addServices, setAddServices] = useState(false);
+    const [selectedServices, setSelectedServices] = useState([]);
+    const [reportTypes, setReportTypes] = useState([
+        {
+            id: 1,
+            name: "Финансово-технический аудит",
+        },
+        {
+            id: 2,
+            name: "Финансово-технический мониторинг",
+        },
+        {
+            id: 3,
+            name: "Финансовая модель",
+        },
+        {
+            id: 4,
+            name: "Отчет технического консультанта",
+        },
+        {
+            id: 5,
+            name: "Инженерные записки",
+        },
+    ]);
 
     let query;
 
@@ -226,23 +252,63 @@ const SaleCard = () => {
                                         type="button"
                                         className="add-button"
                                         title="Добавить услугу"
+                                        onClick={() => setAddServices(true)}
                                     >
                                         <span></span>
                                     </button>
                                 </div>
 
                                 <div className="border-2 border-gray-300 py-5 px-4 h-full overflow-x-hidden overflow-y-auto">
-                                    <ul className="grid gap-3">
-                                        <li className="grid items-center grid-cols-[1fr_40%] gap-3 mb-2 text-gray-400">
-                                            <span>Тип услуги</span>
-                                            <span className="flex items-center gap-2">
-                                                Стоимость
-                                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                    ?
+                                    {addServices ? (
+                                        <Select
+                                            closeMenuOnSelect={false}
+                                            isMulti
+                                            name="colors"
+                                            options={reportTypes.map(
+                                                (type) => ({
+                                                    value: type.name,
+                                                    label: type.name,
+                                                })
+                                            )}
+                                            className="basic-multi-select min-w-[170px] min-h-[32px]"
+                                            classNamePrefix="select"
+                                            placeholder="Выбрать тип отчёта"
+                                            onChange={(selectedOptions) => {
+                                                setSelectedServices(
+                                                    selectedOptions.map(
+                                                        (option) => option.value
+                                                    )
+                                                );
+                                            }}
+                                            onMenuClose={() => {
+                                                setAddServices(false);
+                                            }}
+                                        />
+                                    ) : (
+                                        <ul className="grid gap-3">
+                                            <li className="grid items-center grid-cols-[1fr_40%] gap-3 mb-2 text-gray-400">
+                                                <span>Тип услуги</span>
+                                                <span className="flex items-center gap-2">
+                                                    Стоимость
+                                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                        ?
+                                                    </span>
                                                 </span>
-                                            </span>
-                                        </li>
-                                    </ul>
+                                            </li>
+
+                                            {selectedServices.length > 0 &&
+                                                selectedServices.map(
+                                                    (service) => (
+                                                        <li
+                                                            className="grid items-center grid-cols-[1fr_40%] gap-3 mb-2"
+                                                            key={service}
+                                                        >
+                                                            {service}
+                                                        </li>
+                                                    )
+                                                )}
+                                        </ul>
+                                    )}
                                 </div>
                             </div>
 
