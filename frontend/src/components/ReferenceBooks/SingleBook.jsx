@@ -75,6 +75,12 @@ const SingleBook = () => {
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
         ],
+        "request-sources": [
+            { label: "Наименование", key: "name" },
+            { label: "Кол-во проектов", key: "projects_count" },
+            { label: "Последнее изменение", key: "updated_at" },
+            { label: "Автор измнения", key: "author" },
+        ],
     };
 
     const TITLES = {
@@ -88,6 +94,7 @@ const SingleBook = () => {
         positions: "Должности сотрудников",
         "suppliers-with-reports": "Контакты Подрядчиков",
         "management-report-types": "Типы отчётов Менеджмента",
+        "request-sources": "Источники запросов",
     };
 
     const { bookId } = useParams();
@@ -164,6 +171,7 @@ const SingleBook = () => {
         );
     };
 
+    // Изменение контакта подрядчика
     const editContactElem = (id, contactId) => {
         const contractor = booksItems.find((item) => item.id === id);
 
@@ -206,6 +214,7 @@ const SingleBook = () => {
         });
     };
 
+    // Удаление контакта подрядчика
     const deleteContactElem = (id, contactId) => {
         query = toast.loading("Удаление", {
             containerId: "singleBook",
