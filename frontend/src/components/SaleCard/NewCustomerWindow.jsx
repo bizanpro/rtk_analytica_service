@@ -1,7 +1,15 @@
 import { useState } from "react";
 
-const NewCustomerWindow = ({ setAddCustomer }) => {
+const NewCustomerWindow = ({
+    setAddCustomer,
+    contragents,
+    handleInputChange,
+    projectData,
+    updateProject,
+}) => {
     const [customerType, setCustomerType] = useState("new");
+
+    console.log(projectData);
 
     return (
         <div className="flex flex-col gap-3">
@@ -41,10 +49,18 @@ const NewCustomerWindow = ({ setAddCustomer }) => {
                         type="text"
                     />
                 ) : (
-                    <select className="w-full h-[21px]">
-                        <option value="" selected="">
-                            Выберите заказчика
-                        </option>
+                    <select
+                        className="w-full h-[21px]"
+                        value={projectData?.contragent_id || ""}
+                        onChange={(e) => handleInputChange(e, "contragent_id")}
+                    >
+                        <option value="">Выберите заказчика</option>
+                        {contragents.length > 0 &&
+                            contragents.map((item) => (
+                                <option value={item.id} key={item.id}>
+                                    {item.program_name}
+                                </option>
+                            ))}
                     </select>
                 )}
             </div>
@@ -58,9 +74,7 @@ const NewCustomerWindow = ({ setAddCustomer }) => {
                 </span>
                 <div className="border-2 border-gray-300 p-2">
                     <select className="w-full h-[21px]">
-                        <option value="" selected="">
-                            Выберите Тип
-                        </option>
+                        <option value="">Выберите Тип</option>
                     </select>
                 </div>
             </div>
@@ -69,6 +83,10 @@ const NewCustomerWindow = ({ setAddCustomer }) => {
                 <button
                     type="button"
                     className="border rounded-lg py-3 px-5 bg-black text-white"
+                    onClick={() => {
+                        updateProject();
+                        setAddCustomer(false);
+                    }}
                     title="Сохранить заказчика"
                 >
                     Сохранить
