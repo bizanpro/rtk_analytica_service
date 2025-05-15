@@ -9,8 +9,6 @@ const NewCustomerWindow = ({
 }) => {
     const [customerType, setCustomerType] = useState("new");
 
-    console.log(projectData);
-
     return (
         <div className="flex flex-col gap-3">
             <div className="text-base font-bold">Добавление заказчика</div>

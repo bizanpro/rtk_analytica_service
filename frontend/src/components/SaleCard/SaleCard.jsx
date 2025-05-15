@@ -26,9 +26,12 @@ const SaleCard = () => {
 
     const [addCustomer, setAddCustomer] = useState(false);
     const [addServices, setAddServices] = useState(false);
+    const [addBanks, setAddBanks] = useState(false);
+
     const [selectedServices, setSelectedServices] = useState([]);
     const [industries, setIndustries] = useState([]);
     const [contragents, setContragents] = useState([]);
+    const [banks, setBanks] = useState([]);
     const [reportTypes, setReportTypes] = useState([
         {
             id: 1,
@@ -82,6 +85,15 @@ const SaleCard = () => {
         });
     };
 
+    // Получение банков
+    const fetchBanks = () => {
+        getData(`${import.meta.env.VITE_API_URL}banks`).then((response) => {
+            if (response?.status == 200) {
+                setBanks(response.data.data);
+            }
+        });
+    };
+
     // Получение проекта
     const getProject = async (id) => {
         setIsDataLoaded(false);
@@ -92,7 +104,11 @@ const SaleCard = () => {
             });
             setProjectData(response.data);
 
-            await Promise.all([fetchIndustries(), fetchContragents()]);
+            await Promise.all([
+                fetchIndustries(),
+                fetchContragents(),
+                fetchBanks(),
+            ]);
 
             setIsDataLoaded(true);
         } catch (error) {
@@ -104,48 +120,34 @@ const SaleCard = () => {
 
     // Обновление проекта
     const updateProject = async (showMessage = true) => {
-        if (projectData?.contragent_id && projectData?.industry_id) {
-            query = toast.loading("Обновление", {
-                containerId: "projectCard",
-                position: "top-center",
-            });
+        query = toast.loading("Обновление", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
 
-            try {
-                const response = await postData(
-                    "PATCH",
-                    `${URL}/${saleId}`,
-                    formFields
-                );
-                if (response?.ok && showMessage) {
-                    toast.update(query, {
-                        render: "Проект успешно обновлен",
-                        type: "success",
-                        containerId: "projectCard",
-                        isLoading: false,
-                        autoClose: 1200,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: false,
-                        position: "top-center",
-                    });
-                }
-
-                setProjectData(response);
-                setFormFields(response);
-                return response;
-            } catch (error) {
-                toast.dismiss(query);
-                toast.error("Ошибка при обновлении проекта", {
+        try {
+            const response = await postData(
+                "PATCH",
+                `${URL}/${saleId}`,
+                formFields
+            );
+            if (response?.ok && showMessage) {
+                toast.update(query, {
+                    render: "Проект успешно обновлен",
+                    type: "success",
                     containerId: "projectCard",
                     isLoading: false,
-                    autoClose: 1500,
+                    autoClose: 1200,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
                     position: "top-center",
                 });
-                console.error("Ошибка при обновлении проекта:", error);
-                throw error;
             }
-        } else {
+
+            setProjectData(response);
+            setFormFields(response);
+            return response;
+        } catch (error) {
             toast.dismiss(query);
             toast.error("Ошибка при обновлении проекта", {
                 containerId: "projectCard",
@@ -155,6 +157,8 @@ const SaleCard = () => {
                 pauseOnHover: false,
                 position: "top-center",
             });
+            console.error("Ошибка при обновлении проекта:", error);
+            throw error;
         }
     };
 
@@ -369,6 +373,11 @@ const SaleCard = () => {
                                                         <button
                                                             type="button"
                                                             className="add-button"
+                                                            onClick={() =>
+                                                                setAddBanks(
+                                                                    true
+                                                                )
+                                                            }
                                                             title="Выбрать банк"
                                                         >
                                                             <span></span>
@@ -377,11 +386,77 @@ const SaleCard = () => {
                                                 </div>
                                             </span>
                                             <ul className="border-2 border-gray-300 p-5 h-full flex flex-col gap-3">
-                                                {projectData.creditors?.map(
-                                                    (creditor) => (
-                                                        <li key={creditor.id}>
-                                                            {creditor.name}
-                                                        </li>
+                                                {addBanks ? (
+                                                    <Select
+                                                        closeMenuOnSelect={
+                                                            false
+                                                        }
+                                                        isMulti
+                                                        options={banks.map(
+                                                            (item) => ({
+                                                                value: item.id,
+                                                                label: item.name,
+                                                            })
+                                                        )}
+                                                        className="basic-multi-select min-w-[170px] min-h-[32px]"
+                                                        classNamePrefix="select"
+                                                        placeholder="Выбрать банк"
+                                                        value={
+                                                            projectData.creditors?.map(
+                                                                (creditor) => ({
+                                                                    value: creditor.id,
+                                                                    label: creditor.name,
+                                                                })
+                                                            ) || []
+                                                        }
+                                                        onChange={(
+                                                            selectedOptions
+                                                        ) => {
+                                                            const selectedIds =
+                                                                selectedOptions.map(
+                                                                    (option) =>
+                                                                        option.value
+                                                                );
+
+                                                            const selectedBanks =
+                                                                banks.filter(
+                                                                    (bank) =>
+                                                                        selectedIds.includes(
+                                                                            bank.id
+                                                                        )
+                                                                );
+
+                                                            setProjectData(
+                                                                (prevData) => ({
+                                                                    ...prevData,
+                                                                    creditors:
+                                                                        selectedBanks,
+                                                                })
+                                                            );
+
+                                                            setFormFields(
+                                                                (prev) => ({
+                                                                    ...prev,
+                                                                    creditors:
+                                                                        selectedIds,
+                                                                })
+                                                            );
+                                                        }}
+                                                        onMenuClose={() => {
+                                                            setAddBanks(false);
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    projectData.creditors?.map(
+                                                        (creditor) => (
+                                                            <li
+                                                                key={
+                                                                    creditor.id
+                                                                }
+                                                            >
+                                                                {creditor.name}
+                                                            </li>
+                                                        )
                                                     )
                                                 )}
                                             </ul>
