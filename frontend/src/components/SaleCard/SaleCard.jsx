@@ -14,11 +14,14 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const SaleCard = () => {
-    const URL = `${import.meta.env.VITE_API_URL}sales`;
+    const URL = `${import.meta.env.VITE_API_URL}sales-funnel-projects`;
     const location = useLocation();
     const { saleId } = useParams();
 
     const [mode, setMode] = useState(location.state?.mode || "read");
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+    const [projectData, setProjectData] = useState({});
 
     const [addCustomer, setAddCustomer] = useState(false);
     const [addServices, setAddServices] = useState(false);
@@ -48,6 +51,32 @@ const SaleCard = () => {
 
     let query;
 
+    // Получение проекта
+    const getProject = async (id) => {
+        setIsDataLoaded(false);
+
+        try {
+            const response = await getData(`${URL}/${id}`, {
+                Accept: "application/json",
+            });
+            setProjectData(response.data);
+
+            // await Promise.all([]);
+
+            setIsDataLoaded(true);
+        } catch (error) {
+            console.error("Ошибка при загрузке проекта:", error);
+
+            setIsDataLoaded(true);
+        }
+    };
+
+    useEffect(() => {
+        if (saleId) {
+            getProject(saleId);
+        }
+    }, []);
+
     return (
         <main className="page">
             <div className="new-project pt-8 pb-15">
@@ -61,7 +90,7 @@ const SaleCard = () => {
                                     type="text"
                                     className="text-3xl font-medium"
                                     name="name"
-                                    defaultValue="ГОК Радужный"
+                                    defaultValue={projectData.name}
                                     // onChange={(e) =>
                                     //     handleInputChange(e, "name")
                                     // }

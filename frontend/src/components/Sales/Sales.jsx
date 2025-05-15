@@ -7,14 +7,15 @@ import Select from "../Select";
 import { useNavigate } from "react-router-dom";
 
 const Sales = () => {
-    const URL = `${import.meta.env.VITE_API_URL}sales`;
+    const URL = `${import.meta.env.VITE_API_URL}sales-funnel-projects`;
     const navigate = useNavigate();
     const [list, setList] = useState([]);
     const [popupState, setPopupState] = useState(false);
     const [newProjectName, setNewProjectName] = useState("");
-    const [selectedSector, setSelectedSector] = useState("");
+    const [selectedCustomer, setSelectedCustomer] = useState("");
     const [selectedBank, setSelectedBank] = useState("");
-    const [selectedManager, setSelectedManager] = useState("");
+    const [selectedStatus, setSelectedStatus] = useState("");
+    const [selectedPeriod, setSelectedPeriod] = useState("");
     const [isLoading, setIsLoading] = useState(true);
 
     const COLUMNS = [
@@ -22,9 +23,9 @@ const Sales = () => {
         { label: "Заказчик", key: "contragent" },
         { label: "Банк", key: "creditors" },
         { label: "Тип услуг", key: "service_type" },
-        { label: "Стоимость, млн руб.", key: "" },
-        { label: "Дата запроса", key: "" },
-        { label: "Источник", key: "source" },
+        { label: "Стоимость, млн руб.", key: "service_cost" },
+        { label: "Дата запроса", key: "request_date" },
+        { label: "Источник", key: "request_source" },
         { label: "Дата статуса", key: "status_date" },
         { label: "Статус", key: "status" },
     ];
@@ -32,29 +33,32 @@ const Sales = () => {
     const filteredProjects = useMemo(() => {
         const result = list.filter((project) => {
             return (
-                (selectedSector && selectedSector !== "default"
-                    ? project.industry === selectedSector
+                (selectedCustomer && selectedCustomer !== "default"
+                    ? project?.contragent?.program_name === selectedCustomer
                     : true) &&
                 (selectedBank && selectedBank !== "default"
                     ? Array.isArray(project.creditors)
                         ? project.creditors?.some(
-                              (bank) => bank.name === selectedBank
+                              (bank) => bank?.name === selectedBank
                           )
                         : false
                     : true) &&
-                (selectedManager && selectedManager !== "default"
-                    ? project.manager === selectedManager
+                // (selectedStatus && selectedStatus !== "default"
+                //     ? project.status === selectedStatus
+                //     : true) &&
+                (selectedPeriod && selectedPeriod !== "default"
+                    ? project.request_date === selectedPeriod
                     : true)
             );
         });
         return result;
-    }, [list, selectedSector, selectedBank, selectedManager]);
+    }, [list, selectedCustomer, selectedBank, selectedStatus, selectedPeriod]);
 
-    // Заполняем селектор отраслей
+    // Заполняем селектор заказчиков
     const customerOptions = useMemo(() => {
         const allSectors = list
-            .map((item) => item.industry)
-            .filter((industry) => industry !== null);
+            .map((item) => item?.contragent?.program_name)
+            .filter((contragent) => contragent?.program_name !== null);
 
         return Array.from(new Set(allSectors));
     }, [list]);
@@ -62,25 +66,26 @@ const Sales = () => {
     // Заполняем селектор банков
     const bankOptions = useMemo(() => {
         const allBanks = list.flatMap((item) =>
-            item.creditors?.map((bank) => bank.name)
+            item.creditors?.map((bank) => bank?.name)
         );
         return Array.from(new Set(allBanks));
     }, [list]);
 
-    // Заполняем селектор руководителей
-    const statusOptions = useMemo(() => {
-        const allPM = list
-            .map((item) => item.manager)
-            .filter((manager) => manager !== null);
-        return Array.from(new Set(allPM));
-    }, [list]);
+    // // Заполняем селектор статусов
+    // const statusOptions = useMemo(() => {
+    //     const allPM = list
+    //         .map((item) => item.manager)
+    //         .filter((manager) => manager !== null);
+    //     return Array.from(new Set(allPM));
+    // }, [list]);
 
-    const periodOptions = useMemo(() => {
-        const allPM = list
-            .map((item) => item.manager)
-            .filter((manager) => manager !== null);
-        return Array.from(new Set(allPM));
-    }, [list]);
+    // // Заполняем селектор периода запросов
+    // const periodOptions = useMemo(() => {
+    //     const allPM = list
+    //         .map((item) => item.manager)
+    //         .filter((manager) => manager !== null);
+    //     return Array.from(new Set(allPM));
+    // }, [list]);
 
     const handleProjectsNameChange = (e) => {
         setNewProjectName(e.target.value);
@@ -106,11 +111,11 @@ const Sales = () => {
     };
 
     useEffect(() => {
-        // getData(URL, { Accept: "application/json" })
-        //     .then((response) => {
-        //         setList(response.data);
-        //     })
-        //     .finally(() => setIsLoading(false));
+        getData(URL, { Accept: "application/json" })
+            .then((response) => {
+                setList(response.data);
+            })
+            .finally(() => setIsLoading(false));
     }, []);
 
     return (
@@ -118,7 +123,7 @@ const Sales = () => {
             <div className="container py-8">
                 <div className="flex justify-between items-center gap-6 mb-8">
                     <h1 className="text-3xl font-medium">
-                        Реестр проектов в воронке продаж
+                        Реестр проектов в воронке продаж{" "}
                         {filteredProjects.length > 0 &&
                             `(${filteredProjects.length})`}
                     </h1>
@@ -127,12 +132,12 @@ const Sales = () => {
                         {customerOptions.length > 0 && (
                             <Select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
                                 title={"Заказчик"}
                                 items={customerOptions}
                                 onChange={(evt) => {
-                                    setSelectedSector(evt.target.value);
+                                    setSelectedCustomer(evt.target.value);
                                 }}
                             />
                         )}
@@ -140,7 +145,7 @@ const Sales = () => {
                         {bankOptions.length > 0 && (
                             <Select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
                                 title={"Банк"}
                                 items={bankOptions}
@@ -150,15 +155,15 @@ const Sales = () => {
                             />
                         )}
 
-                        {statusOptions.length > 0 && (
+                        {/* {statusOptions.length > 0 && (
                             <Select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[200px] cursor-pointer"
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
                                 title={"Статус"}
                                 items={statusOptions}
                                 onChange={(evt) =>
-                                    setSelectedManager(evt.target.value)
+                                    setSelectedStatus(evt.target.value)
                                 }
                             />
                         )}
@@ -166,15 +171,15 @@ const Sales = () => {
                         {periodOptions.length > 0 && (
                             <Select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[200px] cursor-pointer"
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
                                 title={"Период запросов"}
                                 items={periodOptions}
                                 onChange={(evt) =>
-                                    setSelectedManager(evt.target.value)
+                                    setSelectedPeriod(evt.target.value)
                                 }
                             />
-                        )}
+                        )} */}
 
                         <button
                             type="button"

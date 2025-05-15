@@ -296,11 +296,16 @@ button {
     pointer-events: none;
 }
 
+select {
+    cursor: pointer;
+}
+
 select:disabled {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     background-image: none;
+    cursor: unset;
 }
 
 .loader {

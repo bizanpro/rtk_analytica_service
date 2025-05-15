@@ -2,6 +2,9 @@ import { useNavigate } from "react-router-dom";
 
 import handleStatus from "../../utils/handleStatus";
 
+import { format, parseISO } from "date-fns";
+import { ru } from "date-fns/locale";
+
 const SalesItem = ({ props, columns }) => {
     const navigate = useNavigate();
 
@@ -57,23 +60,36 @@ const SalesItem = ({ props, columns }) => {
                         );
                     }
                 } else if (typeof value === "object" && value !== null) {
-                    key === "project_manager"
-                        ? Object.entries(value).map(([subKey, subValue]) => (
-                              <td
-                                  className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                  key={subKey}
-                              >
-                                  {subValue?.full_name?.toString() || "—"}
-                              </td>
-                          ))
-                        : Object.entries(value).map(([subKey, subValue]) => (
-                              <td
-                                  className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                  key={subKey}
-                              >
-                                  {subValue?.toString() || "—"}
-                              </td>
-                          ));
+                    if (key === "contragent") {
+                        return (
+                            <td
+                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
+                                key={key}
+                            >
+                                {value?.program_name?.toString() || "—"}
+                            </td>
+                        );
+                    } else if (key === "request_source") {
+                        return (
+                            <td
+                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
+                                key={key}
+                            >
+                                {value?.name?.toString() || "—"}
+                            </td>
+                        );
+                    } else {
+                        return Object.entries(value).map(
+                            ([subKey, subValue]) => (
+                                <td
+                                    className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
+                                    key={subKey}
+                                >
+                                    {subValue?.toString() || "—"}
+                                </td>
+                            )
+                        );
+                    }
                 } else {
                     if (key === "name") {
                         return (
@@ -84,7 +100,7 @@ const SalesItem = ({ props, columns }) => {
                                 {value?.toString() || "—"}
                                 <br />
                                 <span className="text-gray-400 text-sm">
-                                    {props.industry}
+                                    {props?.industry?.name}
                                 </span>
                             </td>
                         );
@@ -95,6 +111,20 @@ const SalesItem = ({ props, columns }) => {
                                 key={key}
                             >
                                 {handleStatus(value?.toString()) || "—"}
+                            </td>
+                        );
+                    } else if (
+                        (key === "request_date" || key === "status_date") &&
+                        value !== null
+                    ) {
+                        return (
+                            <td
+                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
+                                key={key}
+                            >
+                                {format(parseISO(value), "d.MM.yyyy", {
+                                    locale: ru,
+                                }) || "—"}
                             </td>
                         );
                     } else {
