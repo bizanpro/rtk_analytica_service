@@ -29,7 +29,7 @@ const SingleBook = () => {
         ],
         roles: [
             { label: "Наименование", key: "name" },
-            { label: "Кол-во ролей в отчётах", key: "reports_count" },
+            { label: "Кол-во ролей в отчётах", key: "count" },
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
         ],
