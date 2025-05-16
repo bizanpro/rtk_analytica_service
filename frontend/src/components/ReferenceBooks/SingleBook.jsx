@@ -23,7 +23,7 @@ const SingleBook = () => {
         "report-types": [
             { label: "Сокращённое наименование", key: "name" },
             { label: "Полное наименование", key: "full_name" },
-            { label: "Кол-во проектов", key: "projects_count" },
+            { label: "Кол-во проектов", key: "count" },
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
         ],
