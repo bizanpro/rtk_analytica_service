@@ -6,8 +6,10 @@ const NewCustomerWindow = ({
     handleInputChange,
     projectData,
     updateProject,
+    sendNewContragent,
 }) => {
     const [customerType, setCustomerType] = useState("new");
+    const [programName, setProgramName] = useState("");
 
     return (
         <div className="flex flex-col gap-3">
@@ -44,7 +46,9 @@ const NewCustomerWindow = ({
                     <input
                         className="w-full h-[21px]"
                         placeholder="Введите имя заказчика"
+                        value={programName}
                         type="text"
+                        onChange={(e) => setProgramName(e.target.value)}
                     />
                 ) : (
                     <select
@@ -82,8 +86,10 @@ const NewCustomerWindow = ({
                     type="button"
                     className="border rounded-lg py-3 px-5 bg-black text-white"
                     onClick={() => {
-                        updateProject();
-                        setAddCustomer(false);
+                        customerType === "new"
+                            ? (sendNewContragent(programName),
+                              setAddCustomer(false))
+                            : (updateProject(), setAddCustomer(false));
                     }}
                     title="Сохранить заказчика"
                 >

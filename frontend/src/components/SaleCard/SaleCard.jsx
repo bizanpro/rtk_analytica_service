@@ -94,6 +94,59 @@ const SaleCard = () => {
         });
     };
 
+    // Обновление заказчика
+    const updateContragent = async (showMessage = true, data) => {
+        query = toast.loading("Обновление", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
+
+        try {
+            const response = await postData("PATCH", `${URL}/${saleId}`, data);
+            if (response?.ok && showMessage) {
+                toast.update(query, {
+                    render: "Проект успешно обновлен",
+                    type: "success",
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            }
+
+            setProjectData(response);
+            setFormFields(response);
+            return response;
+        } catch (error) {
+            toast.dismiss(query);
+            toast.error("Ошибка при обновлении проекта", {
+                containerId: "projectCard",
+                isLoading: false,
+                autoClose: 1500,
+                pauseOnFocusLoss: false,
+                pauseOnHover: false,
+                position: "top-center",
+            });
+            console.error("Ошибка при обновлении проекта:", error);
+            throw error;
+        }
+    };
+
+    // Создание нового заказчика
+    const sendNewContragent = (program_name) => {
+        postData(
+            "POST",
+            `${import.meta.env.VITE_API_URL}contragents/sales-funnel`,
+            { program_name }
+        ).then((response) => {
+            if (response?.ok) {
+                updateContragent(true, { contragent_id: response.id });
+            }
+        });
+    };
+
     // Получение проекта
     const getProject = async (id) => {
         setIsDataLoaded(false);
@@ -255,6 +308,9 @@ const SaleCard = () => {
                                                     contragents={contragents}
                                                     updateProject={
                                                         updateProject
+                                                    }
+                                                    sendNewContragent={
+                                                        sendNewContragent
                                                     }
                                                 />
                                             ) : (
