@@ -71,6 +71,7 @@ const Reports = () => {
     const [popupState, setPopupState] = useState(false);
 
     const [managementReportData, setManagementReportData] = useState({
+        name: "",
         physical_person_id: 1,
         report_month: "",
         status_summary: "",
@@ -253,32 +254,44 @@ const Reports = () => {
             "POST",
             `${import.meta.env.VITE_API_URL}management-reports`,
             extendReportData
-        ).then((response) => {
-            if (response?.ok) {
-                toast.update(query, {
-                    render: "Данные сохранены",
-                    type: "success",
-                    containerId: "report",
-                    isLoading: false,
-                    autoClose: 1200,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-                getManagementReports();
-                setManagementEditorState(false);
-            } else {
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: "Данные сохранены",
+                        type: "success",
+                        containerId: "report",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                    getManagementReports();
+                    setManagementEditorState(false);
+                } else {
+                    toast.dismiss(query);
+                    toast.error("Ошибка сохранения данных", {
+                        containerId: "report",
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                }
+            })
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка сохранения данных", {
+                toast.error(error.message || "Ошибка при обновлении", {
                     containerId: "report",
                     isLoading: false,
-                    autoClose: 1500,
+                    autoClose: 5000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
                     position: "top-center",
                 });
-            }
-        });
+            });
     };
 
     // Обновляем  отчёт Менеджмента
@@ -577,7 +590,10 @@ const Reports = () => {
                     )}
 
                     {activeTab === "management" && managementEditorState && (
-                        <div className="bg-white min-h-[min-content] max-h-[max-content] overflow-y-auto absolute bottom-0 top-0 right-0 w-[40%]">
+                        <div
+                            className="bg-white overflow-x-hidden overflow-y-auto fixed bottom-0 top-[5%] right-[2%] w-[35%]"
+                            style={{ "min-height": "calc(100vh - 5%)" }}
+                        >
                             <ManagementReportEditor
                                 managementReportData={managementReportData}
                                 setManagementReportData={
@@ -607,13 +623,14 @@ const Reports = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        name="project_name"
-                                        id="project_name"
                                         className="border-2 border-gray-300 p-3 w-full"
-                                        // value={newProjectName}
-                                        // onChange={(e) =>
-                                        //     handleProjectsNameChange(e)
-                                        // }
+                                        value={managementReportData.name}
+                                        onChange={(e) => {
+                                            setManagementReportData((prev) => ({
+                                                ...prev,
+                                                name: e.target.value,
+                                            }));
+                                        }}
                                     />
                                 </div>
                                 <div className="flex flex-col">
