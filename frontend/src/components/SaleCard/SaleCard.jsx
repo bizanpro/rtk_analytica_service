@@ -27,33 +27,15 @@ const SaleCard = () => {
     const [addCustomer, setAddCustomer] = useState(false);
     const [addServices, setAddServices] = useState(false);
     const [addBanks, setAddBanks] = useState(false);
+    const [addWorkScore, setAddWorkScore] = useState("");
 
-    const [selectedServices, setSelectedServices] = useState([]);
     const [industries, setIndustries] = useState([]);
     const [contragents, setContragents] = useState([]);
     const [banks, setBanks] = useState([]);
-    const [reportTypes, setReportTypes] = useState([
-        {
-            id: 1,
-            name: "Финансово-технический аудит",
-        },
-        {
-            id: 2,
-            name: "Финансово-технический мониторинг",
-        },
-        {
-            id: 3,
-            name: "Финансовая модель",
-        },
-        {
-            id: 4,
-            name: "Отчет технического консультанта",
-        },
-        {
-            id: 5,
-            name: "Инженерные записки",
-        },
-    ]);
+    const [reportTypes, setReportTypes] = useState([]);
+    const [services, setServices] = useState([]);
+    const [newService, setNewService] = useState({});
+    const [selectedService, setSelectedService] = useState({});
 
     let query;
 
@@ -94,6 +76,7 @@ const SaleCard = () => {
         });
     };
 
+    // Получение услуг
     const fetchServices = () => {
         getData(
             `${
@@ -101,17 +84,67 @@ const SaleCard = () => {
             }sales-funnel-projects/${saleId}/services`
         ).then((response) => {
             if (response?.status == 200) {
-                console.log(response.data);
+                setServices(response.data);
             }
         });
     };
 
+    // Получение тупов отчетов
     const fetchReportTypes = () => {
         getData(`${import.meta.env.VITE_API_URL}report-types`, {
             Accept: "application/json",
         }).then((response) => {
             if (response.status == 200) {
                 setReportTypes(response.data.data);
+            }
+        });
+    };
+
+    // Прикрепляем услугу
+    const sendService = () => {
+        postData(
+            "POST",
+            `${
+                import.meta.env.VITE_API_URL
+            }sales-funnel-projects/${saleId}/services`,
+            newService
+        ).then((response) => {
+            if (response?.status == 200) {
+                setAddServices(false);
+                fetchServices();
+            }
+        });
+    };
+
+    // Обновляем услугу
+    const updateService = () => {
+        query = toast.loading("Обновление", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
+
+        postData(
+            "PATCH",
+            `${
+                import.meta.env.VITE_API_URL
+            }sales-funnel-projects/${saleId}/services/${
+                selectedService.report_type_id
+            }`,
+            selectedService
+        ).then((response) => {
+            if (response?.ok) {
+                toast.update(query, {
+                    render: response.message,
+                    type: "success",
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+                fetchServices();
+                setAddWorkScore("");
             }
         });
     };
@@ -244,6 +277,36 @@ const SaleCard = () => {
             getProject(saleId);
         }
     }, []);
+
+    useEffect(() => {
+        if (addWorkScore !== "") {
+            setSelectedService((prev) => ({
+                ...prev,
+                work_scope:
+                    services.find((serive) => serive.id === addWorkScore)?.pivot
+                        ?.work_scope || "",
+                report_type_id:
+                    services.find((serive) => serive.id === addWorkScore)?.id ||
+                    "",
+            }));
+        } else {
+            setSelectedService("");
+        }
+    }, [addWorkScore]);
+
+    useEffect(() => {
+        if (mode === "read") {
+            setAddCustomer(false);
+            setAddServices(false);
+            setAddBanks(false);
+        }
+    }, [mode]);
+
+    useEffect(() => {
+        if (newService.report_type_id && newService.report_type_id !== "") {
+            sendService();
+        }
+    }, [newService]);
 
     return (
         <main className="page">
@@ -622,33 +685,53 @@ const SaleCard = () => {
 
                                         <div className="border-2 border-gray-300 py-5 px-4 h-full overflow-x-hidden overflow-y-auto">
                                             {addServices ? (
-                                                <Select
-                                                    closeMenuOnSelect={false}
-                                                    isMulti
-                                                    name="colors"
-                                                    options={reportTypes.map(
-                                                        (type) => ({
-                                                            value: type.id,
-                                                            label: type.full_name,
-                                                        })
-                                                    )}
-                                                    className="basic-multi-select min-w-[170px] min-h-[32px]"
-                                                    classNamePrefix="select"
-                                                    placeholder="Выбрать тип отчёта"
-                                                    onChange={(
-                                                        selectedOptions
-                                                    ) => {
-                                                        setSelectedServices(
-                                                            selectedOptions.map(
-                                                                (option) =>
-                                                                    option.value
-                                                            )
-                                                        );
-                                                    }}
-                                                    onMenuClose={() => {
-                                                        setAddServices(false);
-                                                    }}
-                                                />
+                                                <div className="border-2 border-gray-300 p-5">
+                                                    <select
+                                                        className="w-full h-[21px]"
+                                                        defaultValue=""
+                                                        onChange={(
+                                                            selectedOptions
+                                                        ) => {
+                                                            setNewService(
+                                                                (prev) => ({
+                                                                    ...prev,
+                                                                    report_type_id:
+                                                                        selectedOptions
+                                                                            .target
+                                                                            .value,
+                                                                })
+                                                            );
+                                                        }}
+                                                        disabled={
+                                                            mode == "read"
+                                                                ? true
+                                                                : false
+                                                        }
+                                                    >
+                                                        <option value="">
+                                                            Выбрать тип отчёта
+                                                        </option>
+
+                                                        {reportTypes.length >
+                                                            0 &&
+                                                            reportTypes.map(
+                                                                (type) => (
+                                                                    <option
+                                                                        value={
+                                                                            type.id
+                                                                        }
+                                                                        key={
+                                                                            type.id
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            type.full_name
+                                                                        }
+                                                                    </option>
+                                                                )
+                                                            )}
+                                                    </select>
+                                                </div>
                                             ) : (
                                                 <ul className="grid gap-3">
                                                     <li className="grid items-center grid-cols-[1fr_40%] gap-3 mb-2 text-gray-400">
@@ -661,17 +744,34 @@ const SaleCard = () => {
                                                         </span>
                                                     </li>
 
-                                                    {selectedServices.length >
-                                                        0 &&
-                                                        selectedServices.map(
+                                                    {services.length > 0 &&
+                                                        services.map(
                                                             (service) => (
                                                                 <li
-                                                                    className="grid items-center grid-cols-[1fr_40%] gap-3 mb-2"
+                                                                    className="grid items-center grid-cols-[1fr_40%] gap-3 mb-2 cursor-pointer"
                                                                     key={
-                                                                        service
+                                                                        service.id
                                                                     }
+                                                                    onClick={() => {
+                                                                        setAddWorkScore(
+                                                                            service.id
+                                                                        );
+                                                                    }}
                                                                 >
-                                                                    {service}
+                                                                    <div className="flex items-center gap-3">
+                                                                        <div
+                                                                            className={`w-[10px] h-[10px] rounded-[50%] transition ${
+                                                                                addWorkScore ===
+                                                                                service.id
+                                                                                    ? "bg-gray-400"
+                                                                                    : ""
+                                                                            }`}
+                                                                        ></div>
+                                                                        {
+                                                                            service.full_name
+                                                                        }
+                                                                    </div>
+                                                                    <div>-</div>
                                                                 </li>
                                                             )
                                                         )}
@@ -723,6 +823,20 @@ const SaleCard = () => {
                                             <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                                 ?
                                             </span>
+                                            {mode === "edit" &&
+                                                addWorkScore != "" &&
+                                                selectedService.work_scope &&
+                                                selectedService.work_scope
+                                                    .length > 1 && (
+                                                    <button
+                                                        type="button"
+                                                        className="save-icon w-[20px] h-[20px]"
+                                                        title="Сохранить перечень работ"
+                                                        onClick={() =>
+                                                            updateService()
+                                                        }
+                                                    ></button>
+                                                )}
                                         </div>
 
                                         <textarea
@@ -730,9 +844,21 @@ const SaleCard = () => {
                                             placeholder="Заполните перечень работ"
                                             style={{ resize: "none" }}
                                             type="text"
-                                            name="description"
+                                            value={
+                                                selectedService.work_scope || ""
+                                            }
+                                            onChange={(evt) => {
+                                                setSelectedService((prev) => ({
+                                                    ...prev,
+                                                    work_scope:
+                                                        evt.target.value,
+                                                }));
+                                            }}
                                             disabled={
-                                                mode == "read" ? true : false
+                                                mode == "edit" &&
+                                                addWorkScore != ""
+                                                    ? false
+                                                    : true
                                             }
                                         />
                                     </div>
