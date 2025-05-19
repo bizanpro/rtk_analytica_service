@@ -94,6 +94,28 @@ const SaleCard = () => {
         });
     };
 
+    const fetchServices = () => {
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }sales-funnel-projects/${saleId}/services`
+        ).then((response) => {
+            if (response?.status == 200) {
+                console.log(response.data);
+            }
+        });
+    };
+
+    const fetchReportTypes = () => {
+        getData(`${import.meta.env.VITE_API_URL}report-types`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status == 200) {
+                setReportTypes(response.data.data);
+            }
+        });
+    };
+
     // Обновление заказчика
     const updateContragent = async (showMessage = true, data) => {
         query = toast.loading("Обновление", {
@@ -161,6 +183,8 @@ const SaleCard = () => {
                 fetchIndustries(),
                 fetchContragents(),
                 fetchBanks(),
+                fetchServices(),
+                fetchReportTypes(),
             ]);
 
             setIsDataLoaded(true);
@@ -604,8 +628,8 @@ const SaleCard = () => {
                                                     name="colors"
                                                     options={reportTypes.map(
                                                         (type) => ({
-                                                            value: type.name,
-                                                            label: type.name,
+                                                            value: type.id,
+                                                            label: type.full_name,
                                                         })
                                                     )}
                                                     className="basic-multi-select min-w-[170px] min-h-[32px]"

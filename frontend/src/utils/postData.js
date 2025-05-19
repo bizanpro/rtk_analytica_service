@@ -8,19 +8,25 @@ async function postData(method = "POST", url = "", data = {}) {
             }),
         });
 
+        const responseData = await response.json().catch(() => ({}));
+
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`${errorData.err || "Unknown Error"}`);
+            throw {
+                message: responseData.message || "Unknown error",
+                status: response.status,
+                data: responseData,
+            };
         }
 
-        const responseData = await response.json();
         return {
             ok: true,
             ...responseData,
         };
     } catch (error) {
         console.error("Ошибка запроса: ", error);
-        throw error;
+        throw typeof error === "object"
+            ? error
+            : { message: error.message || "Unknown error" };
     }
 }
 

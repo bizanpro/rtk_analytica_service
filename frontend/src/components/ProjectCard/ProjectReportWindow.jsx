@@ -380,7 +380,7 @@ const ProjectReportWindow = ({
     }, [isDataLoaded, reportId]);
 
     return (
-        <div className="grid gap-6 relative">
+        <div className="grid gap-6 relative bg-white">
             {!isDataLoaded && <Loader />}
 
             <div className="text-2xl w-full mb-3">{reportTitle}</div>

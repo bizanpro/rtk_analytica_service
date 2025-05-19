@@ -75,7 +75,6 @@ const EmployeeCard = () => {
                 ? JSON.parse(e.target.value)
                 : e.target.value;
 
-
         setEmployeeData((prev) => ({
             ...prev,
             [name]: value,
@@ -286,23 +285,14 @@ const EmployeeCard = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-                } else {
-                    toast.error("Ошибка обновления данных", {
-                        isLoading: false,
-                        autoClose: 1500,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: false,
-                        position: "top-center",
-                        containerId: "employee",
-                    });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка обновления данных", {
+                toast.error(error.message || "Ошибка при обновлении", {
                     containerId: "employee",
                     isLoading: false,
-                    autoClose: 1500,
+                    autoClose: 5000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
                     position: "top-center",
