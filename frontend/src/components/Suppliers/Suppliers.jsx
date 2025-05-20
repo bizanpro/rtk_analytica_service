@@ -81,7 +81,7 @@ const Suppliers = () => {
                         {nameOptions.length > 0 && (
                             <Select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
                                 title={"Подрядчик"}
                                 items={nameOptions}
@@ -94,7 +94,7 @@ const Suppliers = () => {
                         {statusOptions.length > 0 && (
                             <select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
                                 onChange={(evt) =>
                                     setSelectedStatus(evt.target.value)

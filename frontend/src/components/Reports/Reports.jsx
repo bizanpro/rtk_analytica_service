@@ -404,7 +404,7 @@ const Reports = () => {
                                             return (
                                                 <select
                                                     key={index}
-                                                    className="p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                                    className="p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                                     value={
                                                         selectedFilters[
                                                             filterKey
@@ -458,14 +458,14 @@ const Reports = () => {
                                 <div className="flex items-center gap-5">
                                     <select
                                         className={
-                                            "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                            "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                         }
                                     >
                                         <option value="">Отчёт</option>
                                     </select>
                                     <select
                                         className={
-                                            "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                            "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                         }
                                     >
                                         <option value="">Отчётный месяц</option>

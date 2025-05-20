@@ -57,7 +57,7 @@ const Employees = () => {
                         <>
                             <select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
                                 onChange={(evt) => {
                                     setSelectedType(evt.target.value);
@@ -70,7 +70,7 @@ const Employees = () => {
 
                             <select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
                                 onChange={(evt) => {
                                     setSelectedStatus(evt.target.value);

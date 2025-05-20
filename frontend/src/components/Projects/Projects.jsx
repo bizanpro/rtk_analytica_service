@@ -118,7 +118,7 @@ const Projects = () => {
                         {sectorOptions.length > 0 && (
                             <Select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
                                 title={"Отрасль"}
                                 items={sectorOptions}
@@ -131,7 +131,7 @@ const Projects = () => {
                         {bankOptions.length > 0 && (
                             <Select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
                                 title={"Банк"}
                                 items={bankOptions}
@@ -144,7 +144,7 @@ const Projects = () => {
                         {projectManagerOptions.length > 0 && (
                             <Select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[200px] cursor-pointer"
+                                    "p-1 border border-gray-300 min-w-[200px] max-w-[200px]"
                                 }
                                 title={"Руководитель проекта"}
                                 items={projectManagerOptions}
