@@ -80,8 +80,17 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                             ?
                         </span>
                     </div>
-                    <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            (revenue.revenue?.value ?? 0).toLocaleString(
+                                "de-DE"
+                            ) +
+                            " " +
+                            revenue.revenue?.label
+                        }
+                    >
+                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(revenue.revenue?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -94,7 +103,16 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                 <div className="flex flex-col gap-2">
                     <div className="text-gray-400">Поступления</div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong
+                            className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap"
+                            title={
+                                (revenue.receipts?.value ?? 0).toLocaleString(
+                                    "de-DE"
+                                ) +
+                                " " +
+                                revenue.receipts?.label
+                            }
+                        >
                             {(revenue.receipts?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -111,8 +129,17 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                             ?
                         </span>
                     </div>
-                    <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            (revenue.debts?.value ?? 0).toLocaleString(
+                                "de-DE"
+                            ) +
+                            " " +
+                            revenue.debts?.label
+                        }
+                    >
+                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(revenue.debts?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -131,8 +158,17 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                             ?
                         </span>
                     </div>
-                    <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            (revenue.gross_profit?.value ?? 0).toLocaleString(
+                                "de-DE"
+                            ) +
+                            " " +
+                            revenue.gross_profit?.label
+                        }
+                    >
+                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {revenue.gross_profit?.value ?? 0}
                         </strong>
                         <small className="text-xl">
@@ -147,8 +183,17 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                             ?
                         </span>
                     </div>
-                    <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            (revenue.suppliers_expenses?.value ?? 0).toLocaleString(
+                                "de-DE"
+                            ) +
+                            " " +
+                            revenue.suppliers_expenses?.label
+                        }
+                    >
+                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(
                                 revenue.suppliers_expenses?.value ?? 0
                             ).toLocaleString("de-DE")}
@@ -165,8 +210,17 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                             ?
                         </span>
                     </div>
-                    <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            (revenue.gross_margin?.value ?? 0).toLocaleString(
+                                "de-DE"
+                            ) +
+                            " " +
+                            revenue.gross_margin?.label
+                        }
+                    >
+                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {revenue.gross_margin?.value ?? 0}
                         </strong>
                         <small className="text-xl">

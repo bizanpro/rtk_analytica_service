@@ -67,16 +67,26 @@ const SupplierStatisticBlock = ({ supplierId }) => {
                     </div>
                 </div>
             </div>
+
             <div className="grid items-stretch grid-cols-3 gap-3 mb-3">
                 <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-gray-400">
+                    <div
+                        className="flex items-center gap-2 text-gray-400"
+                        title={
+                            (revenue.revenue?.value ?? 0).toLocaleString(
+                                "de-DE"
+                            ) +
+                            " " +
+                            revenue.revenue?.label
+                        }
+                    >
                         Выполнено
                         <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                             ?
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(revenue.revenue?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -87,14 +97,23 @@ const SupplierStatisticBlock = ({ supplierId }) => {
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-gray-400">
+                    <div
+                        className="flex items-center gap-2 text-gray-400"
+                        title={
+                            (revenue.receipts?.value ?? 0).toLocaleString(
+                                "de-DE"
+                            ) +
+                            " " +
+                            revenue.receipts?.label
+                        }
+                    >
                         Оплачено
                         <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                             ?
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(revenue.receipts?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -105,14 +124,23 @@ const SupplierStatisticBlock = ({ supplierId }) => {
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-gray-400">
+                    <div
+                        className="flex items-center gap-2 text-gray-400"
+                        title={
+                            (revenue.debts?.value ?? 0).toLocaleString(
+                                "de-DE"
+                            ) +
+                            " " +
+                            revenue.debts?.label
+                        }
+                    >
                         КЗ
                         <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                             ?
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(revenue.debts?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
