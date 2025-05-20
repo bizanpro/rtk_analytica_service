@@ -6,6 +6,7 @@ import postData from "../../utils/postData";
 
 import Select from "react-select";
 import NewCustomerWindow from "./NewCustomerWindow";
+import SaleServiceItem from "./SaleServiceItem";
 import Loader from "../Loader";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -102,16 +103,77 @@ const SaleCard = () => {
 
     // Прикрепляем услугу
     const sendService = () => {
+        query = toast.loading("Обновление", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
+
         postData(
             "POST",
             `${
                 import.meta.env.VITE_API_URL
             }sales-funnel-projects/${saleId}/services`,
             newService
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: response.message,
+                        type: "success",
+                        containerId: "projectCard",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                    setAddServices(false);
+                    fetchServices();
+                }
+            })
+            .catch(() => {
+                toast.dismiss(query);
+                toast.error(
+                    "Ошибка добавления. Возможно, такая услуга уже добавлена",
+                    {
+                        containerId: "projectCard",
+                        isLoading: false,
+                        autoClose: 3000,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    }
+                );
+            });
+    };
+
+    // Удалить услугу
+    const deleteService = (id) => {
+        query = toast.loading("Обновление", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
+
+        postData(
+            "DELETE",
+            `${
+                import.meta.env.VITE_API_URL
+            }sales-funnel-projects/${saleId}/services/${id}`,
+            {}
         ).then((response) => {
-            if (response?.status == 200) {
-                setAddServices(false);
+            if (response?.ok) {
+                toast.update(query, {
+                    render: response.message,
+                    type: "success",
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
                 fetchServices();
+                setAddWorkScore("");
             }
         });
     };
@@ -747,32 +809,24 @@ const SaleCard = () => {
                                                     {services.length > 0 &&
                                                         services.map(
                                                             (service) => (
-                                                                <li
-                                                                    className="grid items-center grid-cols-[1fr_40%] gap-3 mb-2 cursor-pointer"
+                                                                <SaleServiceItem
                                                                     key={
                                                                         service.id
                                                                     }
-                                                                    onClick={() => {
-                                                                        setAddWorkScore(
-                                                                            service.id
-                                                                        );
-                                                                    }}
-                                                                >
-                                                                    <div className="flex items-center gap-3">
-                                                                        <div
-                                                                            className={`w-[10px] h-[10px] rounded-[50%] transition ${
-                                                                                addWorkScore ===
-                                                                                service.id
-                                                                                    ? "bg-gray-400"
-                                                                                    : ""
-                                                                            }`}
-                                                                        ></div>
-                                                                        {
-                                                                            service.full_name
-                                                                        }
-                                                                    </div>
-                                                                    <div>-</div>
-                                                                </li>
+                                                                    service={
+                                                                        service
+                                                                    }
+                                                                    setAddWorkScore={
+                                                                        setAddWorkScore
+                                                                    }
+                                                                    addWorkScore={
+                                                                        addWorkScore
+                                                                    }
+                                                                    deleteService={
+                                                                        deleteService
+                                                                    }
+                                                                    mode={mode}
+                                                                />
                                                             )
                                                         )}
                                                 </ul>
