@@ -71,6 +71,7 @@ const ProjectCard = () => {
     const [reportId, setReportId] = useState(null);
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const [firstInit, setFirstInit] = useState(true);
 
     let query;
 
@@ -246,20 +247,25 @@ const ProjectCard = () => {
             // Получаем ответственные лица заказчика
             setCustomers(response.data?.contragent_responsible_persons || []);
 
-            await Promise.all([
+            const tasks = [
                 fetchIndustries(),
                 fetchContragents(),
                 fetchBanks(),
                 getReports(),
                 getTeam(),
                 getServices(),
-                handleUpdate(),
-            ]);
+            ];
+
+            if (!firstInit) {
+                tasks.push(handleUpdate());
+            }
+
+            await Promise.all(tasks);
 
             setIsDataLoaded(true);
+            setFirstInit(false);
         } catch (error) {
             console.error("Ошибка при загрузке проекта:", error);
-
             setIsDataLoaded(true);
         }
     };
