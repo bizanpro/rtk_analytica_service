@@ -8,10 +8,10 @@ import { ToastContainer, toast } from "react-toastify";
 
 import CustomerProjectItem from "./CustomerProjectItem";
 import FilledExecutorBlock from "../ExecutorBlock/FilledExecutorBlock";
-import ProjectStatisticsBlock from "../ProjectCard/ProjectStatisticsBlock";
 import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
 import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
+import CustomerStatisticBlock from "./CustomerStatisticBlock";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -403,7 +403,7 @@ const CustomerCard = () => {
                                 />
                             ) : (
                                 <>
-                                    <ProjectStatisticsBlock />
+                                    <CustomerStatisticBlock contragentId={contragentId} />
 
                                     <div className="flex flex-col gap-2 flex-grow">
                                         <div className="flex items-center gap-2">

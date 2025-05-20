@@ -1,10 +1,10 @@
-import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import { useState, useEffect } from "react";
 
 import getData from "../../utils/getData";
 
 import Loader from "../Loader";
 
-const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
+const CustomerStatisticBlock = ({ contragentId }) => {
     const [period, setPeriod] = useState("current-year");
     const [revenue, setRevenue] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -15,7 +15,7 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }projects/${projectId}/revenue/?period=${period}`
+            }contragents/${contragentId}/customer-metrics/?period=${period}`
         )
             .then((response) => {
                 if (response.status == 200) {
@@ -24,10 +24,6 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
             })
             .finally(() => setIsDataLoaded(true));
     };
-
-    useImperativeHandle(ref, () => ({
-        refreshRevenue: () => getRevenue(),
-    }));
 
     useEffect(() => {
         getRevenue();
@@ -178,8 +174,6 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
             </div>
         </div>
     );
-});
+};
 
-ProjectStatisticsBlock.displayName = "ProjectStatisticsBlock";
-
-export default ProjectStatisticsBlock;
+export default CustomerStatisticBlock;

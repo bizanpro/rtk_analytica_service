@@ -1,10 +1,10 @@
-import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import { useState, useEffect } from "react";
 
 import getData from "../../utils/getData";
 
 import Loader from "../Loader";
 
-const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
+const SupplierStatisticBlock = ({ supplierId }) => {
     const [period, setPeriod] = useState("current-year");
     const [revenue, setRevenue] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -15,7 +15,7 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }projects/${projectId}/revenue/?period=${period}`
+            }contragents/${supplierId}/supplier-metrics/?period=${period}`
         )
             .then((response) => {
                 if (response.status == 200) {
@@ -24,10 +24,6 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
             })
             .finally(() => setIsDataLoaded(true));
     };
-
-    useImperativeHandle(ref, () => ({
-        refreshRevenue: () => getRevenue(),
-    }));
 
     useEffect(() => {
         getRevenue();
@@ -71,11 +67,10 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                     </div>
                 </div>
             </div>
-
             <div className="grid items-stretch grid-cols-3 gap-3 mb-3">
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-gray-400">
-                        Выручка
+                        Выполнено
                         <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                             ?
                         </span>
@@ -92,7 +87,12 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <div className="text-gray-400">Поступления</div>
+                    <div className="flex items-center gap-2 text-gray-400">
+                        Оплачено
+                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                            ?
+                        </span>
+                    </div>
                     <div className="flex items-center flex-grow gap-2">
                         <strong className="font-normal text-4xl">
                             {(revenue.receipts?.value ?? 0).toLocaleString(
@@ -106,7 +106,7 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-gray-400">
-                        ДЗ
+                        КЗ
                         <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                             ?
                         </span>
@@ -123,63 +123,8 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                     </div>
                 </div>
             </div>
-            <div className="grid items-stretch grid-cols-3 gap-3">
-                <div className="flex flex-col gap-2">
-                    <div className="flex items-center flex-grow gap-2 text-gray-400">
-                        Валовая прибыль
-                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                            ?
-                        </span>
-                    </div>
-                    <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">
-                            {revenue.gross_profit?.value ?? 0}
-                        </strong>
-                        <small className="text-xl">
-                            {revenue.gross_profit?.label}
-                        </small>
-                    </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-gray-400">
-                        Подрячики
-                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                            ?
-                        </span>
-                    </div>
-                    <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">
-                            {(
-                                revenue.suppliers_expenses?.value ?? 0
-                            ).toLocaleString("de-DE")}
-                        </strong>
-                        <small className="text-sm">
-                            {revenue.suppliers_expenses?.label}
-                        </small>
-                    </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-gray-400">
-                        Валовая рент.
-                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                            ?
-                        </span>
-                    </div>
-                    <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">
-                            {revenue.gross_margin?.value ?? 0}
-                        </strong>
-                        <small className="text-xl">
-                            {" "}
-                            {revenue.gross_margin?.label}
-                        </small>
-                    </div>
-                </div>
-            </div>
         </div>
     );
-});
+};
 
-ProjectStatisticsBlock.displayName = "ProjectStatisticsBlock";
-
-export default ProjectStatisticsBlock;
+export default SupplierStatisticBlock;
