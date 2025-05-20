@@ -76,7 +76,7 @@ const SupplierStatisticBlock = ({ supplierId }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">
+                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(revenue.revenue?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -94,7 +94,7 @@ const SupplierStatisticBlock = ({ supplierId }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">
+                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(revenue.receipts?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -112,7 +112,7 @@ const SupplierStatisticBlock = ({ supplierId }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">
+                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(revenue.debts?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}

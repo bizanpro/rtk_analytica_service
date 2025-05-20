@@ -43,6 +43,18 @@ button {
     cursor: pointer;
 }
 
+select {
+    cursor: pointer;
+}
+
+select:disabled {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: none;
+    cursor: unset;
+}
+
 a,
 a:visited {
     text-decoration: none;

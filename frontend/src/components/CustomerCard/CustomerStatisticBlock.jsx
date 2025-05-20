@@ -77,7 +77,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">
+                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(revenue.revenue?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -90,7 +90,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                 <div className="flex flex-col gap-2">
                     <div className="text-gray-400">Поступления</div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">
+                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(revenue.receipts?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -108,7 +108,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">
+                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(revenue.debts?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -128,7 +128,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">
+                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {revenue.gross_profit?.value ?? 0}
                         </strong>
                         <small className="text-xl">
@@ -144,7 +144,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">
+                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {(
                                 revenue.suppliers_expenses?.value ?? 0
                             ).toLocaleString("de-DE")}
@@ -162,7 +162,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl">
+                        <strong className="font-normal text-4xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
                             {revenue.gross_margin?.value ?? 0}
                         </strong>
                         <small className="text-xl">
