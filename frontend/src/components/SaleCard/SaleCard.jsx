@@ -7,6 +7,7 @@ import postData from "../../utils/postData";
 import Select from "react-select";
 import NewCustomerWindow from "./NewCustomerWindow";
 import SaleServiceItem from "./SaleServiceItem";
+import SaleFunnelItem from "./SaleFunnelItem";
 import Loader from "../Loader";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -843,7 +844,7 @@ const SaleCard = () => {
 
                                         <div className="border-2 border-gray-300 py-5 px-4 h-full overflow-x-hidden overflow-y-auto">
                                             <ul className="grid gap-3">
-                                                <li className="grid items-center grid-cols-[1fr_25%_25%] gap-3 mb-2 text-gray-400">
+                                                <li className="grid items-center grid-cols-[1fr_28%_25%] gap-3 mb-2 text-gray-400">
                                                     <span className="flex items-center gap-2">
                                                         Этап
                                                         <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
@@ -863,6 +864,8 @@ const SaleCard = () => {
                                                         </span>
                                                     </span>
                                                 </li>
+
+                                                <SaleFunnelItem mode={mode} />
                                             </ul>
                                         </div>
                                     </div>
