@@ -4,6 +4,7 @@ const SaleServiceItem = ({
     addWorkScore,
     mode,
     deleteService,
+    getStages,
 }) => {
     return (
         <li
@@ -11,6 +12,7 @@ const SaleServiceItem = ({
             key={service.id}
             onClick={() => {
                 setAddWorkScore(service.id);
+                getStages(service.id);
             }}
         >
             <div className="flex items-center gap-3">

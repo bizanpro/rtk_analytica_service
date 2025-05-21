@@ -36,6 +36,7 @@ const SaleCard = () => {
     const [banks, setBanks] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
     const [services, setServices] = useState([]);
+    const [saleStages, setSaleStages] = useState([]);
     const [newService, setNewService] = useState({});
     const [selectedService, setSelectedService] = useState({});
 
@@ -263,6 +264,59 @@ const SaleCard = () => {
                 updateContragent(true, { contragent_id: response.id });
             }
         });
+    };
+
+    const getStages = (serviceId) => {
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }sales-funnel-projects/${saleId}/services/${serviceId}/stages`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setSaleStages(response.data);
+                // console.log(response.data);
+            }
+        });
+    };
+
+    const requestNextStage = (stage_id) => {
+        query = toast.loading("Обновление", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
+
+        postData(
+            "POST",
+            `${
+                import.meta.env.VITE_API_URL
+            }sales-funnel-projects/${saleId}/services/${addWorkScore}/stages`,
+            { stage_id }
+        )
+            .then((response) => {
+                if (response?.status == 200) {
+                    toast.update(query, {
+                        render: response.data.message,
+                        type: "success",
+                        containerId: "projectCard",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                }
+            })
+            .catch((response) => {
+                toast.dismiss(query);
+                toast.error(response.data.error, {
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 3000,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
     };
 
     // Получение проекта
@@ -826,6 +880,9 @@ const SaleCard = () => {
                                                                     deleteService={
                                                                         deleteService
                                                                     }
+                                                                    getStages={
+                                                                        getStages
+                                                                    }
                                                                     mode={mode}
                                                                 />
                                                             )
@@ -865,7 +922,17 @@ const SaleCard = () => {
                                                     </span>
                                                 </li>
 
-                                                <SaleFunnelItem mode={mode} />
+                                                {saleStages.length > 0 &&
+                                                    saleStages.map((stage) => (
+                                                        <SaleFunnelItem
+                                                            key={stage.id}
+                                                            stage={stage}
+                                                            requestNextStage={
+                                                                requestNextStage
+                                                            }
+                                                            mode={mode}
+                                                        />
+                                                    ))}
                                             </ul>
                                         </div>
                                     </div>
