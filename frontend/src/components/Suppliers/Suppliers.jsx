@@ -3,6 +3,8 @@ import getData from "../../utils/getData";
 import handleStatus from "../../utils/handleStatus";
 import SupplierItem from "./SupplierItem";
 import Select from "../Select";
+import Search from "../Search/Search";
+import { createDebounce } from "../../utils/debounce";
 
 const Suppliers = () => {
     const [list, setList] = useState([]);
@@ -10,7 +12,7 @@ const Suppliers = () => {
     const [selectedStatus, setSelectedStatus] = useState("default");
     const [isLoading, setIsLoading] = useState(true);
 
-    const URL = `${import.meta.env.VITE_API_URL}suppliers`;
+    const URL = `${import.meta.env.VITE_API_URL}suppliers/?active=true`;
 
     const COLUMNS = [
         { label: "Наименование", key: "program_name" },
@@ -35,6 +37,20 @@ const Suppliers = () => {
             return matchName && matchStatus;
         });
     }, [list, selectedName, selectedStatus]);
+
+    const handleSearch = (event) => {
+        const searchQuery = event.value.toLowerCase();
+
+        getData(`${URL}/?search=${searchQuery}`, { Accept: "application/json" })
+            .then((response) => {
+                if (response.status == 200) {
+                    setList(response.data);
+                }
+            })
+            .finally(() => setIsLoading(false));
+    };
+
+    const debounce = createDebounce(handleSearch, 300, true);
 
     // Заполняем селектор заказчиков
     const nameOptions = useMemo(() => {
@@ -78,6 +94,12 @@ const Suppliers = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
+                        <Search
+                            onSearch={debounce}
+                            className="search-fullpage"
+                            placeholder="Поиск подрядчика"
+                        />
+
                         {nameOptions.length > 0 && (
                             <Select
                                 className={

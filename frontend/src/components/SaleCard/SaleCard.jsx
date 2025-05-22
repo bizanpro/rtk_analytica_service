@@ -281,7 +281,7 @@ const SaleCard = () => {
     }, []);
 
     // Запрос следующего этапа в воронке продаж
-    const requestNextStage = useCallback((stage_id) => {
+    const requestNextStage = (stage_id) => {
         postData(
             "POST",
             `${
@@ -312,7 +312,7 @@ const SaleCard = () => {
                     position: "top-center",
                 });
             });
-    }, []);
+    };
 
     // Получение проекта
     const getProject = async (id) => {

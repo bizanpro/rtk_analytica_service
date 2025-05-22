@@ -5,7 +5,7 @@ import getData from "../../utils/getData";
 import Loader from "../Loader";
 
 const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
-    const [period, setPeriod] = useState("current-year");
+    const [period, setPeriod] = useState("current_year");
     const [revenue, setRevenue] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
@@ -44,8 +44,8 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                             type="radio"
                             name="time_sort"
                             id="this_year"
-                            checked={period === "current-year"}
-                            onChange={() => setPeriod("current-year")}
+                            checked={period === "current_year"}
+                            onChange={() => setPeriod("current_year")}
                         />
                         <label
                             className="bg-gray-200 py-1 px-2 text-center rounded-md"

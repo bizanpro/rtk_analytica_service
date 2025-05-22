@@ -4,6 +4,8 @@ import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
 import ProjectItem from "./CustomerItem";
 import Select from "../Select";
+import Search from "../Search/Search";
+import { createDebounce } from "../../utils/debounce";
 
 const Customers = () => {
     const [list, setList] = useState([]);
@@ -46,6 +48,21 @@ const Customers = () => {
         });
     }, [list, selectedName, selectedStatus]);
 
+    const handleSearch = (event) => {
+        const searchQuery = event.value.toLowerCase();
+
+        setIsLoading(true);
+        getData(`${URL}/?page=${page}&active=true&search=${searchQuery}`, {
+            Accept: "application/json",
+        })
+            .then((response) => {
+                setList(response.data.data);
+            })
+            .finally(() => setIsLoading(false));
+    };
+
+    const debounce = createDebounce(handleSearch, 300, true);
+
     // Заполняем селектор заказчиков
     const nameOptions = useMemo(() => {
         const allNames = list
@@ -71,7 +88,9 @@ const Customers = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        getData(`${URL}/?page=${page}`, { Accept: "application/json" })
+        getData(`${URL}/?page=${page}&active=true`, {
+            Accept: "application/json",
+        })
             .then((response) => {
                 setList((prev) => [...prev, ...response.data.data]);
                 setMeta(response.data.meta);
@@ -103,6 +122,12 @@ const Customers = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
+                        <Search
+                            onSearch={debounce}
+                            className="search-fullpage"
+                            placeholder="Поиск заказчика"
+                        />
+
                         {nameOptions.length > 0 && (
                             <Select
                                 className={

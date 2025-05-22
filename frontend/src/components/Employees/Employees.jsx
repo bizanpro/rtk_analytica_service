@@ -1,11 +1,14 @@
 import { useEffect, useState, useMemo } from "react";
 import getData from "../../utils/getData";
 import EmployeeItem from "./EmployeeItem";
+import Search from "../Search/Search";
+import { createDebounce } from "../../utils/debounce";
 
 const Employees = () => {
     const [list, setList] = useState([]);
     const [selectedType, setSelectedType] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
+    const [isLoading, setIsLoading] = useState(true);
 
     const COLUMNS = [
         { label: "ФИО", key: "name" },
@@ -32,15 +35,34 @@ const Employees = () => {
         return result;
     }, [list, selectedType, selectedStatus]);
 
-    useEffect(() => {
-        getData(`${import.meta.env.VITE_API_URL}physical-persons`).then(
-            (response) => {
+    const handleSearch = (event) => {
+        const searchQuery = event.value.toLowerCase();
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }physical-persons/?search=${searchQuery}`,
+            { Accept: "application/json" }
+        )
+            .then((response) => {
                 if (response.status == 200) {
                     setList(response.data);
                 }
-            }
-        );
-        // .finally(() => setIsLoading(false));
+            })
+            .finally(() => setIsLoading(false));
+    };
+
+    const debounce = createDebounce(handleSearch, 300, true);
+
+    useEffect(() => {
+        setIsLoading(true);
+        getData(`${import.meta.env.VITE_API_URL}physical-persons`)
+            .then((response) => {
+                if (response.status == 200) {
+                    setList(response.data);
+                }
+            })
+            .finally(() => setIsLoading(false));
     }, []);
 
     return (
@@ -54,33 +76,37 @@ const Employees = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        <>
-                            <select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                }
-                                onChange={(evt) => {
-                                    setSelectedType(evt.target.value);
-                                }}
-                            >
-                                <option value="default">Тип</option>
-                                <option value="true">штатный</option>
-                                <option value="false">внештатный</option>
-                            </select>
+                        <Search
+                            onSearch={debounce}
+                            className="search-fullpage"
+                            placeholder="Поиск сотрудника"
+                        />
 
-                            <select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                }
-                                onChange={(evt) => {
-                                    setSelectedStatus(evt.target.value);
-                                }}
-                            >
-                                <option value="default">Статус</option>
-                                <option value="true">работает</option>
-                                <option value="false">не работает</option>
-                            </select>
-                        </>
+                        <select
+                            className={
+                                "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                            }
+                            onChange={(evt) => {
+                                setSelectedType(evt.target.value);
+                            }}
+                        >
+                            <option value="default">Тип</option>
+                            <option value="true">штатный</option>
+                            <option value="false">внештатный</option>
+                        </select>
+
+                        <select
+                            className={
+                                "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                            }
+                            onChange={(evt) => {
+                                setSelectedStatus(evt.target.value);
+                            }}
+                        >
+                            <option value="default">Статус</option>
+                            <option value="true">работает</option>
+                            <option value="false">не работает</option>
+                        </select>
                     </div>
                 </div>
 
@@ -110,6 +136,8 @@ const Employees = () => {
                                 ))}
                         </tbody>
                     </table>
+
+                    {isLoading && <div className="mt-4">Загрузка...</div>}
                 </div>
             </div>
         </main>
