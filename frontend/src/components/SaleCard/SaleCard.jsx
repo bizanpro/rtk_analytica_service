@@ -7,7 +7,7 @@ import postData from "../../utils/postData";
 import Select from "react-select";
 import NewCustomerWindow from "./NewCustomerWindow";
 import SaleServiceItem from "./SaleServiceItem";
-import SaleFunnelItem from "./SaleFunnelItem";
+import SaleFunnelStages from "./SaleFunnelStages";
 import Loader from "../Loader";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -917,16 +917,14 @@ const SaleCard = () => {
                                                     </span>
                                                 </li>
 
-                                                {saleStages.length > 0 &&
-                                                    saleStages.map((stage) => (
-                                                        <SaleFunnelItem
-                                                            key={stage.id}
-                                                            stage={stage}
-                                                            requestNextStage={
-                                                                requestNextStage
-                                                            }
-                                                        />
-                                                    ))}
+                                                {addWorkScore != "" && (
+                                                    <SaleFunnelStages
+                                                        saleStages={saleStages}
+                                                        requestNextStage={
+                                                            requestNextStage
+                                                        }
+                                                    />
+                                                )}
                                             </ul>
                                         </div>
                                     </div>
