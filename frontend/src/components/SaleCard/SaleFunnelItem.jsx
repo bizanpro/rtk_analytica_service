@@ -4,8 +4,6 @@ import { format, parseISO } from "date-fns";
 import { ru } from "date-fns/locale";
 
 const SaleFunnelItem = ({ stage, requestNextStage }) => {
-    console.log(stage);
-
     const stageId = stage?.pivot?.stage_id;
 
     let status;

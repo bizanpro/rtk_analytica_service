@@ -10,25 +10,29 @@ const STAGES = [
 ];
 
 const SaleFunnelStages = ({ saleStages, requestNextStage }) => {
-    const firstStage = STAGES[0];
-
-    const remainingStages = saleStages.map((stageData, index) => {
-        const stageTemplate = STAGES[index + 1];
+    const mappedStages = saleStages.map((stageData, index) => {
+        const stageTemplate = STAGES[index];
         return {
             ...stageTemplate,
             ...stageData,
         };
     });
 
-    // Общий список для отображения
-    const stagesToRender = [firstStage, ...remainingStages];
+    const lastStage = saleStages[saleStages.length - 1];
 
-    return stagesToRender.map((stage, index) => (
+    const shouldAddNext =
+        lastStage?.type === "main" && saleStages.length < STAGES.length;
+
+    const nextStage = shouldAddNext ? STAGES[saleStages.length] : null;
+
+    const stagesToRender = nextStage
+        ? [...mappedStages, nextStage]
+        : mappedStages;
+
+    return stagesToRender.map((stage) => (
         <SaleFunnelItem
             key={stage.id}
             stage={stage}
-            isActive={false}
-            showActions={false}
             requestNextStage={requestNextStage}
         />
     ));
