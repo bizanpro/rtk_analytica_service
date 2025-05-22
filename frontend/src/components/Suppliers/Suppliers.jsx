@@ -41,7 +41,7 @@ const Suppliers = () => {
     const handleSearch = (event) => {
         const searchQuery = event.value.toLowerCase();
 
-        getData(`${URL}/?search=${searchQuery}`, { Accept: "application/json" })
+        getData(`${URL}&search=${searchQuery}`, { Accept: "application/json" })
             .then((response) => {
                 if (response.status == 200) {
                     setList(response.data);
