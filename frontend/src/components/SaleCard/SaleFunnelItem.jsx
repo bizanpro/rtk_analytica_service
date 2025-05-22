@@ -3,8 +3,8 @@ import SaleFunnelActions from "./SaleFunnelActions";
 import { format, parseISO } from "date-fns";
 import { ru } from "date-fns/locale";
 
-const SaleFunnelItem = ({ stage, requestNextStage }) => {
-    const stageId = stage?.pivot?.stage_id;
+const SaleFunnelItem = ({ stage, requestNextStage, index }) => {
+    const stageId = stage?.pivot?.stage_id || index + 1;
 
     let status;
 

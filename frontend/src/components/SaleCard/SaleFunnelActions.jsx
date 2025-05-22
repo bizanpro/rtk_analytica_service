@@ -1,4 +1,6 @@
 const SaleFunnelActions = ({ requestNextStage, stageId, status }) => {
+    console.log(stageId);
+    
     return (
         <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 pr-8">
             <button

@@ -29,10 +29,11 @@ const SaleFunnelStages = ({ saleStages, requestNextStage }) => {
         ? [...mappedStages, nextStage]
         : mappedStages;
 
-    return stagesToRender.map((stage) => (
+    return stagesToRender.map((stage, index) => (
         <SaleFunnelItem
             key={stage.id}
             stage={stage}
+            index={index}
             requestNextStage={requestNextStage}
         />
     ));
