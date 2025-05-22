@@ -150,7 +150,7 @@ const SaleCard = () => {
     };
 
     // Удалить услугу
-    const deleteService = (id) => {
+    const deleteService = useCallback((id) => {
         query = toast.loading("Обновление", {
             containerId: "projectCard",
             position: "top-center",
@@ -178,7 +178,7 @@ const SaleCard = () => {
                 setAddWorkScore("");
             }
         });
-    };
+    }, []);
 
     // Обновляем услугу
     const updateService = () => {
@@ -266,7 +266,8 @@ const SaleCard = () => {
         });
     };
 
-    const getStages = (serviceId) => {
+    // Получаем этапы в воронке продаж
+    const getStages = useCallback((serviceId) => {
         getData(
             `${
                 import.meta.env.VITE_API_URL
@@ -277,14 +278,10 @@ const SaleCard = () => {
                 // console.log(response.data);
             }
         });
-    };
+    }, []);
 
-    const requestNextStage = (stage_id) => {
-        query = toast.loading("Обновление", {
-            containerId: "projectCard",
-            position: "top-center",
-        });
-
+    // Запрос следующего этапа в воронке продаж
+    const requestNextStage = useCallback((stage_id) => {
         postData(
             "POST",
             `${
@@ -294,8 +291,7 @@ const SaleCard = () => {
         )
             .then((response) => {
                 if (response?.status == 200) {
-                    toast.update(query, {
-                        render: response.data.message,
+                    toast.success(response.data.message, {
                         type: "success",
                         containerId: "projectCard",
                         isLoading: false,
@@ -307,17 +303,16 @@ const SaleCard = () => {
                 }
             })
             .catch((response) => {
-                toast.dismiss(query);
-                toast.error(response.data.error, {
+                toast.error(response.data.error || "Ошибка запроса", {
                     containerId: "projectCard",
                     isLoading: false,
-                    autoClose: 3000,
+                    autoClose: 2000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
                     position: "top-center",
                 });
             });
-    };
+    }, []);
 
     // Получение проекта
     const getProject = async (id) => {
@@ -930,7 +925,6 @@ const SaleCard = () => {
                                                             requestNextStage={
                                                                 requestNextStage
                                                             }
-                                                            mode={mode}
                                                         />
                                                     ))}
                                             </ul>

@@ -11,8 +11,10 @@ const SaleServiceItem = ({
             className="grid items-center grid-cols-[1fr_40%] gap-3 mb-2 cursor-pointer"
             key={service.id}
             onClick={() => {
-                setAddWorkScore(service.id);
-                getStages(service.id);
+                if (addWorkScore != service.id) {
+                    setAddWorkScore(service.id);
+                    getStages(service.id);
+                }
             }}
         >
             <div className="flex items-center gap-3">
