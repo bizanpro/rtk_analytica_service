@@ -1,4 +1,5 @@
-import SaleFunnelItem from "./SaleFunnelItem";
+import SaleFunnelItemCurrent from "./SaleFunnelItemCurrent";
+import SaleFunnelItemActive from "./SaleFunnelItemActive";
 
 const STAGES = [
     { id: 1, label: "Получен запрос" },
@@ -10,33 +11,22 @@ const STAGES = [
 ];
 
 const SaleFunnelStages = ({ saleStages, requestNextStage }) => {
-    const mappedStages = saleStages.map((stageData, index) => {
-        const stageTemplate = STAGES[index];
-        return {
-            ...stageTemplate,
-            ...stageData,
-        };
-    });
+    const { stages = [], next_possible_stages = [] } = saleStages;
 
-    const lastStage = saleStages[saleStages.length - 1];
+    return (
+        <>
+            {stages.map((stage) => {
+                return <SaleFunnelItemActive key={stage.id} stage={stage} />;
+            })}
 
-    const shouldAddNext =
-        lastStage?.type === "main" && saleStages.length < STAGES.length;
-
-    const nextStage = shouldAddNext ? STAGES[saleStages.length] : null;
-
-    const stagesToRender = nextStage
-        ? [...mappedStages, nextStage]
-        : mappedStages;
-
-    return stagesToRender.map((stage, index) => (
-        <SaleFunnelItem
-            key={stage.id}
-            stage={stage}
-            index={index}
-            requestNextStage={requestNextStage}
-        />
-    ));
+            {next_possible_stages.length > 0 && (
+                <SaleFunnelItemCurrent
+                    stage={next_possible_stages}
+                    requestNextStage={requestNextStage}
+                />
+            )}
+        </>
+    );
 };
 
 export default SaleFunnelStages;
