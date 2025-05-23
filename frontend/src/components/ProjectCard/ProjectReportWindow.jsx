@@ -502,9 +502,6 @@ const ProjectReportWindow = ({
                                 ".",
                                 ","
                             )}
-                            // value={formatPrice(
-                            //     reportData["service_cost_in_rubles"]
-                            // )}
                             onChange={(e) =>
                                 handleInputChange(e, "service_cost_in_rubles")
                             }

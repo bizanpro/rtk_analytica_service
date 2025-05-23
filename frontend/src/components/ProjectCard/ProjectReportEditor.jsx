@@ -20,6 +20,7 @@ const ProjectReportEditor = ({
         { id: "general_assessment", label: "Общая" },
         { id: "bank_assessment", label: "Банк" },
         { id: "customer_assessment", label: "Заказчик" },
+        { id: "contractor_assessment", label: "Подрядчик" },
         { id: "team_assessment", label: "Команда" },
     ];
 
@@ -30,6 +31,7 @@ const ProjectReportEditor = ({
         { id: "general_summary", label: "Резюме" },
         { id: "bank_summary", label: "Банк" },
         { id: "customer_summary", label: "Заказчик" },
+        { id: "contractor_summary", label: "Подрядчик" },
         { id: "team_summary", label: "Команда" },
         { id: "risk_summary", label: "Риски" },
     ];

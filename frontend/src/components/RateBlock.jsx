@@ -10,7 +10,7 @@ const RateBlock = ({ name, title, handleTRating, value, mode }) => {
 
     return (
         <div className="flex items-center">
-            <div className="block mr-2 basis-auto min-w-[60px]">{title}</div>
+            <div className="block mr-2 basis-auto min-w-[80px]">{title}</div>
 
             <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] min-w-[20px] h-[20px] mr-3">
                 ?
