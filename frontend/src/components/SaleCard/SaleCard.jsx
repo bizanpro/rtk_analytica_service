@@ -36,6 +36,7 @@ const SaleCard = () => {
     const [banks, setBanks] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
     const [services, setServices] = useState([]);
+    const [sources, setSources] = useState([]);
     const [saleStages, setSaleStages] = useState([]);
     const [newService, setNewService] = useState({});
     const [selectedService, setSelectedService] = useState({});
@@ -90,6 +91,17 @@ const SaleCard = () => {
                 setServices(response.data);
             }
         });
+    };
+
+    // Получение источников
+    const fetchSources = () => {
+        getData(`${import.meta.env.VITE_API_URL}request-sources`).then(
+            (response) => {
+                if (response?.status == 200) {
+                    setSources(response.data.data);
+                }
+            }
+        );
     };
 
     // Получение тупов отчетов
@@ -328,6 +340,7 @@ const SaleCard = () => {
                 fetchIndustries(),
                 fetchContragents(),
                 fetchBanks(),
+                fetchSources(),
                 fetchServices(),
                 fetchReportTypes(),
             ]);
@@ -605,7 +618,16 @@ const SaleCard = () => {
                                                 <div className="border-2 border-gray-300 p-5">
                                                     <select
                                                         className="w-full h-[21px]"
-                                                        defaultValue={""}
+                                                        defaultValue={
+                                                            projectData?.request_source_id ||
+                                                            ""
+                                                        }
+                                                        onChange={(e) => {
+                                                            handleInputChange(
+                                                                e,
+                                                                "request_source_id"
+                                                            );
+                                                        }}
                                                         disabled={
                                                             mode == "read"
                                                                 ? true
@@ -615,6 +637,23 @@ const SaleCard = () => {
                                                         <option value="">
                                                             Выберите из списка
                                                         </option>
+                                                        {sources.length > 0 &&
+                                                            sources.map(
+                                                                (item) => (
+                                                                    <option
+                                                                        value={
+                                                                            item.id
+                                                                        }
+                                                                        key={
+                                                                            item.id
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            item.name
+                                                                        }
+                                                                    </option>
+                                                                )
+                                                            )}
                                                     </select>
                                                 </div>
                                             </div>
@@ -982,7 +1021,7 @@ const SaleCard = () => {
                                     <div className="flex flex-col gap-2 flex-grow">
                                         <div className="flex items-center gap-2">
                                             <span className="text-gray-400">
-                                                Воронка продажи
+                                                Детализация этапа продажи
                                             </span>
                                         </div>
 
