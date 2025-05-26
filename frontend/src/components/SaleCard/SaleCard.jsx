@@ -8,6 +8,7 @@ import Select from "react-select";
 import NewCustomerWindow from "./NewCustomerWindow";
 import SaleServiceItem from "./SaleServiceItem";
 import SaleFunnelStages from "./SaleFunnelStages";
+import SaleStageDetails from "./SaleStageDetails";
 import Loader from "../Loader";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -30,6 +31,7 @@ const SaleCard = () => {
     const [addServices, setAddServices] = useState(false);
     const [addBanks, setAddBanks] = useState(false);
     const [addWorkScore, setAddWorkScore] = useState("");
+    const [activeStage, setActiveStage] = useState("");
 
     const [industries, setIndustries] = useState([]);
     const [contragents, setContragents] = useState([]);
@@ -40,6 +42,7 @@ const SaleCard = () => {
     const [saleStages, setSaleStages] = useState([]);
     const [newService, setNewService] = useState({});
     const [selectedService, setSelectedService] = useState({});
+    const [stageMetrics, setStageMetrics] = useState({});
 
     let query;
 
@@ -287,10 +290,58 @@ const SaleCard = () => {
         ).then((response) => {
             if (response?.status == 200) {
                 setSaleStages(response.data);
-                // console.log(response.data);
             }
         });
     }, []);
+
+    // Получаем детализацию выбранного этапа
+    const getStageDetails = useCallback((stageId) => {
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }sales-funnel-projects/${saleId}/stages/${stageId}/metrics`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setStageMetrics(response.data);
+            }
+        });
+    }, []);
+
+    // Обновляем детализацию выбранного этапа
+    const updateStageDetails = () => {
+        postData(
+            "POST",
+            `${
+                import.meta.env.VITE_API_URL
+            }sales-funnel-projects/${saleId}/stages/${
+                stageMetrics.stage_id
+            }/metrics`,
+            { stageMetrics }
+        )
+            .then((response) => {
+                if (response?.status == 200) {
+                    toast.success(response.data.message, {
+                        type: "success",
+                        containerId: "projectCard",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                }
+            })
+            .catch((response) => {
+                toast.error(response.data.error || "Ошибка запроса", {
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 2000,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
+    };
 
     // Запрос следующего этапа в воронке продаж
     const requestNextStage = (stage_id) => {
@@ -432,6 +483,10 @@ const SaleCard = () => {
             sendService();
         }
     }, [newService]);
+
+    useEffect(() => {
+        console.log(stageMetrics);
+    }, [stageMetrics]);
 
     return (
         <main className="page">
@@ -962,6 +1017,15 @@ const SaleCard = () => {
                                                         requestNextStage={
                                                             requestNextStage
                                                         }
+                                                        getStageDetails={
+                                                            getStageDetails
+                                                        }
+                                                        activeStage={
+                                                            activeStage
+                                                        }
+                                                        setActiveStage={
+                                                            setActiveStage
+                                                        }
                                                     />
                                                 )}
                                             </ul>
@@ -1023,21 +1087,28 @@ const SaleCard = () => {
                                             <span className="text-gray-400">
                                                 Детализация этапа продажи
                                             </span>
+                                            {mode === "edit" &&
+                                                activeStage != "" && (
+                                                    <button
+                                                        type="button"
+                                                        className="save-icon w-[20px] h-[20px]"
+                                                        title="Сохранить детализацию этапа продажи"
+                                                        onClick={() =>
+                                                            updateStageDetails()
+                                                        }
+                                                    ></button>
+                                                )}
                                         </div>
 
                                         <div className="border-2 border-gray-300 py-5 px-4 h-full">
-                                            <textarea
-                                                className="p-5 h-full w-full"
-                                                placeholder="Оставьте комментарии по этапу"
-                                                style={{ resize: "none" }}
-                                                type="text"
-                                                name="description"
-                                                disabled={
-                                                    mode == "read"
-                                                        ? true
-                                                        : false
-                                                }
-                                            />
+                                            {activeStage != "" && (
+                                                <SaleStageDetails
+                                                    stageMetrics={stageMetrics}
+                                                    setStageMetrics={
+                                                        setStageMetrics
+                                                    }
+                                                />
+                                            )}
                                         </div>
                                     </div>
                                 </div>
