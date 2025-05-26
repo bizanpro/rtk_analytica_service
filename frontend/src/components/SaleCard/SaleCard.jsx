@@ -295,17 +295,15 @@ const SaleCard = () => {
     }, []);
 
     // Получаем детализацию выбранного этапа
-    const getStageDetails = useCallback((stageId) => {
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }sales-funnel-projects/${saleId}/stages/${stageId}/metrics`
-        ).then((response) => {
-            if (response?.status == 200) {
-                setStageMetrics(response.data);
-            }
-        });
-    }, []);
+    const getStageDetails = (stageId) => {
+        const stageData = saleStages.stages.find((item) => item.id === stageId);
+
+        setStageMetrics(stageData?.metrics);
+        setStageMetrics((prev) => ({
+            ...prev,
+            stage_id: stageData.id,
+        }));
+    };
 
     // Обновляем детализацию выбранного этапа
     const updateStageDetails = () => {
@@ -353,8 +351,8 @@ const SaleCard = () => {
             { stage_id }
         )
             .then((response) => {
-                if (response?.status == 200) {
-                    toast.success(response.data.message, {
+                if (response?.ok) {
+                    toast.success(response.message, {
                         type: "success",
                         containerId: "projectCard",
                         isLoading: false,
@@ -363,10 +361,11 @@ const SaleCard = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
+                    getStages(stage_id);
                 }
             })
             .catch((response) => {
-                toast.error(response.data.error || "Ошибка запроса", {
+                toast.error(response.error || "Ошибка запроса", {
                     containerId: "projectCard",
                     isLoading: false,
                     autoClose: 2000,
@@ -483,10 +482,6 @@ const SaleCard = () => {
             sendService();
         }
     }, [newService]);
-
-    useEffect(() => {
-        console.log(stageMetrics);
-    }, [stageMetrics]);
 
     return (
         <main className="page">
@@ -1107,6 +1102,7 @@ const SaleCard = () => {
                                                     setStageMetrics={
                                                         setStageMetrics
                                                     }
+                                                    mode={mode}
                                                 />
                                             )}
                                         </div>

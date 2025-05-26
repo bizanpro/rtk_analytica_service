@@ -28,9 +28,7 @@ const SaleFunnelStages = ({
                 <SaleFunnelItemCurrent
                     stage={next_possible_stages}
                     requestNextStage={requestNextStage}
-                    getStageDetails={getStageDetails}
                     activeStage={activeStage}
-                    setActiveStage={setActiveStage}
                 />
             )}
         </>

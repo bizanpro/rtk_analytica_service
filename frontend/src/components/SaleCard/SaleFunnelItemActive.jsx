@@ -52,12 +52,12 @@ const SaleFunnelItemActive = ({
 
             <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 pr-8">
                 <div
-                    className={`w-[12px] h-[12px] rounded-[50%] bg-red-400  ${
+                    className={`w-[12px] h-[12px] rounded-[50%] bg-red-400 ${
                         stage.type === "rejected" ? "" : "opacity-[0.4]"
                     }`}
                 ></div>
                 <div
-                    className={`w-[12px] h-[12px] rounded-[50%] bg-yellow-400 opacity-[0.4] ${
+                    className={`w-[12px] h-[12px] rounded-[50%] bg-yellow-400 ${
                         stage.type === "postponed" ? "" : "opacity-[0.4]"
                     }`}
                 ></div>

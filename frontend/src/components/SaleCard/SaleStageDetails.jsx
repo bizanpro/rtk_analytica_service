@@ -1,6 +1,4 @@
-import React from "react";
-
-const SaleStageDetails = ({ stageMetrics, setStageMetrics }) => {
+const SaleStageDetails = ({ stageMetrics, setStageMetrics, mode }) => {
     return (
         <div className="flex flex-col gap-4">
             <div className="flex items-center gap-4">
@@ -26,6 +24,7 @@ const SaleStageDetails = ({ stageMetrics, setStageMetrics }) => {
                                         fta_value: evt.target.value,
                                     }));
                                 }}
+                                disabled={mode == "read"}
                             />
                         </div>
                     </div>
@@ -44,6 +43,7 @@ const SaleStageDetails = ({ stageMetrics, setStageMetrics }) => {
                                         tk_value: evt.target.value,
                                     }));
                                 }}
+                                disabled={mode == "read"}
                             />
                         </div>
                     </div>
@@ -83,6 +83,7 @@ const SaleStageDetails = ({ stageMetrics, setStageMetrics }) => {
                             comment: evt.target.value,
                         }));
                     }}
+                    disabled={mode == "read"}
                 />
             </div>
         </div>
