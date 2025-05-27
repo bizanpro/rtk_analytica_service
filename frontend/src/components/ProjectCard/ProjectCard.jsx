@@ -862,9 +862,9 @@ const ProjectCard = () => {
                                         className="border-2 border-gray-300 py-1 px-5"
                                         type="text"
                                         disabled={mode == "read"}
-                                        value={projectData?.position || ""}
+                                        value={projectData?.location || ""}
                                         onChange={(e) =>
-                                            handleInputChange(e, "position")
+                                            handleInputChange(e, "location")
                                         }
                                     />
                                 </div>
