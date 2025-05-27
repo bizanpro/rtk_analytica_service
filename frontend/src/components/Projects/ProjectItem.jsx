@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 import handleStatus from "../../utils/handleStatus";
 
-const ProjectItem = ({ props, columns }) => {
+const ProjectItem = ({ props, columns, mode, deleteProject }) => {
     const navigate = useNavigate();
 
     const handleRowClick = () => {
@@ -109,6 +109,18 @@ const ProjectItem = ({ props, columns }) => {
                     }
                 }
             })}
+            <td className="w-[24px] h-[20px]">
+                {mode === "edit" && (
+                    <button
+                        className="delete-icon flex-none w-[20px] h-[20px]"
+                        title="Удалить проект"
+                        onClick={(e) => {
+                            deleteProject(props.id);
+                            e.stopPropagation();
+                        }}
+                    ></button>
+                )}
+            </td>
         </tr>
     );
 };

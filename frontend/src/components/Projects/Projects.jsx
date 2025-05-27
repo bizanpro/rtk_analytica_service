@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 const Projects = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
     const navigate = useNavigate();
+
+    const [mode, setMode] = useState("read");
     const [list, setList] = useState([]);
     const [popupState, setPopupState] = useState(false);
     const [newProjectName, setNewProjectName] = useState("");
@@ -85,10 +87,20 @@ const Projects = () => {
         if (evt.currentTarget.classList.contains("popup")) setPopupState(false);
     };
 
+    const getProjects = () => {
+        setIsLoading(true);
+
+        getData(URL, { Accept: "application/json" })
+            .then((response) => {
+                setList(response.data);
+            })
+            .finally(() => setIsLoading(false));
+    };
+
     // Создание проекта
     const createProject = () => {
         postData("POST", URL, { name: newProjectName }).then((response) => {
-            if (response) {
+            if (response.ok) {
                 navigate(`/projects/${response.id}`, {
                     state: { mode: "edit" },
                 });
@@ -96,12 +108,16 @@ const Projects = () => {
         });
     };
 
+    const deleteProject = (projectId) => {
+        postData("DELETE", `${URL}/${projectId}`, {}).then((response) => {
+            if (response.ok) {
+                getProjects();
+            }
+        });
+    };
+
     useEffect(() => {
-        getData(URL, { Accept: "application/json" })
-            .then((response) => {
-                setList(response.data);
-            })
-            .finally(() => setIsLoading(false));
+        getProjects();
     }, []);
 
     return (
@@ -154,13 +170,43 @@ const Projects = () => {
                             />
                         )}
 
-                        <button
-                            type="button"
-                            className="p-1 px-4 text-gray-900 rounded-lg bg-gray-100 group text-lg"
-                            onClick={openPopup}
-                        >
-                            Создать проект
-                        </button>
+                        {mode === "edit" && (
+                            <button
+                                type="button"
+                                className="p-1 px-4 text-gray-900 rounded-lg bg-gray-100 group text-lg"
+                                onClick={openPopup}
+                            >
+                                Создать проект
+                            </button>
+                        )}
+
+                        <nav className="switch">
+                            <div>
+                                <input
+                                    type="radio"
+                                    name="mode"
+                                    id="read_mode"
+                                    onChange={() => {
+                                        setMode("read");
+                                    }}
+                                    checked={mode === "read"}
+                                />
+                                <label htmlFor="read_mode">Чтение</label>
+                            </div>
+
+                            <div>
+                                <input
+                                    type="radio"
+                                    name="mode"
+                                    id="edit_mode"
+                                    onChange={() => setMode("edit")}
+                                    checked={mode === "edit"}
+                                />
+                                <label htmlFor="edit_mode">
+                                    Редактирование
+                                </label>
+                            </div>
+                        </nav>
                     </div>
                 </div>
 
@@ -194,6 +240,8 @@ const Projects = () => {
                                         key={item.id}
                                         props={item}
                                         columns={COLUMNS}
+                                        mode={mode}
+                                        deleteProject={deleteProject}
                                     />
                                 ))
                             )}
