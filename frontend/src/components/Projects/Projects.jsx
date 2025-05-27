@@ -87,6 +87,7 @@ const Projects = () => {
         if (evt.currentTarget.classList.contains("popup")) setPopupState(false);
     };
 
+    // Получение проектов
     const getProjects = () => {
         setIsLoading(true);
 
@@ -108,6 +109,7 @@ const Projects = () => {
         });
     };
 
+    // Удаление проекта
     const deleteProject = (projectId) => {
         postData("DELETE", `${URL}/${projectId}`, {}).then((response) => {
             if (response.ok) {

@@ -308,7 +308,7 @@ const SaleCard = () => {
     // Обновляем детализацию выбранного этапа
     const updateStageDetails = () => {
         postData(
-            "POST",
+            "PATCH",
             `${
                 import.meta.env.VITE_API_URL
             }sales-funnel-projects/${saleId}/stages/${
