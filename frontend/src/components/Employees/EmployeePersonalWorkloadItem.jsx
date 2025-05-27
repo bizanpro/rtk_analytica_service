@@ -62,7 +62,7 @@ const EmployeePersonalWorkloadItem = ({
                             }));
                         }
                     }}
-                    disabled={mode == "read" ? true : false}
+                    disabled={mode == "read"}
                 />
                 %
             </div>

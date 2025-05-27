@@ -500,7 +500,7 @@ const SaleCard = () => {
                                     onChange={(e) =>
                                         handleInputChange(e, "name")
                                     }
-                                    disabled={mode == "read" ? true : false}
+                                    disabled={mode == "read"}
                                 />
                             </div>
 

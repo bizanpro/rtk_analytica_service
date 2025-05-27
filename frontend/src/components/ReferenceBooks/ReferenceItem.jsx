@@ -11,7 +11,7 @@ const ReferenceItem = ({
     deleteElement,
     editElement,
     handleInputChange,
-    positions
+    positions,
 }) => {
     const navigate = useNavigate();
 
@@ -159,7 +159,7 @@ const ReferenceItem = ({
                                     onChange={(e) =>
                                         handleInputChange(e, key, data.id)
                                     }
-                                    disabled={mode == "read" ? true : false}
+                                    disabled={mode == "read"}
                                 >
                                     {bookId === "management-report-types" ? (
                                         positions.map((position) => (

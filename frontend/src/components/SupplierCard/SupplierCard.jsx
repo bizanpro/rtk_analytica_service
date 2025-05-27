@@ -261,7 +261,7 @@ const SupplierCard = () => {
                                             supplierData?.head_office_address ||
                                             ""
                                         }
-                                        disabled={mode == "read" ? true : false}
+                                        disabled={mode == "read"}
                                     ></textarea>
                                 </div>
 
@@ -373,7 +373,9 @@ const SupplierCard = () => {
                                                 Взаиморасчёты
                                             </span>
 
-                                            <SupplierStatisticBlock supplierId={supplierId} />
+                                            <SupplierStatisticBlock
+                                                supplierId={supplierId}
+                                            />
                                         </div>
                                     </div>
 

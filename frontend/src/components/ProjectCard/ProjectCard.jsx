@@ -647,7 +647,7 @@ const ProjectCard = () => {
                                     onChange={(e) =>
                                         handleInputChange(e, "name")
                                     }
-                                    disabled={mode == "read" ? true : false}
+                                    disabled={mode == "read"}
                                 />
 
                                 <span
@@ -863,7 +863,7 @@ const ProjectCard = () => {
                                         placeholder="Заполните описание проекта"
                                         type="text"
                                         name="description"
-                                        disabled={mode == "read" ? true : false}
+                                        disabled={mode == "read"}
                                         value={projectData?.description || ""}
                                         onChange={(e) =>
                                             handleInputChange(e, "description")

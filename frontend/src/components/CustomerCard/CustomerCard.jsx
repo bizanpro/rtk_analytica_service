@@ -280,7 +280,7 @@ const CustomerCard = () => {
                                             customerData?.head_office_address ||
                                             ""
                                         }
-                                        disabled={mode == "read" ? true : false}
+                                        disabled={mode == "read"}
                                     ></textarea>
                                 </div>
 
@@ -341,7 +341,7 @@ const CustomerCard = () => {
                                     style={{ resize: "none" }}
                                     placeholder="Заполните описание"
                                     type="text"
-                                    disabled={mode == "read" ? true : false}
+                                    disabled={mode == "read"}
                                     value={
                                         customerData?.description_short || ""
                                     }
@@ -403,7 +403,9 @@ const CustomerCard = () => {
                                 />
                             ) : (
                                 <>
-                                    <CustomerStatisticBlock contragentId={contragentId} />
+                                    <CustomerStatisticBlock
+                                        contragentId={contragentId}
+                                    />
 
                                     <div className="flex flex-col gap-2 flex-grow">
                                         <div className="flex items-center gap-2">

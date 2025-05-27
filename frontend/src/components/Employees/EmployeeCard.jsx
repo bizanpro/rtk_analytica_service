@@ -121,6 +121,7 @@ const EmployeeCard = () => {
         });
     };
 
+    // Получаем список должностей
     const getPositions = () => {
         getData(`${import.meta.env.VITE_API_URL}positions`).then((response) => {
             if (response.status === 200) {
@@ -339,7 +340,7 @@ const EmployeeCard = () => {
                                         onChange={(e) =>
                                             handleInputChange(e, "is_staff")
                                         }
-                                        disabled={mode == "read" ? true : false}
+                                        disabled={mode == "read"}
                                     >
                                         <option value="true">штатный</option>
                                         <option value="false">
@@ -353,7 +354,7 @@ const EmployeeCard = () => {
                                         onChange={(e) =>
                                             handleInputChange(e, "is_active")
                                         }
-                                        disabled={mode == "read" ? true : false}
+                                        disabled={mode == "read"}
                                     >
                                         <option value="true">работает</option>
                                         <option value="false">
@@ -418,7 +419,7 @@ const EmployeeCard = () => {
                                             handleInputChange(e, "position_id")
                                         }
                                         value={employeeData.position_id}
-                                        disabled={mode == "read" ? true : false}
+                                        disabled={mode == "read"}
                                     >
                                         {positions.length > 0 &&
                                             positions.map((position) => (
@@ -454,11 +455,7 @@ const EmployeeCard = () => {
                                                     employeeData.phone_number
                                                 }
                                                 placeholder="+7 999 999 99 99"
-                                                disabled={
-                                                    mode == "read"
-                                                        ? true
-                                                        : false
-                                                }
+                                                disabled={mode == "read"}
                                             />
 
                                             {errors.phone_number && (
@@ -484,17 +481,67 @@ const EmployeeCard = () => {
                                                         "email"
                                                     )
                                                 }
-                                                disabled={
-                                                    mode == "read"
-                                                        ? true
-                                                        : false
-                                                }
+                                                disabled={mode == "read"}
                                             />
                                             {errors.email && (
                                                 <p className="text-red-500 text-sm mt-2">
                                                     Некорректный email
                                                 </p>
                                             )}
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 items-center gap-3">
+                                        <div className="flex flex-col">
+                                            <span className="block mb-2 text-gray-400">
+                                                Дата приема
+                                            </span>
+                                            <select
+                                                className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
+                                                // onChange={(e) =>
+                                                //     setSelectedSummaryYear(
+                                                //         e.target.value
+                                                //     )
+                                                // }
+                                                // value={selectedSummaryYear}
+                                                disabled={mode == "read"}
+                                            >
+                                                {/* {availableYears.length > 0 &&
+                                                    availableYears.map(
+                                                        (item) => (
+                                                            <option
+                                                                value={item}
+                                                                key={item}
+                                                            >
+                                                                {item}
+                                                            </option>
+                                                        )
+                                                    )} */}
+                                            </select>
+                                        </div>
+
+                                        <div className="flex flex-col">
+                                            <span className="block mb-2 text-gray-400">
+                                                Дата увольнения
+                                            </span>
+                                            <select
+                                                className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
+                                                // onChange={(e) =>
+                                                // setSelectedSummaryMonth(
+                                                //     e.target.value
+                                                // )
+                                                // }
+                                                disabled={mode == "read"}
+                                            >
+                                                {/* {months.map((month, index) => (
+                                                    <option
+                                                        value={index + 1}
+                                                        key={index}
+                                                    >
+                                                        {month}
+                                                    </option>
+                                                ))} */}
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -787,8 +834,6 @@ const EmployeeCard = () => {
                                                                     disabled={
                                                                         mode ==
                                                                         "read"
-                                                                            ? true
-                                                                            : false
                                                                     }
                                                                 />
                                                                 %
