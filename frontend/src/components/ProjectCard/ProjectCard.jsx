@@ -856,6 +856,38 @@ const ProjectCard = () => {
                             <div className="grid gap-[20px] grid-cols-2 mb-5">
                                 <div className="flex flex-col gap-2">
                                     <span className="text-gray-400">
+                                        Местоположение
+                                    </span>
+                                    <input
+                                        className="border-2 border-gray-300 py-1 px-5"
+                                        type="text"
+                                        disabled={mode == "read"}
+                                        value={projectData?.position || ""}
+                                        onChange={(e) =>
+                                            handleInputChange(e, "position")
+                                        }
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid gap-[20px] grid-cols-2 mb-5">
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-gray-400">ТЭП</span>
+                                    <input
+                                        className="border-2 border-gray-300 py-1 px-5"
+                                        type="text"
+                                        disabled={mode == "read"}
+                                        value={projectData?.tep || ""}
+                                        onChange={(e) =>
+                                            handleInputChange(e, "tep")
+                                        }
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid gap-[20px] grid-cols-2 mb-5">
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-gray-400">
                                         Краткое описание
                                     </span>
                                     <textarea

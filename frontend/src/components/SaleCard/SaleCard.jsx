@@ -629,8 +629,6 @@ const SaleCard = () => {
                                                         }}
                                                         disabled={
                                                             mode == "read"
-                                                                ? true
-                                                                : false
                                                         }
                                                     >
                                                         <option value="">
@@ -680,8 +678,6 @@ const SaleCard = () => {
                                                         }}
                                                         disabled={
                                                             mode == "read"
-                                                                ? true
-                                                                : false
                                                         }
                                                     >
                                                         <option value="">
@@ -825,11 +821,26 @@ const SaleCard = () => {
                                                         "location"
                                                     );
                                                 }}
-                                                disabled={
-                                                    mode == "read"
-                                                        ? true
-                                                        : false
+                                                disabled={mode == "read"}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2 flex-shrink-0 flex-grow">
+                                        <span className="flex items-center gap-2 text-gray-400">
+                                            ТЭП
+                                        </span>
+                                        <div className="border-2 border-gray-300 p-5">
+                                            <input
+                                                type="text"
+                                                className="w-full"
+                                                defaultValue={
+                                                    projectData.tep || ""
                                                 }
+                                                onChange={(e) => {
+                                                    handleInputChange(e, "tep");
+                                                }}
+                                                disabled={mode == "read"}
                                             />
                                         </div>
                                     </div>
@@ -852,9 +863,7 @@ const SaleCard = () => {
                                                     "short_description"
                                                 );
                                             }}
-                                            disabled={
-                                                mode == "read" ? true : false
-                                            }
+                                            disabled={mode == "read"}
                                         />
                                     </div>
                                 </div>
@@ -905,8 +914,6 @@ const SaleCard = () => {
                                                         }}
                                                         disabled={
                                                             mode == "read"
-                                                                ? true
-                                                                : false
                                                         }
                                                     >
                                                         <option value="">
