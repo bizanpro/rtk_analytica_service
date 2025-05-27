@@ -6,6 +6,8 @@ import postData from "../../utils/postData";
 import { IMaskInput } from "react-imask";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
+import DatePicker from "react-datepicker";
+import formatToUtcDateOnly from "../../utils/formatToUtcDateOnly";
 
 import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
 import EmployeePersonalWorkloadItem from "./EmployeePersonalWorkloadItem";
@@ -68,18 +70,27 @@ const EmployeeCard = () => {
     };
 
     const handleInputChange = (e, name) => {
-        const value =
-            name === "phone_number"
-                ? e
-                : name === "is_staff" || name === "is_active"
-                ? JSON.parse(e.target.value)
-                : e.target.value;
+        let value;
+
+        if (name === "employment_date" || name === "dismissal_date") {
+            value = e ? formatToUtcDateOnly(e) : null;
+        } else if (name === "phone_number") {
+            value = e;
+        } else if (name === "is_staff" || name === "is_active") {
+            value = JSON.parse(e.target.value);
+        } else {
+            value = e.target.value;
+        }
 
         setEmployeeData((prev) => ({
             ...prev,
             [name]: value,
         }));
     };
+
+    useEffect(() => {
+        console.log(employeeData);
+    }, [employeeData]);
 
     // Текущая загрузка
     const getWorkload = () => {
@@ -496,52 +507,40 @@ const EmployeeCard = () => {
                                             <span className="block mb-2 text-gray-400">
                                                 Дата приема
                                             </span>
-                                            <select
-                                                className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
-                                                // onChange={(e) =>
-                                                //     setSelectedSummaryYear(
-                                                //         e.target.value
-                                                //     )
-                                                // }
-                                                // value={selectedSummaryYear}
-                                                disabled={mode == "read"}
-                                            >
-                                                {/* {availableYears.length > 0 &&
-                                                    availableYears.map(
-                                                        (item) => (
-                                                            <option
-                                                                value={item}
-                                                                key={item}
-                                                            >
-                                                                {item}
-                                                            </option>
-                                                        )
-                                                    )} */}
-                                            </select>
+                                            <DatePicker
+                                                className="border-2 border-gray-300 p-1 w-full h-[32px]"
+                                                selected={
+                                                    employeeData.employment_date
+                                                }
+                                                onChange={(e) =>
+                                                    handleInputChange(
+                                                        e,
+                                                        "employment_date"
+                                                    )
+                                                }
+                                                dateFormat="dd.MM.yyyy"
+                                                disabled={mode === "read"}
+                                            />
                                         </div>
 
                                         <div className="flex flex-col">
                                             <span className="block mb-2 text-gray-400">
                                                 Дата увольнения
                                             </span>
-                                            <select
-                                                className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
-                                                // onChange={(e) =>
-                                                // setSelectedSummaryMonth(
-                                                //     e.target.value
-                                                // )
-                                                // }
-                                                disabled={mode == "read"}
-                                            >
-                                                {/* {months.map((month, index) => (
-                                                    <option
-                                                        value={index + 1}
-                                                        key={index}
-                                                    >
-                                                        {month}
-                                                    </option>
-                                                ))} */}
-                                            </select>
+                                            <DatePicker
+                                                className="border-2 border-gray-300 p-1 w-full h-[32px]"
+                                                selected={
+                                                    employeeData.dismissal_date
+                                                }
+                                                onChange={(e) =>
+                                                    handleInputChange(
+                                                        e,
+                                                        "dismissal_date"
+                                                    )
+                                                }
+                                                dateFormat="dd.MM.yyyy"
+                                                disabled={mode === "read"}
+                                            />
                                         </div>
                                     </div>
                                 </div>

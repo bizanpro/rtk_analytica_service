@@ -394,7 +394,7 @@ const ProjectReportWindow = ({
                                 handleInputChange(e, "report_type_id")
                             }
                             value={reportData.report_type_id}
-                            disabled={mode === "read" ? true : false}
+                            disabled={mode === "read"}
                         >
                             {reportTypes.length > 0 &&
                                 reportTypes.map((type) => (
@@ -418,7 +418,7 @@ const ProjectReportWindow = ({
                         onChange={handleChangeDateRange("report_period")}
                         dateFormat="dd.MM.yyyy"
                         selectsRange
-                        disabled={mode === "read" ? true : false}
+                        disabled={mode === "read"}
                     />
                 </div>
             </div>
@@ -440,7 +440,7 @@ const ProjectReportWindow = ({
                             onChange={(e) =>
                                 handleInputChange(e, "budget_in_billions")
                             }
-                            disabled={mode === "read" ? true : false}
+                            disabled={mode === "read"}
                         />
                     </div>
                 </div>
@@ -459,7 +459,7 @@ const ProjectReportWindow = ({
                         )}
                         dateFormat="dd.MM.yyyy"
                         selectsRange
-                        disabled={mode === "read" ? true : false}
+                        disabled={mode === "read"}
                     />
                 </div>
             </div>
@@ -474,7 +474,7 @@ const ProjectReportWindow = ({
                                 handleInputChange(e, "contract_id")
                             }
                             value={reportData.contract_id || ""}
-                            disabled={mode === "read" ? true : false}
+                            disabled={mode === "read"}
                         >
                             {contracts.length > 0 &&
                                 contracts.map((contract) => (
@@ -505,7 +505,7 @@ const ProjectReportWindow = ({
                             onChange={(e) =>
                                 handleInputChange(e, "service_cost_in_rubles")
                             }
-                            disabled={mode === "read" ? true : false}
+                            disabled={mode === "read"}
                         />
                     </div>
                 </div>
@@ -522,7 +522,7 @@ const ProjectReportWindow = ({
                         onChange={handleChangeDateRange("execution_period")}
                         dateFormat="dd.MM.yyyy"
                         selectsRange
-                        disabled={mode === "read" ? true : false}
+                        disabled={mode === "read"}
                     />
                 </div>
             </div>
