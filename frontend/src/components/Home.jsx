@@ -3,7 +3,7 @@ import getData from "../utils/getData";
 import postData from "../utils/postData";
 
 import Indicators from "./Dashboards/Indicators";
-import Finance from "./Dashboards/finance";
+import Finance from "./Dashboards/Finance";
 import Projects from "./Dashboards/Projects";
 import Sales from "./Dashboards/Sales";
 import Staff from "./Dashboards/Staff";
