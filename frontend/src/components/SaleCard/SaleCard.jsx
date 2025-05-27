@@ -314,11 +314,11 @@ const SaleCard = () => {
             }sales-funnel-projects/${saleId}/stages/${
                 stageMetrics.stage_id
             }/metrics`,
-            { stageMetrics }
+            stageMetrics
         )
             .then((response) => {
-                if (response?.status == 200) {
-                    toast.success(response.data.message, {
+                if (response?.ok) {
+                    toast.success(response.message, {
                         type: "success",
                         containerId: "projectCard",
                         isLoading: false,
