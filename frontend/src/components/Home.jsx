@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import getData from "../utils/getData";
-import postData from "../utils/postData";
 
 import Indicators from "./Dashboards/Indicators";
 import Finance from "./Dashboards/Finance";

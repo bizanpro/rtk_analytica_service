@@ -88,10 +88,6 @@ const EmployeeCard = () => {
         }));
     };
 
-    useEffect(() => {
-        console.log(employeeData);
-    }, [employeeData]);
-
     // Текущая загрузка
     const getWorkload = () => {
         getData(
