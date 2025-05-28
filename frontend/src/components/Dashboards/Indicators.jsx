@@ -27,9 +27,11 @@ ChartJS.register(
 
 const Indicators = () => {
     const [isLoading, setIsLoading] = useState(true);
-    const [months, setMonths] = useState([]);
-    const [periods, setPeriods] = useState([]);
+    const [isFiltersLoaded, setIsFiltersLoaded] = useState(false);
+
+    const [filtertOptions, setFilterOptions] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState({});
+    const [financialMetrics, setFinancialMetrics] = useState({});
 
     const verticalLabels = ["Янв", "Фев", "Мар", "Апр", "Май"];
     const verticalData = {
@@ -140,8 +142,12 @@ const Indicators = () => {
         getData(`${import.meta.env.VITE_API_URL}company/filter-options`).then(
             (response) => {
                 if (response?.status == 200) {
-                    setMonths(response.data?.months);
-                    setPeriods(response.data?.periods);
+                    setFilterOptions(response.data);
+
+                    setSelectedFilters({
+                        period: [response.data.periods[0].value],
+                        report_month: [response.data.months[0].value],
+                    });
                 }
             }
         );
@@ -152,7 +158,7 @@ const Indicators = () => {
 
         Object.entries(selectedFilters).forEach(([key, values]) => {
             values.forEach((value) => {
-                queryParams.append(`filters[${key}][]`, value);
+                queryParams.append(`${key}`, value);
             });
         });
 
@@ -162,7 +168,7 @@ const Indicators = () => {
             }company/financial-metrics?${queryParams.toString()}`
         ).then((response) => {
             if (response?.status == 200) {
-                console.log(response.data);
+                setFinancialMetrics(response.data);
             }
         });
     };
@@ -172,7 +178,11 @@ const Indicators = () => {
     }, []);
 
     useEffect(() => {
-        getFinancialMetrics();
+        console.log(selectedFilters);
+
+        if (Object.keys(selectedFilters).length > 0) {
+            getFinancialMetrics();
+        }
     }, [selectedFilters]);
 
     return (
@@ -185,6 +195,7 @@ const Indicators = () => {
                         </span>
                         <select
                             className="border-2 h-[32px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                            // defaultValue={months[0].value || ""}
                             onChange={(e) => {
                                 const selectedValue = Array.from(
                                     e.target.selectedOptions
@@ -196,8 +207,8 @@ const Indicators = () => {
                                 );
                             }}
                         >
-                            {months.length > 0 &&
-                                months.map((month) => (
+                            {filtertOptions?.months?.length > 0 &&
+                                filtertOptions?.months?.map((month) => (
                                     <option
                                         key={month.value}
                                         value={month.value}
@@ -214,6 +225,7 @@ const Indicators = () => {
                         </span>
                         <select
                             className="border-2 h-[32px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                            // defaultValue={periods[0].value || ""}
                             onChange={(e) => {
                                 const selectedValue = Array.from(
                                     e.target.selectedOptions
@@ -221,8 +233,8 @@ const Indicators = () => {
                                 handleFilterChange("period", selectedValue);
                             }}
                         >
-                            {periods.length > 0 &&
-                                periods.map((period) => (
+                            {filtertOptions?.periods?.length > 0 &&
+                                filtertOptions?.periods?.map((period) => (
                                     <option
                                         key={period.value}
                                         value={period.value}
@@ -260,7 +272,7 @@ const Indicators = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-3">
+            <div className="grid grid-cols-3 gap-10 justify-between items-start">
                 <div className="flex flex-col gap-8 border border-gray-300">
                     <div className="p-5">
                         <div className="grid items-stretch grid-cols-3 gap-3 mb-5">
@@ -273,14 +285,20 @@ const Indicators = () => {
                                 </div>
                                 <div
                                     className="flex items-center flex-grow gap-2"
-                                    title="350.000 руб."
+                                    title={
+                                        financialMetrics.revenue?.value +
+                                        " " +
+                                        financialMetrics.revenue?.label
+                                    }
                                 >
                                     <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                        350.000
+                                        {financialMetrics.revenue?.value}
                                     </strong>
-                                    <small className="text-sm">руб.</small>
+                                    <small className="text-sm">
+                                        {financialMetrics.revenue?.label}
+                                    </small>
                                 </div>
-                                <div className="text-green-400">+15%</div>
+                                {/* <div className="text-green-400">+15%</div> */}
                             </div>
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center gap-2 font-medium">
@@ -289,16 +307,22 @@ const Indicators = () => {
                                         ?
                                     </span>
                                 </div>
-                                <div className="flex items-center flex-grow gap-2">
-                                    <strong
-                                        className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap"
-                                        title="350.000 руб."
-                                    >
-                                        350.000
+                                <div
+                                    className="flex items-center flex-grow gap-2"
+                                    title={
+                                        financialMetrics.receipts?.value +
+                                        " " +
+                                        financialMetrics.receipts?.label
+                                    }
+                                >
+                                    <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                        {financialMetrics.receipts?.value}
                                     </strong>
-                                    <small className="text-sm">руб.</small>
+                                    <small className="text-sm">
+                                        {financialMetrics.receipts?.label}
+                                    </small>
                                 </div>
-                                <div className="text-green-400">+15%</div>
+                                {/* <div className="text-green-400">+15%</div> */}
                             </div>
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center gap-2 font-medium">
@@ -309,14 +333,82 @@ const Indicators = () => {
                                 </div>
                                 <div
                                     className="flex items-center flex-grow gap-2"
-                                    title="0 руб."
+                                    title={
+                                        financialMetrics.debts?.value +
+                                        " " +
+                                        financialMetrics.debts?.label
+                                    }
                                 >
                                     <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                        0
+                                        {financialMetrics.debts?.value}
                                     </strong>
-                                    <small className="text-sm">руб.</small>
+                                    <small className="text-sm">
+                                        {financialMetrics.debts?.label}
+                                    </small>
                                 </div>
-                                <div className="text-red-400">+15%</div>
+                                {/* <div className="text-red-400">+15%</div> */}
+                            </div>
+                        </div>
+
+                        <Bar data={verticalData} options={verticalOptions} />
+                    </div>
+
+                    <div className="p-5">
+                        <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
+                            <select className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer">
+                                <option value="">Проект</option>
+                            </select>
+
+                            <select className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer">
+                                <option value="">Выручка</option>
+                            </select>
+                        </div>
+
+                        <Bar
+                            data={horizontalData}
+                            options={horizontalOptions}
+                        />
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-8 border border-gray-300">
+                    <div className="p-5">
+                        <div className="grid items-stretch grid-cols-3 gap-3 mb-5">
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-center gap-2 font-medium">
+                                    Валовая прибыль
+                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                        ?
+                                    </span>
+                                </div>
+                                <div
+                                    className="flex items-center flex-grow gap-2"
+                                    title="350.000 руб."
+                                >
+                                    <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                        350.000
+                                    </strong>
+                                    <small className="text-sm">млн руб.</small>
+                                </div>
+                                <div className="text-green-400">+15%</div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-center gap-2 font-medium">
+                                    Валовая рентабельность
+                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                        ?
+                                    </span>
+                                </div>
+                                <div className="flex items-center flex-grow gap-2">
+                                    <strong
+                                        className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap"
+                                        title="350.000 руб."
+                                    >
+                                        65,5
+                                    </strong>
+                                    <small className="text-sm">%</small>
+                                </div>
+                                <div className="text-green-400">+15%</div>
                             </div>
                         </div>
 
