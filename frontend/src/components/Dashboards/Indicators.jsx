@@ -26,9 +26,10 @@ ChartJS.register(
 );
 
 const Indicators = () => {
-    const API = `${import.meta.env.VITE_API_URL}company/`;
-
     const [isLoading, setIsLoading] = useState(true);
+    const [months, setMonths] = useState([]);
+    const [periods, setPeriods] = useState([]);
+    const [selectedFilters, setSelectedFilters] = useState({});
 
     const verticalLabels = ["Янв", "Фев", "Мар", "Апр", "Май"];
     const verticalData = {
@@ -125,6 +126,55 @@ const Indicators = () => {
         },
     };
 
+    // Обработка фильтров
+    const handleFilterChange = (filterKey, value) => {
+        const filteredValues = value.filter((v) => v !== "");
+
+        setSelectedFilters((prev) => ({
+            ...prev,
+            [filterKey]: filteredValues.length > 0 ? filteredValues : [],
+        }));
+    };
+
+    const getFilterOptions = () => {
+        getData(`${import.meta.env.VITE_API_URL}company/filter-options`).then(
+            (response) => {
+                if (response?.status == 200) {
+                    setMonths(response.data?.months);
+                    setPeriods(response.data?.periods);
+                }
+            }
+        );
+    };
+
+    const getFinancialMetrics = () => {
+        const queryParams = new URLSearchParams();
+
+        Object.entries(selectedFilters).forEach(([key, values]) => {
+            values.forEach((value) => {
+                queryParams.append(`filters[${key}][]`, value);
+            });
+        });
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }company/financial-metrics?${queryParams.toString()}`
+        ).then((response) => {
+            if (response?.status == 200) {
+                console.log(response.data);
+            }
+        });
+    };
+
+    useEffect(() => {
+        getFilterOptions();
+    }, []);
+
+    useEffect(() => {
+        getFinancialMetrics();
+    }, [selectedFilters]);
+
     return (
         <div className="flex flex-col justify-between gap-6 mb-8">
             <div className="flex items-center justify-between gap-6">
@@ -133,8 +183,28 @@ const Indicators = () => {
                         <span className="block mb-2 text-gray-400">
                             Отчётный месяц
                         </span>
-                        <select className="border-2 h-[32px] p-1 border-gray-300 min-w-[140px] cursor-pointer">
-                            <option value="">март 2025</option>
+                        <select
+                            className="border-2 h-[32px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                            onChange={(e) => {
+                                const selectedValue = Array.from(
+                                    e.target.selectedOptions
+                                ).map((option) => option.value);
+
+                                handleFilterChange(
+                                    "report_month",
+                                    selectedValue
+                                );
+                            }}
+                        >
+                            {months.length > 0 &&
+                                months.map((month) => (
+                                    <option
+                                        key={month.value}
+                                        value={month.value}
+                                    >
+                                        {month.label}
+                                    </option>
+                                ))}
                         </select>
                     </div>
 
@@ -142,8 +212,24 @@ const Indicators = () => {
                         <span className="block mb-2 text-gray-400">
                             Отчётный период
                         </span>
-                        <select className="border-2 h-[32px] p-1 border-gray-300 min-w-[140px] cursor-pointer">
-                            <option value="">1 месяц</option>
+                        <select
+                            className="border-2 h-[32px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                            onChange={(e) => {
+                                const selectedValue = Array.from(
+                                    e.target.selectedOptions
+                                ).map((option) => option.value);
+                                handleFilterChange("period", selectedValue);
+                            }}
+                        >
+                            {periods.length > 0 &&
+                                periods.map((period) => (
+                                    <option
+                                        key={period.value}
+                                        value={period.value}
+                                    >
+                                        {period.label}
+                                    </option>
+                                ))}
                         </select>
                     </div>
                 </div>
@@ -167,6 +253,7 @@ const Indicators = () => {
                     <button
                         type="button"
                         className="border rounded-lg py-1 px-5 h-[32px]"
+                        onClick={() => setSelectedFilters([])}
                     >
                         Очистить
                     </button>
