@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import getData from "../../utils/getData";
 
 import ChartDataLabels from "chartjs-plugin-datalabels";
@@ -31,7 +31,18 @@ const Indicators = () => {
 
     const [filtertOptions, setFilterOptions] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState({});
+    const [financialListFilters, setFinancialListFilters] = useState({
+        type: ["project"],
+        metric: ["revenue"],
+    });
+    const [financialProfitListFilters, setFinancialProfitListFilters] =
+        useState({
+            type: ["project"],
+            metric: ["gross_profit"],
+        });
     const [financialMetrics, setFinancialMetrics] = useState({});
+    const [financialList, setFinancialList] = useState({});
+    const [financialProfitList, setFinancialProfitList] = useState({});
 
     const verticalLabels = ["Янв", "Фев", "Мар", "Апр", "Май"];
     const verticalData = {
@@ -58,20 +69,37 @@ const Indicators = () => {
         ],
     };
 
-    const horizontalLabels = [
-        "ГОК Светловский",
-        "ГОК Светловский",
-        "ГОК Светловский",
-        "ГОК Светловский",
-        "ГОК Светловский",
-        "ГОК Светловский",
-    ];
-    const horizontalData = {
-        labels: horizontalLabels,
+    const financialListData = {
+        labels: financialList.items?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: [300, 500, 700, 550, 920, 680],
+                data:
+                    financialListFilters.metric[0] === "revenue"
+                        ? financialList.items?.map((item) => item.revenue.value)
+                        : financialList.items?.map(
+                              (item) => item.receipts.value
+                          ),
+                backgroundColor: "black",
+                borderRadius: 4,
+                categoryPercentage: 0.5,
+            },
+        ],
+    };
+
+    const financialProfitListData = {
+        labels: financialProfitList.items?.map((item) => item.name),
+        datasets: [
+            {
+                label: "",
+                data:
+                    financialProfitListFilters.metric[0] === "gross_profit"
+                        ? financialProfitList.items?.map(
+                              (item) => item.gross_profit.value
+                          )
+                        : financialProfitList.items?.map(
+                              (item) => item.gross_margin.value
+                          ),
                 backgroundColor: "black",
                 borderRadius: 4,
                 categoryPercentage: 0.5,
@@ -136,6 +164,16 @@ const Indicators = () => {
             ...prev,
             [filterKey]: filteredValues.length > 0 ? filteredValues : [],
         }));
+
+        setFinancialListFilters((prev) => ({
+            ...prev,
+            [filterKey]: filteredValues.length > 0 ? filteredValues : [],
+        }));
+
+        setFinancialProfitListFilters((prev) => ({
+            ...prev,
+            [filterKey]: filteredValues.length > 0 ? filteredValues : [],
+        }));
     };
 
     const getFilterOptions = () => {
@@ -144,10 +182,25 @@ const Indicators = () => {
                 if (response?.status == 200) {
                     setFilterOptions(response.data);
 
+                    const periodValue = response.data.periods[0]?.value;
+                    const reportMonthValue = response.data.months[0]?.value;
+
                     setSelectedFilters({
-                        period: [response.data.periods[0].value],
-                        report_month: [response.data.months[0].value],
+                        period: [periodValue],
+                        report_month: [reportMonthValue],
                     });
+
+                    setFinancialListFilters((prev) => ({
+                        ...prev,
+                        period: [periodValue],
+                        report_month: [reportMonthValue],
+                    }));
+
+                    setFinancialProfitListFilters((prev) => ({
+                        ...prev,
+                        period: [periodValue],
+                        report_month: [reportMonthValue],
+                    }));
                 }
             }
         );
@@ -173,17 +226,111 @@ const Indicators = () => {
         });
     };
 
+    const getFinancialList = () => {
+        const queryParams = new URLSearchParams();
+
+        Object.entries(financialListFilters).forEach(([key, values]) => {
+            values.forEach((value) => {
+                queryParams.append(`${key}`, value);
+            });
+        });
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }company/financial-list?${queryParams.toString()}`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setFinancialList(response.data);
+            }
+        });
+    };
+
+    const getFinancialProfitList = () => {
+        const queryParams = new URLSearchParams();
+
+        Object.entries(financialProfitListFilters).forEach(([key, values]) => {
+            values.forEach((value) => {
+                queryParams.append(`${key}`, value);
+            });
+        });
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }company/financial-profit-list?${queryParams.toString()}`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setFinancialProfitList(response.data);
+            }
+        });
+    };
+
     useEffect(() => {
         getFilterOptions();
     }, []);
 
-    useEffect(() => {
-        console.log(selectedFilters);
+    const hasInitialized = useRef(false);
+    const hasCalledListOnSelected = useRef(false);
+    const hasCalledProfitListOnSelected = useRef(false);
 
-        if (Object.keys(selectedFilters).length > 0) {
+    const isFinancialListFiltersReady =
+        Object.keys(financialListFilters).length > 3;
+    const isFinancialProfitListFiltersReady =
+        Object.keys(financialProfitListFilters).length > 3;
+
+    useEffect(() => {
+        if (!hasInitialized.current) {
+            hasInitialized.current = true;
+            return;
+        }
+
+        if (isFinancialListFiltersReady) {
+            getFinancialList();
+            hasCalledListOnSelected.current = true;
+        }
+
+        if (isFinancialProfitListFiltersReady) {
+            getFinancialProfitList();
+            hasCalledProfitListOnSelected.current = true;
+        }
+
+        if (isFinancialListFiltersReady && isFinancialProfitListFiltersReady) {
             getFinancialMetrics();
         }
     }, [selectedFilters]);
+
+    useEffect(() => {
+        if (!hasInitialized.current) return;
+
+        if (isFinancialListFiltersReady) {
+            if (hasCalledListOnSelected.current) {
+                hasCalledListOnSelected.current = false;
+                return;
+            }
+            getFinancialList();
+        }
+    }, [
+        financialListFilters.report_month,
+        financialListFilters.period,
+        financialListFilters.type,
+    ]);
+
+    useEffect(() => {
+        if (!hasInitialized.current) return;
+
+        if (isFinancialProfitListFiltersReady) {
+            if (hasCalledProfitListOnSelected.current) {
+                hasCalledProfitListOnSelected.current = false;
+                return;
+            }
+            getFinancialProfitList();
+        }
+    }, [
+        financialProfitListFilters.report_month,
+        financialProfitListFilters.period,
+        financialProfitListFilters.type,
+    ]);
 
     return (
         <div className="flex flex-col justify-between gap-6 mb-8">
@@ -195,7 +342,6 @@ const Indicators = () => {
                         </span>
                         <select
                             className="border-2 h-[32px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                            // defaultValue={months[0].value || ""}
                             onChange={(e) => {
                                 const selectedValue = Array.from(
                                     e.target.selectedOptions
@@ -225,7 +371,6 @@ const Indicators = () => {
                         </span>
                         <select
                             className="border-2 h-[32px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                            // defaultValue={periods[0].value || ""}
                             onChange={(e) => {
                                 const selectedValue = Array.from(
                                     e.target.selectedOptions
@@ -291,7 +436,7 @@ const Indicators = () => {
                                         financialMetrics.revenue?.label
                                     }
                                 >
-                                    <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                    <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                                         {financialMetrics.revenue?.value}
                                     </strong>
                                     <small className="text-sm">
@@ -315,7 +460,7 @@ const Indicators = () => {
                                         financialMetrics.receipts?.label
                                     }
                                 >
-                                    <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                    <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                                         {financialMetrics.receipts?.value}
                                     </strong>
                                     <small className="text-sm">
@@ -339,7 +484,7 @@ const Indicators = () => {
                                         financialMetrics.debts?.label
                                     }
                                 >
-                                    <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                    <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                                         {financialMetrics.debts?.value}
                                     </strong>
                                     <small className="text-sm">
@@ -355,17 +500,39 @@ const Indicators = () => {
 
                     <div className="p-5">
                         <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
-                            <select className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer">
-                                <option value="">Проект</option>
+                            <select
+                                className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                                onChange={(evt) =>
+                                    setFinancialListFilters((prev) => ({
+                                        ...prev,
+                                        type: [evt.target.value],
+                                    }))
+                                }
+                            >
+                                <option value="project">Проект</option>
+                                <option value="customer">Заказчик</option>
                             </select>
 
-                            <select className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer">
-                                <option value="">Выручка</option>
+                            <select
+                                className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                                onChange={(evt) =>
+                                    setFinancialListFilters((prev) => ({
+                                        ...prev,
+                                        metric: [evt.target.value],
+                                    }))
+                                }
+                            >
+                                <option value="revenue">
+                                    Выручка, млн руб.
+                                </option>
+                                <option value="receipts">
+                                    Поступления, млн руб.
+                                </option>
                             </select>
                         </div>
 
                         <Bar
-                            data={horizontalData}
+                            data={financialListData}
                             options={horizontalOptions}
                         />
                     </div>
@@ -385,7 +552,7 @@ const Indicators = () => {
                                     className="flex items-center flex-grow gap-2"
                                     title="350.000 руб."
                                 >
-                                    <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                    <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                                         350.000
                                     </strong>
                                     <small className="text-sm">млн руб.</small>
@@ -401,7 +568,7 @@ const Indicators = () => {
                                 </div>
                                 <div className="flex items-center flex-grow gap-2">
                                     <strong
-                                        className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap"
+                                        className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap"
                                         title="350.000 руб."
                                     >
                                         65,5
@@ -417,17 +584,39 @@ const Indicators = () => {
 
                     <div className="p-5">
                         <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
-                            <select className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer">
-                                <option value="">Проект</option>
+                            <select
+                                className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                                onChange={(evt) =>
+                                    setFinancialProfitListFilters((prev) => ({
+                                        ...prev,
+                                        type: [evt.target.value],
+                                    }))
+                                }
+                            >
+                                <option value="project">Проект</option>
+                                <option value="customer">Заказчик</option>
                             </select>
 
-                            <select className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer">
-                                <option value="">Выручка</option>
+                            <select
+                                className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                                onChange={(evt) =>
+                                    setFinancialProfitListFilters((prev) => ({
+                                        ...prev,
+                                        metric: [evt.target.value],
+                                    }))
+                                }
+                            >
+                                <option value="gross_profit">
+                                    Валовая прибыль, млн руб.
+                                </option>
+                                <option value="gross_margin">
+                                    Валовая рентабельность
+                                </option>
                             </select>
                         </div>
 
                         <Bar
-                            data={horizontalData}
+                            data={financialProfitListData}
                             options={horizontalOptions}
                         />
                     </div>
