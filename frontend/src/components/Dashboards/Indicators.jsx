@@ -3,6 +3,8 @@ import getData from "../../utils/getData";
 
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
+import CountUp from "react-countup";
+
 ChartJS.register(ChartDataLabels);
 
 import {
@@ -44,27 +46,28 @@ const Indicators = () => {
     const [financialList, setFinancialList] = useState({});
     const [financialProfitList, setFinancialProfitList] = useState({});
 
-    const verticalLabels = ["Янв", "Фев", "Мар", "Апр", "Май"];
-    const verticalData = {
-        labels: verticalLabels,
+    const financialMetricsData = {
+        labels: financialMetrics.monthly_chart?.map((item) => item.month),
         datasets: [
             {
                 label: "",
-                data: verticalLabels.map(() =>
-                    Math.floor(Math.random() * 1000)
+                data: financialMetrics.monthly_chart?.map(
+                    (item) => item.revenue
                 ),
                 backgroundColor: "black",
                 categoryPercentage: 0.5,
                 stack: "stack1",
-                borderRadius: 4,
+                borderRadius: 2,
             },
             {
                 label: "",
-                data: verticalLabels.map(() => 1000),
-                backgroundColor: "rgba(245, 245, 245, 0.5)",
+                data: financialMetrics.monthly_chart?.map(
+                    (item) => item.receipts
+                ),
+                backgroundColor: "rgba(204, 204, 204, 0.5)",
                 categoryPercentage: 0.5,
-                stack: "stack1",
-                borderRadius: 4,
+                stack: "stack2",
+                borderRadius: 2,
             },
         ],
     };
@@ -81,7 +84,7 @@ const Indicators = () => {
                               (item) => item.receipts.value
                           ),
                 backgroundColor: "black",
-                borderRadius: 4,
+                borderRadius: 2,
                 categoryPercentage: 0.5,
             },
         ],
@@ -101,13 +104,12 @@ const Indicators = () => {
                               (item) => item.gross_margin.value
                           ),
                 backgroundColor: "black",
-                borderRadius: 4,
+                borderRadius: 2,
                 categoryPercentage: 0.5,
             },
         ],
     };
 
-    // Опции с включённым "stacked"
     const verticalOptions = {
         responsive: true,
         plugins: {
@@ -437,7 +439,14 @@ const Indicators = () => {
                                     }
                                 >
                                     <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                        {financialMetrics.revenue?.value}
+                                        <CountUp
+                                            end={
+                                                financialMetrics.revenue
+                                                    ?.value || 0
+                                            }
+                                            duration={1}
+                                            separator=" "
+                                        />
                                     </strong>
                                     <small className="text-sm">
                                         {financialMetrics.revenue?.label}
@@ -461,7 +470,14 @@ const Indicators = () => {
                                     }
                                 >
                                     <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                        {financialMetrics.receipts?.value}
+                                        <CountUp
+                                            end={
+                                                financialMetrics.receipts
+                                                    ?.value || 0
+                                            }
+                                            duration={1}
+                                            separator=" "
+                                        />
                                     </strong>
                                     <small className="text-sm">
                                         {financialMetrics.receipts?.label}
@@ -485,7 +501,14 @@ const Indicators = () => {
                                     }
                                 >
                                     <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                        {financialMetrics.debts?.value}
+                                        <CountUp
+                                            end={
+                                                financialMetrics.debts?.value ||
+                                                0
+                                            }
+                                            duration={1}
+                                            separator=" "
+                                        />
                                     </strong>
                                     <small className="text-sm">
                                         {financialMetrics.debts?.label}
@@ -495,7 +518,10 @@ const Indicators = () => {
                             </div>
                         </div>
 
-                        <Bar data={verticalData} options={verticalOptions} />
+                        <Bar
+                            data={financialMetricsData}
+                            options={verticalOptions}
+                        />
                     </div>
 
                     <div className="p-5">
@@ -579,7 +605,10 @@ const Indicators = () => {
                             </div>
                         </div>
 
-                        <Bar data={verticalData} options={verticalOptions} />
+                        <Bar
+                            data={financialMetricsData}
+                            options={verticalOptions}
+                        />
                     </div>
 
                     <div className="p-5">
