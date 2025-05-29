@@ -159,50 +159,61 @@ const EmployeeCard = () => {
 
     // Обновление данных сотрудника
     const updateEmployee = () => {
-        query = toast.loading("Обновление", {
-            containerId: "employee",
-            position: "top-center",
-        });
+        if (employeeData.position_id != null) {
+            query = toast.loading("Обновление", {
+                containerId: "employee",
+                position: "top-center",
+            });
 
-        postData(
-            "PATCH",
-            `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
-            employeeData
-        )
-            .then((response) => {
-                if (response?.ok) {
-                    toast.update(query, {
-                        render: "Успешно обновлено!",
-                        type: "success",
-                        containerId: "employee",
-                        isLoading: false,
-                        autoClose: 1200,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: false,
-                        position: "top-center",
-                    });
-                } else {
+            postData(
+                "PATCH",
+                `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
+                employeeData
+            )
+                .then((response) => {
+                    if (response?.ok) {
+                        toast.update(query, {
+                            render: "Успешно обновлено!",
+                            type: "success",
+                            containerId: "employee",
+                            isLoading: false,
+                            autoClose: 1200,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: false,
+                            position: "top-center",
+                        });
+                    } else {
+                        toast.error("Ошибка обновления данных", {
+                            isLoading: false,
+                            autoClose: 1500,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: false,
+                            position: "top-center",
+                            containerId: "employee",
+                        });
+                    }
+                })
+                .catch(() => {
+                    toast.dismiss(query);
                     toast.error("Ошибка обновления данных", {
+                        containerId: "employee",
                         isLoading: false,
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
                         position: "top-center",
-                        containerId: "employee",
                     });
-                }
-            })
-            .catch(() => {
-                toast.dismiss(query);
-                toast.error("Ошибка обновления данных", {
-                    containerId: "employee",
-                    isLoading: false,
-                    autoClose: 1500,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
                 });
+        } else {
+            toast.error("Необходимо выбрать должность", {
+                containerId: "employee",
+                isLoading: false,
+                autoClose: 1500,
+                pauseOnFocusLoss: false,
+                pauseOnHover: false,
+                position: "top-center",
             });
+        }
     };
 
     // Получаем сотрудника
@@ -428,6 +439,9 @@ const EmployeeCard = () => {
                                         value={employeeData.position_id}
                                         disabled={mode == "read"}
                                     >
+                                        <option value="">
+                                            Выбрать должность
+                                        </option>
                                         {positions.length > 0 &&
                                             positions.map((position) => (
                                                 <option
