@@ -1,4 +1,10 @@
-const FunnelMetrics = () => {
+import { useEffect, useState } from "react";
+
+import getData from "../../../utils/getData";
+
+const FunnelMetrics = ({ filtertOptions }) => {
+   
+
     return (
         <div className="flex items-center gap-2 mb-3 p-4 border-b border-gray-300">
             <div className="grid items-stretch grid-cols-2 gap-3 border-r border-gray-300">

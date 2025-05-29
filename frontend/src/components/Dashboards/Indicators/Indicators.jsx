@@ -48,6 +48,9 @@ const Indicators = () => {
     const [financialList, setFinancialList] = useState({});
     const [financialProfitList, setFinancialProfitList] = useState({});
 
+    const [contragents, setContragents] = useState([]);
+    const [reportTypes, setReportTypes] = useState([]);
+
     const financialMetricsData = {
         labels: financialMetrics.monthly_chart?.map((item) => item.month),
         datasets: [
@@ -270,8 +273,32 @@ const Indicators = () => {
         });
     };
 
+    // Получение заказчиков
+    const getContragents = () => {
+        getData(`${import.meta.env.VITE_API_URL}contragents/?all=true`).then(
+            (response) => {
+                if (response?.status == 200) {
+                    setContragents(response.data.data);
+                }
+            }
+        );
+    };
+
+    // Получение типов отчета
+    const getReportTypes = () => {
+        getData(`${import.meta.env.VITE_API_URL}report-types`).then(
+            (response) => {
+                if (response?.status == 200) {
+                    setReportTypes(response.data.data);
+                }
+            }
+        );
+    };
+
     useEffect(() => {
         getFilterOptions();
+        getContragents();
+        getReportTypes();
     }, []);
 
     const hasInitialized = useRef(false);
@@ -345,7 +372,7 @@ const Indicators = () => {
                             Отчётный месяц
                         </span>
                         <select
-                            className="border-2 h-[32px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                            className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
                             onChange={(e) => {
                                 const selectedValue = Array.from(
                                     e.target.selectedOptions
@@ -374,7 +401,7 @@ const Indicators = () => {
                             Отчётный период
                         </span>
                         <select
-                            className="border-2 h-[32px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                            className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
                             onChange={(e) => {
                                 const selectedValue = Array.from(
                                     e.target.selectedOptions
@@ -400,14 +427,26 @@ const Indicators = () => {
                         <span className="block mb-2 text-gray-400">
                             Фильтры
                         </span>
-                        <select className="border-2 h-[32px] p-1 border-gray-300 min-w-[140px] cursor-pointer">
+                        <select className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer">
                             <option value="">Заказчик</option>
+                            {contragents.length > 0 &&
+                                contragents.map((type) => (
+                                    <option key={type.id} value={type.id}>
+                                        {type.program_name}
+                                    </option>
+                                ))}
                         </select>
                     </div>
 
                     <div className="flex flex-col">
-                        <select className="border-2 h-[32px] p-1 border-gray-300 min-w-[140px] cursor-pointer">
+                        <select className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer">
                             <option value="">Тип отчёта</option>
+                            {reportTypes.length > 0 &&
+                                reportTypes.map((type) => (
+                                    <option key={type.id} value={type.id}>
+                                        {type.name}
+                                    </option>
+                                ))}
                         </select>
                     </div>
 
@@ -654,7 +693,7 @@ const Indicators = () => {
                 </div>
 
                 <div className="flex flex-col gap-8 border border-gray-300 p-2">
-                    <FunnelMetrics />
+                    <FunnelMetrics filtertOptions={filtertOptions} />
                 </div>
             </div>
         </div>

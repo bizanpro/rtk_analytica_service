@@ -368,7 +368,7 @@ const SaleCard = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-                    getStages(stage_id);
+                    getStages(addWorkScore);
                 }
             })
             .catch((response) => {
