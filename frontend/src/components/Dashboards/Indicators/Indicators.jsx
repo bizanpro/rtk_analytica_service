@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import getData from "../../utils/getData";
+import getData from "../../../utils/getData";
 
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
 import CountUp from "react-countup";
+
+import FunnelMetrics from "./FunnelMetrics";
 
 ChartJS.register(ChartDataLabels);
 
@@ -412,16 +414,16 @@ const Indicators = () => {
                     <button
                         type="button"
                         className="border rounded-lg py-1 px-5 h-[32px]"
-                        onClick={() => setSelectedFilters([])}
+                        // onClick={() => setSelectedFilters([])}
                     >
                         Очистить
                     </button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-10 justify-between items-start">
-                <div className="flex flex-col gap-8 border border-gray-300">
-                    <div className="p-5">
+            <div className="grid grid-cols-3 gap-7 justify-between items-start">
+                <div className="flex flex-col gap-8 border border-gray-300 p-2">
+                    <div className="p-4">
                         <div className="grid items-stretch grid-cols-3 gap-3 mb-5">
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center gap-2 font-medium">
@@ -524,7 +526,7 @@ const Indicators = () => {
                         />
                     </div>
 
-                    <div className="p-5">
+                    <div className="p-4">
                         <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
                             <select
                                 className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
@@ -564,8 +566,8 @@ const Indicators = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-8 border border-gray-300">
-                    <div className="p-5">
+                <div className="flex flex-col gap-8 border border-gray-300 p-2">
+                    {/* <div className="p-5">
                         <div className="grid items-stretch grid-cols-3 gap-3 mb-5">
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center gap-2 font-medium">
@@ -609,7 +611,7 @@ const Indicators = () => {
                             data={financialMetricsData}
                             options={verticalOptions}
                         />
-                    </div>
+                    </div> */}
 
                     <div className="p-5">
                         <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
@@ -649,6 +651,10 @@ const Indicators = () => {
                             options={horizontalOptions}
                         />
                     </div>
+                </div>
+
+                <div className="flex flex-col gap-8 border border-gray-300 p-2">
+                    <FunnelMetrics />
                 </div>
             </div>
         </div>

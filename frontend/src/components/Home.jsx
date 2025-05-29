@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
-import getData from "../utils/getData";
+import { useState } from "react";
 
-import Indicators from "./Dashboards/Indicators";
-import Finance from "./Dashboards/Finance";
-import Projects from "./Dashboards/Projects";
-import Sales from "./Dashboards/Sales";
-import Staff from "./Dashboards/Staff";
+import Indicators from "./Dashboards/Indicators/Indicators";
+import Finance from "./Dashboards/Finance/Finance";
+import Projects from "./Dashboards/Projects/Projects";
+import Sales from "./Dashboards/Sales/Sales";
+import Staff from "./Dashboards/Staff/Staff";
 
 const Home = () => {
     const TABS = [
@@ -28,7 +27,6 @@ const Home = () => {
     };
 
     const [activeTab, setActiveTab] = useState("indicators");
-    const [isLoading, setIsLoading] = useState(true);
 
     return (
         <main className="page">

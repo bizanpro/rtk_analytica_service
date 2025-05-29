@@ -92,6 +92,11 @@ const SaleCard = () => {
         ).then((response) => {
             if (response?.status == 200) {
                 setServices(response.data);
+
+                if (response.data.length > 0) {
+                    setAddWorkScore(response.data[0].id);
+                    getStages(response.data[0].id);
+                }
             }
         });
     };
@@ -165,7 +170,7 @@ const SaleCard = () => {
     };
 
     // Удалить услугу
-    const deleteService = useCallback((id) => {
+    const deleteService = (id) => {
         query = toast.loading("Обновление", {
             containerId: "projectCard",
             position: "top-center",
@@ -193,7 +198,7 @@ const SaleCard = () => {
                 setAddWorkScore("");
             }
         });
-    }, []);
+    };
 
     // Обновляем услугу
     const updateService = () => {
@@ -282,7 +287,9 @@ const SaleCard = () => {
     };
 
     // Получаем этапы в воронке продаж
-    const getStages = useCallback((serviceId) => {
+    const getStages = (serviceId) => {
+        setSaleStages([]);
+
         getData(
             `${
                 import.meta.env.VITE_API_URL
@@ -292,7 +299,7 @@ const SaleCard = () => {
                 setSaleStages(response.data);
             }
         });
-    }, []);
+    };
 
     // Получаем детализацию выбранного этапа
     const getStageDetails = (stageId) => {
@@ -666,7 +673,7 @@ const SaleCard = () => {
                                                 <div className="border-2 border-gray-300 p-5">
                                                     <select
                                                         className="w-full h-[21px]"
-                                                        defaultValue={
+                                                        value={
                                                             projectData?.request_source_id ||
                                                             ""
                                                         }
