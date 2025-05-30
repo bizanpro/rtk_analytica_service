@@ -6,6 +6,7 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 
 import FinancialMetrics from "./FinancialMetrics";
 import FunnelMetrics from "./FunnelMetrics";
+import FunnelProjectItem from "./FunnelProjectItem";
 
 ChartJS.register(ChartDataLabels);
 
@@ -49,6 +50,7 @@ const Indicators = () => {
     const [financialList, setFinancialList] = useState({});
     const [financialProfitList, setFinancialProfitList] = useState({});
     const [funnelMetrics, setFunnelMetrics] = useState({});
+    const [funnelProjects, setFunnelProjects] = useState({});
 
     const [contragents, setContragents] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
@@ -282,6 +284,20 @@ const Indicators = () => {
         });
     };
 
+    const getFunnelProjects = () => {
+        const queryString = buildQueryParams(funnelMetricsFilters);
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }company/funnel-projects?${queryString}`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setFunnelProjects(response.data.items);
+            }
+        });
+    };
+
     // Получение заказчиков
     const getContragents = () => {
         getData(`${import.meta.env.VITE_API_URL}contragents/?all=true`).then(
@@ -342,6 +358,7 @@ const Indicators = () => {
 
         if (isFunnelMetricsFiltersReady) {
             getFunnelMetrics();
+            getFunnelProjects();
             hasCalledFunnelMetricsOnSelected.current = true;
         }
 
@@ -391,6 +408,7 @@ const Indicators = () => {
                 return;
             }
             getFunnelMetrics();
+            getFunnelProjects();
         }
     }, [funnelMetricsFilters]);
 
@@ -645,8 +663,18 @@ const Indicators = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-8 border border-gray-300 p-2">
+                <div className="flex flex-col border border-gray-300 p-2">
                     <FunnelMetrics funnelMetrics={funnelMetrics.metrics} />
+
+                    <ul className="max-h-[300px] overflow-x-hidden overflow-y-auto p-4">
+                        {funnelProjects.length > 0 &&
+                            funnelProjects.map((project) => (
+                                <FunnelProjectItem
+                                    key={project.id}
+                                    {...project}
+                                />
+                            ))}
+                    </ul>
                 </div>
             </div>
         </div>
