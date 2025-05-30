@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import getData from "../../../utils/getData";
+import buildQueryParams from "../../../utils/buildQueryParams";
 
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
@@ -44,9 +45,11 @@ const Indicators = () => {
             type: ["project"],
             metric: ["gross_profit"],
         });
+    const [funnelMetricsFilters, setFunnelMetricsFilters] = useState({});
     const [financialMetrics, setFinancialMetrics] = useState({});
     const [financialList, setFinancialList] = useState({});
     const [financialProfitList, setFinancialProfitList] = useState({});
+    const [funnelMetrics, setFunnelMetrics] = useState({});
 
     const [contragents, setContragents] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
@@ -181,6 +184,11 @@ const Indicators = () => {
             ...prev,
             [filterKey]: filteredValues.length > 0 ? filteredValues : [],
         }));
+
+        setFunnelMetricsFilters((prev) => ({
+            ...prev,
+            [filterKey]: filteredValues.length > 0 ? filteredValues : [],
+        }));
     };
 
     const getFilterOptions = () => {
@@ -208,24 +216,24 @@ const Indicators = () => {
                         period: [periodValue],
                         report_month: [reportMonthValue],
                     }));
+
+                    setFunnelMetricsFilters((prev) => ({
+                        ...prev,
+                        period: [periodValue],
+                        report_month: [reportMonthValue],
+                    }));
                 }
             }
         );
     };
 
     const getFinancialMetrics = () => {
-        const queryParams = new URLSearchParams();
-
-        Object.entries(selectedFilters).forEach(([key, values]) => {
-            values.forEach((value) => {
-                queryParams.append(`${key}`, value);
-            });
-        });
+        const queryString = buildQueryParams(selectedFilters);
 
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }company/financial-metrics?${queryParams.toString()}`
+            }company/financial-metrics?${queryString}`
         ).then((response) => {
             if (response?.status == 200) {
                 setFinancialMetrics(response.data);
@@ -234,18 +242,12 @@ const Indicators = () => {
     };
 
     const getFinancialList = () => {
-        const queryParams = new URLSearchParams();
-
-        Object.entries(financialListFilters).forEach(([key, values]) => {
-            values.forEach((value) => {
-                queryParams.append(`${key}`, value);
-            });
-        });
+        const queryString = buildQueryParams(financialListFilters);
 
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }company/financial-list?${queryParams.toString()}`
+            }company/financial-list?${queryString}`
         ).then((response) => {
             if (response?.status == 200) {
                 setFinancialList(response.data);
@@ -254,21 +256,29 @@ const Indicators = () => {
     };
 
     const getFinancialProfitList = () => {
-        const queryParams = new URLSearchParams();
-
-        Object.entries(financialProfitListFilters).forEach(([key, values]) => {
-            values.forEach((value) => {
-                queryParams.append(`${key}`, value);
-            });
-        });
+        const queryString = buildQueryParams(financialProfitListFilters);
 
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }company/financial-profit-list?${queryParams.toString()}`
+            }company/financial-profit-list?${queryString}`
         ).then((response) => {
             if (response?.status == 200) {
                 setFinancialProfitList(response.data);
+            }
+        });
+    };
+
+    const getFunnelMetrics = () => {
+        const queryString = buildQueryParams(funnelMetricsFilters);
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }company/funnel-metrics?${queryString}`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setFunnelMetrics(response.data);
             }
         });
     };
@@ -304,11 +314,16 @@ const Indicators = () => {
     const hasInitialized = useRef(false);
     const hasCalledListOnSelected = useRef(false);
     const hasCalledProfitListOnSelected = useRef(false);
+    const hasCalledFunnelMetricsOnSelected = useRef(false);
 
     const isFinancialListFiltersReady =
         Object.keys(financialListFilters).length > 3;
+
     const isFinancialProfitListFiltersReady =
         Object.keys(financialProfitListFilters).length > 3;
+
+    const isFunnelMetricsFiltersReady =
+        Object.keys(funnelMetricsFilters).length > 1;
 
     useEffect(() => {
         if (!hasInitialized.current) {
@@ -324,6 +339,11 @@ const Indicators = () => {
         if (isFinancialProfitListFiltersReady) {
             getFinancialProfitList();
             hasCalledProfitListOnSelected.current = true;
+        }
+
+        if (isFunnelMetricsFiltersReady) {
+            getFunnelMetrics();
+            hasCalledFunnelMetricsOnSelected.current = true;
         }
 
         if (isFinancialListFiltersReady && isFinancialProfitListFiltersReady) {
@@ -362,6 +382,18 @@ const Indicators = () => {
         financialProfitListFilters.period,
         financialProfitListFilters.type,
     ]);
+
+    useEffect(() => {
+        if (!hasInitialized.current) return;
+
+        if (isFunnelMetricsFiltersReady) {
+            if (hasCalledFunnelMetricsOnSelected.current) {
+                hasCalledFunnelMetricsOnSelected.current = false;
+                return;
+            }
+            getFunnelMetrics();
+        }
+    }, [funnelMetricsFilters]);
 
     return (
         <div className="flex flex-col justify-between gap-6 mb-8">
@@ -427,7 +459,15 @@ const Indicators = () => {
                         <span className="block mb-2 text-gray-400">
                             Фильтры
                         </span>
-                        <select className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer">
+                        <select
+                            className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
+                            onChange={(evt) =>
+                                setFunnelMetricsFilters((prev) => ({
+                                    ...prev,
+                                    contragent_id: [evt.target.value],
+                                }))
+                            }
+                        >
                             <option value="">Заказчик</option>
                             {contragents.length > 0 &&
                                 contragents.map((type) => (
@@ -439,7 +479,15 @@ const Indicators = () => {
                     </div>
 
                     <div className="flex flex-col">
-                        <select className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer">
+                        <select
+                            className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
+                            onChange={(evt) =>
+                                setFunnelMetricsFilters((prev) => ({
+                                    ...prev,
+                                    report_type_id: [evt.target.value],
+                                }))
+                            }
+                        >
                             <option value="">Тип отчёта</option>
                             {reportTypes.length > 0 &&
                                 reportTypes.map((type) => (
@@ -693,7 +741,7 @@ const Indicators = () => {
                 </div>
 
                 <div className="flex flex-col gap-8 border border-gray-300 p-2">
-                    <FunnelMetrics filtertOptions={filtertOptions} />
+                    <FunnelMetrics funnelMetrics={funnelMetrics.metrics} />
                 </div>
             </div>
         </div>
