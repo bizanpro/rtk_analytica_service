@@ -8,24 +8,27 @@ const SaleFunnelStages = ({
     activeStage,
     setActiveStage,
 }) => {
+    const stages = saleStages.stages ?? [];
+    const lastStage = stages[stages.length - 1];
+    const previousStages = stages.slice(0, -1);
+
     return (
         <>
-            {saleStages.stages?.length > 0 &&
-                saleStages.stages?.map((stage) => {
-                    return (
-                        <SaleFunnelItemActive
-                            key={stage.id}
-                            stage={stage}
-                            getStageDetails={getStageDetails}
-                            activeStage={activeStage}
-                            setActiveStage={setActiveStage}
-                        />
-                    );
-                })}
+            {previousStages?.length > 0 &&
+                previousStages.map((stage) => (
+                    <SaleFunnelItemActive
+                        key={stage.id}
+                        stage={stage}
+                        getStageDetails={getStageDetails}
+                        activeStage={activeStage}
+                        setActiveStage={setActiveStage}
+                    />
+                ))}
 
             {saleStages.next_possible_stages?.length > 0 && (
                 <SaleFunnelItemCurrent
-                    stage={saleStages.next_possible_stages}
+                    stage={lastStage}
+                    nextPossibleStages={saleStages.next_possible_stages}
                     requestNextStage={requestNextStage}
                     activeStage={activeStage}
                 />
