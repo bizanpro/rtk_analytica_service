@@ -57,7 +57,8 @@ const SaleFunnelItem = ({
                         type="button"
                         className="w-[12px] h-[12px] rounded-[50%] opacity-[0.3] bg-red-400 hover:opacity-100 transition-opacity"
                         title="Отказ от участия"
-                        onClick={() => {
+                        onClick={(evt) => {
+                            evt.stopPropagation();
                             if (confirm("Вы уверены?")) {
                                 requestNextStage(
                                     stage.next_possible_stages[2].id
@@ -69,7 +70,8 @@ const SaleFunnelItem = ({
                         type="button"
                         className="w-[12px] h-[12px] rounded-[50%] opacity-[0.3] bg-yellow-400 hover:opacity-100 transition-opacity"
                         title="Отложить проект"
-                        onClick={() => {
+                        onClick={(evt) => {
+                            evt.stopPropagation();
                             requestNextStage(stage.next_possible_stages[1].id);
                         }}
                     ></button>
@@ -77,7 +79,8 @@ const SaleFunnelItem = ({
                         type="button"
                         className="w-[12px] h-[12px] rounded-[50%] opacity-[0.3] bg-green-400 hover:opacity-100 transition-opacity"
                         title="Принять"
-                        onClick={() => {
+                        onClick={(evt) => {
+                            evt.stopPropagation();
                             requestNextStage(stage.next_possible_stages[0].id);
                         }}
                     ></button>
