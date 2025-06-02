@@ -9,8 +9,6 @@ import FunnelMetrics from "./FunnelMetrics";
 import FunnelProjectItem from "./FunnelProjectItem";
 import GrossMetrics from "./GrossMetrics";
 
-ChartJS.register(ChartDataLabels);
-
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -29,7 +27,8 @@ ChartJS.register(
     LineElement,
     PointElement,
     Tooltip,
-    Legend
+    Legend,
+    ChartDataLabels
 );
 
 import { Bar } from "react-chartjs-2";
