@@ -616,7 +616,7 @@ const Indicators = () => {
                 </div>
 
                 <div className="flex flex-col gap-8 border border-gray-300 p-2">
-                    <div className="p-5">
+                    <div className="p-4">
                         <GrossMetrics financialMetrics={financialMetrics} />
 
                         <Bar
@@ -625,7 +625,7 @@ const Indicators = () => {
                         />
                     </div>
 
-                    <div className="p-5">
+                    <div className="p-4">
                         <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
                             <select
                                 className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
