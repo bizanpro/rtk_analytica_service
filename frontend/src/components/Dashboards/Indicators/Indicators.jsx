@@ -50,7 +50,6 @@ const Indicators = () => {
     const [financialList, setFinancialList] = useState({});
     const [financialProfitList, setFinancialProfitList] = useState({});
     const [funnelMetrics, setFunnelMetrics] = useState({});
-    const [funnelProjects, setFunnelProjects] = useState({});
 
     const [contragents, setContragents] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
@@ -276,24 +275,10 @@ const Indicators = () => {
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }company/funnel-metrics?${queryString}`
+            }company/funnel-metrics?no_cache=1&${queryString}`
         ).then((response) => {
             if (response?.status == 200) {
                 setFunnelMetrics(response.data);
-            }
-        });
-    };
-
-    const getFunnelProjects = () => {
-        const queryString = buildQueryParams(funnelMetricsFilters);
-
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }company/funnel-projects?${queryString}`
-        ).then((response) => {
-            if (response?.status == 200) {
-                setFunnelProjects(response.data.items);
             }
         });
     };
@@ -358,7 +343,7 @@ const Indicators = () => {
 
         if (isFunnelMetricsFiltersReady) {
             getFunnelMetrics();
-            getFunnelProjects();
+            // getFunnelProjects();
             hasCalledFunnelMetricsOnSelected.current = true;
         }
 
@@ -408,7 +393,7 @@ const Indicators = () => {
                 return;
             }
             getFunnelMetrics();
-            getFunnelProjects();
+            // getFunnelProjects();
         }
     }, [funnelMetricsFilters]);
 
@@ -666,14 +651,17 @@ const Indicators = () => {
                 <div className="flex flex-col border border-gray-300 p-2">
                     <FunnelMetrics funnelMetrics={funnelMetrics.metrics} />
 
-                    <ul className="max-h-[300px] overflow-x-hidden overflow-y-auto p-4">
-                        {funnelProjects.length > 0 &&
-                            funnelProjects.map((project) => (
-                                <FunnelProjectItem
-                                    key={project.id}
-                                    {...project}
-                                />
-                            ))}
+                    <ul className="max-h-[300px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
+                        {funnelMetrics.sales_funnel_projects_with_stage_changes
+                            ?.length > 0 &&
+                            funnelMetrics.sales_funnel_projects_with_stage_changes.map(
+                                (project) => (
+                                    <FunnelProjectItem
+                                        key={project.id}
+                                        {...project}
+                                    />
+                                )
+                            )}
                     </ul>
                 </div>
             </div>
