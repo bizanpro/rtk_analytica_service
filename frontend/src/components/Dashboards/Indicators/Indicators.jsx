@@ -7,6 +7,7 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import FinancialMetrics from "./FinancialMetrics";
 import FunnelMetrics from "./FunnelMetrics";
 import FunnelProjectItem from "./FunnelProjectItem";
+import GrossMetrics from "./GrossMetrics";
 
 ChartJS.register(ChartDataLabels);
 
@@ -15,24 +16,26 @@ import {
     CategoryScale,
     LinearScale,
     BarElement,
-    Title,
+    LineElement,
+    PointElement,
     Tooltip,
     Legend,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
 
 ChartJS.register(
     CategoryScale,
     LinearScale,
     BarElement,
-    Title,
+    LineElement,
+    PointElement,
     Tooltip,
     Legend
 );
 
+import { Bar } from "react-chartjs-2";
+
 const Indicators = () => {
     const [isLoading, setIsLoading] = useState(true);
-    const [isFiltersLoaded, setIsFiltersLoaded] = useState(false);
 
     const [filtertOptions, setFilterOptions] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState({});
@@ -75,6 +78,37 @@ const Indicators = () => {
                 backgroundColor: "rgba(204, 204, 204, 0.5)",
                 categoryPercentage: 0.5,
                 stack: "stack2",
+                borderRadius: 2,
+            },
+        ],
+    };
+
+    const grossMetricsData = {
+        labels: financialMetrics.monthly_chart?.map((item) => item.month),
+        datasets: [
+            {
+                type: "line",
+                label: "",
+                data: financialMetrics.monthly_chart?.map(
+                    (item) => item.gross_margin
+                ),
+                backgroundColor: "rgba(204, 204, 204, 1)",
+                borderColor: "rgba(204, 204, 204, 1)",
+                borderWidth: 2,
+                fill: false,
+                pointBackgroundColor: "#ccc",
+                pointRadius: 4,
+                tension: 0.3,
+            },
+            {
+                type: "bar",
+                label: "",
+                data: financialMetrics.monthly_chart?.map(
+                    (item) => item.gross_profit
+                ),
+                backgroundColor: "black",
+                categoryPercentage: 0.5,
+                stack: "stack1",
                 borderRadius: 2,
             },
         ],
@@ -137,6 +171,28 @@ const Indicators = () => {
             },
             y: {
                 stacked: true,
+            },
+        },
+    };
+
+    const verticalOptions2 = {
+        responsive: true,
+        indexAxis: "x",
+        plugins: {
+            legend: {
+                display: false,
+            },
+            title: {
+                display: false,
+            },
+            datalabels: false,
+        },
+        scales: {
+            x: {
+                stacked: true,
+            },
+            y: {
+                stacked: false,
             },
         },
     };
@@ -343,7 +399,6 @@ const Indicators = () => {
 
         if (isFunnelMetricsFiltersReady) {
             getFunnelMetrics();
-            // getFunnelProjects();
             hasCalledFunnelMetricsOnSelected.current = true;
         }
 
@@ -393,7 +448,6 @@ const Indicators = () => {
                 return;
             }
             getFunnelMetrics();
-            // getFunnelProjects();
         }
     }, [funnelMetricsFilters]);
 
@@ -562,51 +616,14 @@ const Indicators = () => {
                 </div>
 
                 <div className="flex flex-col gap-8 border border-gray-300 p-2">
-                    {/* <div className="p-5">
-                        <div className="grid items-stretch grid-cols-3 gap-3 mb-5">
-                            <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-2 font-medium">
-                                    Валовая прибыль
-                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                        ?
-                                    </span>
-                                </div>
-                                <div
-                                    className="flex items-center flex-grow gap-2"
-                                    title="350.000 руб."
-                                >
-                                    <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                        350.000
-                                    </strong>
-                                    <small className="text-sm">млн руб.</small>
-                                </div>
-                                <div className="text-green-400">+15%</div>
-                            </div>
-                            <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-2 font-medium">
-                                    Валовая рентабельность
-                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                        ?
-                                    </span>
-                                </div>
-                                <div className="flex items-center flex-grow gap-2">
-                                    <strong
-                                        className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap"
-                                        title="350.000 руб."
-                                    >
-                                        65,5
-                                    </strong>
-                                    <small className="text-sm">%</small>
-                                </div>
-                                <div className="text-green-400">+15%</div>
-                            </div>
-                        </div>
+                    <div className="p-5">
+                        <GrossMetrics financialMetrics={financialMetrics} />
 
                         <Bar
-                            data={financialMetricsData}
-                            options={verticalOptions}
+                            data={grossMetricsData}
+                            options={verticalOptions2}
                         />
-                    </div> */}
+                    </div>
 
                     <div className="p-5">
                         <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
