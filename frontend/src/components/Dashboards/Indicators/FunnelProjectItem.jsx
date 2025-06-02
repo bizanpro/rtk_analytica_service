@@ -32,7 +32,7 @@ const FunnelProjectItem = ({
                     {current_stage?.changed_at &&
                         format(
                             parseISO(current_stage?.changed_at),
-                            "d.MM.yyyy,",
+                            "d.MM.yyyy",
                             {
                                 locale: ru,
                             }
