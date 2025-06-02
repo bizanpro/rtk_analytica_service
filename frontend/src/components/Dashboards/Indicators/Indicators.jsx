@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import getData from "../../../utils/getData";
 import buildQueryParams from "../../../utils/buildQueryParams";
 
+import ChartDataLabels from "chartjs-plugin-datalabels";
+
 import FinancialMetrics from "./FinancialMetrics";
 import FunnelMetrics from "./FunnelMetrics";
 import FunnelProjectItem from "./FunnelProjectItem";
@@ -13,18 +15,18 @@ import {
     LinearScale,
     BarElement,
     LineElement,
+    LineController,
     PointElement,
     Tooltip,
     Legend,
 } from "chart.js";
-
-import ChartDataLabels from "chartjs-plugin-datalabels";
 
 ChartJS.register(
     CategoryScale,
     LinearScale,
     BarElement,
     LineElement,
+    LineController,
     PointElement,
     Tooltip,
     Legend,
