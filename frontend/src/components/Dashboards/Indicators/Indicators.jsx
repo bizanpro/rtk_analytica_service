@@ -694,8 +694,8 @@ const Indicators = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-3 border border-gray-300 p-2">
-                        <div className="flex items-center gap-2 font-medium">
+                    <div className="flex flex-col gap-3 border border-gray-300 py-3 px-2">
+                        <div className="flex items-center gap-2 font-medium pl-3">
                             Завершённые отчёты (
                             {completedReports.items?.length || 0})
                             <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">

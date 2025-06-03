@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useSearchParams } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
@@ -27,6 +27,7 @@ const ProjectCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
     const location = useLocation();
     const { projectId } = useParams();
+    const [searchParams] = useSearchParams();
 
     const [projectData, setProjectData] = useState({});
     const [formFields, setFormFields] = useState({});
@@ -629,6 +630,19 @@ const ProjectCard = () => {
             getProject(projectId);
         }
     }, []);
+
+    useEffect(() => {
+        const report = searchParams.get("report");
+        const withConclusion = searchParams.get("with_conclusion");
+
+        if (report) {
+            if (withConclusion === "true") {
+                openSubReportEditor(report);
+            } else {
+                openReportEditor(report);
+            }
+        }
+    }, [searchParams]);
 
     return (
         <main className="page">

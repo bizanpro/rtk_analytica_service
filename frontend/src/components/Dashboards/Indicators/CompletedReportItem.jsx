@@ -1,10 +1,12 @@
-import React from "react";
+import { Link } from "react-router-dom";
 
 const CompletedReportItem = ({
     project,
+    report_id,
     report_name,
     days,
     assessment,
+    industry,
     execution_period,
 }) => {
     return (
@@ -12,17 +14,29 @@ const CompletedReportItem = ({
             className="grid items-center grid-cols-[25%_25%_25%_8%] gap-3 cursor-pointer"
             onClick={() => {}}
         >
-            <div className="flex flex-col">
+            <Link
+                to={`${import.meta.env.VITE_BASE_URL}projects/${project.id}`}
+                onClick={() => window.scrollTo(0, 0)}
+                className="flex flex-col"
+                title="Открыть карточку проекта"
+            >
                 <div className="text-lg">{project.name}</div>
-                <span className="text-sm">{}</span>
-            </div>
+                <span className="text-sm text-gray-400">{industry}</span>
+            </Link>
 
-            <div className="flex gap-3 items-center">
+            <Link
+                to={`${import.meta.env.VITE_BASE_URL}projects/${
+                    project.id
+                }/?report=${report_id}`}
+                onClick={() => window.scrollTo(0, 0)}
+                className="flex gap-3 items-center"
+                title="Открыть отчёт в карточке проекта"
+            >
                 <div className="flex flex-col flex-grow">
                     <div className="text-lg">{report_name}</div>
                     <span className="text-sm">{execution_period}</span>
                 </div>
-            </div>
+            </Link>
 
             <div className="flex gap-3 items-center">
                 <div className="flex flex-col flex-grow">
@@ -34,14 +48,14 @@ const CompletedReportItem = ({
             <div className="flex items-center gap-3">
                 {assessment && (
                     <>
-                        <button
-                            type="button"
+                        <Link
+                            to={`${import.meta.env.VITE_BASE_URL}projects/${
+                                project.id
+                            }/?report=${report_id}/with_conclusion=true`}
+                            onClick={() => window.scrollTo(0, 0)}
                             className="info-icon flex-none w-[20px]"
-                            title="Посмотреть заключение"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                            }}
-                        ></button>
+                            title="Открыть заключение в карточке проекта"
+                        ></Link>
 
                         <div className="text-lg">{assessment}/10</div>
                     </>
