@@ -8,6 +8,7 @@ import FinancialMetrics from "./FinancialMetrics";
 import FunnelMetrics from "./FunnelMetrics";
 import FunnelProjectItem from "./FunnelProjectItem";
 import GrossMetrics from "./GrossMetrics";
+import CompletedReportItem from "./CompletedReportItem";
 
 import {
     Chart as ChartJS,
@@ -57,6 +58,7 @@ const Indicators = () => {
 
     const [contragents, setContragents] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
+    const [completedReports, setCompletedReports] = useState([]);
 
     const financialMetricsData = {
         labels: financialMetrics.monthly_chart?.map((item) => item.month),
@@ -298,6 +300,20 @@ const Indicators = () => {
         });
     };
 
+    const getCompletedReports = () => {
+        const queryString = buildQueryParams(selectedFilters);
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }completed-reports?${queryString}&no_cache=1`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setCompletedReports(response.data);
+            }
+        });
+    };
+
     const getFinancialList = () => {
         const queryString = buildQueryParams(financialListFilters);
 
@@ -405,6 +421,7 @@ const Indicators = () => {
 
         if (isFinancialListFiltersReady && isFinancialProfitListFiltersReady) {
             getFinancialMetrics();
+            getCompletedReports();
         }
     }, [selectedFilters]);
 
@@ -566,103 +583,135 @@ const Indicators = () => {
             </div>
 
             <div className="grid grid-cols-3 gap-7 justify-between items-start">
-                <div className="flex flex-col gap-8 border border-gray-300 p-2">
-                    <div className="p-4">
-                        <FinancialMetrics financialMetrics={financialMetrics} />
+                <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-8 border border-gray-300 p-2">
+                        <div className="p-4">
+                            <FinancialMetrics
+                                financialMetrics={financialMetrics}
+                            />
 
-                        <Bar
-                            data={financialMetricsData}
-                            options={verticalOptions}
-                        />
-                    </div>
-
-                    <div className="p-4">
-                        <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
-                            <select
-                                className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                                onChange={(evt) =>
-                                    setFinancialListFilters((prev) => ({
-                                        ...prev,
-                                        type: [evt.target.value],
-                                    }))
-                                }
-                            >
-                                <option value="project">Проект</option>
-                                <option value="customer">Заказчик</option>
-                            </select>
-
-                            <select
-                                className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                                onChange={(evt) =>
-                                    setFinancialListFilters((prev) => ({
-                                        ...prev,
-                                        metric: [evt.target.value],
-                                    }))
-                                }
-                            >
-                                <option value="revenue">
-                                    Выручка, млн руб.
-                                </option>
-                                <option value="receipts">
-                                    Поступления, млн руб.
-                                </option>
-                            </select>
+                            <Bar
+                                data={financialMetricsData}
+                                options={verticalOptions}
+                            />
                         </div>
 
-                        <Bar
-                            data={financialListData}
-                            options={horizontalOptions}
-                        />
+                        <div className="p-4">
+                            <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
+                                <select
+                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                                    onChange={(evt) =>
+                                        setFinancialListFilters((prev) => ({
+                                            ...prev,
+                                            type: [evt.target.value],
+                                        }))
+                                    }
+                                >
+                                    <option value="project">Проект</option>
+                                    <option value="customer">Заказчик</option>
+                                </select>
+
+                                <select
+                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                                    onChange={(evt) =>
+                                        setFinancialListFilters((prev) => ({
+                                            ...prev,
+                                            metric: [evt.target.value],
+                                        }))
+                                    }
+                                >
+                                    <option value="revenue">
+                                        Выручка, млн руб.
+                                    </option>
+                                    <option value="receipts">
+                                        Поступления, млн руб.
+                                    </option>
+                                </select>
+                            </div>
+
+                            <Bar
+                                data={financialListData}
+                                options={horizontalOptions}
+                            />
+                        </div>
                     </div>
+
+                    <div className="flex flex-col gap-8 border border-gray-300 p-2"></div>
                 </div>
 
-                <div className="flex flex-col gap-8 border border-gray-300 p-2">
-                    <div className="p-4">
-                        <GrossMetrics financialMetrics={financialMetrics} />
+                <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-8 border border-gray-300 p-2">
+                        <div className="p-4">
+                            <GrossMetrics financialMetrics={financialMetrics} />
 
-                        <Bar
-                            data={grossMetricsData}
-                            options={verticalOptions2}
-                        />
-                    </div>
-
-                    <div className="p-4">
-                        <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
-                            <select
-                                className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                                onChange={(evt) =>
-                                    setFinancialProfitListFilters((prev) => ({
-                                        ...prev,
-                                        type: [evt.target.value],
-                                    }))
-                                }
-                            >
-                                <option value="project">Проект</option>
-                                <option value="customer">Заказчик</option>
-                            </select>
-
-                            <select
-                                className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                                onChange={(evt) =>
-                                    setFinancialProfitListFilters((prev) => ({
-                                        ...prev,
-                                        metric: [evt.target.value],
-                                    }))
-                                }
-                            >
-                                <option value="gross_profit">
-                                    Валовая прибыль, млн руб.
-                                </option>
-                                <option value="gross_margin">
-                                    Валовая рентабельность
-                                </option>
-                            </select>
+                            <Bar
+                                data={grossMetricsData}
+                                options={verticalOptions2}
+                            />
                         </div>
 
-                        <Bar
-                            data={financialProfitListData}
-                            options={horizontalOptions}
-                        />
+                        <div className="p-4">
+                            <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
+                                <select
+                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                                    onChange={(evt) =>
+                                        setFinancialProfitListFilters(
+                                            (prev) => ({
+                                                ...prev,
+                                                type: [evt.target.value],
+                                            })
+                                        )
+                                    }
+                                >
+                                    <option value="project">Проект</option>
+                                    <option value="customer">Заказчик</option>
+                                </select>
+
+                                <select
+                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
+                                    onChange={(evt) =>
+                                        setFinancialProfitListFilters(
+                                            (prev) => ({
+                                                ...prev,
+                                                metric: [evt.target.value],
+                                            })
+                                        )
+                                    }
+                                >
+                                    <option value="gross_profit">
+                                        Валовая прибыль, млн руб.
+                                    </option>
+                                    <option value="gross_margin">
+                                        Валовая рентабельность
+                                    </option>
+                                </select>
+                            </div>
+
+                            <Bar
+                                data={financialProfitListData}
+                                options={horizontalOptions}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-3 border border-gray-300 p-2">
+                        <div className="flex items-center gap-2 font-medium">
+                            Завершённые отчёты (
+                            {completedReports.items?.length || 0})
+                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                ?
+                            </span>
+                        </div>
+
+                        <ul className="max-h-[300px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
+                            {completedReports.items?.length > 0 &&
+                                completedReports.items.map((report) => (
+                                    <CompletedReportItem
+                                        key={report.id}
+                                        {...report}
+                                    />
+                                ))}
+                        </ul>
                     </div>
                 </div>
 

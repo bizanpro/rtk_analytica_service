@@ -60,12 +60,12 @@ const SaleStageDetails = ({ stageMetrics, setStageMetrics, mode }) => {
                         </span>
                     </span>
 
-                    <div className="border-2 border-gray-300 py-1 px-2 h-[30px] text-red-500">
-                        {stageMetrics.fta_change_percent || ""}
+                    <div className="flex items-center border-2 border-gray-300 py-1 px-2 h-[30px]">
+                        {stageMetrics.fta_change_percent || 0}%
                     </div>
 
-                    <div className="border-2 border-gray-300 py-1 px-2 h-[30px] text-red-500">
-                        {stageMetrics.tk_change_percent || ""}
+                    <div className="flex items-center border-2 border-gray-300 py-1 px-2 h-[30px]">
+                        {stageMetrics.tk_change_percent || 0}%
                     </div>
                 </div>
             </div>
@@ -76,7 +76,7 @@ const SaleStageDetails = ({ stageMetrics, setStageMetrics, mode }) => {
                     className="border-2 border-gray-300 p-5 min-h-[300px]"
                     placeholder="Оставьте комментарий по этапу"
                     style={{ resize: "none" }}
-                    defaultValue={stageMetrics.comment || ""}
+                    value={stageMetrics.comment || ""}
                     onChange={(evt) => {
                         setStageMetrics((prev) => ({
                             ...prev,
