@@ -288,6 +288,7 @@ const SaleCard = () => {
 
     // Получаем этапы в воронке продаж
     const getStages = (serviceId) => {
+        setActiveStage("");
         setSaleStages([]);
 
         getData(
@@ -305,7 +306,7 @@ const SaleCard = () => {
     const getStageDetails = (stageId) => {
         const stageData = saleStages.stages.find((item) => item.id === stageId);
 
-        setStageMetrics(stageData?.metrics);
+        setStageMetrics(stageData);
         setStageMetrics((prev) => ({
             ...prev,
             stage_id: stageData.id,
