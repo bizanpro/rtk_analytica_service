@@ -35,7 +35,13 @@ const SupplierItem = ({ props, columns }) => {
                                                             : "pt-1"
                                                     }`}
                                                 >
-                                                    {item?.toString()}
+                                                    {key === "roles" ? (
+                                                        <div className="border border-gray-300 py-1 px-3 w-fit rounded">
+                                                            {item?.toString()}
+                                                        </div>
+                                                    ) : (
+                                                        item?.toString()
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}

@@ -2,11 +2,10 @@ import { Link } from "react-router-dom";
 
 const CompletedReportItem = ({
     project,
-    report_id,
+    id,
     report_name,
     days,
     assessment,
-    industry,
     execution_period,
 }) => {
     return (
@@ -21,13 +20,15 @@ const CompletedReportItem = ({
                 title="Открыть карточку проекта"
             >
                 <div className="text-lg">{project.name}</div>
-                <span className="text-sm text-gray-400">{industry}</span>
+                <span className="text-sm text-gray-400">
+                    {project.industry}
+                </span>
             </Link>
 
             <Link
                 to={`${import.meta.env.VITE_BASE_URL}projects/${
                     project.id
-                }/?report=${report_id}`}
+                }/?report=${id}`}
                 onClick={() => window.scrollTo(0, 0)}
                 className="flex gap-3 items-center"
                 title="Открыть отчёт в карточке проекта"
@@ -51,7 +52,7 @@ const CompletedReportItem = ({
                         <Link
                             to={`${import.meta.env.VITE_BASE_URL}projects/${
                                 project.id
-                            }/?report=${report_id}/with_conclusion=true`}
+                            }/?report=${id}&with_conclusion=true`}
                             onClick={() => window.scrollTo(0, 0)}
                             className="info-icon flex-none w-[20px]"
                             title="Открыть заключение в карточке проекта"

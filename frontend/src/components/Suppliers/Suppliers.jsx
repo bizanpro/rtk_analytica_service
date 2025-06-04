@@ -18,8 +18,8 @@ const Suppliers = () => {
         { label: "Наименование", key: "program_name" },
         { label: "Кол-во проектов, всего", key: "projects_total_count" },
         { label: "Кол-во активных проектов", key: "projects_active_count" },
-        { label: "Роли", key: "role" },
-        { label: "Оплачено услуг, млн руб.", key: "" },
+        { label: "Роли", key: "roles" },
+        { label: "Оплачено услуг, млн руб.", key: "receipts" },
         { label: "Статус", key: "status" },
     ];
 
