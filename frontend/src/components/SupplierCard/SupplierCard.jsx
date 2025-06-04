@@ -11,6 +11,8 @@ import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
 import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
 import SupplierStatisticBlock from "./SupplierStatisticBlock";
+import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
+import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -33,6 +35,14 @@ const SupplierCard = () => {
     const [reportId, setReportId] = useState(null);
     const [contracts, setContracts] = useState([]);
     const [reportData, setReportData] = useState({});
+    const [responsiblePersons, setResponsiblePersons] = useState([]);
+    const [addRespPerson, setAddRespPerson] = useState(false);
+    const [newRespPerson, setNewRespPerson] = useState({
+        full_name: "",
+        phone: "",
+        position: "",
+        email: "",
+    });
 
     let query;
 
@@ -72,6 +82,7 @@ const SupplierCard = () => {
         }).then((response) => {
             setSupplierData(response.data);
             setProjects(response.data.projects);
+            setResponsiblePersons(response.data.contacts);
         });
     };
 
@@ -150,6 +161,64 @@ const SupplierCard = () => {
                     if (id) {
                         setReportEditorState(true);
                     }
+                }
+            }
+        );
+    };
+
+    // Обработчик ввода данных блока нового ключевого лица
+    const handleNewExecutor = (type, e, name) => {
+        setNewRespPerson({
+            ...newRespPerson,
+            [name]: name === "phone" ? e : e.target.value,
+        });
+    };
+
+    // Добавление ключевого лица
+    const sendExecutor = () => {
+        query = toast.loading("Выполняется отправка", {
+            containerId: "supplier",
+            position: "top-center",
+        });
+
+        postData("POST", `${URL}/${supplierId}/contacts`, newRespPerson).then(
+            (response) => {
+                if (response?.ok) {
+                    setResponsiblePersons((prevPerson) => [
+                        ...prevPerson,
+                        response,
+                    ]);
+
+                    setNewRespPerson({
+                        full_name: "",
+                        phone: "",
+                        position: "",
+                        email: "",
+                    });
+
+                    toast.update(query, {
+                        render: response.message,
+                        type: "success",
+                        containerId: "supplier",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                }
+            }
+        );
+    };
+
+    // Удаление ключевого лица
+    const deleteRespPerson = (id) => {
+        postData("DELETE", `${URL}/${supplierId}/contacts/${id}`, {}).then(
+            (response) => {
+                if (response?.ok) {
+                    setResponsiblePersons(
+                        responsiblePersons.filter((item) => item.id !== id)
+                    );
                 }
             }
         );
@@ -239,7 +308,7 @@ const SupplierCard = () => {
                         </nav>
                     </div>
 
-                    <div className="grid grid-cols-[35%_55%] justify-between mt-15 gap-10 flex-grow">
+                    <div className="grid grid-cols-3 justify-between mt-15 gap-10 flex-grow">
                         <div className="flex flex-col">
                             <div className="grid gap-5 mb-5">
                                 <div className="flex flex-col gap-2">
@@ -289,6 +358,92 @@ const SupplierCard = () => {
                                         />
                                     </div>
                                 </div>
+
+                                <div className="flex flex-col gap-2 flex-grow">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-gray-400">
+                                            Ключевые лица Подрядчика
+                                        </span>
+
+                                        {mode == "edit" && (
+                                            <button
+                                                type="button"
+                                                className="add-button"
+                                                onClick={() => {
+                                                    if (!addRespPerson) {
+                                                        setAddRespPerson(true);
+                                                    }
+                                                }}
+                                                title="Добавить ключевое лицо Подрядчика"
+                                            >
+                                                <span></span>
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div className="border-2 border-gray-300 py-5 px-3 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                        <ul className="grid gap-5">
+                                            {addRespPerson && (
+                                                <EmptyExecutorBlock
+                                                    borderClass={
+                                                        "border-gray-300"
+                                                    }
+                                                    type={"customer"}
+                                                    data={newRespPerson}
+                                                    removeBlock={() =>
+                                                        setAddRespPerson(false)
+                                                    }
+                                                    handleNewExecutor={
+                                                        handleNewExecutor
+                                                    }
+                                                    sendExecutor={sendExecutor}
+                                                />
+                                            )}
+
+                                            {responsiblePersons.length > 0 &&
+                                                responsiblePersons.map(
+                                                    (person) => (
+                                                        <ExecutorBlock
+                                                            key={person.id}
+                                                            contanct={person}
+                                                            mode={mode}
+                                                            type={"customer"}
+                                                            deleteBlock={
+                                                                deleteRespPerson
+                                                            }
+                                                            // handleChange={
+                                                            //     handleChange
+                                                            // }
+                                                        />
+                                                    )
+                                                )}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col">
+                            <div className="flex flex-col gap-2 mb-10">
+                                <span className="text-gray-400">
+                                    Краткое описание
+                                </span>
+                                <textarea
+                                    className="border-2 border-gray-300 p-5 min-h-[155px] max-h-[155px]"
+                                    style={{ resize: "none" }}
+                                    placeholder="Заполните описание"
+                                    type="text"
+                                    disabled={mode == "read" ? true : false}
+                                    value={
+                                        supplierData?.description_short || ""
+                                    }
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            e,
+                                            "description_short"
+                                        )
+                                    }
+                                />
                             </div>
 
                             <div className="flex flex-col gap-2 flex-grow">
@@ -340,43 +495,14 @@ const SupplierCard = () => {
                                 />
                             ) : (
                                 <>
-                                    <div className="grid grid-cols-2 gap-5">
-                                        <div className="flex flex-col gap-2 mb-5">
-                                            <span className="text-gray-400">
-                                                Краткое описание
-                                            </span>
-                                            <textarea
-                                                className="border-2 border-gray-300 p-5 min-h-[155px] max-h-[155px]"
-                                                style={{ resize: "none" }}
-                                                placeholder="Заполните описание"
-                                                type="text"
-                                                disabled={
-                                                    mode == "read"
-                                                        ? true
-                                                        : false
-                                                }
-                                                value={
-                                                    supplierData?.description_short ||
-                                                    ""
-                                                }
-                                                onChange={(e) =>
-                                                    handleInputChange(
-                                                        e,
-                                                        "description_short"
-                                                    )
-                                                }
-                                            />
-                                        </div>
+                                    <div className="flex flex-col gap-2 mb-5">
+                                        <span className="text-gray-400">
+                                            Взаиморасчёты
+                                        </span>
 
-                                        <div className="flex flex-col gap-2 mb-5">
-                                            <span className="text-gray-400">
-                                                Взаиморасчёты
-                                            </span>
-
-                                            <SupplierStatisticBlock
-                                                supplierId={supplierId}
-                                            />
-                                        </div>
+                                        <SupplierStatisticBlock
+                                            supplierId={supplierId}
+                                        />
                                     </div>
 
                                     <div className="flex flex-col gap-2 flex-grow">
