@@ -17,7 +17,7 @@ const SaleStageDetails = ({ stageMetrics, setStageMetrics, mode }) => {
                             <input
                                 type="text"
                                 className="w-full"
-                                defaultValue={stageMetrics.fta_value || ""}
+                                value={stageMetrics.fta_value || ""}
                                 onChange={(evt) => {
                                     setStageMetrics((prev) => ({
                                         ...prev,
@@ -36,7 +36,7 @@ const SaleStageDetails = ({ stageMetrics, setStageMetrics, mode }) => {
                             <input
                                 type="text"
                                 className="w-full"
-                                defaultValue={stageMetrics.tk_value || ""}
+                                value={stageMetrics.tk_value || ""}
                                 onChange={(evt) => {
                                     setStageMetrics((prev) => ({
                                         ...prev,

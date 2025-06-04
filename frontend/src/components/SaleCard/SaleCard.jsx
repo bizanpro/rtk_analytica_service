@@ -306,11 +306,13 @@ const SaleCard = () => {
     const getStageDetails = (stageId) => {
         const stageData = saleStages.stages.find((item) => item.id === stageId);
 
-        setStageMetrics(stageData);
-        setStageMetrics((prev) => ({
-            ...prev,
-            stage_id: stageData.id,
-        }));
+        if (stageData) {
+            setStageMetrics(stageData);
+            setStageMetrics((prev) => ({
+                ...prev,
+                stage_id: stageData.id,
+            }));
+        }
     };
 
     // Обновляем детализацию выбранного этапа
@@ -492,6 +494,15 @@ const SaleCard = () => {
             sendService();
         }
     }, [newService]);
+
+    useEffect(() => {
+        if (saleStages.stages) {
+            setActiveStage(saleStages.stages[saleStages.stages?.length - 1].id);
+            getStageDetails(
+                saleStages.stages[saleStages.stages?.length - 1].id
+            );
+        }
+    }, [saleStages]);
 
     return (
         <main className="page">

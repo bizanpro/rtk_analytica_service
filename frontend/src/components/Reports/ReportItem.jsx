@@ -115,6 +115,25 @@ const ReportItem = ({
                                 <div className="text-base">млрд руб.</div>
                             </td>
                         );
+                    } else if (key === "status") {
+                        return (
+                            <td
+                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
+                                key={key}
+                            >
+                                <div
+                                    className={`rounded px-3 py-1 text-center
+                                            ${
+                                                value === "Завершен"
+                                                    ? "bg-green-400"
+                                                    : "bg-gray-200"
+                                            }
+                                        `}
+                                >
+                                    {value?.toString() || "—"}
+                                </div>
+                            </td>
+                        );
                     } else if (key === "days") {
                         return (
                             <td
