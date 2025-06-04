@@ -636,8 +636,6 @@ const ProjectCard = () => {
         const withConclusion = searchParams.get("with_conclusion");
 
         if (report !== null && report !== "undefined") {
-            console.log(report);
-
             if (withConclusion === "true") {
                 openSubReportEditor(report);
             } else {
