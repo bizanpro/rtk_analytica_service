@@ -9,6 +9,9 @@ import FunnelMetrics from "./FunnelMetrics";
 import FunnelProjectItem from "./FunnelProjectItem";
 import GrossMetrics from "./GrossMetrics";
 import CompletedReportItem from "./CompletedReportItem";
+import EmployeeItem from "./EmployeeItem";
+import EmployeeMetrics from "./EmployeeMetrics";
+import Loader from "../../Loader";
 
 import {
     Chart as ChartJS,
@@ -50,15 +53,21 @@ const Indicators = () => {
             type: ["project"],
             metric: ["gross_profit"],
         });
+    const [employeeFilters, setEmployeeFilters] = useState({
+        view_type: ["headcount"],
+        metric_type: ["headcount"],
+    });
     const [funnelMetricsFilters, setFunnelMetricsFilters] = useState({});
     const [financialMetrics, setFinancialMetrics] = useState({});
     const [financialList, setFinancialList] = useState({});
     const [financialProfitList, setFinancialProfitList] = useState({});
     const [funnelMetrics, setFunnelMetrics] = useState({});
+    const [employeeMetrics, setEmployeeMetrics] = useState({});
 
     const [contragents, setContragents] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
     const [completedReports, setCompletedReports] = useState([]);
+    const [chartView, setChartView] = useState("headcount");
 
     const financialMetricsData = {
         labels: financialMetrics.monthly_chart?.map((item) => item.month),
@@ -148,6 +157,21 @@ const Indicators = () => {
                         : financialProfitList.items?.map(
                               (item) => item.gross_margin.value
                           ),
+                backgroundColor: "black",
+                borderRadius: 2,
+                categoryPercentage: 0.5,
+            },
+        ],
+    };
+
+    const EmployeeMetricsData = {
+        labels: employeeMetrics.headcount_by_position?.map((item) => item.name),
+        datasets: [
+            {
+                label: "",
+                data: employeeMetrics.headcount_by_position?.map(
+                    (item) => item.count
+                ),
                 backgroundColor: "black",
                 borderRadius: 2,
                 categoryPercentage: 0.5,
@@ -248,6 +272,11 @@ const Indicators = () => {
             ...prev,
             [filterKey]: filteredValues.length > 0 ? filteredValues : [],
         }));
+
+        setEmployeeFilters((prev) => ({
+            ...prev,
+            [filterKey]: filteredValues.length > 0 ? filteredValues : [],
+        }));
     };
 
     const getFilterOptions = () => {
@@ -281,12 +310,19 @@ const Indicators = () => {
                         period: [periodValue],
                         report_month: [reportMonthValue],
                     }));
+
+                    setEmployeeFilters((prev) => ({
+                        ...prev,
+                        period: [periodValue],
+                        report_month: [reportMonthValue],
+                    }));
                 }
             }
         );
     };
 
     const getFinancialMetrics = () => {
+        setIsLoading(true);
         const queryString = buildQueryParams(selectedFilters);
 
         getData(
@@ -296,6 +332,22 @@ const Indicators = () => {
         ).then((response) => {
             if (response?.status == 200) {
                 setFinancialMetrics(response.data);
+                setIsLoading(false);
+            }
+        });
+    };
+
+    // Получение сотрудников
+    const getEmployeeMetrics = () => {
+        const queryString = buildQueryParams(employeeFilters);
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }company-metrics/employee-metrics?${queryString}`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setEmployeeMetrics(response.data);
             }
         });
     };
@@ -388,6 +440,7 @@ const Indicators = () => {
     const hasCalledListOnSelected = useRef(false);
     const hasCalledProfitListOnSelected = useRef(false);
     const hasCalledFunnelMetricsOnSelected = useRef(false);
+    const hasEmployeeMetricsOnSelected = useRef(false);
 
     const isFinancialListFiltersReady =
         Object.keys(financialListFilters).length > 3;
@@ -397,6 +450,9 @@ const Indicators = () => {
 
     const isFunnelMetricsFiltersReady =
         Object.keys(funnelMetricsFilters).length > 1;
+
+    const isEmployeeMetricsFiltersReady =
+        Object.keys(employeeFilters).length > 3;
 
     useEffect(() => {
         if (!hasInitialized.current) {
@@ -417,6 +473,11 @@ const Indicators = () => {
         if (isFunnelMetricsFiltersReady) {
             getFunnelMetrics();
             hasCalledFunnelMetricsOnSelected.current = true;
+        }
+
+        if (isEmployeeMetricsFiltersReady) {
+            getEmployeeMetrics();
+            hasEmployeeMetricsOnSelected.current = true;
         }
 
         if (isFinancialListFiltersReady && isFinancialProfitListFiltersReady) {
@@ -460,6 +521,18 @@ const Indicators = () => {
     useEffect(() => {
         if (!hasInitialized.current) return;
 
+        if (isEmployeeMetricsFiltersReady) {
+            if (hasEmployeeMetricsOnSelected.current) {
+                hasEmployeeMetricsOnSelected.current = false;
+                return;
+            }
+            getEmployeeMetrics();
+        }
+    }, [employeeFilters]);
+
+    useEffect(() => {
+        if (!hasInitialized.current) return;
+
         if (isFunnelMetricsFiltersReady) {
             if (hasCalledFunnelMetricsOnSelected.current) {
                 hasCalledFunnelMetricsOnSelected.current = false;
@@ -471,6 +544,8 @@ const Indicators = () => {
 
     return (
         <div className="flex flex-col justify-between gap-6 mb-8">
+            {isLoading && <Loader transparent={true} />}
+
             <div className="flex items-center justify-between gap-6">
                 <div className="flex items-center gap-8">
                     <div className="flex flex-col">
@@ -636,7 +711,115 @@ const Indicators = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-8 border border-gray-300 p-2"></div>
+                    <div className="flex flex-col gap-2 border border-gray-300 p-5">
+                        <EmployeeMetrics {...employeeMetrics} />
+
+                        <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
+                            <div className="flex items-center gap-3">
+                                <select
+                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] w-full"
+                                    value={chartView}
+                                    onChange={(evt) => {
+                                        setChartView(evt.target.value);
+
+                                        setEmployeeFilters((prev) => ({
+                                            ...prev,
+                                            view_type: [evt.target.value],
+                                        }));
+                                    }}
+                                >
+                                    <option value="headcount">Структура</option>
+                                    <option value="turnover">
+                                        Пришли / ушли
+                                    </option>
+                                </select>
+                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                    ?
+                                </span>
+                            </div>
+
+                            {chartView == "headcount" && (
+                                <div className="flex items-center gap-3">
+                                    <select
+                                        className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] w-full"
+                                        onChange={(evt) =>
+                                            setEmployeeFilters((prev) => ({
+                                                ...prev,
+                                                metric_type: [evt.target.value],
+                                            }))
+                                        }
+                                    >
+                                        <option value="headcount">
+                                            Численность, чел
+                                        </option>
+                                        <option value="gross_salary">
+                                            ФОТ gross, млн руб.
+                                        </option>
+                                        <option value="average_salary">
+                                            Средняя зп, тыс. руб.
+                                        </option>
+                                    </select>
+
+                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                        ?
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+
+                        {chartView == "headcount" ? (
+                            <Bar
+                                data={EmployeeMetricsData}
+                                options={horizontalOptions}
+                            />
+                        ) : (
+                            <div className="flex flex-col gap-7 max-h-[340px] overflow-x-hidden overflow-y-auto">
+                                <div>
+                                    <div className="mb-3 font-medium">
+                                        Новые сотрудники (
+                                        {employeeMetrics.hired_employees
+                                            ?.length || 0}
+                                        )
+                                    </div>
+
+                                    <ul className="flex flex-col gap-2">
+                                        {employeeMetrics.hired_employees
+                                            ?.length > 0 &&
+                                            employeeMetrics.hired_employees.map(
+                                                (item) => (
+                                                    <EmployeeItem
+                                                        key={item.id}
+                                                        {...item}
+                                                    />
+                                                )
+                                            )}
+                                    </ul>
+                                </div>
+
+                                <div>
+                                    <div className="mb-3 font-medium">
+                                        Ушедшие сотрудники (
+                                        {employeeMetrics.dismissed_employees
+                                            ?.length || 0}
+                                        )
+                                    </div>
+
+                                    <ul className="flex flex-col gap-2">
+                                        {employeeMetrics.dismissed_employees
+                                            ?.length > 0 &&
+                                            employeeMetrics.dismissed_employees.map(
+                                                (item) => (
+                                                    <EmployeeItem
+                                                        key={item.id}
+                                                        {...item}
+                                                    />
+                                                )
+                                            )}
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex flex-col gap-4">

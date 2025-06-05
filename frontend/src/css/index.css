@@ -330,11 +330,16 @@ body {
     position: absolute;
     inset: 0;
     background: #fff;
-    z-index: 2;
+    z-index: 999;
     pointer-events: none;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.15s ease-in-out;
+}
+
+.loader.transparent {
+    background: rgba(255, 255, 255, 0.6);
 }
 
 .loader__icon {
