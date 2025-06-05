@@ -46,7 +46,8 @@ const SingleBook = () => {
             { label: "ФИО / должность", key: "responsible_persons" },
         ],
         creditor: [
-            { label: "Банк", key: "" },
+            { label: "Наименование кредитора", key: "" },
+            { label: "Кол-во проектов", key: "" },
             { label: "Контакт", key: "" },
             { label: "Проект", key: "" },
         ],
@@ -94,7 +95,7 @@ const SingleBook = () => {
         positions: "Должности сотрудников",
         "suppliers-with-reports": "Контакты Подрядчиков",
         "management-report-types": "Типы отчётов Менеджмента",
-        "request-sources": "Источники запросов",
+        "request-sources": "Источники запросов в воронке продаж",
     };
 
     const { bookId } = useParams();

@@ -30,6 +30,8 @@ const ReferenceItemExtended = ({ data, bookId }) => {
         >
             <td className="pl-4">{data.name}</td>
 
+            <td className="pl-4">-</td>
+
             <td className="align-top">
                 <table className="w-full">
                     <tbody>
