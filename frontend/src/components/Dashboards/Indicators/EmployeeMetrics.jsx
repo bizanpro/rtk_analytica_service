@@ -1,6 +1,10 @@
 import CountUp from "react-countup";
 
-const EmployeeMetrics = ({ average_salary, gross_salary }) => {
+const EmployeeMetrics = ({
+    total_active_employees,
+    average_salary,
+    gross_salary,
+}) => {
     return (
         <div className="grid items-stretch grid-cols-3 gap-3 mb-5">
             <div className="flex flex-col gap-2">
@@ -12,21 +16,21 @@ const EmployeeMetrics = ({ average_salary, gross_salary }) => {
                 </div>
                 <div
                     className="flex items-center flex-grow gap-2"
-                    // title={
-                    //     financialMetrics.revenue?.value +
-                    //     " " +
-                    //     financialMetrics.revenue?.label
-                    // }
+                    title={
+                        total_active_employees?.value +
+                        " " +
+                        total_active_employees?.label
+                    }
                 >
                     <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
-                        {/* <CountUp
-                            end={financialMetrics.revenue?.value || 0}
+                        <CountUp
+                            end={total_active_employees?.value || 0}
                             duration={1}
                             separator=" "
-                        /> */}
+                        />
                     </strong>
                     <small className="text-sm">
-                        {/* {financialMetrics.revenue?.label} */}
+                        {total_active_employees?.label}
                     </small>
                 </div>
                 {/* <div className="text-green-400">+15%</div> */}
