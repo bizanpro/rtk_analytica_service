@@ -11,6 +11,7 @@ import GrossMetrics from "./GrossMetrics";
 import CompletedReportItem from "./CompletedReportItem";
 import EmployeeItem from "./EmployeeItem";
 import EmployeeMetrics from "./EmployeeMetrics";
+import ManagerReportsEditor from "./ManagerReportsEditor";
 import Loader from "../../Loader";
 
 import {
@@ -898,21 +899,26 @@ const Indicators = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col border border-gray-300 p-2">
-                    <FunnelMetrics funnelMetrics={funnelMetrics.metrics} />
+                <div className="flex flex-col gap-4">
+                    <div className="flex flex-col border border-gray-300 p-2">
+                        <FunnelMetrics funnelMetrics={funnelMetrics.metrics} />
 
-                    <ul className="max-h-[300px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
-                        {funnelMetrics.sales_funnel_projects_with_stage_changes
-                            ?.length > 0 &&
-                            funnelMetrics.sales_funnel_projects_with_stage_changes.map(
-                                (project) => (
-                                    <FunnelProjectItem
-                                        key={project.id}
-                                        {...project}
-                                    />
-                                )
-                            )}
-                    </ul>
+                        <ul className="max-h-[300px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
+                            {funnelMetrics
+                                .sales_funnel_projects_with_stage_changes
+                                ?.length > 0 &&
+                                funnelMetrics.sales_funnel_projects_with_stage_changes.map(
+                                    (project) => (
+                                        <FunnelProjectItem
+                                            key={project.id}
+                                            {...project}
+                                        />
+                                    )
+                                )}
+                        </ul>
+                    </div>
+
+                    <ManagerReportsEditor />
                 </div>
             </div>
         </div>

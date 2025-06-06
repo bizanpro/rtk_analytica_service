@@ -206,6 +206,11 @@ body {
     overflow: hidden;
 }
 
+.radio-field_tab label {
+    border: 1px solid #e0e0e0;
+    white-space: nowrap;
+}
+
 .radio-field_tab input,
 .radio-field input,
 .switch input {
