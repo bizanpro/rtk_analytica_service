@@ -1,6 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { format, parseISO } from "date-fns";
+import { ru } from "date-fns/locale";
+
 const ReferenceItemExtended = ({ data, bookId }) => {
     const navigate = useNavigate();
 
@@ -8,17 +11,29 @@ const ReferenceItemExtended = ({ data, bookId }) => {
         navigate(`/reference-books/${data.creditor_id}`);
     };
 
+    const personContacts =
+        bookId == "creditor" ? "contacts" : "responsible_persons";
+
     const targetRefs = useRef([]);
-    const destinationRefs = useRef([]);
+    const projectsRefs = useRef([]);
+    const phoneRefs = useRef([]);
+    const lastChangeRefs = useRef([]);
+    const authorRefs = useRef([]);
 
     useEffect(() => {
         data.projects.forEach((_, index) => {
-            const target = targetRefs.current[index];
-            const destination = destinationRefs.current[index];
+            const targetHeight =
+                targetRefs.current[index]?.getBoundingClientRect().height;
 
-            if (target && destination) {
-                const targetHeight = target.getBoundingClientRect().height;
-                destination.style.height = `${targetHeight}px`;
+            if (targetHeight) {
+                [projectsRefs, phoneRefs, lastChangeRefs, authorRefs].forEach(
+                    (refs) => {
+                        const el = refs.current[index];
+                        if (el) {
+                            el.style.height = `${targetHeight}px`;
+                        }
+                    }
+                );
             }
         });
     }, []);
@@ -29,8 +44,6 @@ const ReferenceItemExtended = ({ data, bookId }) => {
             {...(!bookId && { onClick: handleRowClick })}
         >
             <td className="pl-4">{data.name}</td>
-
-            <td className="pl-4">-</td>
 
             <td className="align-top">
                 <table className="w-full">
@@ -50,39 +63,91 @@ const ReferenceItemExtended = ({ data, bookId }) => {
                                 <td className="py-3 px-4 min-w-[180px]">
                                     <table className="w-full">
                                         <tbody className="flex flex-col gap-3">
-                                            {project.contacts.map(
+                                            {project[personContacts].map(
                                                 (contact, contactIndex) => (
                                                     <tr
                                                         key={contactIndex}
                                                         className="w-full"
                                                     >
                                                         <td className="w-full">
-                                                            <div>
-                                                                <strong>
-                                                                    ФИО{" "}
-                                                                </strong>
+                                                            <div className="text-xl">
                                                                 {
                                                                     contact.full_name
                                                                 }
                                                             </div>
+
                                                             <div>
-                                                                <strong>
-                                                                    Должность{" "}
-                                                                </strong>
                                                                 {
                                                                     contact.position
                                                                 }
                                                             </div>
-                                                            <div>
-                                                                <strong>
-                                                                    Телефон{" "}
-                                                                </strong>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </td>
+
+            <td className="align-top">
+                <table className="w-full">
+                    <tbody>
+                        {data.projects.map((_, projIndex) => (
+                            <tr
+                                className={`w-full ${
+                                    projIndex === data.projects.length - 1
+                                        ? ""
+                                        : "border-b border-gray-300"
+                                }`}
+                                key={projIndex}
+                                ref={(el) =>
+                                    (projectsRefs.current[projIndex] = el)
+                                }
+                            >
+                                <td className="py-3 px-4 min-w-[180px]">
+                                    {data.projects_count || "-"}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </td>
+
+            <td className="align-top">
+                <table className="w-full">
+                    <tbody>
+                        {data.projects.map((project, projIndex) => (
+                            <tr
+                                className={`w-full ${
+                                    projIndex === data.projects.length - 1
+                                        ? ""
+                                        : "border-b border-gray-300"
+                                }`}
+                                key={projIndex}
+                                ref={(el) =>
+                                    (phoneRefs.current[projIndex] = el)
+                                }
+                            >
+                                <td className="py-3 px-4 min-w-[180px]">
+                                    <table className="w-full">
+                                        <tbody className="flex flex-col gap-3">
+                                            {project[personContacts].map(
+                                                (contact, contactIndex) => (
+                                                    <tr
+                                                        key={contactIndex}
+                                                        className="w-full"
+                                                    >
+                                                        <td className="w-full">
+                                                            <div className="text-xl">
                                                                 {contact.phone}
                                                             </div>
+
                                                             <div>
-                                                                <strong>
-                                                                    Email{" "}
-                                                                </strong>
                                                                 {contact.email}
                                                             </div>
                                                         </td>
@@ -101,20 +166,51 @@ const ReferenceItemExtended = ({ data, bookId }) => {
             <td className="align-top">
                 <table className="w-full">
                     <tbody>
-                        {data.projects.map((project, projIndex) => (
+                        {data.projects.map((_, projIndex) => (
                             <tr
-                                className={`${
+                                className={`w-full ${
                                     projIndex === data.projects.length - 1
                                         ? ""
                                         : "border-b border-gray-300"
                                 }`}
                                 key={projIndex}
                                 ref={(el) =>
-                                    (destinationRefs.current[projIndex] = el)
+                                    (lastChangeRefs.current[projIndex] = el)
                                 }
                             >
-                                <td className="px-4 min-w-[210px]">
-                                    {project.name}
+                                <td className="py-3 px-4 min-w-[180px]">
+                                    {format(
+                                        parseISO(data.last_updated_at),
+                                        "d MMMM yyyy, HH:mm",
+                                        {
+                                            locale: ru,
+                                        }
+                                    ) || "-"}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </td>
+
+            <td className="align-top">
+                <table className="w-full">
+                    <tbody>
+                        {data.projects.map((_, projIndex) => (
+                            <tr
+                                className={`w-full ${
+                                    projIndex === data.projects.length - 1
+                                        ? ""
+                                        : "border-b border-gray-300"
+                                }`}
+                                key={projIndex}
+                                ref={(el) =>
+                                    (authorRefs.current[projIndex] = el)
+                                }
+                            >
+                                <td className="py-3 px-4 min-w-[180px]">
+                                    {" "}
+                                    {data.author || "-"}
                                 </td>
                             </tr>
                         ))}

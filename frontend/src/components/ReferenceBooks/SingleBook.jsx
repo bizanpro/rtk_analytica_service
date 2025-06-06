@@ -41,15 +41,20 @@ const SingleBook = () => {
             { label: "Автор измнения", key: "author" },
         ],
         contragent: [
-            { label: "Наименование контрагента", key: "contragent" },
-            { label: "Проект", key: "project_name" },
-            { label: "ФИО / должность", key: "responsible_persons" },
+            { label: "Наименование Заказчика", key: "" },
+            { label: "ФИО / должность", key: "" },
+            { label: "Кол-во проектов", key: "" },
+            { label: "Контакты", key: "" },
+            { label: "Последнее изменение", key: "" },
+            { label: "Автор измнения", key: "" },
         ],
         creditor: [
             { label: "Наименование кредитора", key: "" },
+            { label: "ФИО / должность", key: "" },
             { label: "Кол-во проектов", key: "" },
-            { label: "Контакт", key: "" },
-            { label: "Проект", key: "" },
+            { label: "Контакты", key: "" },
+            { label: "Последнее изменение", key: "" },
+            { label: "Автор измнения", key: "" },
         ],
         "working-hours": [
             { label: "Месяц", key: "month_name" },
@@ -114,6 +119,9 @@ const SingleBook = () => {
     const [listLength, setListLength] = useState(0);
     const [popupState, setPopupState] = useState(false);
     const [positions, setPositions] = useState([]);
+
+    const personContacts =
+        bookId == "creditor" ? "contacts" : "responsible_persons";
 
     const [selectedCounterpartyName, setSelectedCounterpartyName] =
         useState("");
@@ -432,7 +440,7 @@ const SingleBook = () => {
                     setBooksItems(response.data.data);
 
                     setListLength(
-                        bookId !== "creditor"
+                        bookId !== "creditor" && bookId !== "contragent"
                             ? response.data.data?.length
                             : response.data.data.reduce((sum, creditor) => {
                                   const projectsContacts =
@@ -440,7 +448,7 @@ const SingleBook = () => {
                                           (projectSum, project) => {
                                               return (
                                                   projectSum +
-                                                  project.contacts.length
+                                                  project[personContacts].length
                                               );
                                           },
                                           0
@@ -698,7 +706,10 @@ const SingleBook = () => {
 
                                     {filteredProjects?.length > 0 &&
                                         filteredProjects.map((item) => {
-                                            if (bookId === "creditor") {
+                                            if (
+                                                bookId === "creditor" ||
+                                                bookId === "contragent"
+                                            ) {
                                                 return (
                                                     <ReferenceItemExtended
                                                         key={item.id}
