@@ -519,18 +519,6 @@ const SingleBook = () => {
                             </>
                         )} */}
 
-                        {bookId === "report-types" && (
-                            <select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                }
-                            >
-                                <option value="">Регулярный</option>
-                                <option value="true">Да</option>
-                                <option value="false">Нет</option>
-                            </select>
-                        )}
-
                         <nav className="switch">
                             <div>
                                 <input
