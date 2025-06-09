@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 
@@ -71,6 +71,8 @@ const Reports = () => {
     const [selectedManagementFilters, setSelectedManagementFilters] = useState(
         {}
     ); // Выбранные параметры фильтров во вкладке менеджмента
+    const [selectedManagementReport, setSelectedManagementReport] =
+        useState("");
 
     const [popupState, setPopupState] = useState(false);
 
@@ -85,6 +87,22 @@ const Reports = () => {
         legal_issues: "",
         misc: "",
     });
+
+    const filteredReports = useMemo(() => {
+        const result = managementList.filter((report) => {
+            return selectedManagementReport &&
+                selectedManagementReport !== "default"
+                ? report.name === selectedManagementReport
+                : true;
+        });
+        return result;
+    }, [managementList, selectedManagementReport]);
+
+    // Заполняем селектор банков
+    const managementReportsOptions = useMemo(() => {
+        const allReports = managementList.flatMap((item) => item.name);
+        return Array.from(new Set(allReports));
+    }, [managementList]);
 
     // Обработка фильтров
     const handleFilterChange = (filterKey, value, section) => {
@@ -119,6 +137,7 @@ const Reports = () => {
             .then((response) => {
                 if (response.status === 200) {
                     setReportsList(response.data.reports);
+                    setSelectedManagementReport("default");
                 }
             })
             .finally(() => setIsLoading(false));
@@ -146,7 +165,7 @@ const Reports = () => {
     };
 
     // Получение списка доступных фильтров
-    const getFilteredManagementFilters = () => {
+    const getFilteredManagementReports = () => {
         setIsLoading(true);
 
         const queryParams = new URLSearchParams();
@@ -157,21 +176,7 @@ const Reports = () => {
             });
         });
 
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }management-reports/?${queryParams.toString()}`
-        ).then((response) => {
-            if (response.status === 200) {
-                setManagementList(response.data);
-                setIsLoading(false);
-            }
-        });
-    };
-
-    // Получаем список отчетов Менеджмента
-    const getManagementReports = () => {
-        getData(MANAGEMENT_URL, { Accept: "application/json" })
+        getData(`${MANAGEMENT_URL}/?${queryParams.toString()}`)
             .then((response) => {
                 if (response.status === 200) {
                     setManagementList(response.data);
@@ -313,7 +318,8 @@ const Reports = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-                    getManagementReports();
+                    getFilteredManagementReports();
+                    getAvailableMonths();
                     setManagementEditorState(false);
                 } else {
                     toast.dismiss(query);
@@ -365,7 +371,8 @@ const Reports = () => {
                     pauseOnHover: false,
                     position: "top-center",
                 });
-                getManagementReports();
+                getFilteredManagementReports();
+                getAvailableMonths();
                 setManagementEditorState(false);
             } else {
                 toast.dismiss(query);
@@ -391,19 +398,16 @@ const Reports = () => {
     }, [activeTab]);
 
     useEffect(() => {
-        console.log("projects");
-
         getUpdatedProjectsFilters();
         getFilteredReports();
     }, [selectedProjectsFilters]);
 
     useEffect(() => {
-        console.log("management");
-        getFilteredManagementFilters();
+        getFilteredManagementReports();
     }, [selectedManagementFilters]);
 
     useEffect(() => {
-        getManagementReports();
+        // getManagementReports();
         getPeriods();
         getAvailableMonths();
     }, []);
@@ -439,7 +443,7 @@ const Reports = () => {
                             onClick={() => setActiveTab("management")}
                             title="Перейти на вкладку Менеджмент"
                         >
-                            Менеджмент ({managementList.length})
+                            Менеджмент ({filteredReports.length})
                         </button>
                     </nav>
 
@@ -517,8 +521,24 @@ const Reports = () => {
                                         className={
                                             "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                         }
+                                        onChange={(evt) =>
+                                            setSelectedManagementReport(
+                                                evt.target.value
+                                            )
+                                        }
                                     >
-                                        <option value="">Отчёт</option>
+                                        <option value="default">Отчёт</option>
+                                        {managementReportsOptions.length > 0 &&
+                                            managementReportsOptions.map(
+                                                (item) => (
+                                                    <option
+                                                        key={item}
+                                                        value={item}
+                                                    >
+                                                        {item}
+                                                    </option>
+                                                )
+                                            )}
                                     </select>
                                     <select
                                         className={
@@ -606,8 +626,8 @@ const Reports = () => {
                                     />
                                 ))
                             ) : (
-                                managementList.length > 0 &&
-                                managementList.map((item) => (
+                                filteredReports.length > 0 &&
+                                filteredReports.map((item) => (
                                     <ManagementItem
                                         key={item.id}
                                         columns={COLUMNS[1]}
