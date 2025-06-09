@@ -3,6 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
+import removeEmptyFields from "../../utils/removeEmptyFields";
 
 import Select from "react-select";
 import NewCustomerWindow from "./NewCustomerWindow";

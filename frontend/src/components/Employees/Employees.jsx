@@ -13,7 +13,7 @@ const Employees = () => {
     const COLUMNS = [
         { label: "ФИО", key: "name" },
         { label: "Загрузка", key: "active_projects_count" },
-        { label: "Должность", key: "qualification" },
+        { label: "Должность", key: "position" },
         { label: "Телефон", key: "phone_number" },
         { label: "email", key: "email" },
         { label: "Тип", key: "is_staff" },

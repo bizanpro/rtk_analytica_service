@@ -23,6 +23,7 @@ const SingleBook = () => {
         "report-types": [
             { label: "Сокращённое наименование", key: "name" },
             { label: "Полное наименование", key: "full_name" },
+            { label: "Регулярный", key: "is_regular" },
             { label: "Кол-во проектов", key: "count" },
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
@@ -63,7 +64,7 @@ const SingleBook = () => {
         positions: [
             { label: "Наименование", key: "name" },
             { label: "Тип должности", key: "type" },
-            { label: "Кол-во сотрудников", key: "employee_count" },
+            { label: "Кол-во сотрудников", key: "employees_count" },
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
         ],
@@ -326,24 +327,51 @@ const SingleBook = () => {
             return;
         }
 
-        postData("POST", URL, formFields).then((response) => {
-            if (response) {
-                setFormFields((prev) => ({
-                    ...prev,
-                    name: "",
-                    counterparty_name: "",
-                    full_name: "",
-                }));
-                setBooksItems((booksItems) => [...booksItems, response]);
-            }
+        query = toast.loading("Обновление", {
+            containerId: "singleBook",
+            position: "top-center",
         });
+
+        postData("POST", URL, formFields)
+            .then((response) => {
+                if (response?.ok) {
+                    setFormFields((prev) => ({
+                        ...prev,
+                        name: "",
+                        counterparty_name: "",
+                        full_name: "",
+                    }));
+                    setBooksItems((booksItems) => [...booksItems, response]);
+                    toast.update(query, {
+                        render: "Запись добавлена",
+                        type: "success",
+                        containerId: "singleBook",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                }
+            })
+            .catch(() => {
+                toast.dismiss(query);
+                toast.error("Ошибка добавления записи", {
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                    containerId: "singleBook",
+                });
+            });
     };
 
     // Добавить новый контакт подрядчику
     const addNewContact = (data) => {
         postData("POST", `${URL}/${data.contragent_id}`, data).then(
             (response) => {
-                if (response) {
+                if (response?.ok) {
                     setBooksItems((booksItems) =>
                         booksItems.map((item) =>
                             item.id === data.contragent_id
@@ -395,19 +423,32 @@ const SingleBook = () => {
             position: "top-center",
         });
 
-        postData("PATCH", `${URL}/${data.id}`, data).then((response) => {
-            if (response?.ok) {
-                toast.update(query, {
-                    render: "Запись обновлена",
-                    type: "success",
-                    containerId: "singleBook",
-                    isLoading: false,
-                    autoClose: 1200,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-            } else {
+        postData("PATCH", `${URL}/${data.id}`, data)
+            .then((response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: "Запись обновлена",
+                        type: "success",
+                        containerId: "singleBook",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                } else {
+                    toast.dismiss(query);
+                    toast.error("Ошибка обновления записи", {
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                        containerId: "singleBook",
+                    });
+                }
+            })
+            .catch(() => {
                 toast.dismiss(query);
                 toast.error("Ошибка обновления записи", {
                     isLoading: false,
@@ -417,8 +458,7 @@ const SingleBook = () => {
                     position: "top-center",
                     containerId: "singleBook",
                 });
-            }
-        });
+            });
     };
 
     // Удаление записи
@@ -675,6 +715,29 @@ const SingleBook = () => {
                                                                         </option>
                                                                     </>
                                                                 )}
+                                                            </select>
+                                                        ) : key ===
+                                                          "is_regular" ? (
+                                                            <select
+                                                                className="w-full border border-gray-300 min-h-[30px]"
+                                                                name={key}
+                                                                defaultValue=""
+                                                                onChange={(e) =>
+                                                                    handleNewElementInputChange(
+                                                                        e,
+                                                                        key
+                                                                    )
+                                                                }
+                                                            >
+                                                                <option value="">
+                                                                    Выбрать
+                                                                </option>
+                                                                <option value="true">
+                                                                    Да
+                                                                </option>
+                                                                <option value="false">
+                                                                    Нет
+                                                                </option>
                                                             </select>
                                                         ) : (
                                                             "—"

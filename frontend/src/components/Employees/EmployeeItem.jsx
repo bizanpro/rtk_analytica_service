@@ -69,14 +69,25 @@ const EmployeeItem = ({ data, columns }) => {
                         </td>
                     );
                 } else {
-                    return (
-                        <td
-                            className="px-4 py-7 min-w-[180px] max-w-[200px]"
-                            key={key}
-                        >
-                            {value?.toString() || "—"}
-                        </td>
-                    );
+                    if (key === "position") {
+                        return (
+                            <td
+                                className="px-4 py-7 min-w-[180px] max-w-[200px]"
+                                key={key}
+                            >
+                                {value?.name?.toString() || "—"}
+                            </td>
+                        );
+                    } else {
+                        return (
+                            <td
+                                className="px-4 py-7 min-w-[180px] max-w-[200px]"
+                                key={key}
+                            >
+                                {value?.toString() || "—"}
+                            </td>
+                        );
+                    }
                 }
             })}
         </tr>
