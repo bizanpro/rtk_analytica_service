@@ -64,9 +64,13 @@ const Reports = () => {
     const [contracts, setContracts] = useState([]);
     const [reportData, setReportData] = useState({});
     const [periods, setPeriods] = useState({});
+    const [availableMonths, setAvailableMonths] = useState([]);
     const [mode, setMode] = useState("read");
     const [filterOptionsList, setFilterOptionsList] = useState({}); // Список доступных параметров фильтров
-    const [selectedFilters, setSelectedFilters] = useState({}); // Выбранные параметры фильтров
+    const [selectedProjectsFilters, setSelectedProjectsFilters] = useState({}); // Выбранные параметры фильтров во вкладке проектов
+    const [selectedManagementFilters, setSelectedManagementFilters] = useState(
+        {}
+    ); // Выбранные параметры фильтров во вкладке менеджмента
 
     const [popupState, setPopupState] = useState(false);
 
@@ -83,13 +87,20 @@ const Reports = () => {
     });
 
     // Обработка фильтров
-    const handleFilterChange = (filterKey, value) => {
+    const handleFilterChange = (filterKey, value, section) => {
         const filteredValues = value.filter((v) => v !== "");
 
-        setSelectedFilters((prev) => ({
-            ...prev,
-            [filterKey]: filteredValues.length > 0 ? filteredValues : [],
-        }));
+        if (section === "projects") {
+            setSelectedProjectsFilters((prev) => ({
+                ...prev,
+                [filterKey]: filteredValues.length > 0 ? filteredValues : [],
+            }));
+        } else if (section === "management") {
+            setSelectedManagementFilters((prev) => ({
+                ...prev,
+                [filterKey]: filteredValues.length > 0 ? filteredValues : [],
+            }));
+        }
     };
 
     // Получение списка отчетов
@@ -98,7 +109,7 @@ const Reports = () => {
 
         const queryParams = new URLSearchParams();
 
-        Object.entries(selectedFilters).forEach(([key, values]) => {
+        Object.entries(selectedProjectsFilters).forEach(([key, values]) => {
             values.forEach((value) => {
                 queryParams.append(`filters[${key}][]`, value);
             });
@@ -114,10 +125,10 @@ const Reports = () => {
     };
 
     // Получение списка доступных фильтров
-    const getUpdatedFilters = () => {
+    const getUpdatedProjectsFilters = () => {
         const queryParams = new URLSearchParams();
 
-        Object.entries(selectedFilters).forEach(([key, values]) => {
+        Object.entries(selectedProjectsFilters).forEach(([key, values]) => {
             values.forEach((value) => {
                 queryParams.append(`filters[${key}][]`, value);
             });
@@ -130,6 +141,30 @@ const Reports = () => {
         ).then((response) => {
             if (response.status === 200) {
                 setFilterOptionsList(response.data);
+            }
+        });
+    };
+
+    // Получение списка доступных фильтров
+    const getFilteredManagementFilters = () => {
+        setIsLoading(true);
+
+        const queryParams = new URLSearchParams();
+
+        Object.entries(selectedManagementFilters).forEach(([key, values]) => {
+            values.forEach((value) => {
+                queryParams.append(key, value);
+            });
+        });
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }management-reports/?${queryParams.toString()}`
+        ).then((response) => {
+            if (response.status === 200) {
+                setManagementList(response.data);
+                setIsLoading(false);
             }
         });
     };
@@ -178,6 +213,17 @@ const Reports = () => {
                         "0"
                     )}-01`,
                 }));
+            }
+        });
+    };
+
+    // Получаем доступные периоды для попапа отчета Менеджмента
+    const getAvailableMonths = () => {
+        getData(
+            `${import.meta.env.VITE_API_URL}management-reports/available-months`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setAvailableMonths(response.data);
             }
         });
     };
@@ -345,13 +391,21 @@ const Reports = () => {
     }, [activeTab]);
 
     useEffect(() => {
-        getUpdatedFilters();
+        console.log("projects");
+
+        getUpdatedProjectsFilters();
         getFilteredReports();
-    }, [selectedFilters]);
+    }, [selectedProjectsFilters]);
+
+    useEffect(() => {
+        console.log("management");
+        getFilteredManagementFilters();
+    }, [selectedManagementFilters]);
 
     useEffect(() => {
         getManagementReports();
         getPeriods();
+        getAvailableMonths();
     }, []);
 
     return (
@@ -406,7 +460,7 @@ const Reports = () => {
                                                     key={index}
                                                     className="p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                                     value={
-                                                        selectedFilters[
+                                                        selectedProjectsFilters[
                                                             filterKey
                                                         ] || ""
                                                     }
@@ -421,7 +475,8 @@ const Reports = () => {
                                                             );
                                                         handleFilterChange(
                                                             filterKey,
-                                                            selectedValue
+                                                            selectedValue,
+                                                            "projects"
                                                         );
                                                     }}
                                                 >
@@ -447,7 +502,9 @@ const Reports = () => {
                                 <button
                                     type="button"
                                     className="border rounded-lg py-1 px-5"
-                                    onClick={() => setSelectedFilters([])}
+                                    onClick={() =>
+                                        setSelectedProjectsFilters([])
+                                    }
                                 >
                                     Очистить
                                 </button>
@@ -467,8 +524,27 @@ const Reports = () => {
                                         className={
                                             "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                         }
+                                        onChange={(e) => {
+                                            const selectedValue = Array.from(
+                                                e.target.selectedOptions
+                                            ).map((option) => option.value);
+                                            handleFilterChange(
+                                                "report_month",
+                                                selectedValue,
+                                                "management"
+                                            );
+                                        }}
                                     >
                                         <option value="">Отчётный месяц</option>
+                                        {availableMonths.length > 0 &&
+                                            availableMonths.map((month) => (
+                                                <option
+                                                    key={month.value}
+                                                    value={month.value}
+                                                >
+                                                    {month.label}
+                                                </option>
+                                            ))}
                                     </select>
 
                                     <button
