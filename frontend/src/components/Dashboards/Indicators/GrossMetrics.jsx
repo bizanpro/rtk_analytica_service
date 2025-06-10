@@ -19,7 +19,10 @@ const GrossMetrics = ({ financialMetrics }) => {
                         {financialMetrics.gross_profit?.label}
                     </small>
                 </div>
-                {/* <div className="text-green-400">+15%</div> */}
+                <div className="text-green-400">
+                    {financialMetrics.gross_profit?.change_percent > 0 &&
+                        `+${financialMetrics.gross_profit?.change_percent}%`}
+                </div>
             </div>
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 font-medium">
@@ -39,7 +42,10 @@ const GrossMetrics = ({ financialMetrics }) => {
                         {financialMetrics.gross_margin?.label}
                     </small>
                 </div>
-                {/* <div className="text-green-400">+15%</div> */}
+                <div className="text-green-400">
+                    {financialMetrics.gross_margin?.change_percent > 0 &&
+                        `+${financialMetrics.gross_margin?.change_percent} п.п.`}
+                </div>
             </div>
         </div>
     );

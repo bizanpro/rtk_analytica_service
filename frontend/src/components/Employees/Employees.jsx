@@ -12,7 +12,7 @@ const Employees = () => {
 
     const COLUMNS = [
         { label: "ФИО", key: "name" },
-        { label: "Загрузка", key: "active_projects_count" },
+        { label: "Загрузка", key: "reports_count" },
         { label: "Должность", key: "position" },
         { label: "Телефон", key: "phone_number" },
         { label: "email", key: "email" },

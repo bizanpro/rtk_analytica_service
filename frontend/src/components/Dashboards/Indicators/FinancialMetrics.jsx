@@ -29,7 +29,10 @@ const FinancialMetrics = ({ financialMetrics }) => {
                         {financialMetrics.revenue?.label}
                     </small>
                 </div>
-                {/* <div className="text-green-400">+15%</div> */}
+                <div className="text-green-400">
+                    {financialMetrics.revenue?.change_percent > 0 &&
+                        `+${financialMetrics.revenue?.change_percent}%`}
+                </div>
             </div>
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 font-medium">
@@ -57,7 +60,10 @@ const FinancialMetrics = ({ financialMetrics }) => {
                         {financialMetrics.receipts?.label}
                     </small>
                 </div>
-                {/* <div className="text-green-400">+15%</div> */}
+                <div className="text-green-400">
+                    {financialMetrics.receipts?.change_percent > 0 &&
+                        `+${financialMetrics.receipts?.change_percent}%`}
+                </div>
             </div>
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 font-medium">
@@ -85,7 +91,11 @@ const FinancialMetrics = ({ financialMetrics }) => {
                         {financialMetrics.debts?.label}
                     </small>
                 </div>
-                {/* <div className="text-red-400">+15%</div> */}
+
+                <div className="text-red-400">
+                    {financialMetrics.debts?.change_percent > 0 &&
+                        `+${financialMetrics.debts?.change_percent}%`}
+                </div>
             </div>
         </div>
     );
