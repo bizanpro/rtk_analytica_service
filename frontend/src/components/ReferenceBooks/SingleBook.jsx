@@ -463,13 +463,50 @@ const SingleBook = () => {
 
     // Удаление записи
     const deleteElement = (id) => {
-        postData("DELETE", `${URL}/${id}`, {}).then((response) => {
-            if (response) {
-                setBooksItems((booksItems) =>
-                    booksItems.filter((item) => item.id !== id)
-                );
-            }
+        query = toast.loading("Удаление", {
+            containerId: "singleBook",
+            position: "top-center",
         });
+
+        postData("DELETE", `${URL}/${id}`, {})
+            .then((response) => {
+                if (response?.ok) {
+                    setBooksItems((booksItems) =>
+                        booksItems.filter((item) => item.id !== id)
+                    );
+                    toast.update(query, {
+                        render: "Запись удалена",
+                        type: "success",
+                        containerId: "singleBook",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                } else {
+                    toast.dismiss(query);
+                    toast.error("Ошибка удаления записи", {
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                        containerId: "singleBook",
+                    });
+                }
+            })
+            .catch(() => {
+                toast.dismiss(query);
+                toast.error("Ошибка удаления записи", {
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                    containerId: "singleBook",
+                });
+            });
     };
 
     // Получение списка записей

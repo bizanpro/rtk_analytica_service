@@ -101,7 +101,19 @@ const SupplierItem = ({ props, columns }) => {
                                 className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
                                 key={key}
                             >
-                                {handleStatus(value?.toString()) || "—"}
+                                <div
+                                    className={`rounded px-3 py-1 text-center
+                                            ${
+                                                handleStatus(
+                                                    value?.toString()
+                                                ) === "Активный"
+                                                    ? "bg-green-400"
+                                                    : "bg-gray-200"
+                                            }
+                                        `}
+                                >
+                                    {handleStatus(value?.toString()) || "—"}
+                                </div>
                             </td>
                         );
                     } else {
