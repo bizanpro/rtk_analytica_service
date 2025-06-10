@@ -12,13 +12,17 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong
+                            className="font-normal text-4xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap"
+                            title={funnelMetrics?.request_received?.value}
+                        >
                             <CountUp
                                 end={
                                     funnelMetrics?.request_received?.value || 0
                                 }
                                 duration={1}
                                 separator=" "
+                                decimals={2}
                             />
                         </strong>
                     </div>
@@ -31,11 +35,15 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong
+                            className="font-normal text-4xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap"
+                            title={funnelMetrics?.proposal_sent?.value}
+                        >
                             <CountUp
                                 end={funnelMetrics?.proposal_sent?.value || 0}
                                 duration={1}
                                 separator=" "
+                                decimals={2}
                             />
                         </strong>
                     </div>
@@ -51,11 +59,15 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong
+                            className="font-normal text-4xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap"
+                            title={funnelMetrics?.agreement?.value}
+                        >
                             <CountUp
                                 end={funnelMetrics?.agreement?.value || 0}
                                 duration={1}
                                 separator=" "
+                                decimals={2}
                             />
                         </strong>
                     </div>
@@ -68,11 +80,15 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong
+                            className="font-normal text-4xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap"
+                            title={funnelMetrics?.rejected?.value}
+                        >
                             <CountUp
                                 end={funnelMetrics?.rejected?.value || 0}
                                 duration={1}
                                 separator=" "
+                                decimals={2}
                             />
                         </strong>
                     </div>
@@ -85,11 +101,15 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                         </span>
                     </div>
                     <div className="flex items-center flex-grow gap-2">
-                        <strong className="font-normal text-4xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong
+                            className="font-normal text-4xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap"
+                            title={funnelMetrics?.postponed?.value}
+                        >
                             <CountUp
                                 end={funnelMetrics?.postponed?.value || 0}
                                 duration={1}
                                 separator=" "
+                                decimals={2}
                             />
                         </strong>
                     </div>

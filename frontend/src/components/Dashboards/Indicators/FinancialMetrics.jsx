@@ -23,6 +23,7 @@ const FinancialMetrics = ({ financialMetrics }) => {
                             end={financialMetrics.revenue?.value || 0}
                             duration={1}
                             separator=" "
+                            decimals={3}
                         />
                     </strong>
                     <small className="text-sm">
@@ -54,6 +55,7 @@ const FinancialMetrics = ({ financialMetrics }) => {
                             end={financialMetrics.receipts?.value || 0}
                             duration={1}
                             separator=" "
+                            decimals={3}
                         />
                     </strong>
                     <small className="text-sm">
@@ -85,6 +87,7 @@ const FinancialMetrics = ({ financialMetrics }) => {
                             end={financialMetrics.debts?.value || 0}
                             duration={1}
                             separator=" "
+                            decimals={3}
                         />
                     </strong>
                     <small className="text-sm">

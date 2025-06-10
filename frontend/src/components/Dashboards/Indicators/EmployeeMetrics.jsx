@@ -27,6 +27,7 @@ const EmployeeMetrics = ({
                             end={total_active_employees?.value || 0}
                             duration={1}
                             separator=" "
+                            decimals={3}
                         />
                     </strong>
                     <small className="text-sm">
@@ -51,6 +52,7 @@ const EmployeeMetrics = ({
                             end={gross_salary?.value || 0}
                             duration={1}
                             separator=" "
+                            decimals={3}
                         />
                     </strong>
                     <small className="text-sm">{gross_salary?.label}</small>
@@ -77,6 +79,7 @@ const EmployeeMetrics = ({
                             end={average_salary?.value || 0}
                             duration={1}
                             separator=" "
+                            decimals={3}
                         />
                     </strong>
                     <small className="text-sm">{average_salary?.label}</small>
