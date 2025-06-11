@@ -182,6 +182,7 @@ const Indicators = () => {
 
     const verticalOptions = {
         responsive: true,
+        animation: false,
         plugins: {
             legend: {
                 display: false,
@@ -205,6 +206,7 @@ const Indicators = () => {
 
     const verticalOptions2 = {
         responsive: true,
+        animation: false,
         indexAxis: "x",
         plugins: {
             legend: {
@@ -227,6 +229,7 @@ const Indicators = () => {
 
     const horizontalOptions = {
         responsive: true,
+        animation: false,
         indexAxis: "y",
         plugins: {
             legend: {

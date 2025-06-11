@@ -285,12 +285,28 @@ const SingleBook = () => {
 
     // Обработка полей новой записи в справочнике
     const handleNewElementInputChange = (e, name) => {
-        setFormFields({ ...formFields, [name]: e.target.value });
+        let value;
+
+        if (name === "is_regular") {
+            value = e.target.value === "true";
+        } else {
+            value = e.target.value;
+        }
+
+        setFormFields({ ...formFields, [name]: value });
     };
 
     // Обработка существующих полей справочника
     const handleInputChange = (e, name, id) => {
-        const value = name === "phone" ? e : e.target.value;
+        let value;
+
+        if (name === "phone") {
+            value = e;
+        } else if (name === "is_regular") {
+            value = e.target.value === "true";
+        } else {
+            value = e.target.value;
+        }
 
         setBooksItems((prevBooksItems) =>
             prevBooksItems.map((item) =>
