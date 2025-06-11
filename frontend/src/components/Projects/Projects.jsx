@@ -27,6 +27,7 @@ const Projects = () => {
         { label: "Срок (мес.)", key: "implementation_period" },
         { label: "Руководитель проекта", key: "project_manager" },
         { label: "Статус", key: "status" },
+        { label: "Последние отчёты", key: "latest_reports" },
     ];
 
     const filteredProjects = useMemo(() => {

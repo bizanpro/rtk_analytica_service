@@ -21,27 +21,67 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                     if (value?.length > 0) {
                         return (
                             <td
-                                className="border-b border-gray-300 py-2.5 min-w-[180px] max-w-[200px]"
+                                className="border-b border-gray-300 py-2.5 min-w-[180px] max-w-[250px]"
                                 key={key}
                             >
                                 <table className="w-full">
                                     <tbody>
-                                        {value?.map((item, index) => (
-                                            <tr key={`${key}_${index}`}>
-                                                <td
-                                                    className={`px-4 ${
-                                                        index !==
-                                                        value?.length - 1
-                                                            ? "pb-1"
-                                                            : "pt-1"
-                                                    }`}
-                                                >
-                                                    {key === "creditors"
-                                                        ? item.name
-                                                        : item?.toString()}
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        {key === "latest_reports"
+                                            ? value?.map((item, index) => (
+                                                  <tr key={`${key}_${index}`}>
+                                                      <td
+                                                          className={`px-4 ${
+                                                              index !==
+                                                              value?.length - 1
+                                                                  ? "pb-1"
+                                                                  : "pt-1"
+                                                          }`}
+                                                      >
+                                                          <div className="flex items-center gap-3 w-full">
+                                                              <div
+                                                                  className="text-lg"
+                                                                  style={{
+                                                                      flex: "0 0 40px",
+                                                                  }}
+                                                              >
+                                                                  {item.name}
+                                                              </div>
+
+                                                              <div
+                                                                  className={`rounded px-8 py-1 text-center flex-grow
+                                            ${
+                                                item.status.name === "Завершен"
+                                                    ? "bg-green-400"
+                                                    : "bg-gray-200"
+                                            }
+                                        `}
+                                                              >
+                                                                  {
+                                                                      item
+                                                                          .status
+                                                                          .name
+                                                                  }
+                                                              </div>
+                                                          </div>
+                                                      </td>
+                                                  </tr>
+                                              ))
+                                            : value?.map((item, index) => (
+                                                  <tr key={`${key}_${index}`}>
+                                                      <td
+                                                          className={`px-4 ${
+                                                              index !==
+                                                              value?.length - 1
+                                                                  ? "pb-1"
+                                                                  : "pt-1"
+                                                          }`}
+                                                      >
+                                                          {key === "creditors"
+                                                              ? item.name
+                                                              : item?.toString()}
+                                                      </td>
+                                                  </tr>
+                                              ))}
                                     </tbody>
                                 </table>
                             </td>
