@@ -477,6 +477,110 @@ const SingleBook = () => {
             });
     };
 
+    // Изменение записи
+    const editContragentAndCreditorContact = (data) => {
+        query = toast.loading("Обновление", {
+            containerId: "singleBook",
+            position: "top-center",
+        });
+
+        postData(
+            "PATCH",
+            `${import.meta.env.VITE_API_URL}${bookId}-responsible-persons/${
+                data.id
+            }`,
+            data
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: "Контакт обновлен",
+                        type: "success",
+                        containerId: "singleBook",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                } else {
+                    toast.dismiss(query);
+                    toast.error("Ошибка обновления контакта", {
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                        containerId: "singleBook",
+                    });
+                }
+            })
+            .catch(() => {
+                toast.dismiss(query);
+                toast.error("Ошибка обновления контакта", {
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                    containerId: "singleBook",
+                });
+            });
+    };
+
+    // Удаление записи
+    const deleteContact = (id) => {
+        query = toast.loading("Удаление", {
+            containerId: "singleBook",
+            position: "top-center",
+        });
+
+        postData(
+            "DELETE",
+            `${
+                import.meta.env.VITE_API_URL
+            }${bookId}-responsible-persons/${id}`,
+            {}
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    getBooks();
+
+                    toast.update(query, {
+                        render: "Контакт удалена",
+                        type: "success",
+                        containerId: "singleBook",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                } else {
+                    toast.dismiss(query);
+                    toast.error("Ошибка удаления контакта", {
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                        containerId: "singleBook",
+                    });
+                }
+            })
+            .catch(() => {
+                toast.dismiss(query);
+                toast.error("Ошибка удаления контакта", {
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                    containerId: "singleBook",
+                });
+            });
+    };
+
     // Удаление записи
     const deleteElement = (id) => {
         query = toast.loading("Удаление", {
@@ -527,6 +631,8 @@ const SingleBook = () => {
 
     // Получение списка записей
     const getBooks = () => {
+        setIsLoading(true);
+
         getData(URL, { Accept: "application/json" })
             .then((response) => {
                 if (response.status == 200) {
@@ -830,17 +936,13 @@ const SingleBook = () => {
                                                     <ReferenceItemExtended
                                                         key={item.id}
                                                         data={item}
-                                                        columns={columns}
                                                         mode={mode}
                                                         bookId={bookId}
-                                                        handleInputChange={
-                                                            handleInputChange
+                                                        editContragentAndCreditorContact={
+                                                            editContragentAndCreditorContact
                                                         }
-                                                        deleteElement={
-                                                            deleteElement
-                                                        }
-                                                        editElement={
-                                                            editElement
+                                                        deleteContact={
+                                                            deleteContact
                                                         }
                                                     />
                                                 );
