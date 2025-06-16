@@ -127,25 +127,6 @@ const SalesItem = ({ props, columns }) => {
                                 </span>
                             </td>
                         );
-                    } else if (key === "contragent.status") {
-                        return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
-                                <div
-                                    className={`rounded px-3 py-1 text-center
-                                            ${
-                                                value === "completed"
-                                                    ? "bg-green-400"
-                                                    : "bg-gray-200"
-                                            }
-                                        `}
-                                >
-                                    {handleStatus(value?.toString()) || "—"}
-                                </div>
-                            </td>
-                        );
                     } else if (
                         (key === "request_date" || key === "status_date") &&
                         value !== null

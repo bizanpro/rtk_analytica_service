@@ -27,7 +27,7 @@ const Sales = () => {
         { label: "Дата запроса", key: "request_date" },
         { label: "Источник", key: "request_source" },
         { label: "Дата статуса", key: "status_date" },
-        { label: "Статус", key: "contragent.status" },
+        { label: "Статус", key: "last_service_last_stage" },
     ];
 
     const filteredProjects = useMemo(() => {
