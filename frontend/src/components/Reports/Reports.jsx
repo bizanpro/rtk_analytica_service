@@ -14,6 +14,9 @@ import Popup from "../Popup/Popup";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { format, parseISO } from "date-fns";
+import { ru } from "date-fns/locale";
+
 const Reports = () => {
     const REPORTS_URL = `${import.meta.env.VITE_API_URL}reports`;
     const MANAGEMENT_URL = `${import.meta.env.VITE_API_URL}management-reports`;
@@ -52,6 +55,7 @@ const Reports = () => {
 
     const [activeTab, setActiveTab] = useState("projects");
     const [isLoading, setIsLoading] = useState(true);
+    const [mode, setMode] = useState("read");
 
     const [reportsList, setReportsList] = useState([]);
     const [managementList, setManagementList] = useState([]);
@@ -65,14 +69,14 @@ const Reports = () => {
     const [reportData, setReportData] = useState({});
     const [periods, setPeriods] = useState({});
     const [availableMonths, setAvailableMonths] = useState([]);
-    const [mode, setMode] = useState("read");
+    const [filteredAvailableMonths, setFilteredAvailableMonths] = useState([]);
     const [filterOptionsList, setFilterOptionsList] = useState({}); // Список доступных параметров фильтров
     const [selectedProjectsFilters, setSelectedProjectsFilters] = useState({}); // Выбранные параметры фильтров во вкладке проектов
     const [selectedManagementFilters, setSelectedManagementFilters] = useState(
         {}
     ); // Выбранные параметры фильтров во вкладке менеджмента
     const [selectedManagementReport, setSelectedManagementReport] =
-        useState("");
+        useState("default");
 
     const [popupState, setPopupState] = useState(false);
 
@@ -141,6 +145,26 @@ const Reports = () => {
                 }
             })
             .finally(() => setIsLoading(false));
+    };
+
+    const filterAvailableMonths = () => {
+        if (selectedManagementReport === "default") {
+            setFilteredAvailableMonths(availableMonths);
+        } else {
+            const targetReport = managementList.find(
+                (item) => item.name === selectedManagementReport
+            );
+
+            const selectedMonth = format(
+                parseISO(targetReport?.report_month),
+                "yyyy-MM",
+                { locale: ru }
+            );
+
+            setFilteredAvailableMonths(
+                availableMonths.filter((item) => item.value === selectedMonth)
+            );
+        }
     };
 
     // Получение списка доступных фильтров
@@ -229,6 +253,7 @@ const Reports = () => {
         ).then((response) => {
             if (response?.status == 200) {
                 setAvailableMonths(response.data);
+                setFilteredAvailableMonths(response.data);
             }
         });
     };
@@ -407,7 +432,10 @@ const Reports = () => {
     }, [selectedManagementFilters]);
 
     useEffect(() => {
-        // getManagementReports();
+        filterAvailableMonths();
+    }, [selectedManagementReport]);
+
+    useEffect(() => {
         getPeriods();
         getAvailableMonths();
     }, []);
@@ -556,15 +584,17 @@ const Reports = () => {
                                         }}
                                     >
                                         <option value="">Отчётный месяц</option>
-                                        {availableMonths.length > 0 &&
-                                            availableMonths.map((month) => (
-                                                <option
-                                                    key={month.value}
-                                                    value={month.value}
-                                                >
-                                                    {month.label}
-                                                </option>
-                                            ))}
+                                        {filteredAvailableMonths.length > 0 &&
+                                            filteredAvailableMonths.map(
+                                                (month) => (
+                                                    <option
+                                                        key={month.value}
+                                                        value={month.value}
+                                                    >
+                                                        {month.label}
+                                                    </option>
+                                                )
+                                            )}
                                     </select>
 
                                     <button
