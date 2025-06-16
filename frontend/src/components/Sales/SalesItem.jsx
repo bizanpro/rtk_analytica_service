@@ -12,13 +12,21 @@ const SalesItem = ({ props, columns }) => {
         navigate(`/sales/${props.id}`, { state: { mode: "read" } });
     };
 
+    const getNestedValue = (obj, path) => {
+        return path.split(".").reduce((acc, part) => {
+            return acc && acc[part];
+        }, obj);
+    };
+
     return (
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
             onClick={handleRowClick}
         >
             {columns.map(({ key }) => {
-                const value = props[key];
+                const value = key.includes(".")
+                    ? getNestedValue(props, key)
+                    : props[key];
 
                 if (Array.isArray(value) && value !== null) {
                     if (value?.length > 0) {
@@ -29,22 +37,37 @@ const SalesItem = ({ props, columns }) => {
                             >
                                 <table className="w-full">
                                     <tbody>
-                                        {value?.map((item, index) => (
-                                            <tr key={`${key}_${index}`}>
-                                                <td
-                                                    className={`px-4 ${
-                                                        index !==
-                                                        value?.length - 1
-                                                            ? "pb-1"
-                                                            : "pt-1"
-                                                    }`}
-                                                >
-                                                    {key === "creditors"
-                                                        ? item.name
-                                                        : item?.toString()}
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        {key === "services"
+                                            ? value.map((item, index) => (
+                                                  <tr key={`${key}_${index}`}>
+                                                      <td
+                                                          className={`px-4 ${
+                                                              index !==
+                                                              value.length - 1
+                                                                  ? "pb-1"
+                                                                  : "pt-1"
+                                                          }`}
+                                                      >
+                                                          {item?.name?.toString()}
+                                                      </td>
+                                                  </tr>
+                                              ))
+                                            : value.map((item, index) => (
+                                                  <tr key={`${key}_${index}`}>
+                                                      <td
+                                                          className={`px-4 ${
+                                                              index !==
+                                                              value.length - 1
+                                                                  ? "pb-1"
+                                                                  : "pt-1"
+                                                          }`}
+                                                      >
+                                                          {key === "creditors"
+                                                              ? item.name
+                                                              : item?.toString()}
+                                                      </td>
+                                                  </tr>
+                                              ))}
                                     </tbody>
                                 </table>
                             </td>
@@ -104,13 +127,23 @@ const SalesItem = ({ props, columns }) => {
                                 </span>
                             </td>
                         );
-                    } else if (key === "status") {
+                    } else if (key === "contragent.status") {
                         return (
                             <td
                                 className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
                                 key={key}
                             >
-                                {handleStatus(value?.toString()) || "—"}
+                                <div
+                                    className={`rounded px-3 py-1 text-center
+                                            ${
+                                                value === "completed"
+                                                    ? "bg-green-400"
+                                                    : "bg-gray-200"
+                                            }
+                                        `}
+                                >
+                                    {handleStatus(value?.toString()) || "—"}
+                                </div>
                             </td>
                         );
                     } else if (

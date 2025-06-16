@@ -22,12 +22,12 @@ const Sales = () => {
         { label: "Проект", key: "name" },
         { label: "Заказчик", key: "contragent" },
         { label: "Банк", key: "creditors" },
-        { label: "Тип услуг", key: "service_type" },
-        { label: "Стоимость, млн руб.", key: "service_cost" },
+        { label: "Тип услуг", key: "services" },
+        { label: "Стоимость, млн руб.", key: "contragent.projects_total_budget" },
         { label: "Дата запроса", key: "request_date" },
         { label: "Источник", key: "request_source" },
         { label: "Дата статуса", key: "status_date" },
-        { label: "Статус", key: "status" },
+        { label: "Статус", key: "contragent.status" },
     ];
 
     const filteredProjects = useMemo(() => {
