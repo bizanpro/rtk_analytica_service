@@ -417,7 +417,7 @@ const Indicators = () => {
         getData(`${import.meta.env.VITE_API_URL}contragents/?all=true`).then(
             (response) => {
                 if (response?.status == 200) {
-                    setContragents(response.data.data);
+                    setContragents(response.data);
                 }
             }
         );
