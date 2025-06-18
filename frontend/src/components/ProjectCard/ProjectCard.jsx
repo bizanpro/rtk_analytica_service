@@ -158,7 +158,7 @@ const ProjectCard = () => {
             Accept: "application/json",
         }).then((response) => {
             if (response?.status == 200) {
-                setContragents(response.data.data);
+                setContragents(response.data);
             }
         });
     };

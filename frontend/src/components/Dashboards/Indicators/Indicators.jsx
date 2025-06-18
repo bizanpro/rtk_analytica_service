@@ -550,7 +550,7 @@ const Indicators = () => {
         <div className="flex flex-col justify-between gap-6 mb-8">
             {isLoading && <Loader transparent={true} />}
 
-            <div className="flex items-center justify-between gap-6">
+            <section className="flex items-center justify-between gap-6">
                 <div className="flex items-center gap-8">
                     <div className="flex flex-col">
                         <span className="block mb-2 text-gray-400">
@@ -659,10 +659,10 @@ const Indicators = () => {
                         Очистить
                     </button>
                 </div>
-            </div>
+            </section>
 
             <div className="grid grid-cols-3 gap-7 justify-between items-start">
-                <div className="flex flex-col gap-4">
+                <section className="flex flex-col gap-4">
                     <div className="flex flex-col gap-8 border border-gray-300 p-2">
                         <div className="p-4">
                             <FinancialMetrics
@@ -824,9 +824,9 @@ const Indicators = () => {
                             </div>
                         )}
                     </div>
-                </div>
+                </section>
 
-                <div className="flex flex-col gap-4">
+                <section className="flex flex-col gap-4">
                     <div className="flex flex-col gap-8 border border-gray-300 p-2">
                         <div className="p-4">
                             <GrossMetrics financialMetrics={financialMetrics} />
@@ -900,9 +900,9 @@ const Indicators = () => {
                                 ))}
                         </ul>
                     </div>
-                </div>
+                </section>
 
-                <div className="flex flex-col gap-4">
+                <section className="flex flex-col gap-4">
                     <div className="flex flex-col border border-gray-300 p-2">
                         <FunnelMetrics funnelMetrics={funnelMetrics.metrics} />
 
@@ -922,7 +922,7 @@ const Indicators = () => {
                     </div>
 
                     <ManagerReportsEditor />
-                </div>
+                </section>
             </div>
         </div>
     );
