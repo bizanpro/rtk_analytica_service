@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 import handleStatus from "../../utils/handleStatus";
@@ -19,6 +19,8 @@ import "react-toastify/dist/ReactToastify.css";
 const SupplierCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}suppliers`;
     const { supplierId } = useParams();
+    const navigate = useNavigate();
+
     const [supplierData, setSupplierData] = useState({});
     const [formFields, setFormFields] = useState({});
     const [mode, setMode] = useState("read");
@@ -79,11 +81,23 @@ const SupplierCard = () => {
     const fetchData = () => {
         getData(`${URL}/${supplierId}`, {
             Accept: "application/json",
-        }).then((response) => {
-            setSupplierData(response.data);
-            setProjects(response.data.projects);
-            setResponsiblePersons(response.data.contacts);
-        });
+        })
+            .then((response) => {
+                setSupplierData(response.data);
+                setProjects(response.data.projects);
+                setResponsiblePersons(response.data.contacts);
+            })
+            .catch((error) => {
+                if (error && error.status === 404) {
+                    navigate("/not-found", {
+                        state: {
+                            message: "Подрядчик не найден",
+                            errorCode: 404,
+                            additionalInfo: "",
+                        },
+                    });
+                }
+            });
     };
 
     const updateData = (showMessage = true) => {

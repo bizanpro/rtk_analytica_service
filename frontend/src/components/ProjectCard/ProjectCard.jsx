@@ -1,5 +1,10 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useParams, useLocation, useSearchParams } from "react-router-dom";
+import {
+    useParams,
+    useLocation,
+    useSearchParams,
+    useNavigate,
+} from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
@@ -28,6 +33,7 @@ const ProjectCard = () => {
     const location = useLocation();
     const { projectId } = useParams();
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
 
     const [projectData, setProjectData] = useState({});
     const [formFields, setFormFields] = useState({});
@@ -266,8 +272,15 @@ const ProjectCard = () => {
             setIsDataLoaded(true);
             setFirstInit(false);
         } catch (error) {
-            console.error("Ошибка при загрузке проекта:", error);
-            setIsDataLoaded(true);
+            if (error && error.status === 404) {
+                navigate("/not-found", {
+                    state: {
+                        message: "Проект не найден",
+                        errorCode: 404,
+                        additionalInfo: "",
+                    },
+                });
+            }
         }
     };
 
@@ -601,6 +614,12 @@ const ProjectCard = () => {
     };
 
     useEffect(() => {
+        if (projectId) {
+            getProject(projectId);
+        }
+    }, []);
+
+    useEffect(() => {
         if (projectData.creditors) {
             setFormFields((prev) => ({
                 ...prev,
@@ -624,12 +643,6 @@ const ProjectCard = () => {
         setReportEditorState(false);
         setReportId(null);
     }, [mode]);
-
-    useEffect(() => {
-        if (projectId) {
-            getProject(projectId);
-        }
-    }, []);
 
     useEffect(() => {
         const report = searchParams.get("report");

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 
@@ -17,6 +17,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 const EmployeeCard = () => {
     const { employeeId } = useParams();
+    const navigate = useNavigate();
+
     const [employeeData, setEmployeeData] = useState({});
     const [workload, setworkload] = useState({});
     const [personalWorkload, setPersonalWorkload] = useState();
@@ -236,7 +238,15 @@ const EmployeeCard = () => {
                 getTypes(),
             ]);
         } catch (error) {
-            console.error("Ошибка при загрузке сотрудника:", error);
+            if (error && error.status === 404) {
+                navigate("/not-found", {
+                    state: {
+                        message: "Сотрудник не найден",
+                        errorCode: 404,
+                        additionalInfo: "",
+                    },
+                });
+            }
         }
     };
 

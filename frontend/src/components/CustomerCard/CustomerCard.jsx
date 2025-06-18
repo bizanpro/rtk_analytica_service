@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 import handleStatus from "../../utils/handleStatus";
@@ -18,6 +18,8 @@ import "react-toastify/dist/ReactToastify.css";
 const CustomerCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}contragents`;
     const { contragentId } = useParams();
+    const navigate = useNavigate();
+
     const [customerData, setEmployeeData] = useState({});
     const [formFields, setFormFields] = useState({});
     const [mode, setMode] = useState("read");
@@ -47,12 +49,24 @@ const CustomerCard = () => {
     const fetchData = () => {
         getData(`${URL}/${contragentId}`, {
             Accept: "application/json",
-        }).then((response) => {
-            if (response.status == 200) {
-                setEmployeeData(response.data);
-                setProjects(response.data.projects);
-            }
-        });
+        })
+            .then((response) => {
+                if (response.status == 200) {
+                    setEmployeeData(response.data);
+                    setProjects(response.data.projects);
+                }
+            })
+            .catch((error) => {
+                if (error && error.status === 404) {
+                    navigate("/not-found", {
+                        state: {
+                            message: "Заказчик не найден",
+                            errorCode: 404,
+                            additionalInfo: "",
+                        },
+                    });
+                }
+            });
     };
 
     // Получаем ключевые лица

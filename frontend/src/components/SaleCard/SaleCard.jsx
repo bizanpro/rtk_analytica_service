@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
-import removeEmptyFields from "../../utils/removeEmptyFields";
 
 import Select from "react-select";
 import NewCustomerWindow from "./NewCustomerWindow";
@@ -21,6 +20,7 @@ const SaleCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}sales-funnel-projects`;
     const location = useLocation();
     const { saleId } = useParams();
+    const navigate = useNavigate();
 
     const [mode, setMode] = useState(location.state?.mode || "read");
     const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -410,9 +410,15 @@ const SaleCard = () => {
 
             setIsDataLoaded(true);
         } catch (error) {
-            console.error("Ошибка при загрузке проекта:", error);
-
-            setIsDataLoaded(true);
+            if (error && error.status === 404) {
+                navigate("/not-found", {
+                    state: {
+                        message: "Проект не найден",
+                        errorCode: 404,
+                        additionalInfo: "",
+                    },
+                });
+            }
         }
     };
 
