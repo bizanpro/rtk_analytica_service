@@ -362,7 +362,7 @@ const Indicators = () => {
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }completed-reports?${queryString}&no_cache=1`
+            }completed-reports?${queryString}`
         ).then((response) => {
             if (response?.status == 200) {
                 setCompletedReports(response.data);
@@ -404,7 +404,7 @@ const Indicators = () => {
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }company/funnel-metrics?no_cache=1&${queryString}`
+            }company/funnel-metrics?${queryString}`
         ).then((response) => {
             if (response?.status == 200) {
                 setFunnelMetrics(response.data);

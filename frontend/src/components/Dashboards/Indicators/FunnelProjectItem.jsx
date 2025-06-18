@@ -27,7 +27,19 @@ const FunnelProjectItem = ({
             </div>
 
             <div className="flex flex-col">
-                <div className="text-lg">{current_stage?.name}</div>
+                <div
+                    className={`text-lg ${
+                        current_stage?.name?.toLowerCase() ===
+                        "получено согласие"
+                            ? "text-green-400"
+                            : current_stage?.name?.toLowerCase() ===
+                              "получен отказ"
+                            ? "text-red-400"
+                            : ""
+                    }`}
+                >
+                    {current_stage?.name}
+                </div>
                 <span className="text-gray-400">
                     {current_stage?.changed_at &&
                         format(
