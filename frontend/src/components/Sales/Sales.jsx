@@ -1,29 +1,44 @@
 import { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
+import buildQueryParams from "../../utils/buildQueryParams";
+
 import SalesItem from "./SalesItem";
 import Popup from "../Popup/Popup";
 import Select from "../Select";
-import { useNavigate } from "react-router-dom";
+
+import DatePicker from "react-datepicker";
+
+const formatDate = (date) => {
+    return date.toISOString().split("T")[0];
+};
 
 const Sales = () => {
     const URL = `${import.meta.env.VITE_API_URL}sales-funnel-projects`;
     const navigate = useNavigate();
-    const [list, setList] = useState([]);
+
+    const [isLoading, setIsLoading] = useState(true);
     const [popupState, setPopupState] = useState(false);
+    const [list, setList] = useState([]);
+
     const [newProjectName, setNewProjectName] = useState("");
     const [selectedCustomer, setSelectedCustomer] = useState("");
     const [selectedBank, setSelectedBank] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("");
-    const [selectedPeriod, setSelectedPeriod] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
+
+    const [dateRange, setDateRange] = useState([null, null]);
 
     const COLUMNS = [
         { label: "Проект", key: "name" },
         { label: "Заказчик", key: "contragent" },
         { label: "Банк", key: "creditors" },
         { label: "Тип услуг", key: "services" },
-        { label: "Стоимость, млн руб.", key: "contragent.projects_total_budget" },
+        {
+            label: "Стоимость, млн руб.",
+            key: "contragent.projects_total_budget",
+        },
         { label: "Дата запроса", key: "request_date" },
         { label: "Источник", key: "request_source" },
         { label: "Дата статуса", key: "status_date" },
@@ -43,16 +58,13 @@ const Sales = () => {
                           )
                         : false
                     : true) &&
-                // (selectedStatus && selectedStatus !== "default"
-                //     ? project.status === selectedStatus
-                //     : true) &&
-                (selectedPeriod && selectedPeriod !== "default"
-                    ? project.request_date === selectedPeriod
+                (selectedStatus && selectedStatus !== "default"
+                    ? project.last_service_last_stage === selectedStatus
                     : true)
             );
         });
         return result;
-    }, [list, selectedCustomer, selectedBank, selectedStatus, selectedPeriod]);
+    }, [list, selectedCustomer, selectedBank, selectedStatus, dateRange]);
 
     // Заполняем селектор заказчиков
     const customerOptions = useMemo(() => {
@@ -72,20 +84,27 @@ const Sales = () => {
     }, [list]);
 
     // // Заполняем селектор статусов
-    // const statusOptions = useMemo(() => {
-    //     const allPM = list
-    //         .map((item) => item.manager)
-    //         .filter((manager) => manager !== null);
-    //     return Array.from(new Set(allPM));
-    // }, [list]);
+    const statusOptions = useMemo(() => {
+        const allPM = list
+            .map((item) => item.last_service_last_stage)
+            .filter(
+                (last_service_last_stage) => last_service_last_stage !== null
+            );
+        return Array.from(new Set(allPM));
+    }, [list]);
 
-    // // Заполняем селектор периода запросов
-    // const periodOptions = useMemo(() => {
-    //     const allPM = list
-    //         .map((item) => item.manager)
-    //         .filter((manager) => manager !== null);
-    //     return Array.from(new Set(allPM));
-    // }, [list]);
+    // Получение реестра
+    const getList = (query = "") => {
+        setIsLoading(true);
+
+        console.log(query);
+
+        getData(`${URL}?${query}`, { Accept: "application/json" })
+            .then((response) => {
+                setList(response.data);
+            })
+            .finally(() => setIsLoading(false));
+    };
 
     const handleProjectsNameChange = (e) => {
         setNewProjectName(e.target.value);
@@ -111,11 +130,7 @@ const Sales = () => {
     };
 
     useEffect(() => {
-        getData(URL, { Accept: "application/json" })
-            .then((response) => {
-                setList(response.data);
-            })
-            .finally(() => setIsLoading(false));
+        getList();
     }, []);
 
     return (
@@ -132,7 +147,7 @@ const Sales = () => {
                         {customerOptions.length > 0 && (
                             <Select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                    "p-1 border border-gray-300 w-[150px]"
                                 }
                                 title={"Заказчик"}
                                 items={customerOptions}
@@ -145,7 +160,7 @@ const Sales = () => {
                         {bankOptions.length > 0 && (
                             <Select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                    "p-1 border border-gray-300 w-[150px]"
                                 }
                                 title={"Банк"}
                                 items={bankOptions}
@@ -155,10 +170,10 @@ const Sales = () => {
                             />
                         )}
 
-                        {/* {statusOptions.length > 0 && (
+                        {statusOptions.length > 0 && (
                             <Select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                    "p-1 border border-gray-300 w-[150px]"
                                 }
                                 title={"Статус"}
                                 items={statusOptions}
@@ -168,18 +183,35 @@ const Sales = () => {
                             />
                         )}
 
-                        {periodOptions.length > 0 && (
-                            <Select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                        <DatePicker
+                            className="p-1 border border-gray-300 h-[27.5px] w-[195px]"
+                            placeholderText="Период запросов"
+                            startDate={dateRange[0]}
+                            endDate={dateRange[1]}
+                            onChange={(update) => {
+                                const [start, end] = update || [];
+
+                                if (!start && !end) {
+                                    setDateRange([null, null]);
+                                    getList();
+                                    return;
                                 }
-                                title={"Период запросов"}
-                                items={periodOptions}
-                                onChange={(evt) =>
-                                    setSelectedPeriod(evt.target.value)
+
+                                setDateRange(update);
+
+                                if (start && end) {
+                                    const filters = {
+                                        request_date_from: [formatDate(start)],
+                                        request_date_to: [formatDate(end)],
+                                    };
+                                    const query = buildQueryParams(filters);
+                                    getList(query);
                                 }
-                            />
-                        )} */}
+                            }}
+                            dateFormat="dd.MM.yyyy"
+                            selectsRange={true}
+                            isClearable={true}
+                        />
 
                         <button
                             type="button"
