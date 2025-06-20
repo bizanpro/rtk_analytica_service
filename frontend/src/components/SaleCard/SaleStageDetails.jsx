@@ -1,3 +1,5 @@
+import pepcentColorHandler from "../../utils/percentColorHandler";
+
 const SaleStageDetails = ({ stageMetrics, setStageMetrics, mode }) => {
     return (
         <div className="flex flex-col gap-4">
@@ -60,11 +62,27 @@ const SaleStageDetails = ({ stageMetrics, setStageMetrics, mode }) => {
                         </span>
                     </span>
 
-                    <div className="flex items-center border-2 border-gray-300 py-1 px-2 h-[30px]">
+                    <div
+                        className={`flex items-center border-2 border-gray-300 py-1 px-2 h-[30px] ${
+                            stageMetrics.fta_change_percent
+                                ? pepcentColorHandler(
+                                      stageMetrics.fta_change_percent
+                                  )
+                                : ""
+                        }`}
+                    >
                         {stageMetrics.fta_change_percent || 0}%
                     </div>
 
-                    <div className="flex items-center border-2 border-gray-300 py-1 px-2 h-[30px]">
+                    <div
+                        className={`flex items-center border-2 border-gray-300 py-1 px-2 h-[30px] ${
+                            stageMetrics.tk_change_percent
+                                ? pepcentColorHandler(
+                                      stageMetrics.tk_change_percent
+                                  )
+                                : ""
+                        }`}
+                    >
                         {stageMetrics.tk_change_percent || 0}%
                     </div>
                 </div>
