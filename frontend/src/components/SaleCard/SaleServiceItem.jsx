@@ -1,3 +1,5 @@
+import pepcentColorHandler from "../../utils/percentColorHandler";
+
 const SaleServiceItem = ({
     service,
     setAddWorkScore,
@@ -26,7 +28,22 @@ const SaleServiceItem = ({
                 {service.full_name}
             </div>
             <div className="flex items-center justify-between">
-                -
+                <div className="flex items-center gap-3">
+                    {service.cost}
+
+                    <div
+                        className={`${
+                            service.cost_change_percent
+                                ? pepcentColorHandler(
+                                      service.cost_change_percent
+                                  )
+                                : ""
+                        }`}
+                    >
+                        {service.cost_change_percent}
+                    </div>
+                </div>
+
                 {mode === "read" ? (
                     <div className="w-[20px] h-[20px]"></div>
                 ) : (
