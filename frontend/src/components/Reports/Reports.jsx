@@ -79,9 +79,9 @@ const Reports = () => {
         {}
     ); // Выбранные параметры фильтров во вкладке менеджмента
     const [selectedManagementReport, setSelectedManagementReport] =
-        useState("default");
+        useState("default"); // Выбранный отчет
     const [selectedPhysicalPerson, setSelectedPhysicalPerson] =
-        useState("default");
+        useState("default"); // Выбранный отвественный
 
     const [managementReportData, setManagementReportData] = useState({
         name: "",
@@ -116,6 +116,7 @@ const Reports = () => {
         return Array.from(new Set(allReports));
     }, [managementList]);
 
+    // Заполняем селектор ответственных
     const physicalPersonOptions = useMemo(() => {
         const allReports = managementList.flatMap(
             (item) => item.physical_person.name
@@ -320,10 +321,6 @@ const Reports = () => {
         setManagementReportData(props);
         setMode(mode);
         setManagementEditorState(true);
-    };
-
-    const openPopup = () => {
-        setPopupState(true);
     };
 
     const closePopup = (evt) => {
@@ -648,7 +645,7 @@ const Reports = () => {
                                 <button
                                     type="button"
                                     className="py-1 px-5"
-                                    onClick={() => openPopup()}
+                                    onClick={() => setPopupState(true)}
                                 >
                                     Создать отчёт
                                 </button>

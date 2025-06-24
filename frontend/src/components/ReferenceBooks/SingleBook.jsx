@@ -24,6 +24,7 @@ const SingleBook = () => {
             { label: "Сокращённое наименование", key: "name" },
             { label: "Полное наименование", key: "full_name" },
             { label: "Регулярный", key: "is_regular" },
+            { label: "Указывать стоимость в отчете", key: "show_cost" },
             { label: "Кол-во проектов", key: "count" },
             { label: "Последнее изменение", key: "updated_at" },
             { label: "Автор измнения", key: "author" },
@@ -287,7 +288,7 @@ const SingleBook = () => {
     const handleNewElementInputChange = (e, name) => {
         let value;
 
-        if (name === "is_regular") {
+        if (name === "is_regular" || name === "show_cost") {
             value = e.target.value === "true";
         } else {
             value = e.target.value;
@@ -302,7 +303,7 @@ const SingleBook = () => {
 
         if (name === "phone") {
             value = e;
-        } else if (name === "is_regular") {
+        } else if (name === "is_regular" || name === "show_cost") {
             value = e.target.value === "true";
         } else {
             value = e.target.value;
@@ -877,6 +878,29 @@ const SingleBook = () => {
                                                             </select>
                                                         ) : key ===
                                                           "is_regular" ? (
+                                                            <select
+                                                                className="w-full border border-gray-300 min-h-[30px]"
+                                                                name={key}
+                                                                defaultValue=""
+                                                                onChange={(e) =>
+                                                                    handleNewElementInputChange(
+                                                                        e,
+                                                                        key
+                                                                    )
+                                                                }
+                                                            >
+                                                                <option value="">
+                                                                    Выбрать
+                                                                </option>
+                                                                <option value="true">
+                                                                    Да
+                                                                </option>
+                                                                <option value="false">
+                                                                    Нет
+                                                                </option>
+                                                            </select>
+                                                        ) : key ===
+                                                          "show_cost" ? (
                                                             <select
                                                                 className="w-full border border-gray-300 min-h-[30px]"
                                                                 name={key}
