@@ -36,8 +36,10 @@ const Reports = () => {
         [
             { label: "Отчёт", key: "name" },
             { label: "Отчётный месяц", key: "report_month" },
+            { label: "Оценка", key: "score" },
             { label: "Отвественный", key: "physical_person" },
-            { label: "Дата создания", key: "created_at" },
+            { label: "Статус", key: "status" },
+            { label: "Дата утверждения", key: "approved_at" },
             { label: "Дата изменения", key: "updated_at" },
         ],
     ];
@@ -56,6 +58,7 @@ const Reports = () => {
     const [activeTab, setActiveTab] = useState("projects");
     const [isLoading, setIsLoading] = useState(true);
     const [mode, setMode] = useState("read");
+    const [popupState, setPopupState] = useState(false);
 
     const [reportsList, setReportsList] = useState([]);
     const [managementList, setManagementList] = useState([]);
@@ -77,8 +80,8 @@ const Reports = () => {
     ); // Выбранные параметры фильтров во вкладке менеджмента
     const [selectedManagementReport, setSelectedManagementReport] =
         useState("default");
-
-    const [popupState, setPopupState] = useState(false);
+    const [selectedPhysicalPerson, setSelectedPhysicalPerson] =
+        useState("default");
 
     const [managementReportData, setManagementReportData] = useState({
         name: "",
@@ -94,17 +97,29 @@ const Reports = () => {
 
     const filteredReports = useMemo(() => {
         const result = managementList.filter((report) => {
-            return selectedManagementReport &&
+            return (
+                (selectedManagementReport &&
                 selectedManagementReport !== "default"
-                ? report.name === selectedManagementReport
-                : true;
+                    ? report.name === selectedManagementReport
+                    : true) &&
+                (selectedPhysicalPerson && selectedPhysicalPerson !== "default"
+                    ? report.physical_person.name === selectedPhysicalPerson
+                    : true)
+            );
         });
         return result;
-    }, [managementList, selectedManagementReport]);
+    }, [managementList, selectedManagementReport, selectedPhysicalPerson]);
 
-    // Заполняем селектор банков
+    // Заполняем селектор отчетов менеджмента
     const managementReportsOptions = useMemo(() => {
         const allReports = managementList.flatMap((item) => item.name);
+        return Array.from(new Set(allReports));
+    }, [managementList]);
+
+    const physicalPersonOptions = useMemo(() => {
+        const allReports = managementList.flatMap(
+            (item) => item.physical_person.name
+        );
         return Array.from(new Set(allReports));
     }, [managementList]);
 
@@ -142,6 +157,7 @@ const Reports = () => {
                 if (response.status === 200) {
                     setReportsList(response.data.reports);
                     setSelectedManagementReport("default");
+                    setSelectedPhysicalPerson("default");
                 }
             })
             .finally(() => setIsLoading(false));
@@ -592,6 +608,30 @@ const Reports = () => {
                                                         value={month.value}
                                                     >
                                                         {month.label}
+                                                    </option>
+                                                )
+                                            )}
+                                    </select>
+
+                                    <select
+                                        className={
+                                            "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                        }
+                                        onChange={(evt) =>
+                                            setSelectedPhysicalPerson(
+                                                evt.target.value
+                                            )
+                                        }
+                                    >
+                                        <option value="">Ответственный</option>
+                                        {physicalPersonOptions.length > 0 &&
+                                            physicalPersonOptions.map(
+                                                (item) => (
+                                                    <option
+                                                        key={item}
+                                                        value={item}
+                                                    >
+                                                        {item}
                                                     </option>
                                                 )
                                             )}
