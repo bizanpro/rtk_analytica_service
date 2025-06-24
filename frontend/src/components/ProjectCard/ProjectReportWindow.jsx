@@ -15,7 +15,6 @@ const ProjectReportWindow = ({
     updateReport,
     setReportId,
     mode,
-    reportTitle,
 }) => {
     const [reportData, setReportData] = useState({
         report_status_id: 1,
@@ -160,7 +159,7 @@ const ProjectReportWindow = ({
     // Обработка инпутов
     const handleInputChange = useCallback(
         (e, name) => {
-            let value = e.target.value;
+            let value = name === "approval_date" ? e : e.target.value;
 
             if (
                 name === "budget_in_billions" ||
@@ -528,7 +527,7 @@ const ProjectReportWindow = ({
                 </div>
             </div>
 
-            <div className="grid gap-3 grid-cols-1">
+            <div className="grid gap-3 grid-cols-2">
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Статус</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
@@ -547,6 +546,19 @@ const ProjectReportWindow = ({
                             ))}
                         </select>
                     </div>
+                </div>
+
+                <div className="flex flex-col">
+                    <span className="block mb-2 text-gray-400">
+                        Дата утверждения
+                    </span>
+                    <DatePicker
+                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
+                        selected={reportData?.approval_date}
+                        onChange={(e) => handleInputChange(e, "approval_date")}
+                        dateFormat="dd.MM.yyyy"
+                        disabled={mode === "read"}
+                    />
                 </div>
 
                 {/* {reportData["report_status_id"] == 4 &&

@@ -39,7 +39,7 @@ const Reports = () => {
             { label: "Оценка", key: "score" },
             { label: "Отвественный", key: "physical_person" },
             { label: "Статус", key: "status" },
-            { label: "Дата утверждения", key: "approved_at" },
+            { label: "Дата утверждения", key: "approval_date" },
             { label: "Дата изменения", key: "updated_at" },
         ],
     ];

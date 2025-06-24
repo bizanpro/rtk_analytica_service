@@ -503,6 +503,7 @@ const ProjectCard = () => {
         )} - ${formatDate(data.implementation_period.end)}`;
         data.execution_start_date = formatDate(data.execution_period.start);
         data.execution_end_date = formatDate(data.execution_period.end);
+        data.approval_date = formatDate(data.approval_date);
 
         data.project_id = projectId;
 
@@ -514,8 +515,8 @@ const ProjectCard = () => {
             position: "top-center",
         });
 
-        postData("POST", `${import.meta.env.VITE_API_URL}reports`, data).then(
-            (response) => {
+        postData("POST", `${import.meta.env.VITE_API_URL}reports`, data)
+            .then((response) => {
                 if (response?.ok) {
                     toast.update(query, {
                         render: response.message,
@@ -545,8 +546,18 @@ const ProjectCard = () => {
                     });
                     setReportWindowsState(false);
                 }
-            }
-        );
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка при отправке отчёта", {
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 5000,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
         // } else {
         //     if (Object.keys(data).length > 0) {
         //         setReportWindowsState(false);
@@ -569,6 +580,7 @@ const ProjectCard = () => {
         )} - ${formatDate(data.implementation_period.end)}`;
         data.execution_start_date = formatDate(data.execution_period.start);
         data.execution_end_date = formatDate(data.execution_period.end);
+        data.approval_date = formatDate(data.approval_date);
 
         data.project_id = projectId;
 
@@ -586,24 +598,36 @@ const ProjectCard = () => {
             "PATCH",
             `${import.meta.env.VITE_API_URL}reports/${reportId}`,
             data
-        ).then((response) => {
-            if (response?.ok) {
-                toast.update(query, {
-                    render: response.message,
-                    type: "success",
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: response.message,
+                        type: "success",
+                        containerId: "projectCard",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                    setReportWindowsState(false);
+                    getProject(projectId);
+                } else {
+                    setReportWindowsState(false);
+                }
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка обновления отчета", {
                     containerId: "projectCard",
                     isLoading: false,
-                    autoClose: 1200,
+                    autoClose: 5000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
                     position: "top-center",
                 });
-                setReportWindowsState(false);
-                getProject(projectId);
-            } else {
-                setReportWindowsState(false);
-            }
-        });
+            });
         // } else {
         //     if (Object.keys(data).length > 0) {
         //         setReportWindowsState(false);
@@ -1172,12 +1196,15 @@ const ProjectCard = () => {
                                         <button
                                             type="button"
                                             className={`py-2 transition-all border-b-2 ${
-                                                activeReportTab == "projectReports"
+                                                activeReportTab ==
+                                                "projectReports"
                                                     ? "border-gray-500"
                                                     : "border-transparent"
                                             }`}
                                             onClick={() =>
-                                                setActiveReportTab("projectReports")
+                                                setActiveReportTab(
+                                                    "projectReports"
+                                                )
                                             }
                                             title="Перейти на вкладку Отчёты проекта"
                                         >
@@ -1186,12 +1213,15 @@ const ProjectCard = () => {
                                         <button
                                             type="button"
                                             className={`py-2 transition-all border-b-2 ${
-                                                activeReportTab == "managementReports"
+                                                activeReportTab ==
+                                                "managementReports"
                                                     ? "border-gray-500"
                                                     : "border-transparent"
                                             }`}
                                             onClick={() =>
-                                                setActiveReportTab("managementReports")
+                                                setActiveReportTab(
+                                                    "managementReports"
+                                                )
                                             }
                                             title="Перейти на вкладку Отчёты руководителя проекта"
                                         >

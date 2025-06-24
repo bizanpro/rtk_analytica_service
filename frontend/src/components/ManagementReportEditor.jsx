@@ -47,7 +47,7 @@ const ManagementReportEditor = ({
 
             <div>
                 <div className="flex items-center gap-2 mb-3">
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-3 overflow-x-auto overflow-y-hidden pb-2">
                         {tabOptions.map((tab) => (
                             <div key={tab.id} className="radio-field_tab">
                                 <input
