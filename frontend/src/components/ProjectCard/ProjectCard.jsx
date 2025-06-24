@@ -14,7 +14,7 @@ import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
 import ProjectReportWindow from "./ProjectReportWindow";
 import ProjectReportItem from "./ProjectReportItem";
-import ProjectReportEditor from "./ProjectReportEditor";
+// import ProjectReportEditor from "./ProjectReportEditor";
 import ProjectStatisticsBlock from "./ProjectStatisticsBlock";
 import ProjectTeam from "./ProjectTeam";
 import ReportServices from "./ReportServices";
@@ -69,9 +69,9 @@ const ProjectCard = () => {
 
     const [reports, setReports] = useState([]);
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
-    const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
-    const [reportEditorName, setReportEditorName] = useState("");
-    const [reportData, setReportData] = useState({});
+    // const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
+    // const [reportEditorName, setReportEditorName] = useState("");
+    // const [reportData, setReportData] = useState({});
 
     const [teamData, setTeamData] = useState([]);
     const [services, setServices] = useState([]);
@@ -460,20 +460,20 @@ const ProjectCard = () => {
     };
 
     // Принудительное открытие окна редактирования заключения по отчёту
-    const openSubReportEditor = (id) => {
-        setReportWindowsState(false);
-        getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
-            (response) => {
-                if (response?.status == 200) {
-                    setReportData(response.data);
-                    setReportId(id);
-                    if (id) {
-                        setReportEditorState(true);
-                    }
-                }
-            }
-        );
-    };
+    // const openSubReportEditor = (id) => {
+    //     setReportWindowsState(false);
+    //     getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
+    //         (response) => {
+    //             if (response?.status == 200) {
+    //                 setReportData(response.data);
+    //                 setReportId(id);
+    //                 if (id) {
+    //                     setReportEditorState(true);
+    //                 }
+    //             }
+    //         }
+    //     );
+    // };
 
     // Удаление отчёта
     const deleteReport = (id) => {
@@ -489,7 +489,7 @@ const ProjectCard = () => {
     };
 
     // Отправка отчёта
-    const sendReport = (data, addReport) => {
+    const sendReport = (data) => {
         if (data.budget_in_billions) {
             data.budget_in_billions = data.budget_in_billions.replace(",", ".");
         }
@@ -505,19 +505,16 @@ const ProjectCard = () => {
 
         data.project_id = projectId;
 
-        setReportData(data);
+        // setReportData(data);
 
-        if (!addReport) {
-            query = toast.loading("Выполняется отправка", {
-                containerId: "projectCard",
-                position: "top-center",
-            });
+        // if (!addReport) {
+        query = toast.loading("Выполняется отправка", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
 
-            postData(
-                "POST",
-                `${import.meta.env.VITE_API_URL}reports`,
-                data
-            ).then((response) => {
+        postData("POST", `${import.meta.env.VITE_API_URL}reports`, data).then(
+            (response) => {
                 if (response?.ok) {
                     toast.update(query, {
                         render: response.message,
@@ -547,17 +544,18 @@ const ProjectCard = () => {
                     });
                     setReportWindowsState(false);
                 }
-            });
-        } else {
-            if (Object.keys(data).length > 0) {
-                setReportWindowsState(false);
-                setReportEditorState(true);
             }
-        }
+        );
+        // } else {
+        //     if (Object.keys(data).length > 0) {
+        //         setReportWindowsState(false);
+        //         // setReportEditorState(true);
+        //     }
+        // }
     };
 
     // Обновление отчёта
-    const updateReport = (data, reportId, addReport) => {
+    const updateReport = (data, reportId) => {
         if (data.budget_in_billions) {
             data.budget_in_billions = data.budget_in_billions.replace(",", ".");
         }
@@ -573,44 +571,44 @@ const ProjectCard = () => {
 
         data.project_id = projectId;
 
-        setReportData(data);
+        // setReportData(data);
 
-        if (!addReport) {
-            if (mode === "read") return;
+        // if (!addReport) {
+        if (mode === "read") return;
 
-            query = toast.loading("Обновление", {
-                containerId: "projectCard",
-                position: "top-center",
-            });
+        query = toast.loading("Обновление", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
 
-            postData(
-                "PATCH",
-                `${import.meta.env.VITE_API_URL}reports/${reportId}`,
-                data
-            ).then((response) => {
-                if (response?.ok) {
-                    toast.update(query, {
-                        render: response.message,
-                        type: "success",
-                        containerId: "projectCard",
-                        isLoading: false,
-                        autoClose: 1200,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: false,
-                        position: "top-center",
-                    });
-                    setReportWindowsState(false);
-                    getProject(projectId);
-                } else {
-                    setReportWindowsState(false);
-                }
-            });
-        } else {
-            if (Object.keys(data).length > 0) {
+        postData(
+            "PATCH",
+            `${import.meta.env.VITE_API_URL}reports/${reportId}`,
+            data
+        ).then((response) => {
+            if (response?.ok) {
+                toast.update(query, {
+                    render: response.message,
+                    type: "success",
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
                 setReportWindowsState(false);
-                setReportEditorState(true);
+                getProject(projectId);
+            } else {
+                setReportWindowsState(false);
             }
-        }
+        });
+        // } else {
+        //     if (Object.keys(data).length > 0) {
+        //         setReportWindowsState(false);
+        //         setReportEditorState(true);
+        //     }
+        // }
     };
 
     useEffect(() => {
@@ -640,20 +638,20 @@ const ProjectCard = () => {
         setAddLender(false);
         setAddCustomer(false);
         setReportWindowsState(false);
-        setReportEditorState(false);
+        // setReportEditorState(false);
         setReportId(null);
     }, [mode]);
 
     useEffect(() => {
         const report = searchParams.get("report");
-        const withConclusion = searchParams.get("with_conclusion");
+        // const withConclusion = searchParams.get("with_conclusion");
 
         if (report !== null && report !== "undefined") {
-            if (withConclusion === "true") {
-                openSubReportEditor(report);
-            } else {
-                openReportEditor(report);
-            }
+            // if (withConclusion === "true") {
+            //     openSubReportEditor(report);
+            // } else {
+            openReportEditor(report);
+            // }
         }
     }, [searchParams]);
 
@@ -1113,7 +1111,7 @@ const ProjectCard = () => {
                         </div>
 
                         <div className="flex flex-col">
-                            {reportEditorState ? (
+                            {/* {reportEditorState ? (
                                 <ProjectReportEditor
                                     reportData={reportData}
                                     postData={postData}
@@ -1129,111 +1127,95 @@ const ProjectCard = () => {
                                     getProject={getProject}
                                     mode={mode}
                                 />
-                            ) : (
-                                <>
-                                    <ProjectStatisticsBlock
-                                        ref={statRef}
-                                        projectId={projectId}
-                                    />
+                            ) : ( */}
 
-                                    <div className="flex flex-col gap-2 flex-grow">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-gray-400">
-                                                История проекта
-                                            </span>
+                            <ProjectStatisticsBlock
+                                ref={statRef}
+                                projectId={projectId}
+                            />
 
-                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                ?
-                                            </span>
-                                            {mode == "edit" && (
-                                                <button
-                                                    type="button"
-                                                    className="add-button"
-                                                    onClick={() =>
-                                                        setReportWindowsState(
-                                                            true
-                                                        )
-                                                    }
-                                                    disabled={
-                                                        projectData.contragent_id
-                                                            ? false
-                                                            : true
-                                                    }
-                                                    title={
-                                                        projectData.contragent_id
-                                                            ? "Открыть конструктор отчёта"
-                                                            : "Необходимо назначить заказчика"
-                                                    }
-                                                >
-                                                    <span></span>
-                                                </button>
-                                            )}
-                                        </div>
+                            <div className="flex flex-col gap-2 flex-grow">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-400">
+                                        История проекта
+                                    </span>
 
-                                        <div className="relative border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                            {!reportWindowsState ? (
-                                                <ul className="grid gap-3">
-                                                    {!isDataLoaded && (
-                                                        <Loader />
-                                                    )}
+                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                        ?
+                                    </span>
+                                    {mode == "edit" && (
+                                        <button
+                                            type="button"
+                                            className="add-button"
+                                            onClick={() =>
+                                                setReportWindowsState(true)
+                                            }
+                                            disabled={
+                                                projectData.contragent_id
+                                                    ? false
+                                                    : true
+                                            }
+                                            title={
+                                                projectData.contragent_id
+                                                    ? "Открыть конструктор отчёта"
+                                                    : "Необходимо назначить заказчика"
+                                            }
+                                        >
+                                            <span></span>
+                                        </button>
+                                    )}
+                                </div>
 
-                                                    <li className="grid items-center grid-cols-[25%_18%_25%_18%] gap-3 mb-2 text-gray-400">
-                                                        <span>Отчет</span>
-                                                        <span>Статус</span>
-                                                        <span>
-                                                            Период выполнения
-                                                        </span>
-                                                        <span>
-                                                            Общая оценка
-                                                        </span>
-                                                    </li>
+                                <div className="relative border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                    {!reportWindowsState ? (
+                                        <ul className="grid gap-3">
+                                            {!isDataLoaded && <Loader />}
 
-                                                    {reports.length > 0 &&
-                                                        reports.map(
-                                                            (report, index) => (
-                                                                <ProjectReportItem
-                                                                    key={
-                                                                        report.id ||
-                                                                        index
-                                                                    }
-                                                                    {...report}
-                                                                    setReportEditorState={
-                                                                        setReportEditorState
-                                                                    }
-                                                                    setReportEditorName={
-                                                                        setReportEditorName
-                                                                    }
-                                                                    deleteReport={
-                                                                        deleteReport
-                                                                    }
-                                                                    openReportEditor={
-                                                                        openReportEditor
-                                                                    }
-                                                                    openSubReportEditor={
-                                                                        openSubReportEditor
-                                                                    }
-                                                                    mode={mode}
-                                                                />
-                                                            )
-                                                        )}
-                                                </ul>
-                                            ) : (
-                                                <ProjectReportWindow
-                                                    reportWindowsState={
-                                                        setReportWindowsState
-                                                    }
-                                                    sendReport={sendReport}
-                                                    contracts={contracts}
-                                                    updateReport={updateReport}
-                                                    reportId={reportId}
-                                                    setReportId={setReportId}
-                                                    mode={mode}
-                                                />
-                                            )}
-                                        </div>
-                                    </div>
-                                </>
-                            )}
+                                            <li className="grid items-center grid-cols-[33%_20%_33%_1fr] gap-3 mb-2 text-gray-400">
+                                                <span>Отчет</span>
+                                                <span>Статус</span>
+                                                <span>Период выполнения</span>
+                                            </li>
+
+                                            {reports.length > 0 &&
+                                                reports.map((report, index) => (
+                                                    <ProjectReportItem
+                                                        key={report.id || index}
+                                                        {...report}
+                                                        // setReportEditorState={
+                                                        //     setReportEditorState
+                                                        // }
+                                                        // setReportEditorName={
+                                                        //     setReportEditorName
+                                                        // }
+                                                        deleteReport={
+                                                            deleteReport
+                                                        }
+                                                        openReportEditor={
+                                                            openReportEditor
+                                                        }
+                                                        // openSubReportEditor={
+                                                        //     openSubReportEditor
+                                                        // }
+                                                        mode={mode}
+                                                    />
+                                                ))}
+                                        </ul>
+                                    ) : (
+                                        <ProjectReportWindow
+                                            reportWindowsState={
+                                                setReportWindowsState
+                                            }
+                                            sendReport={sendReport}
+                                            contracts={contracts}
+                                            updateReport={updateReport}
+                                            reportId={reportId}
+                                            setReportId={setReportId}
+                                            mode={mode}
+                                        />
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

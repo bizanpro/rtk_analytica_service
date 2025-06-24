@@ -4,19 +4,17 @@ const ProjectReportItem = ({
     status,
     report_period,
     days,
-    general_assessment,
     execution_period,
-    setReportEditorName,
+    // setReportEditorName,
     openReportEditor,
-    openSubReportEditor,
     deleteReport,
     mode,
 }) => {
     return (
         <li
-            className="grid items-center grid-cols-[25%_18%_25%_15%_6%] gap-3 cursor-pointer"
+            className="grid items-center grid-cols-[33%_20%_33%_1fr] gap-3 cursor-pointer"
             onClick={() => {
-                setReportEditorName(report_name);
+                // setReportEditorName(report_name);
                 openReportEditor(id);
             }}
         >
@@ -24,9 +22,11 @@ const ProjectReportItem = ({
                 <div className="text-lg">{report_name}</div>
                 <span className="text-sm">{report_period}</span>
             </div>
+
             <div className="bg-gray-200 py-1 px-2 text-center rounded-md">
                 {status}
             </div>
+
             <div className="flex gap-3 items-center">
                 <div className="flex flex-col flex-grow">
                     <div className="text-lg">{days}</div>
@@ -34,14 +34,14 @@ const ProjectReportItem = ({
                 </div>
             </div>
 
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
                 {general_assessment && (
                     <div className="text-lg">{general_assessment}/10</div>
                 )}
-            </div>
+            </div> */}
 
             <div className="flex items-center justify-end gap-2">
-                {general_assessment && (
+                {/* {general_assessment && (
                     <button
                         type="button"
                         className="info-icon flex-none w-[20px]"
@@ -51,7 +51,7 @@ const ProjectReportItem = ({
                             openSubReportEditor(id);
                         }}
                     ></button>
-                )}
+                )} */}
 
                 {mode === "edit" && (
                     <button

@@ -202,37 +202,37 @@ const SaleCard = () => {
     };
 
     // Обновляем услугу
-    const updateService = () => {
-        query = toast.loading("Обновление", {
-            containerId: "projectCard",
-            position: "top-center",
-        });
+    // const updateService = () => {
+    //     query = toast.loading("Обновление", {
+    //         containerId: "projectCard",
+    //         position: "top-center",
+    //     });
 
-        postData(
-            "PATCH",
-            `${
-                import.meta.env.VITE_API_URL
-            }sales-funnel-projects/${saleId}/services/${
-                selectedService.report_type_id
-            }`,
-            selectedService
-        ).then((response) => {
-            if (response?.ok) {
-                toast.update(query, {
-                    render: response.message,
-                    type: "success",
-                    containerId: "projectCard",
-                    isLoading: false,
-                    autoClose: 1200,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-                fetchServices();
-                setAddWorkScore("");
-            }
-        });
-    };
+    //     postData(
+    //         "PATCH",
+    //         `${
+    //             import.meta.env.VITE_API_URL
+    //         }sales-funnel-projects/${saleId}/services/${
+    //             selectedService.report_type_id
+    //         }`,
+    //         selectedService
+    //     ).then((response) => {
+    //         if (response?.ok) {
+    //             toast.update(query, {
+    //                 render: response.message,
+    //                 type: "success",
+    //                 containerId: "projectCard",
+    //                 isLoading: false,
+    //                 autoClose: 1200,
+    //                 pauseOnFocusLoss: false,
+    //                 pauseOnHover: false,
+    //                 position: "top-center",
+    //             });
+    //             fetchServices();
+    //             setAddWorkScore("");
+    //         }
+    //     });
+    // };
 
     // Обновление заказчика
     const updateContragent = async (showMessage = true, data) => {
@@ -1064,7 +1064,7 @@ const SaleCard = () => {
                                 </div>
 
                                 <div className="flex flex-col gap-3">
-                                    <div className="flex flex-col gap-2 h-[200px]">
+                                    {/* <div className="flex flex-col gap-2 h-[200px]">
                                         <div className="flex items-center gap-2">
                                             <span className="text-gray-400">
                                                 Перечень работ
@@ -1110,7 +1110,7 @@ const SaleCard = () => {
                                                     : true
                                             }
                                         />
-                                    </div>
+                                    </div> */}
 
                                     <div className="flex flex-col gap-2 flex-grow">
                                         <div className="flex items-center gap-2">

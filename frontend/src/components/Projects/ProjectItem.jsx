@@ -137,6 +137,33 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                                 {handleStatus(value?.toString()) || "—"}
                             </td>
                         );
+                    } else if (key === "implementation_period") {
+                        return (
+                            <td
+                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-2xl"
+                                key={key}
+                            >
+                                <div className="flex items-end gap-1">
+                                    <div className="flex items-end gap-1">
+                                        {value?.toString() || "—"}{" "}
+                                        <span className="text-base">мес.</span>
+                                    </div>
+
+                                    {props?.completion_percentage && (
+                                        <div className="text-gray-300 border-gray-300 py-1 px-1 text-center border rounded-md text-sm">
+                                            {Math.round(
+                                                props?.completion_percentage
+                                            )}
+                                            %
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="text-base">
+                                    до {props?.implementation_period_string}
+                                </div>
+                            </td>
+                        );
                     } else {
                         return (
                             <td

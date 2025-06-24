@@ -5,12 +5,11 @@ const CompletedReportItem = ({
     id,
     report_name,
     days,
-    assessment,
     execution_period,
 }) => {
     return (
         <li
-            className="grid items-center grid-cols-[25%_25%_25%_8%] gap-3 cursor-pointer"
+            className="grid items-center grid-cols-[30%_34%_34%] justify-between gap-3 cursor-pointer"
             onClick={() => {}}
         >
             <Link
@@ -46,7 +45,7 @@ const CompletedReportItem = ({
                 </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* <div className="flex items-center gap-3">
                 {assessment && (
                     <>
                         <Link
@@ -61,7 +60,7 @@ const CompletedReportItem = ({
                         <div className="text-lg">{assessment}/10</div>
                     </>
                 )}
-            </div>
+            </div> */}
         </li>
     );
 };

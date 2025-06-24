@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import DatePicker from "react-datepicker";
 import getData from "../../utils/getData";
 
@@ -46,23 +46,23 @@ const ProjectReportWindow = ({
     const [roles, setRoles] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [reportStatuses, setReportStatuses] = useState([]);
-    const [addReport, setAddReport] = useState(false);
+    // const [addReport, setAddReport] = useState(false);
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     // Проверка на заполненность заключения по отчёту
-    const hasNonNullFields = useMemo(() => {
-        return [
-            reportData.bank_assessment,
-            reportData.bank_summary,
-            reportData.customer_assessment,
-            reportData.customer_summary,
-            reportData.general_summary,
-            reportData.risk_summary,
-            reportData.team_assessment,
-            reportData.team_summary,
-        ].some((field) => field !== null && field !== undefined);
-    }, [reportData]);
+    // const hasNonNullFields = useMemo(() => {
+    //     return [
+    //         reportData.bank_assessment,
+    //         reportData.bank_summary,
+    //         reportData.customer_assessment,
+    //         reportData.customer_summary,
+    //         reportData.general_summary,
+    //         reportData.risk_summary,
+    //         reportData.team_assessment,
+    //         reportData.team_summary,
+    //     ].some((field) => field !== null && field !== undefined);
+    // }, [reportData]);
 
     // Валидация полей
     const validateFields = () => {
@@ -147,8 +147,8 @@ const ProjectReportWindow = ({
 
         if (Object.keys(newErrors).length === 0) {
             reportId
-                ? updateReport(reportData, reportId, addReport)
-                : sendReport(reportData, addReport);
+                ? updateReport(reportData, reportId)
+                : sendReport(reportData);
         } else {
             alert(
                 "Исправьте ошибки перед сохранением:\n" +
@@ -383,7 +383,8 @@ const ProjectReportWindow = ({
         <div className="grid gap-6 relative bg-white">
             {!isDataLoaded && <Loader />}
 
-            <div className="text-2xl w-full mb-3">{reportTitle}</div>
+            <div className="text-2xl w-full">{reportData.report_name}</div>
+
             <div className="grid gap-3 grid-cols-2">
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Тип отчёта</span>
@@ -527,13 +528,7 @@ const ProjectReportWindow = ({
                 </div>
             </div>
 
-            <div
-                className={`grid gap-3 ${
-                    reportData["report_status_id"] == 4
-                        ? "grid-cols-2"
-                        : "grid-cols-1"
-                }`}
-            >
+            <div className="grid gap-3 grid-cols-1">
                 <div className="flex flex-col gap-2 justify-between">
                     <span className="text-gray-400">Статус</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
@@ -554,7 +549,7 @@ const ProjectReportWindow = ({
                     </div>
                 </div>
 
-                {reportData["report_status_id"] == 4 &&
+                {/* {reportData["report_status_id"] == 4 &&
                     mode === "edit" &&
                     !hasNonNullFields && (
                         <div className="flex flex-col gap-2 justify-between">
@@ -585,9 +580,9 @@ const ProjectReportWindow = ({
                                 </div>
                             </div>
                         </div>
-                    )}
+                    )} */}
 
-                {hasNonNullFields &&
+                {/* {hasNonNullFields &&
                     reportData["report_status_id"] == 4 &&
                     mode == "edit" && (
                         <button
@@ -600,7 +595,7 @@ const ProjectReportWindow = ({
                         >
                             Редактировать заключение по отчёту
                         </button>
-                    )}
+                    )} */}
             </div>
 
             <div className="grid gap-3 grid-cols-1">
@@ -691,12 +686,8 @@ const ProjectReportWindow = ({
                         </button>
                     </>
                 ) : (
-                    <div
-                        className={`grid gap-2 flex-grow ${
-                            hasNonNullFields ? "grid-cols-2" : "grid-cols-1"
-                        }`}
-                    >
-                        {hasNonNullFields && (
+                    <div className="grid gap-2 flex-grow grid-cols-1">
+                        {/* {hasNonNullFields && (
                             <button
                                 type="button"
                                 className="border rounded-lg py-3 px-5 bg-black text-white"
@@ -707,7 +698,7 @@ const ProjectReportWindow = ({
                             >
                                 Заключение по отчёту
                             </button>
-                        )}
+                        )} */}
 
                         <button
                             type="button"

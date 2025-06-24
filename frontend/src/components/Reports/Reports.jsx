@@ -457,9 +457,9 @@ const Reports = () => {
                                     : "border-transparent"
                             }`}
                             onClick={() => setActiveTab("projects")}
-                            title="Перейти на вкладку Проекты"
+                            title="Перейти на вкладку Отчёты проектов"
                         >
-                            Проекты ({reportsList.length})
+                            Отчёты проектов ({reportsList.length})
                         </button>
                         <button
                             type="button"
@@ -469,9 +469,9 @@ const Reports = () => {
                                     : "border-transparent"
                             }`}
                             onClick={() => setActiveTab("management")}
-                            title="Перейти на вкладку Менеджмент"
+                            title="Перейти на вкладку Отчёты сотрудников"
                         >
-                            Менеджмент ({filteredReports.length})
+                            Отчёты сотрудников ({filteredReports.length})
                         </button>
                     </nav>
 
