@@ -21,6 +21,7 @@ const ProjectReportWindow = ({
         report_type_id: 1,
         budget_in_billions: "",
         service_cost_in_rubles: "",
+        approval_date: "2025-01-01",
         contract_id: contracts.length > 0 ? contracts[0].id : 1,
         report_period: {
             start: new Date("2025-01-01"),
@@ -554,7 +555,7 @@ const ProjectReportWindow = ({
                     </span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        selected={reportData?.approval_date}
+                        selected={parseDate(reportData?.approval_date) || ""}
                         onChange={(e) => handleInputChange(e, "approval_date")}
                         dateFormat="dd.MM.yyyy"
                         disabled={mode === "read"}

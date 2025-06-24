@@ -713,7 +713,7 @@ const Reports = () => {
                             {reportWindowsState && (
                                 <div
                                     className="bg-white border-2 border-gray-300 py-5 px-4 overflow-x-hidden overflow-y-auto fixed bottom-0 top-[5%] right-[2%] w-[35%]"
-                                    style={{ "min-height": "calc(100vh - 5%)" }}
+                                    style={{ "minHeight": "calc(100vh - 5%)" }}
                                 >
                                     <ProjectReportWindow
                                         reportWindowsState={
@@ -732,7 +732,7 @@ const Reports = () => {
                             {reportEditorState && (
                                 <div
                                     className="bg-white overflow-x-hidden overflow-y-auto fixed bottom-0 top-[5%] right-[2%] w-[35%]"
-                                    style={{ "min-height": "calc(100vh - 5%)" }}
+                                    style={{ "minHeight": "calc(100vh - 5%)" }}
                                 >
                                     <ProjectReportEditor
                                         reportData={reportData}
@@ -755,7 +755,7 @@ const Reports = () => {
                     {activeTab === "management" && managementEditorState && (
                         <div
                             className="bg-white overflow-x-hidden overflow-y-auto fixed bottom-0 top-[5%] right-[2%] w-[35%]"
-                            style={{ "min-height": "calc(100vh - 5%)" }}
+                            style={{ "minHeight": "calc(100vh - 5%)" }}
                         >
                             <ManagementReportEditor
                                 managementReportData={managementReportData}
