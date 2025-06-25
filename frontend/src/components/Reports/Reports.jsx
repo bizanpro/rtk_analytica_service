@@ -713,8 +713,8 @@ const Reports = () => {
                         <>
                             {reportWindowsState && (
                                 <div
-                                    className="bg-white overflow-x-hidden overflow-y-auto fixed bottom-0 top-[5%] right-[2%] w-[35%]"
-                                    style={{ minHeight: "calc(100vh - 5%)" }}
+                                    className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
+                                    style={{ minHeight: "calc(100vh - 10%)" }}
                                 >
                                     {/* <ProjectReportWindow
                                         reportWindowsState={
@@ -762,8 +762,8 @@ const Reports = () => {
 
                     {activeTab === "management" && managementEditorState && (
                         <div
-                            className="bg-white overflow-x-hidden overflow-y-auto fixed bottom-0 top-[5%] right-[2%] w-[35%]"
-                            style={{ minHeight: "calc(100vh - 5%)" }}
+                            className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
+                            style={{ minHeight: "calc(100vh - 10%)" }}
                         >
                             <ManagementReportEditor
                                 managementReportData={managementReportData}

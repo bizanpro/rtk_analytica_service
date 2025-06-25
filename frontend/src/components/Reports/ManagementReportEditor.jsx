@@ -40,7 +40,7 @@ const ManagementReportEditor = ({
     );
 
     return (
-        <div className="border-2 border-gray-300 py-5 px-3 h-[95%] flex flex-col">
+        <div className="border-2 border-gray-300 py-5 px-3 h-full flex flex-col">
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-5 flex-grow">
                     <div className="text-2xl">

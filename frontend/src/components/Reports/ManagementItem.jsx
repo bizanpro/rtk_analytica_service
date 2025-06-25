@@ -1,6 +1,8 @@
 import { format, parseISO } from "date-fns";
 import { ru } from "date-fns/locale";
 
+import RateSwitch from "../RateSwitch";
+
 const ManagementItem = ({ columns, props, openManagementReportEditor }) => {
     const capitalizeFirstLetter = (string) => {
         if (!string) return "";
@@ -11,7 +13,7 @@ const ManagementItem = ({ columns, props, openManagementReportEditor }) => {
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
             onClick={() => {
-                openManagementReportEditor(props);
+                openManagementReportEditor(props, "edit");
             }}
         >
             {columns.map(({ key }) => {
@@ -91,6 +93,8 @@ const ManagementItem = ({ columns, props, openManagementReportEditor }) => {
                                     return (
                                         capitalizeFirstLetter(formatted) || "—"
                                     );
+                                } else if (key === "score") {
+                                    return <div className="w-[80px]"><RateSwitch /></div>;
                                 } else {
                                     return value?.toString() || "—";
                                 }
@@ -99,7 +103,7 @@ const ManagementItem = ({ columns, props, openManagementReportEditor }) => {
                     );
                 }
             })}
-            <td>
+            {/* <td>
                 <button
                     type="button"
                     onClick={(e) => {
@@ -109,7 +113,7 @@ const ManagementItem = ({ columns, props, openManagementReportEditor }) => {
                 >
                     Изменить
                 </button>
-            </td>
+            </td> */}
         </tr>
     );
 };

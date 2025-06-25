@@ -16,7 +16,7 @@ const RATE_LABELS = [
 
 const ReportRateEditor: React.FC<Props> = ({ closeEditor, mode }) => {
     return (
-        <div className="border-2 border-gray-300 p-5 h-[95%] flex flex-col">
+        <div className="border-2 border-gray-300 p-5 h-full flex flex-col">
             <div className="flex items-start justify-between mb-3">
                 <div className="flex items-start gap-5 flex-grow">
                     <div>
