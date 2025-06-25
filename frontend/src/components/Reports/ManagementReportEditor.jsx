@@ -40,10 +40,14 @@ const ManagementReportEditor = ({
     );
 
     return (
-        <div className="border-2 border-gray-300 py-5 px-3">
-            <div className="flex items-center justify-between">
-                <div className="text-2xl w-full mb-3">
-                    {capitalizeFirstLetter(formatted)}
+        <div className="border-2 border-gray-300 py-5 px-3 h-[95%] flex flex-col">
+            <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-5 flex-grow">
+                    <div className="text-2xl">
+                        {capitalizeFirstLetter(formatted)}
+                    </div>
+
+                    <div>В работе</div>
                 </div>
 
                 <button
@@ -58,7 +62,7 @@ const ManagementReportEditor = ({
                 </button>
             </div>
 
-            <div>
+            <div className="flex-grow">
                 <div className="flex items-center gap-2 mb-3">
                     <div className="flex items-center gap-2 mb-3 overflow-x-auto overflow-y-hidden pb-2">
                         {tabOptions.map((tab) => (
@@ -82,7 +86,7 @@ const ManagementReportEditor = ({
                 </div>
 
                 <textarea
-                    className="w-full border-2 border-gray-300 p-5 min-h-[250px] max-h-[500px]"
+                    className="w-full border-2 border-gray-300 p-5 h-full max-h-[90%]"
                     placeholder="Добавьте описание"
                     type="text"
                     name={currentTab}
@@ -92,7 +96,7 @@ const ManagementReportEditor = ({
                 ></textarea>
             </div>
 
-            <div className="mt-5 grid grid-cols-2 items-center gap-6">
+            <div className="mt-5 grid grid-cols-2 items-center gap-6 shrink-0">
                 {/* {mode === "edit" && ( */}
                 {/* <> */}
                 <button

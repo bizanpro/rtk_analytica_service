@@ -2,7 +2,7 @@ const ReportItem = ({
     columns,
     props,
     openReportEditor,
-    openSubReportEditor,
+    // openSubReportEditor,
 }) => {
     return (
         <tr
@@ -187,7 +187,7 @@ const ReportItem = ({
                 }
             })}
 
-            <td className="px-4 py-2.5 min-w-[80px]">
+            {/* <td className="px-4 py-2.5 min-w-[80px]">
                 {props.has_conclusion && (
                     <button
                         type="button"
@@ -200,7 +200,7 @@ const ReportItem = ({
                         }}
                     ></button>
                 )}
-            </td>
+            </td> */}
         </tr>
     );
 };

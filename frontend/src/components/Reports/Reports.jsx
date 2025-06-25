@@ -5,11 +5,12 @@ import postData from "../../utils/postData";
 import ReportItem from "./ReportItem";
 import ManagementItem from "./ManagementItem";
 
-import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
-import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
-import ManagementReportEditor from "../ManagementReportEditor";
+// import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
+// import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
+import ManagementReportEditor from "./ManagementReportEditor";
+import ReportRateEditor from "./ReportRateEditor";
 
-import Popup from "../Popup/Popup";
+// import Popup from "../Popup/Popup";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -58,19 +59,19 @@ const Reports = () => {
     const [activeTab, setActiveTab] = useState("projects");
     const [isLoading, setIsLoading] = useState(true);
     const [mode, setMode] = useState("read");
-    const [popupState, setPopupState] = useState(false);
+    // const [popupState, setPopupState] = useState(false);
 
     const [reportsList, setReportsList] = useState([]);
     const [managementList, setManagementList] = useState([]);
 
     const [managementEditorState, setManagementEditorState] = useState(false); // Конструктор отчёта
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
-    const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
-    const [reportEditorName, setReportEditorName] = useState(""); // Имя отчета в заключении
-    const [reportId, setReportId] = useState(null);
-    const [contracts, setContracts] = useState([]);
-    const [reportData, setReportData] = useState({});
-    const [periods, setPeriods] = useState({});
+    // const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
+    // const [reportEditorName, setReportEditorName] = useState(""); // Имя отчета в заключении
+    // const [reportId, setReportId] = useState(null);
+    // const [contracts, setContracts] = useState([]);
+    // const [reportData, setReportData] = useState({});
+    // const [periods, setPeriods] = useState({});
     const [availableMonths, setAvailableMonths] = useState([]);
     const [filteredAvailableMonths, setFilteredAvailableMonths] = useState([]);
     const [filterOptionsList, setFilterOptionsList] = useState({}); // Список доступных параметров фильтров
@@ -227,41 +228,41 @@ const Reports = () => {
     };
 
     // Получение договоров для детального отчёта
-    const getContracts = (contragentId) => {
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }contragents/${contragentId}/contracts`
-        ).then((response) => {
-            if (response?.status == 200) {
-                setContracts(response.data);
-            }
-        });
-    };
+    // const getContracts = (contragentId) => {
+    //     getData(
+    //         `${
+    //             import.meta.env.VITE_API_URL
+    //         }contragents/${contragentId}/contracts`
+    //     ).then((response) => {
+    //         if (response?.status == 200) {
+    //             setContracts(response.data);
+    //         }
+    //     });
+    // };
 
     // Получаем доступные периоды для попапа отчета Менеджмента
-    const getPeriods = () => {
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }management-reports/available-periods`
-        ).then((response) => {
-            if (response?.status == 200) {
-                setPeriods(response.data);
+    // const getPeriods = () => {
+    //     getData(
+    //         `${
+    //             import.meta.env.VITE_API_URL
+    //         }management-reports/available-periods`
+    //     ).then((response) => {
+    //         if (response?.status == 200) {
+    //             setPeriods(response.data);
 
-                const firstYear = Object.keys(response.data)[0];
-                const firstMonth = response.data[firstYear][0].value;
+    //             const firstYear = Object.keys(response.data)[0];
+    //             const firstMonth = response.data[firstYear][0].value;
 
-                setManagementReportData((prev) => ({
-                    ...prev,
-                    report_month: `${firstYear}-${String(firstMonth).padStart(
-                        2,
-                        "0"
-                    )}-01`,
-                }));
-            }
-        });
-    };
+    //             setManagementReportData((prev) => ({
+    //                 ...prev,
+    //                 report_month: `${firstYear}-${String(firstMonth).padStart(
+    //                     2,
+    //                     "0"
+    //                 )}-01`,
+    //             }));
+    //         }
+    //     });
+    // };
 
     // Получаем доступные периоды для попапа отчета Менеджмента
     const getAvailableMonths = () => {
@@ -277,10 +278,10 @@ const Reports = () => {
 
     // Открытие окна отчёта
     const openReportEditor = (reportData) => {
-        getContracts(reportData.contragent?.id);
-        setReportId(reportData.id);
+        // getContracts(reportData.contragent?.id);
+        // setReportId(reportData.id);
 
-        setReportEditorName(`${reportData.project?.name} / ${reportData.name}`);
+        // setReportEditorName(`${reportData.project?.name} / ${reportData.name}`);
 
         if (reportData.id) {
             setReportWindowsState(true);
@@ -288,49 +289,49 @@ const Reports = () => {
     };
 
     // Обновляем отчет для открытия заключения
-    const openReportConclusion = (data) => {
-        data.project_id = data.project?.id;
+    // const openReportConclusion = (data) => {
+    //     data.project_id = data.project?.id;
 
-        setReportData(data);
+    //     setReportData(data);
 
-        if (Object.keys(data).length > 0) {
-            setReportWindowsState(false);
-            setReportEditorState(true);
-        }
-    };
+    //     if (Object.keys(data).length > 0) {
+    //         setReportWindowsState(false);
+    //         setReportEditorState(true);
+    //     }
+    // };
 
     // Принудительное открытие окна заключения по отчёту
-    const openSubReportEditor = (id) => {
-        setReportWindowsState(false);
-        getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
-            (response) => {
-                if (response?.status == 200) {
-                    setReportData(response.data);
-                    setReportId(id);
-                    if (id) {
-                        setReportEditorState(true);
-                    }
-                }
-            }
-        );
-    };
+    // const openSubReportEditor = (id) => {
+    //     setReportWindowsState(false);
+    //     getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
+    //         (response) => {
+    //             if (response?.status == 200) {
+    //                 setReportData(response.data);
+    //                 setReportId(id);
+    //                 if (id) {
+    //                     setReportEditorState(true);
+    //                 }
+    //             }
+    //         }
+    //     );
+    // };
 
     // Открытие окна редактора отчета Менеджмента
     const openManagementReportEditor = (props, mode = "read") => {
-        setPopupState(false);
+        // setPopupState(false);
         setManagementReportData(props);
         setMode(mode);
         setManagementEditorState(true);
     };
 
-    const closePopup = (evt) => {
-        if (evt.currentTarget.classList.contains("popup")) setPopupState(false);
-    };
+    // const closePopup = (evt) => {
+    //     if (evt.currentTarget.classList.contains("popup")) setPopupState(false);
+    // };
 
-    const capitalizeFirstLetter = (string) => {
-        if (!string) return "";
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    };
+    // const capitalizeFirstLetter = (string) => {
+    //     if (!string) return "";
+    //     return string.charAt(0).toUpperCase() + string.slice(1);
+    // };
 
     // Отправляем новый отчёт Менеджмента
     const sendNewReport = (extendReportData) => {
@@ -429,10 +430,10 @@ const Reports = () => {
     useEffect(() => {
         setManagementEditorState(false);
         setReportWindowsState(false);
-        setReportEditorState(false);
-        setReportEditorName("");
-        setReportId(null);
-        setReportData({});
+        // setReportEditorState(false);
+        // setReportEditorName("");
+        // setReportId(null);
+        // setReportData({});
     }, [activeTab]);
 
     useEffect(() => {
@@ -449,7 +450,7 @@ const Reports = () => {
     }, [selectedManagementReport]);
 
     useEffect(() => {
-        getPeriods();
+        // getPeriods();
         getAvailableMonths();
     }, []);
 
@@ -458,7 +459,7 @@ const Reports = () => {
             <ToastContainer containerId="report" />
 
             <div className="container pt-8 min-h-screen flex flex-col">
-                <div className="flex flex-col justify-between gap-6 mb-8">
+                <section className="flex flex-col justify-between gap-6 mb-8">
                     <h1 className="text-3xl font-medium">Реестр отчётов</h1>
 
                     <nav className="flex items-center gap-10 border-b border-gray-300 text-lg">
@@ -641,20 +642,20 @@ const Reports = () => {
                                         Очистить
                                     </button>
                                 </div>
-
+                                {/* 
                                 <button
                                     type="button"
                                     className="py-1 px-5"
                                     onClick={() => setPopupState(true)}
                                 >
                                     Создать отчёт
-                                </button>
+                                </button> */}
                             </>
                         )}
                     </div>
-                </div>
+                </section>
 
-                <div className="w-full pb-5 relative min-h-full flex-grow overflow-y-auto">
+                <section className="w-full pb-5 relative min-h-full flex-grow overflow-y-auto">
                     <table className="table-auto w-full border-collapse border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
@@ -687,9 +688,9 @@ const Reports = () => {
                                         columns={COLUMNS[0]}
                                         props={item}
                                         openReportEditor={openReportEditor}
-                                        openSubReportEditor={
-                                            openSubReportEditor
-                                        }
+                                        // openSubReportEditor={
+                                        //     openSubReportEditor
+                                        // }
                                     />
                                 ))
                             ) : (
@@ -712,24 +713,31 @@ const Reports = () => {
                         <>
                             {reportWindowsState && (
                                 <div
-                                    className="bg-white border-2 border-gray-300 py-5 px-4 overflow-x-hidden overflow-y-auto fixed bottom-0 top-[5%] right-[2%] w-[35%]"
-                                    style={{ "minHeight": "calc(100vh - 5%)" }}
+                                    className="bg-white overflow-x-hidden overflow-y-auto fixed bottom-0 top-[5%] right-[2%] w-[35%]"
+                                    style={{ minHeight: "calc(100vh - 5%)" }}
                                 >
-                                    <ProjectReportWindow
+                                    {/* <ProjectReportWindow
                                         reportWindowsState={
                                             setReportWindowsState
                                         }
                                         contracts={contracts}
-                                        updateReport={openReportConclusion}
+                                        // updateReport={openReportConclusion}
                                         reportId={reportId}
                                         setReportId={setReportId}
                                         reportTitle={reportEditorName}
                                         mode={"read"}
+                                    /> */}
+
+                                    <ReportRateEditor
+                                        closeEditor={() =>
+                                            setReportWindowsState(false)
+                                        }
+                                        mode={mode}
                                     />
                                 </div>
                             )}
 
-                            {reportEditorState && (
+                            {/* {reportEditorState && (
                                 <div
                                     className="bg-white overflow-x-hidden overflow-y-auto fixed bottom-0 top-[5%] right-[2%] w-[35%]"
                                     style={{ "minHeight": "calc(100vh - 5%)" }}
@@ -748,14 +756,14 @@ const Reports = () => {
                                         mode={"read"}
                                     />
                                 </div>
-                            )}
+                            )} */}
                         </>
                     )}
 
                     {activeTab === "management" && managementEditorState && (
                         <div
                             className="bg-white overflow-x-hidden overflow-y-auto fixed bottom-0 top-[5%] right-[2%] w-[35%]"
-                            style={{ "minHeight": "calc(100vh - 5%)" }}
+                            style={{ minHeight: "calc(100vh - 5%)" }}
                         >
                             <ManagementReportEditor
                                 managementReportData={managementReportData}
@@ -771,8 +779,8 @@ const Reports = () => {
                             />
                         </div>
                     )}
-                </div>
-
+                </section>
+                {/* 
                 {popupState && (
                     <Popup onClick={closePopup} title="Создание отчёта">
                         <div className="min-w-[280px]">
@@ -859,7 +867,7 @@ const Reports = () => {
                             </div>
                         </div>
                     </Popup>
-                )}
+                )} */}
             </div>
         </main>
     );
