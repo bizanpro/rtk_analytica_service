@@ -270,8 +270,10 @@ const ProjectReportWindow = ({
     };
 
     const parseDate = (dateString) => {
-        const [day, month, year] = dateString.split(".");
-        return new Date(`${year}-${month}-${day}`);
+        if (dateString) {
+            const [day, month, year] = dateString.split(".");
+            return new Date(`${year}-${month}-${day}`);
+        }
     };
 
     useEffect(() => {
@@ -555,7 +557,10 @@ const ProjectReportWindow = ({
                     </span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        selected={parseDate(reportData?.approval_date) || ""}
+                        selected={
+                            parseDate(reportData?.approval_date) ||
+                            new Date("2025-01-01")
+                        }
                         onChange={(e) => handleInputChange(e, "approval_date")}
                         dateFormat="dd.MM.yyyy"
                         disabled={mode === "read"}

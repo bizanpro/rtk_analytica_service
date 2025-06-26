@@ -23,8 +23,11 @@ const CustomerCard = () => {
     const [customerData, setEmployeeData] = useState({});
     const [formFields, setFormFields] = useState({});
     const [mode, setMode] = useState("read");
+    const [activeReportTab, setActiveReportTab] = useState("projectReports");
+
     const [reports, setReports] = useState([]); // История проекта
     const [projects, setProjects] = useState([]); // Проекты
+
     const [projectData, setProjectData] = useState({
         id: "",
         name: "",
@@ -429,9 +432,46 @@ const CustomerCard = () => {
                                         </div>
 
                                         <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                            <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
+                                                <button
+                                                    type="button"
+                                                    className={`py-2 transition-all border-b-2 ${
+                                                        activeReportTab ==
+                                                        "projectReports"
+                                                            ? "border-gray-500"
+                                                            : "border-transparent"
+                                                    }`}
+                                                    onClick={() =>
+                                                        setActiveReportTab(
+                                                            "projectReports"
+                                                        )
+                                                    }
+                                                    title="Перейти на вкладку Отчёты проекта"
+                                                >
+                                                    Отчёты проекта
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className={`py-2 transition-all border-b-2 ${
+                                                        activeReportTab ==
+                                                        "managementReports"
+                                                            ? "border-gray-500"
+                                                            : "border-transparent"
+                                                    }`}
+                                                    onClick={() =>
+                                                        setActiveReportTab(
+                                                            "managementReports"
+                                                        )
+                                                    }
+                                                    title="Перейти на вкладку Отчёты руководителя проекта"
+                                                >
+                                                    Отчёты руководителя проекта
+                                                </button>
+                                            </nav>
+
                                             {!reportWindowsState ? (
                                                 <ul className="grid gap-3">
-                                                    <li className="grid items-center grid-cols-[1fr_1fr_18%_1fr] gap-3 mb-2 text-gray-400">
+                                                    <li className="grid items-center grid-cols-[1fr_1fr_18%_34%] gap-3 mb-2 text-gray-400">
                                                         <span>Проект</span>
                                                         <span>Отчет</span>
                                                         <span className="block text-center">

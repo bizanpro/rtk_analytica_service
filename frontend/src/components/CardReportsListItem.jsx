@@ -12,7 +12,7 @@ const CardReportsListItem = ({
 }) => {
     return (
         <li
-            className="grid items-center grid-cols-[1fr_1fr_18%_1fr] gap-5 cursor-pointer"
+            className="grid items-center grid-cols-[1fr_1fr_23%_34%] gap-5 cursor-pointer"
             onClick={() => {
                 setReportEditorName(projectData.name);
                 openReportEditor(id);
