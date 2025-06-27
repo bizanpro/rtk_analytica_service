@@ -1,27 +1,51 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import RateSwitch from "../RateSwitch";
 
 type Props = {
     closeEditor: () => void;
+    updateReportDetails: (report: object, action: string) => void;
     mode: string;
+    project: object;
+    status: string;
+    id: number;
 };
 
 const RATE_LABELS = [
-    { id: "status_summary", label: "Банк" },
-    { id: "problems", label: "Заказчик" },
-    { id: "prospects", label: "Команда" },
-    { id: "team", label: "Подрядчики" },
+    { key: "bank_assessment", label: "Банк" },
+    { key: "customer_assessment", label: "Заказчик" },
+    { key: "team_assessment", label: "Команда" },
+    { key: "contractor_assessment", label: "Подрядчики" },
 ];
 
-const ReportRateEditor: React.FC<Props> = ({ closeEditor, mode }) => {
+const ReportRateEditor: React.FC<Props> = ({
+    closeEditor,
+    updateReportDetails,
+    mode,
+    project,
+    status,
+    id,
+}) => {
+    const [reportRateData, setReportRateData] = useState<object>({ id: id });
+
+    const rateHandler = (name: string, value: string | number) => {
+        setReportRateData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    useEffect(() => {
+        setReportRateData({ id: id });
+    }, [id]);
+
     return (
-        <div className="border-2 border-gray-300 p-5 h-full flex flex-col">
+        <div className="p-5 h-full flex flex-col">
             <div className="flex items-start justify-between mb-3">
                 <div className="flex items-start gap-5 flex-grow">
                     <div>
                         <div className="text-2xl mb-2">
-                            ГОК Светловский / Март 2025
+                            {project.name} / Март 2025
                         </div>
 
                         <div className="text-base mb-2">
@@ -38,7 +62,7 @@ const ReportRateEditor: React.FC<Props> = ({ closeEditor, mode }) => {
                         </ul>
                     </div>
 
-                    <div className="mt-2">В работе</div>
+                    <div className="mt-2">{status}</div>
                 </div>
 
                 <button
@@ -65,7 +89,10 @@ const ReportRateEditor: React.FC<Props> = ({ closeEditor, mode }) => {
                     <div className="py-2 flex items-center">
                         <div className="w-[90px] mr-5">Общая</div>
 
-                        <RateSwitch />
+                        <RateSwitch
+                            name={"general_assessment"}
+                            rateHandler={rateHandler}
+                        />
                     </div>
                 </div>
 
@@ -74,12 +101,15 @@ const ReportRateEditor: React.FC<Props> = ({ closeEditor, mode }) => {
                         <div className="py-2 flex items-center">
                             <div className="w-[90px] mr-5">{item.label}</div>
 
-                            <RateSwitch />
+                            <RateSwitch
+                                name={item.key}
+                                rateHandler={rateHandler}
+                            />
                         </div>
                     ))}
                 </div>
 
-                <div className="flex-grow mt-2">
+                <div className="flex-grow mt-2 flex flex-col">
                     <div className="flex items-center gap-2 mb-4">
                         <span className="flex items-center gap-2 text-gray-400">
                             Заключение
@@ -90,26 +120,24 @@ const ReportRateEditor: React.FC<Props> = ({ closeEditor, mode }) => {
                     </div>
 
                     <textarea
-                        className="w-full border-2 border-gray-300 p-5 h-full max-h-[90%]"
+                        className="w-full border-2 border-gray-300 p-5 flex-grow max-h-[300px]"
                         placeholder="Описание"
-                        // type="text"
-                        // name={currentTab}
                         // value={managementReportData[currentTab] || ""}
-                        // onChange={(e) => handleTextArea(e, currentTab)}
-                        disabled={mode === "read" ? true : false}
+                        onChange={(evt) =>
+                            rateHandler("general_summary", evt.target.value)
+                        }
+                        // disabled={mode === "read" ? true : false}
                     ></textarea>
                 </div>
             </div>
 
-            <div className="mt-5 grid grid-cols-2 items-center gap-6 shrink-0">
+            <div className="mt-5 pb-5 grid grid-cols-2 items-center gap-6 shrink-0">
                 <button
                     type="button"
                     className="border rounded-lg py-2 px-5 bg-black text-white"
-                    // onClick={() =>
-                    //     managementReportData.id
-                    //         ? updateReport(managementReportData)
-                    //         : sendNewReport(managementReportData)
-                    // }
+                    onClick={() =>
+                        updateReportDetails(reportRateData, "approve")
+                    }
                     title="Сохранить и утвердить"
                 >
                     Сохранить и утвердить
@@ -118,11 +146,7 @@ const ReportRateEditor: React.FC<Props> = ({ closeEditor, mode }) => {
                 <button
                     type="button"
                     className="border rounded-lg py-2 px-5"
-                    // onClick={() =>
-                    //     managementReportData.id
-                    //         ? updateReport(managementReportData)
-                    //         : sendNewReport(managementReportData)
-                    // }
+                    onClick={() => updateReportDetails(reportRateData, "save")}
                     title="Сохранить без утверждения"
                 >
                     Сохранить без утверждения

@@ -14,7 +14,6 @@ import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
 import ProjectReportWindow from "./ProjectReportWindow";
 import ProjectReportItem from "./ProjectReportItem";
-// import ProjectReportEditor from "./ProjectReportEditor";
 import ProjectStatisticsBlock from "./ProjectStatisticsBlock";
 import ProjectTeam from "./ProjectTeam";
 import ReportServices from "./ReportServices";
@@ -70,9 +69,6 @@ const ProjectCard = () => {
 
     const [reports, setReports] = useState([]);
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
-    // const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
-    // const [reportEditorName, setReportEditorName] = useState("");
-    // const [reportData, setReportData] = useState({});
 
     const [teamData, setTeamData] = useState([]);
     const [services, setServices] = useState([]);
@@ -460,22 +456,6 @@ const ProjectCard = () => {
         }
     };
 
-    // Принудительное открытие окна редактирования заключения по отчёту
-    // const openSubReportEditor = (id) => {
-    //     setReportWindowsState(false);
-    //     getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
-    //         (response) => {
-    //             if (response?.status == 200) {
-    //                 setReportData(response.data);
-    //                 setReportId(id);
-    //                 if (id) {
-    //                     setReportEditorState(true);
-    //                 }
-    //             }
-    //         }
-    //     );
-    // };
-
     // Удаление отчёта
     const deleteReport = (id) => {
         postData(
@@ -663,20 +643,15 @@ const ProjectCard = () => {
         setAddLender(false);
         setAddCustomer(false);
         setReportWindowsState(false);
-        // setReportEditorState(false);
+
         setReportId(null);
     }, [mode]);
 
     useEffect(() => {
         const report = searchParams.get("report");
-        // const withConclusion = searchParams.get("with_conclusion");
 
         if (report !== null && report !== "undefined") {
-            // if (withConclusion === "true") {
-            //     openSubReportEditor(report);
-            // } else {
             openReportEditor(report);
-            // }
         }
     }, [searchParams]);
 
@@ -1136,24 +1111,6 @@ const ProjectCard = () => {
                         </div>
 
                         <div className="flex flex-col">
-                            {/* {reportEditorState ? (
-                                <ProjectReportEditor
-                                    reportData={reportData}
-                                    postData={postData}
-                                    setReports={setReports}
-                                    reportEditorName={reportEditorName}
-                                    setReportWindowsState={
-                                        setReportWindowsState
-                                    }
-                                    setReportEditorState={setReportEditorState}
-                                    reportId={reportId}
-                                    projectId={projectId}
-                                    setReportId={setReportId}
-                                    getProject={getProject}
-                                    mode={mode}
-                                />
-                            ) : ( */}
-
                             <ProjectStatisticsBlock
                                 ref={statRef}
                                 projectId={projectId}
@@ -1244,21 +1201,12 @@ const ProjectCard = () => {
                                                     <ProjectReportItem
                                                         key={report.id || index}
                                                         {...report}
-                                                        // setReportEditorState={
-                                                        //     setReportEditorState
-                                                        // }
-                                                        // setReportEditorName={
-                                                        //     setReportEditorName
-                                                        // }
                                                         deleteReport={
                                                             deleteReport
                                                         }
                                                         openReportEditor={
                                                             openReportEditor
                                                         }
-                                                        // openSubReportEditor={
-                                                        //     openSubReportEditor
-                                                        // }
                                                         mode={mode}
                                                     />
                                                 ))}

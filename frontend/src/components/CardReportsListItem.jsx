@@ -6,7 +6,7 @@ const CardReportsListItem = ({
     role,
     execution_period,
     days,
-    setReportEditorName,
+
     openReportEditor,
     projectData,
 }) => {
@@ -14,7 +14,6 @@ const CardReportsListItem = ({
         <li
             className="grid items-center grid-cols-[1fr_1fr_23%_34%] gap-5 cursor-pointer"
             onClick={() => {
-                setReportEditorName(projectData.name);
                 openReportEditor(id);
             }}
         >

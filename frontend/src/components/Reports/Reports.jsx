@@ -4,13 +4,8 @@ import postData from "../../utils/postData";
 
 import ReportItem from "./ReportItem";
 import ManagementItem from "./ManagementItem";
-
-// import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
-// import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 import ManagementReportEditor from "./ManagementReportEditor";
 import ReportRateEditor from "./ReportRateEditor";
-
-// import Popup from "../Popup/Popup";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -59,26 +54,25 @@ const Reports = () => {
     const [activeTab, setActiveTab] = useState("projects");
     const [isLoading, setIsLoading] = useState(true);
     const [mode, setMode] = useState("read");
-    // const [popupState, setPopupState] = useState(false);
 
     const [reportsList, setReportsList] = useState([]);
     const [managementList, setManagementList] = useState([]);
 
     const [managementEditorState, setManagementEditorState] = useState(false); // Конструктор отчёта
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
-    // const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
-    // const [reportEditorName, setReportEditorName] = useState(""); // Имя отчета в заключении
-    // const [reportId, setReportId] = useState(null);
-    // const [contracts, setContracts] = useState([]);
-    // const [reportData, setReportData] = useState({});
-    // const [periods, setPeriods] = useState({});
+
+    const [reportData, setReportData] = useState({});
+
     const [availableMonths, setAvailableMonths] = useState([]);
+
     const [filteredAvailableMonths, setFilteredAvailableMonths] = useState([]);
     const [filterOptionsList, setFilterOptionsList] = useState({}); // Список доступных параметров фильтров
+
     const [selectedProjectsFilters, setSelectedProjectsFilters] = useState({}); // Выбранные параметры фильтров во вкладке проектов
     const [selectedManagementFilters, setSelectedManagementFilters] = useState(
         {}
-    ); // Выбранные параметры фильтров во вкладке менеджмента
+    ); // Выбранные параметры фильтров во вкладке Сотрудника
+
     const [selectedManagementReport, setSelectedManagementReport] =
         useState("default"); // Выбранный отчет
     const [selectedPhysicalPerson, setSelectedPhysicalPerson] =
@@ -111,7 +105,7 @@ const Reports = () => {
         return result;
     }, [managementList, selectedManagementReport, selectedPhysicalPerson]);
 
-    // Заполняем селектор отчетов менеджмента
+    // Заполняем селектор отчетов Сотрудника
     const managementReportsOptions = useMemo(() => {
         const allReports = managementList.flatMap((item) => item.name);
         return Array.from(new Set(allReports));
@@ -227,44 +221,7 @@ const Reports = () => {
             .finally(() => setIsLoading(false));
     };
 
-    // Получение договоров для детального отчёта
-    // const getContracts = (contragentId) => {
-    //     getData(
-    //         `${
-    //             import.meta.env.VITE_API_URL
-    //         }contragents/${contragentId}/contracts`
-    //     ).then((response) => {
-    //         if (response?.status == 200) {
-    //             setContracts(response.data);
-    //         }
-    //     });
-    // };
-
-    // Получаем доступные периоды для попапа отчета Менеджмента
-    // const getPeriods = () => {
-    //     getData(
-    //         `${
-    //             import.meta.env.VITE_API_URL
-    //         }management-reports/available-periods`
-    //     ).then((response) => {
-    //         if (response?.status == 200) {
-    //             setPeriods(response.data);
-
-    //             const firstYear = Object.keys(response.data)[0];
-    //             const firstMonth = response.data[firstYear][0].value;
-
-    //             setManagementReportData((prev) => ({
-    //                 ...prev,
-    //                 report_month: `${firstYear}-${String(firstMonth).padStart(
-    //                     2,
-    //                     "0"
-    //                 )}-01`,
-    //             }));
-    //         }
-    //     });
-    // };
-
-    // Получаем доступные периоды для попапа отчета Менеджмента
+    // Получаем доступные периоды для попапа отчета Сотрудника
     const getAvailableMonths = () => {
         getData(
             `${import.meta.env.VITE_API_URL}management-reports/available-months`
@@ -278,45 +235,14 @@ const Reports = () => {
 
     // Открытие окна отчёта
     const openReportEditor = (reportData) => {
-        // getContracts(reportData.contragent?.id);
-        // setReportId(reportData.id);
+        setReportData(reportData);
 
-        // setReportEditorName(`${reportData.project?.name} / ${reportData.name}`);
-
-        if (reportData.id) {
+        if (reportData) {
             setReportWindowsState(true);
         }
     };
 
-    // Обновляем отчет для открытия заключения
-    // const openReportConclusion = (data) => {
-    //     data.project_id = data.project?.id;
-
-    //     setReportData(data);
-
-    //     if (Object.keys(data).length > 0) {
-    //         setReportWindowsState(false);
-    //         setReportEditorState(true);
-    //     }
-    // };
-
-    // Принудительное открытие окна заключения по отчёту
-    // const openSubReportEditor = (id) => {
-    //     setReportWindowsState(false);
-    //     getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
-    //         (response) => {
-    //             if (response?.status == 200) {
-    //                 setReportData(response.data);
-    //                 setReportId(id);
-    //                 if (id) {
-    //                     setReportEditorState(true);
-    //                 }
-    //             }
-    //         }
-    //     );
-    // };
-
-    // Открытие окна редактора отчета Менеджмента
+    // Открытие окна редактора отчета Сотрудника
     const openManagementReportEditor = (props, mode = "read") => {
         // setPopupState(false);
         setManagementReportData(props);
@@ -324,16 +250,7 @@ const Reports = () => {
         setManagementEditorState(true);
     };
 
-    // const closePopup = (evt) => {
-    //     if (evt.currentTarget.classList.contains("popup")) setPopupState(false);
-    // };
-
-    // const capitalizeFirstLetter = (string) => {
-    //     if (!string) return "";
-    //     return string.charAt(0).toUpperCase() + string.slice(1);
-    // };
-
-    // Отправляем новый отчёт Менеджмента
+    // Отправляем новый отчёт Сотрудника
     const sendNewReport = (extendReportData) => {
         query = toast.loading("Выполняется отправка", {
             containerId: "report",
@@ -427,13 +344,49 @@ const Reports = () => {
         });
     };
 
+    // Обновляем отчет Проекта
+    const updateReportDetails = (report, action) => {
+        query = toast.loading("Обновление", {
+            containerId: "report",
+            position: "top-center",
+        });
+
+        report.action = action;
+
+        postData(
+            "PATCH",
+            `${import.meta.env.VITE_API_URL}reports/${report.id}`,
+            report
+        ).then((response) => {
+            if (response?.ok) {
+                toast.update(query, {
+                    render: "Данные обновлены",
+                    type: "success",
+                    containerId: "report",
+                    isLoading: false,
+                    autoClose: 1200,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+                setReportWindowsState(false);
+            } else {
+                toast.dismiss(query);
+                toast.error("Ошибка обновления данных", {
+                    containerId: "report",
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            }
+        });
+    };
+
     useEffect(() => {
         setManagementEditorState(false);
         setReportWindowsState(false);
-        // setReportEditorState(false);
-        // setReportEditorName("");
-        // setReportId(null);
-        // setReportData({});
     }, [activeTab]);
 
     useEffect(() => {
@@ -450,7 +403,6 @@ const Reports = () => {
     }, [selectedManagementReport]);
 
     useEffect(() => {
-        // getPeriods();
         getAvailableMonths();
     }, []);
 
@@ -642,14 +594,6 @@ const Reports = () => {
                                         Очистить
                                     </button>
                                 </div>
-                                {/* 
-                                <button
-                                    type="button"
-                                    className="py-1 px-5"
-                                    onClick={() => setPopupState(true)}
-                                >
-                                    Создать отчёт
-                                </button> */}
                             </>
                         )}
                     </div>
@@ -688,9 +632,6 @@ const Reports = () => {
                                         columns={COLUMNS[0]}
                                         props={item}
                                         openReportEditor={openReportEditor}
-                                        // openSubReportEditor={
-                                        //     openSubReportEditor
-                                        // }
                                     />
                                 ))
                             ) : (
@@ -709,55 +650,18 @@ const Reports = () => {
                         </tbody>
                     </table>
 
-                    {activeTab === "projects" && (
-                        <>
-                            {reportWindowsState && (
-                                <div
-                                    className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
-                                    style={{ minHeight: "calc(100vh - 10%)" }}
-                                >
-                                    {/* <ProjectReportWindow
-                                        reportWindowsState={
-                                            setReportWindowsState
-                                        }
-                                        contracts={contracts}
-                                        // updateReport={openReportConclusion}
-                                        reportId={reportId}
-                                        setReportId={setReportId}
-                                        reportTitle={reportEditorName}
-                                        mode={"read"}
-                                    /> */}
-
-                                    <ReportRateEditor
-                                        closeEditor={() =>
-                                            setReportWindowsState(false)
-                                        }
-                                        mode={mode}
-                                    />
-                                </div>
-                            )}
-
-                            {/* {reportEditorState && (
-                                <div
-                                    className="bg-white overflow-x-hidden overflow-y-auto fixed bottom-0 top-[5%] right-[2%] w-[35%]"
-                                    style={{ "minHeight": "calc(100vh - 5%)" }}
-                                >
-                                    <ProjectReportEditor
-                                        reportData={reportData}
-                                        reportEditorName={reportEditorName}
-                                        setReportWindowsState={
-                                            setReportWindowsState
-                                        }
-                                        setReportEditorState={
-                                            setReportEditorState
-                                        }
-                                        reportId={reportId}
-                                        setReportId={setReportId}
-                                        mode={"read"}
-                                    />
-                                </div>
-                            )} */}
-                        </>
+                    {activeTab === "projects" && reportWindowsState && (
+                        <div
+                            className="bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
+                            style={{ minHeight: "calc(100vh - 10%)" }}
+                        >
+                            <ReportRateEditor
+                                {...reportData}
+                                closeEditor={() => setReportWindowsState(false)}
+                                updateReportDetails={updateReportDetails}
+                                mode={mode}
+                            />
+                        </div>
                     )}
 
                     {activeTab === "management" && managementEditorState && (
@@ -780,94 +684,6 @@ const Reports = () => {
                         </div>
                     )}
                 </section>
-                {/* 
-                {popupState && (
-                    <Popup onClick={closePopup} title="Создание отчёта">
-                        <div className="min-w-[280px]">
-                            <div className="action-form__body">
-                                <div className="flex flex-col mb-5">
-                                    <label
-                                        htmlFor="project_name"
-                                        className="block mb-3"
-                                    >
-                                        Введите наименование отчёта
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className="border-2 border-gray-300 p-3 w-full"
-                                        value={managementReportData.name}
-                                        onChange={(e) => {
-                                            setManagementReportData((prev) => ({
-                                                ...prev,
-                                                name: e.target.value,
-                                            }));
-                                        }}
-                                    />
-                                </div>
-                                <div className="flex flex-col">
-                                    <label
-                                        htmlFor="report_month"
-                                        className="block mb-3"
-                                    >
-                                        Выберите отчётный месяц
-                                    </label>
-                                    <select
-                                        type="text"
-                                        id="report_month"
-                                        className="border-2 border-gray-300 p-3 w-full"
-                                        defaultValue={
-                                            managementReportData.report_month
-                                        }
-                                        onChange={(e) => {
-                                            setManagementReportData({
-                                                ...managementReportData,
-                                                report_month: e.target.value,
-                                            });
-                                        }}
-                                    >
-                                        {Object.entries(periods).map(
-                                            ([year, months]) =>
-                                                months.map((month) => (
-                                                    <option
-                                                        key={`${year}-${month.value}`}
-                                                        value={`${year}-${String(
-                                                            month.value
-                                                        ).padStart(2, "0")}-01`}
-                                                    >
-                                                        {`${capitalizeFirstLetter(
-                                                            month.name
-                                                        )} ${year}`}
-                                                    </option>
-                                                ))
-                                        )}
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="action-form__footer mt-5 flex items-center gap-6 justify-between">
-                                <button
-                                    type="button"
-                                    className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
-                                    onClick={() => {
-                                        openManagementReportEditor(
-                                            managementReportData,
-                                            "edit"
-                                        );
-                                    }}
-                                >
-                                    Создать
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setPopupState(false)}
-                                    className="border rounded-lg py-2 px-5 flex-[1_1_50%]"
-                                >
-                                    Отменить
-                                </button>
-                            </div>
-                        </div>
-                    </Popup>
-                )} */}
             </div>
         </main>
     );

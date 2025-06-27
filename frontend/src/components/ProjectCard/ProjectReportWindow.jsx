@@ -46,23 +46,8 @@ const ProjectReportWindow = ({
     const [roles, setRoles] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [reportStatuses, setReportStatuses] = useState([]);
-    // const [addReport, setAddReport] = useState(false);
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
-
-    // Проверка на заполненность заключения по отчёту
-    // const hasNonNullFields = useMemo(() => {
-    //     return [
-    //         reportData.bank_assessment,
-    //         reportData.bank_summary,
-    //         reportData.customer_assessment,
-    //         reportData.customer_summary,
-    //         reportData.general_summary,
-    //         reportData.risk_summary,
-    //         reportData.team_assessment,
-    //         reportData.team_summary,
-    //     ].some((field) => field !== null && field !== undefined);
-    // }, [reportData]);
 
     // Валидация полей
     const validateFields = () => {
@@ -566,54 +551,6 @@ const ProjectReportWindow = ({
                         disabled={mode === "read"}
                     />
                 </div>
-
-                {/* {reportData["report_status_id"] == 4 &&
-                    mode === "edit" &&
-                    !hasNonNullFields && (
-                        <div className="flex flex-col gap-2 justify-between">
-                            <span className="text-gray-400">
-                                Добавить заключение по отчёту
-                            </span>
-
-                            <div className="grid gap-3 grid-cols-2">
-                                <div className="radio-field">
-                                    <input
-                                        type="radio"
-                                        name="add_report"
-                                        id="addReportYes"
-                                        onChange={() => setAddReport(true)}
-                                        checked={addReport ? true : false}
-                                    />
-                                    <label htmlFor="addReportYes">Да</label>
-                                </div>
-                                <div className="radio-field">
-                                    <input
-                                        type="radio"
-                                        name="add_report"
-                                        id="addReportNo"
-                                        onChange={() => setAddReport(false)}
-                                        checked={addReport ? false : true}
-                                    />
-                                    <label htmlFor="addReportNo">Нет</label>
-                                </div>
-                            </div>
-                        </div>
-                    )} */}
-
-                {/* {hasNonNullFields &&
-                    reportData["report_status_id"] == 4 &&
-                    mode == "edit" && (
-                        <button
-                            type="button"
-                            className="border rounded-lg p-1 min-h-[32px] mt-auto"
-                            onClick={() => {
-                                updateReport(reportData, reportId, true);
-                            }}
-                            title="Редактировать заключение по отчёту"
-                        >
-                            Редактировать заключение по отчёту
-                        </button>
-                    )} */}
             </div>
 
             <div className="grid gap-3 grid-cols-1">
@@ -705,19 +642,6 @@ const ProjectReportWindow = ({
                     </>
                 ) : (
                     <div className="grid gap-2 flex-grow grid-cols-1">
-                        {/* {hasNonNullFields && (
-                            <button
-                                type="button"
-                                className="border rounded-lg py-3 px-5 bg-black text-white"
-                                onClick={() => {
-                                    updateReport(reportData, reportId, true);
-                                }}
-                                title="Перейти к заключению по отчёту"
-                            >
-                                Заключение по отчёту
-                            </button>
-                        )} */}
-
                         <button
                             type="button"
                             onClick={() => {

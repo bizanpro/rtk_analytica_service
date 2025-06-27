@@ -8,7 +8,6 @@ import { ToastContainer, toast } from "react-toastify";
 
 import CustomerProjectItem from "./CustomerProjectItem";
 import FilledExecutorBlock from "../ExecutorBlock/FilledExecutorBlock";
-import ProjectReportEditor from "../ProjectCard/ProjectReportEditor";
 import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
 import CustomerStatisticBlock from "./CustomerStatisticBlock";
@@ -33,13 +32,11 @@ const CustomerCard = () => {
         name: "",
         industry: "",
     }); // Данные проекта для отображения в колонке отчетов
+
     const [responsiblePersons, setResponsiblePersons] = useState([]); // Ключевые лица Заказчика
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
-    const [reportEditorState, setReportEditorState] = useState(false); // Конструктор заключения по отчёту
-    const [reportEditorName, setReportEditorName] = useState(""); // Имя отчета в заключении
     const [reportId, setReportId] = useState(null);
     const [contracts, setContracts] = useState([]);
-    const [reportData, setReportData] = useState({});
 
     let query;
 
@@ -86,8 +83,6 @@ const CustomerCard = () => {
     // Получаем отчеты по выбранному проекту
     const getReports = (id) => {
         setReportWindowsState(false);
-        setReportEditorState(false);
-        setReportEditorName("");
 
         const targetProject = projects.find((project) => project.id === id);
 
@@ -162,29 +157,13 @@ const CustomerCard = () => {
         }
     };
 
-    // Обновляем отчет для открытия заключения
-    const openReportConclusion = (data) => {
-        data.project_id = projectData.id;
-
-        setReportData(data);
-
-        if (Object.keys(data).length > 0) {
-            setReportWindowsState(false);
-            setReportEditorState(true);
-        }
-    };
-
     // Принудительное открытие окна редактирования заключения по отчёту
     const openSubReportEditor = (id) => {
         setReportWindowsState(false);
         getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
             (response) => {
                 if (response?.status == 200) {
-                    setReportData(response.data);
                     setReportId(id);
-                    if (id) {
-                        setReportEditorState(true);
-                    }
                 }
             }
         );
@@ -403,134 +382,97 @@ const CustomerCard = () => {
                         </div>
 
                         <div className="flex flex-col">
-                            {reportEditorState ? (
-                                <ProjectReportEditor
-                                    reportData={reportData}
-                                    postData={postData}
-                                    setReports={setReports}
-                                    reportEditorName={reportEditorName}
-                                    setReportWindowsState={
-                                        setReportWindowsState
-                                    }
-                                    setReportEditorState={setReportEditorState}
-                                    reportId={reportId}
-                                    projectId={projectData.id}
-                                    setReportId={setReportId}
-                                    mode={"read"}
-                                />
-                            ) : (
-                                <>
-                                    <CustomerStatisticBlock
-                                        contragentId={contragentId}
-                                    />
+                            <CustomerStatisticBlock
+                                contragentId={contragentId}
+                            />
 
-                                    <div className="flex flex-col gap-2 flex-grow">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-gray-400">
-                                                История проекта
-                                            </span>
-                                        </div>
+                            <div className="flex flex-col gap-2 flex-grow">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-400">
+                                        История проекта
+                                    </span>
+                                </div>
 
-                                        <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                            <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
-                                                <button
-                                                    type="button"
-                                                    className={`py-2 transition-all border-b-2 ${
-                                                        activeReportTab ==
-                                                        "projectReports"
-                                                            ? "border-gray-500"
-                                                            : "border-transparent"
-                                                    }`}
-                                                    onClick={() =>
-                                                        setActiveReportTab(
-                                                            "projectReports"
-                                                        )
-                                                    }
-                                                    title="Перейти на вкладку Отчёты проекта"
-                                                >
-                                                    Отчёты проекта
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className={`py-2 transition-all border-b-2 ${
-                                                        activeReportTab ==
-                                                        "managementReports"
-                                                            ? "border-gray-500"
-                                                            : "border-transparent"
-                                                    }`}
-                                                    onClick={() =>
-                                                        setActiveReportTab(
-                                                            "managementReports"
-                                                        )
-                                                    }
-                                                    title="Перейти на вкладку Отчёты руководителя проекта"
-                                                >
-                                                    Отчёты руководителя проекта
-                                                </button>
-                                            </nav>
+                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                    <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
+                                        <button
+                                            type="button"
+                                            className={`py-2 transition-all border-b-2 ${
+                                                activeReportTab ==
+                                                "projectReports"
+                                                    ? "border-gray-500"
+                                                    : "border-transparent"
+                                            }`}
+                                            onClick={() =>
+                                                setActiveReportTab(
+                                                    "projectReports"
+                                                )
+                                            }
+                                            title="Перейти на вкладку Отчёты проекта"
+                                        >
+                                            Отчёты проекта
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`py-2 transition-all border-b-2 ${
+                                                activeReportTab ==
+                                                "managementReports"
+                                                    ? "border-gray-500"
+                                                    : "border-transparent"
+                                            }`}
+                                            onClick={() =>
+                                                setActiveReportTab(
+                                                    "managementReports"
+                                                )
+                                            }
+                                            title="Перейти на вкладку Отчёты руководителя проекта"
+                                        >
+                                            Отчёты руководителя проекта
+                                        </button>
+                                    </nav>
 
-                                            {!reportWindowsState ? (
-                                                <ul className="grid gap-3">
-                                                    <li className="grid items-center grid-cols-[1fr_1fr_18%_34%] gap-3 mb-2 text-gray-400">
-                                                        <span>Проект</span>
-                                                        <span>Отчет</span>
-                                                        <span className="block text-center">
-                                                            Статус
-                                                        </span>
-                                                        <span>
-                                                            Период выполнения
-                                                        </span>
-                                                    </li>
+                                    {!reportWindowsState ? (
+                                        <ul className="grid gap-3">
+                                            <li className="grid items-center grid-cols-[1fr_1fr_18%_34%] gap-3 mb-2 text-gray-400">
+                                                <span>Проект</span>
+                                                <span>Отчет</span>
+                                                <span className="block text-center">
+                                                    Статус
+                                                </span>
+                                                <span>Период выполнения</span>
+                                            </li>
 
-                                                    {reports.length > 0 &&
-                                                        reports.map(
-                                                            (report, index) => (
-                                                                <CardReportsListItem
-                                                                    key={
-                                                                        report.id ||
-                                                                        index
-                                                                    }
-                                                                    {...report}
-                                                                    projectData={
-                                                                        projectData
-                                                                    }
-                                                                    setReportEditorState={
-                                                                        setReportEditorState
-                                                                    }
-                                                                    setReportEditorName={
-                                                                        setReportEditorName
-                                                                    }
-                                                                    openReportEditor={
-                                                                        openReportEditor
-                                                                    }
-                                                                    openSubReportEditor={
-                                                                        openSubReportEditor
-                                                                    }
-                                                                    mode={
-                                                                        "read"
-                                                                    }
-                                                                />
-                                                            )
-                                                        )}
-                                                </ul>
-                                            ) : (
-                                                <ProjectReportWindow
-                                                    reportWindowsState={
-                                                        setReportWindowsState
-                                                    }
-                                                    contracts={contracts}
-                                                    updateReport={
-                                                        openReportConclusion
-                                                    }
-                                                    reportId={reportId}
-                                                    setReportId={setReportId}
-                                                    mode={"read"}
-                                                />
-                                            )}
-                                        </div>
-                                    </div>
-                                </>
-                            )}
+                                            {reports.length > 0 &&
+                                                reports.map((report, index) => (
+                                                    <CardReportsListItem
+                                                        key={report.id || index}
+                                                        {...report}
+                                                        projectData={
+                                                            projectData
+                                                        }
+                                                        openReportEditor={
+                                                            openReportEditor
+                                                        }
+                                                        openSubReportEditor={
+                                                            openSubReportEditor
+                                                        }
+                                                        mode={"read"}
+                                                    />
+                                                ))}
+                                        </ul>
+                                    ) : (
+                                        <ProjectReportWindow
+                                            reportWindowsState={
+                                                setReportWindowsState
+                                            }
+                                            contracts={contracts}
+                                            reportId={reportId}
+                                            setReportId={setReportId}
+                                            mode={"read"}
+                                        />
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
