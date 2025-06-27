@@ -92,6 +92,7 @@ const ReportRateEditor: React.FC<Props> = ({
                         <RateSwitch
                             name={"general_assessment"}
                             rateHandler={rateHandler}
+                            reportRateData={reportRateData}
                         />
                     </div>
                 </div>
@@ -104,6 +105,7 @@ const ReportRateEditor: React.FC<Props> = ({
                             <RateSwitch
                                 name={item.key}
                                 rateHandler={rateHandler}
+                                reportRateData={reportRateData}
                             />
                         </div>
                     ))}
