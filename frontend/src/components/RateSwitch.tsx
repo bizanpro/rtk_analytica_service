@@ -1,16 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 interface RateSwitchProps {
     name: string;
     rateHandler: (name: string, value: string | number) => void;
-    reportRateData: object;
+    reportRateData: Record<string, number | undefined>;
 }
 
-const RateSwitch: React.FC<RateSwitchProps> = ({
-    name,
-    reportRateData,
-    rateHandler,
-}) => {
+const RateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
     return (
         <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2">
             <button

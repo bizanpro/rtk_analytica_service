@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import RateSwitch from "../RateSwitch";
 
@@ -18,14 +18,14 @@ const RATE_LABELS = [
     { key: "contractor_assessment", label: "Подрядчики" },
 ];
 
-const ReportRateEditor: React.FC<Props> = ({
+const ReportRateEditor = ({
     closeEditor,
     updateReportDetails,
     mode,
     project,
     status,
     id,
-}) => {
+}: Props) => {
     const [reportRateData, setReportRateData] = useState<object>({ id: id });
 
     const rateHandler = (name: string, value: string | number) => {
