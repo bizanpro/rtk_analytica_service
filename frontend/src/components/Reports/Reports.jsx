@@ -6,6 +6,7 @@ import ReportItem from "./ReportItem";
 import ManagementItem from "./ManagementItem";
 import ManagementReportEditor from "./ManagementReportEditor";
 import ReportRateEditor from "./ReportRateEditor";
+import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -61,7 +62,9 @@ const Reports = () => {
     const [managementEditorState, setManagementEditorState] = useState(false); // Конструктор отчёта
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
 
-    const [reportData, setReportData] = useState({});
+    // const [reportData, setReportData] = useState({});
+    const [contracts, setContracts] = useState([]);
+    const [reportId, setReportId] = useState(null);
 
     const [availableMonths, setAvailableMonths] = useState([]);
 
@@ -235,9 +238,10 @@ const Reports = () => {
 
     // Открытие окна отчёта
     const openReportEditor = (reportData) => {
-        setReportData(reportData);
+        getContracts(reportData.contragent?.id);
+        setReportId(reportData.id);
 
-        if (reportData) {
+        if (reportData.id) {
             setReportWindowsState(true);
         }
     };
@@ -384,9 +388,24 @@ const Reports = () => {
         });
     };
 
+    // Получение договоров для детального отчёта
+    const getContracts = (contragentId) => {
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }contragents/${contragentId}/contracts`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setContracts(response.data);
+            }
+        });
+    };
+
     useEffect(() => {
         setManagementEditorState(false);
         setReportWindowsState(false);
+        setReportId(null);
+        // setReportData({});
     }, [activeTab]);
 
     useEffect(() => {
@@ -497,15 +516,18 @@ const Reports = () => {
                                     )}
                                 </div>
 
-                                <button
-                                    type="button"
-                                    className="border rounded-lg py-1 px-5"
-                                    onClick={() =>
-                                        setSelectedProjectsFilters([])
-                                    }
-                                >
-                                    Очистить
-                                </button>
+                                {Object.entries(filterOptionsList).length >
+                                    0 && (
+                                    <button
+                                        type="button"
+                                        className="border rounded-lg py-1 px-5"
+                                        onClick={() =>
+                                            setSelectedProjectsFilters([])
+                                        }
+                                    >
+                                        Очистить
+                                    </button>
+                                )}
                             </>
                         )}
                         {activeTab === "management" && (
@@ -652,14 +674,15 @@ const Reports = () => {
 
                     {activeTab === "projects" && reportWindowsState && (
                         <div
-                            className="bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
+                            className="bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%] p-3"
                             style={{ minHeight: "calc(100vh - 10%)" }}
                         >
-                            <ReportRateEditor
-                                {...reportData}
-                                closeEditor={() => setReportWindowsState(false)}
-                                updateReportDetails={updateReportDetails}
-                                mode={mode}
+                            <ProjectReportWindow
+                                reportWindowsState={setReportWindowsState}
+                                contracts={contracts}
+                                reportId={reportId}
+                                setReportId={setReportId}
+                                mode={"read"}
                             />
                         </div>
                     )}
@@ -669,6 +692,13 @@ const Reports = () => {
                             className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
                             style={{ minHeight: "calc(100vh - 10%)" }}
                         >
+                            <ReportRateEditor
+                                // {...reportData}
+                                closeEditor={() => setReportWindowsState(false)}
+                                updateReportDetails={updateReportDetails}
+                                mode={mode}
+                            />
+
                             <ManagementReportEditor
                                 managementReportData={managementReportData}
                                 setManagementReportData={
