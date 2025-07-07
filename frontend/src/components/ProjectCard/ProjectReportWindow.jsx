@@ -37,6 +37,7 @@ const ProjectReportWindow = ({
         },
         responsible_persons: [],
         contragents: [],
+        show_cost: true,
     });
 
     const [teammates, setTeammates] = useState([]);
@@ -64,12 +65,14 @@ const ProjectReportWindow = ({
             newErrors.budget_in_billions = "Бюджет должен быть больше 0";
         }
 
-        if (
-            !reportData.service_cost_in_rubles ||
-            reportData.service_cost_in_rubles <= 0
-        ) {
-            newErrors.service_cost_in_rubles =
-                "Стоимость услуг должна быть больше 0";
+        if (reportData.show_cost) {
+            if (
+                !reportData.service_cost_in_rubles ||
+                reportData.service_cost_in_rubles <= 0
+            ) {
+                newErrors.service_cost_in_rubles =
+                    "Стоимость услуг должна быть больше 0";
+            }
         }
 
         if (!reportData.contract_id) {
@@ -478,25 +481,36 @@ const ProjectReportWindow = ({
                 </div>
             </div>
 
-            <div className="grid gap-3 grid-cols-2">
-                <div className="flex flex-col gap-2 justify-between">
-                    <span className="text-gray-400">Стоимость услуг, руб.</span>
-                    <div className="border-2 border-gray-300 p-1 h-[32px]">
-                        <input
-                            type="text"
-                            className="w-full"
-                            placeholder="0.0"
-                            value={reportData.service_cost_in_rubles?.replace(
-                                ".",
-                                ","
-                            )}
-                            onChange={(e) =>
-                                handleInputChange(e, "service_cost_in_rubles")
-                            }
-                            disabled={mode === "read"}
-                        />
+            <div
+                className={`grid gap-3 ${
+                    reportData.show_cost ? "grid-cols-2" : " grid-cols-1"
+                }`}
+            >
+                {reportData.show_cost && (
+                    <div className="flex flex-col gap-2 justify-between">
+                        <span className="text-gray-400">
+                            Стоимость услуг, руб.
+                        </span>
+                        <div className="border-2 border-gray-300 p-1 h-[32px]">
+                            <input
+                                type="text"
+                                className="w-full"
+                                placeholder="0.0"
+                                value={reportData.service_cost_in_rubles?.replace(
+                                    ".",
+                                    ","
+                                )}
+                                onChange={(e) =>
+                                    handleInputChange(
+                                        e,
+                                        "service_cost_in_rubles"
+                                    )
+                                }
+                                disabled={mode === "read"}
+                            />
+                        </div>
                     </div>
-                </div>
+                )}
 
                 <div className="flex flex-col">
                     <span className="block mb-2 text-gray-400">
