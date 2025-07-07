@@ -1,5 +1,3 @@
-import React from "react";
-
 interface RateSwitchProps {
     name: string;
     rateHandler: (name: string, value: string | number) => void;

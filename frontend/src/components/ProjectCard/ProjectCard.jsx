@@ -21,6 +21,8 @@ import ProjectImplementationPeriod from "./ProjectImplementationPeriod";
 import ProjectBudget from "./ProjectBudget";
 import Loader from "../Loader";
 
+import Select from "react-select";
+
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -407,7 +409,7 @@ const ProjectCard = () => {
 
     // Обновление проекта
     const updateProject = async (id, showMessage = true) => {
-        if (projectData?.contragent_id && projectData?.industry_id) {
+        if (projectData?.contragent_id && projectData?.industries.main) {
             query = toast.loading("Обновление", {
                 containerId: "projectCard",
                 position: "top-center",
@@ -655,6 +657,10 @@ const ProjectCard = () => {
         }
     }, [searchParams]);
 
+    useEffect(() => {
+        console.log(formFields);
+    }, [formFields]);
+
     return (
         <main className="page">
             <div className="new-project pt-8 pb-15">
@@ -755,7 +761,7 @@ const ProjectCard = () => {
                                                     ?
                                                 </span>
                                             </span>
-                                            <div className="border-2 border-gray-300 p-5">
+                                            <div className="border-2 border-gray-300 p-3">
                                                 <select
                                                     className="w-full h-[21px]"
                                                     value={
@@ -768,11 +774,7 @@ const ProjectCard = () => {
                                                             "contragent_id"
                                                         )
                                                     }
-                                                    disabled={
-                                                        mode == "read"
-                                                            ? true
-                                                            : false
-                                                    }
+                                                    disabled={mode == "read"}
                                                 >
                                                     <option value="">
                                                         Выбрать заказчика
@@ -810,57 +812,128 @@ const ProjectCard = () => {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
-                                            <span className="flex items-center gap-2 text-gray-400">
-                                                Отрасль{" "}
-                                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                    ?
+                                        <div className="flex flex-col gap-5 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
+                                            <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
+                                                <span className="flex items-center gap-2 text-gray-400">
+                                                    Отрасль
+                                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                        ?
+                                                    </span>
                                                 </span>
-                                            </span>
-                                            <div className="border-2 border-gray-300 p-5">
-                                                <select
-                                                    className="w-full h-[21px]"
-                                                    value={
-                                                        projectData?.industry_id ||
-                                                        ""
-                                                    }
-                                                    onChange={(e) => {
+                                                <div className="border-2 border-gray-300 p-3">
+                                                    <select
+                                                        className="w-full h-[21px]"
+                                                        value={
+                                                            projectData
+                                                                ?.industries
+                                                                ?.main || ""
+                                                        }
+                                                        onChange={(evt) => {
+                                                            setFormFields({
+                                                                ...formFields,
+                                                                industries: {
+                                                                    ...formFields.industries,
+                                                                    main: +evt
+                                                                        .target
+                                                                        .value,
+                                                                },
+                                                            });
+                                                            setProjectData({
+                                                                ...projectData,
+                                                                industries: {
+                                                                    ...projectData.industries,
+                                                                    main: +evt
+                                                                        .target
+                                                                        .value,
+                                                                },
+                                                            });
+                                                        }}
+                                                        disabled={
+                                                            mode == "read"
+                                                        }
+                                                    >
+                                                        <option value="">
+                                                            Выбрать отрасль
+                                                        </option>
+                                                        {industries.length >
+                                                            0 &&
+                                                            industries.map(
+                                                                (item) => (
+                                                                    <option
+                                                                        value={
+                                                                            item.id
+                                                                        }
+                                                                        key={
+                                                                            item.id
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            item.name
+                                                                        }
+                                                                    </option>
+                                                                )
+                                                            )}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
+                                                <span className="flex items-center gap-2 text-gray-400">
+                                                    Вспомогательные отрасли
+                                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                        ?
+                                                    </span>
+                                                </span>
+
+                                                <Select
+                                                    closeMenuOnSelect={false}
+                                                    isMulti
+                                                    name="colors"
+                                                    options={industries.map(
+                                                        (industry) => ({
+                                                            value: industry.id,
+                                                            label: industry.name,
+                                                        })
+                                                    )}
+                                                    value={industries
+                                                        .filter((industry) =>
+                                                            projectData?.industries?.others?.includes(
+                                                                industry.id
+                                                            )
+                                                        )
+                                                        .map((industry) => ({
+                                                            value: industry.id,
+                                                            label: industry.name,
+                                                        }))}
+                                                    className="basic-multi-select min-h-[32px] w-full"
+                                                    classNamePrefix="select"
+                                                    placeholder="Выбрать отрасль"
+                                                    isDisabled={mode == "read"}
+                                                    onChange={(
+                                                        selectedOptions
+                                                    ) => {
                                                         setFormFields({
                                                             ...formFields,
-                                                            industry_id:
-                                                                e.target.value,
+                                                            industries: {
+                                                                ...formFields.industries,
+                                                                others: selectedOptions.map(
+                                                                    (option) =>
+                                                                        option.value
+                                                                ),
+                                                            },
                                                         });
                                                         setProjectData({
                                                             ...projectData,
-                                                            industry_id:
-                                                                e.target.value,
+                                                            industries: {
+                                                                ...projectData.industries,
+                                                                others: selectedOptions.map(
+                                                                    (option) =>
+                                                                        option.value
+                                                                ),
+                                                            },
                                                         });
                                                     }}
-                                                    disabled={
-                                                        mode == "read"
-                                                            ? true
-                                                            : false
-                                                    }
-                                                >
-                                                    <option value="">
-                                                        Выбрать отрасль
-                                                    </option>
-                                                    {industries.length > 0 &&
-                                                        industries.map(
-                                                            (item) => (
-                                                                <option
-                                                                    value={
-                                                                        item.id
-                                                                    }
-                                                                    key={
-                                                                        item.id
-                                                                    }
-                                                                >
-                                                                    {item.name}
-                                                                </option>
-                                                            )
-                                                        )}
-                                                </select>
+                                                />
                                             </div>
                                         </div>
                                     </div>
