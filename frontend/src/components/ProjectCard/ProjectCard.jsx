@@ -657,10 +657,6 @@ const ProjectCard = () => {
         }
     }, [searchParams]);
 
-    useEffect(() => {
-        console.log(formFields);
-    }, [formFields]);
-
     return (
         <main className="page">
             <div className="new-project pt-8 pb-15">
@@ -756,7 +752,7 @@ const ProjectCard = () => {
 
                                         <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
                                             <span className="flex items-center gap-2 text-gray-400">
-                                                Заказчик{" "}
+                                                Заказчик
                                                 <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                                     ?
                                                 </span>

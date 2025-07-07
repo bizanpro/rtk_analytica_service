@@ -580,7 +580,7 @@ const SaleCard = () => {
                                 <div className="flex flex-col gap-3">
                                     <div className="flex flex-col gap-2 flex-shrink-0 flex-grow">
                                         <span className="flex items-center gap-2 text-gray-400">
-                                            Заказчик{" "}
+                                            Заказчик
                                             <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                                 ?
                                             </span>
@@ -637,23 +637,38 @@ const SaleCard = () => {
                                         <div className="flex flex-col gap-3">
                                             <div className="flex flex-col gap-2 flex-shrink-0 flex-grow">
                                                 <span className="flex items-center gap-2 text-gray-400">
-                                                    Отрасль{" "}
+                                                    Отрасль
                                                     <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                                         ?
                                                     </span>
                                                 </span>
-                                                <div className="border-2 border-gray-300 p-5">
+                                                <div className="border-2 border-gray-300 p-3">
                                                     <select
                                                         className="w-full h-[21px]"
                                                         value={
-                                                            projectData?.industry_id ||
-                                                            ""
+                                                            projectData
+                                                                ?.industries
+                                                                .main || ""
                                                         }
-                                                        onChange={(e) => {
-                                                            handleInputChange(
-                                                                e,
-                                                                "industry_id"
-                                                            );
+                                                        onChange={(evt) => {
+                                                            setFormFields({
+                                                                ...formFields,
+                                                                industries: {
+                                                                    ...formFields.industries,
+                                                                    main: +evt
+                                                                        .target
+                                                                        .value,
+                                                                },
+                                                            });
+                                                            setProjectData({
+                                                                ...projectData,
+                                                                industries: {
+                                                                    ...projectData.industries,
+                                                                    main: +evt
+                                                                        .target
+                                                                        .value,
+                                                                },
+                                                            });
                                                         }}
                                                         disabled={
                                                             mode == "read"
@@ -684,14 +699,73 @@ const SaleCard = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="flex flex-col gap-2 flex-shrink-0 flex-grow">
+                                            <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
                                                 <span className="flex items-center gap-2 text-gray-400">
-                                                    Источник{" "}
+                                                    Вспомогательные отрасли
                                                     <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                                         ?
                                                     </span>
                                                 </span>
-                                                <div className="border-2 border-gray-300 p-5">
+
+                                                <Select
+                                                    closeMenuOnSelect={false}
+                                                    isMulti
+                                                    name="colors"
+                                                    options={industries.map(
+                                                        (industry) => ({
+                                                            value: industry.id,
+                                                            label: industry.name,
+                                                        })
+                                                    )}
+                                                    value={industries
+                                                        .filter((industry) =>
+                                                            projectData?.industries?.others?.includes(
+                                                                industry.id
+                                                            )
+                                                        )
+                                                        .map((industry) => ({
+                                                            value: industry.id,
+                                                            label: industry.name,
+                                                        }))}
+                                                    className="basic-multi-select min-h-[32px] w-full"
+                                                    classNamePrefix="select"
+                                                    placeholder="Выбрать отрасль"
+                                                    isDisabled={mode == "read"}
+                                                    onChange={(
+                                                        selectedOptions
+                                                    ) => {
+                                                        setFormFields({
+                                                            ...formFields,
+                                                            industries: {
+                                                                ...formFields.industries,
+                                                                others: selectedOptions.map(
+                                                                    (option) =>
+                                                                        option.value
+                                                                ),
+                                                            },
+                                                        });
+                                                        setProjectData({
+                                                            ...projectData,
+                                                            industries: {
+                                                                ...projectData.industries,
+                                                                others: selectedOptions.map(
+                                                                    (option) =>
+                                                                        option.value
+                                                                ),
+                                                            },
+                                                        });
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col gap-2 flex-shrink-0 flex-grow">
+                                                <span className="flex items-center gap-2 text-gray-400">
+                                                    Источник
+                                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                        ?
+                                                    </span>
+                                                </span>
+                                                <div className="border-2 border-gray-300 p-3">
                                                     <select
                                                         className="w-full h-[21px]"
                                                         value={
