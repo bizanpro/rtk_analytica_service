@@ -255,6 +255,11 @@ const Reports = () => {
         setManagementEditorState(true);
     };
 
+    const closeManagementReportEditor = () => {
+        setReportData({});
+        setManagementEditorState(false);
+    };
+
     // Отправляем новый отчёт Сотрудника
     // const sendNewReport = (extendReportData) => {
     //     query = toast.loading("Выполняется отправка", {
@@ -360,7 +365,7 @@ const Reports = () => {
 
         postData(
             "PATCH",
-            `${import.meta.env.VITE_API_URL}reports/${report.id}`,
+            `${import.meta.env.VITE_API_URL}management-reports/${report.id}`,
             report
         )
             .then((response) => {
@@ -707,9 +712,8 @@ const Reports = () => {
                         >
                             <ReportRateEditor
                                 reportData={reportData}
-                                closeEditor={() => setReportWindowsState(false)}
+                                closeEditor={closeManagementReportEditor}
                                 updateReportDetails={updateReportDetails}
-                                mode={mode}
                             />
 
                             {/* <ManagementReportEditor

@@ -5,10 +5,7 @@ import RateSwitch from "../RateSwitch";
 type Props = {
     closeEditor: () => void;
     updateReportDetails: (report: object, action: string) => void;
-    mode: string;
-    project: object;
-    status: string;
-    id: number;
+    reportData: object;
 };
 
 const RATE_LABELS = [
@@ -21,12 +18,9 @@ const RATE_LABELS = [
 const ReportRateEditor = ({
     closeEditor,
     updateReportDetails,
-    mode,
     reportData,
 }: Props) => {
-    const [reportRateData, setReportRateData] = useState<object>({
-        id: reportData.id,
-    });
+    const [reportRateData, setReportRateData] = useState<object>(reportData);
 
     const rateHandler = (name: string, value: string | number) => {
         setReportRateData((prev) => ({
@@ -36,7 +30,8 @@ const ReportRateEditor = ({
     };
 
     useEffect(() => {
-        setReportRateData({ id: reportData.id });
+        console.log(reportRateData);
+        setReportRateData(reportData);
     }, [reportData]);
 
     return (
@@ -44,10 +39,12 @@ const ReportRateEditor = ({
             <div className="flex items-start justify-between mb-3">
                 <div className="flex items-start gap-5 flex-grow">
                     <div>
-                        <div className="text-2xl mb-2">{reportData.name}</div>
+                        <div className="text-2xl mb-2">
+                            {reportRateData.name}
+                        </div>
 
                         <div className="text-base mb-2">
-                            {reportData.physical_person}
+                            {reportRateData.physical_person}
                         </div>
 
                         <ul className="flex items-center gap-2">
@@ -60,7 +57,7 @@ const ReportRateEditor = ({
                         </ul>
                     </div>
 
-                    <div className="mt-2">{reportData.status}</div>
+                    <div className="mt-2">{reportRateData.status}</div>
                 </div>
 
                 <button
@@ -122,11 +119,10 @@ const ReportRateEditor = ({
                     <textarea
                         className="w-full border-2 border-gray-300 p-5 flex-grow max-h-[300px]"
                         placeholder="Описание"
-                        // value={managementReportData[currentTab] || ""}
+                        value={reportRateData.general_summary}
                         onChange={(evt) =>
                             rateHandler("general_summary", evt.target.value)
                         }
-                        // disabled={mode === "read" ? true : false}
                     ></textarea>
                 </div>
             </div>
