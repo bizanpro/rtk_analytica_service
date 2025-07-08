@@ -1,8 +1,5 @@
 import { useState } from "react";
 
-import { format, parseISO } from "date-fns";
-import { ru } from "date-fns/locale";
-
 const ManagementReportEditor = ({
     managementReportData,
     setManagementReportData,
@@ -28,23 +25,12 @@ const ManagementReportEditor = ({
         }));
     };
 
-    const capitalizeFirstLetter = (string) => {
-        if (!string) return "";
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    };
-
-    const formatted = format(
-        parseISO(managementReportData?.report_month),
-        "LLLL yyyy",
-        { locale: ru }
-    );
-
     return (
         <div className="border-2 border-gray-300 py-5 px-3 h-full flex flex-col">
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-5 flex-grow">
                     <div className="text-2xl">
-                        {capitalizeFirstLetter(formatted)}
+                        {managementReportData.report_month}
                     </div>
 
                     <div>В работе</div>

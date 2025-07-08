@@ -22,11 +22,11 @@ const ReportRateEditor = ({
     closeEditor,
     updateReportDetails,
     mode,
-    project,
-    status,
-    id,
+    reportData,
 }: Props) => {
-    const [reportRateData, setReportRateData] = useState<object>({ id: id });
+    const [reportRateData, setReportRateData] = useState<object>({
+        id: reportData.id,
+    });
 
     const rateHandler = (name: string, value: string | number) => {
         setReportRateData((prev) => ({
@@ -36,20 +36,18 @@ const ReportRateEditor = ({
     };
 
     useEffect(() => {
-        setReportRateData({ id: id });
-    }, [id]);
+        setReportRateData({ id: reportData.id });
+    }, [reportData]);
 
     return (
-        <div className="p-5 h-full flex flex-col">
+        <div className="p-5 h-full flex flex-col border-2 border-gray-300">
             <div className="flex items-start justify-between mb-3">
                 <div className="flex items-start gap-5 flex-grow">
                     <div>
-                        <div className="text-2xl mb-2">
-                            {project.name} / Март 2025
-                        </div>
+                        <div className="text-2xl mb-2">{reportData.name}</div>
 
                         <div className="text-base mb-2">
-                            Прохоров Валерий Петрович
+                            {reportData.physical_person}
                         </div>
 
                         <ul className="flex items-center gap-2">
@@ -62,7 +60,7 @@ const ReportRateEditor = ({
                         </ul>
                     </div>
 
-                    <div className="mt-2">{status}</div>
+                    <div className="mt-2">{reportData.status}</div>
                 </div>
 
                 <button

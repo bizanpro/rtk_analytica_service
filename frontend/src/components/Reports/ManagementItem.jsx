@@ -4,11 +4,6 @@ import { ru } from "date-fns/locale";
 import RateSwitch from "../RateSwitch";
 
 const ManagementItem = ({ columns, props, openManagementReportEditor }) => {
-    const capitalizeFirstLetter = (string) => {
-        if (!string) return "";
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    };
-
     return (
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
@@ -84,17 +79,12 @@ const ManagementItem = ({ columns, props, openManagementReportEditor }) => {
                                             locale: ru,
                                         }) || "—"
                                     );
-                                } else if (key === "report_month" && value) {
-                                    const formatted = format(
-                                        parseISO(value),
-                                        "LLLL yyyy",
-                                        { locale: ru }
-                                    );
-                                    return (
-                                        capitalizeFirstLetter(formatted) || "—"
-                                    );
                                 } else if (key === "score") {
-                                    return <div className="w-[80px]"><RateSwitch /></div>;
+                                    return (
+                                        <div className="w-[80px]">
+                                            {/* <RateSwitch /> */}
+                                        </div>
+                                    );
                                 } else {
                                     return value?.toString() || "—";
                                 }

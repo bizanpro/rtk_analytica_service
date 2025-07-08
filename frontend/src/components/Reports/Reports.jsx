@@ -62,7 +62,7 @@ const Reports = () => {
     const [managementEditorState, setManagementEditorState] = useState(false); // Конструктор отчёта
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
 
-    // const [reportData, setReportData] = useState({});
+    const [reportData, setReportData] = useState({});
     const [contracts, setContracts] = useState([]);
     const [reportId, setReportId] = useState(null);
 
@@ -81,27 +81,27 @@ const Reports = () => {
     const [selectedPhysicalPerson, setSelectedPhysicalPerson] =
         useState("default"); // Выбранный отвественный
 
-    const [managementReportData, setManagementReportData] = useState({
-        name: "",
-        physical_person_id: 1,
-        report_month: "",
-        status_summary: "",
-        problems: "",
-        prospects: "",
-        team: "",
-        legal_issues: "",
-        misc: "",
-    });
+    // const [managementReportData, setManagementReportData] = useState({
+    //     name: "",
+    //     physical_person_id: 1,
+    //     report_month: "",
+    //     status_summary: "",
+    //     problems: "",
+    //     prospects: "",
+    //     team: "",
+    //     legal_issues: "",
+    //     misc: "",
+    // });
 
     const filteredReports = useMemo(() => {
         const result = managementList.filter((report) => {
             return (
                 (selectedManagementReport &&
                 selectedManagementReport !== "default"
-                    ? report.name === selectedManagementReport
+                    ? report?.name === selectedManagementReport
                     : true) &&
                 (selectedPhysicalPerson && selectedPhysicalPerson !== "default"
-                    ? report.physical_person.name === selectedPhysicalPerson
+                    ? report?.physical_person?.name === selectedPhysicalPerson
                     : true)
             );
         });
@@ -117,7 +117,7 @@ const Reports = () => {
     // Заполняем селектор ответственных
     const physicalPersonOptions = useMemo(() => {
         const allReports = managementList.flatMap(
-            (item) => item.physical_person.name
+            (item) => item?.physical_person?.name
         );
         return Array.from(new Set(allReports));
     }, [managementList]);
@@ -154,7 +154,7 @@ const Reports = () => {
         getData(`${REPORTS_URL}?${queryParams.toString()}`)
             .then((response) => {
                 if (response.status === 200) {
-                    setReportsList(response.data.reports);
+                    setReportsList(response.data);
                     setSelectedManagementReport("default");
                     setSelectedPhysicalPerson("default");
                 }
@@ -249,104 +249,105 @@ const Reports = () => {
     // Открытие окна редактора отчета Сотрудника
     const openManagementReportEditor = (props, mode = "read") => {
         // setPopupState(false);
-        setManagementReportData(props);
+        setReportData(props);
+        // setManagementReportData(props);
         setMode(mode);
         setManagementEditorState(true);
     };
 
     // Отправляем новый отчёт Сотрудника
-    const sendNewReport = (extendReportData) => {
-        query = toast.loading("Выполняется отправка", {
-            containerId: "report",
-            position: "top-center",
-        });
+    // const sendNewReport = (extendReportData) => {
+    //     query = toast.loading("Выполняется отправка", {
+    //         containerId: "report",
+    //         position: "top-center",
+    //     });
 
-        postData(
-            "POST",
-            `${import.meta.env.VITE_API_URL}management-reports`,
-            extendReportData
-        )
-            .then((response) => {
-                if (response?.ok) {
-                    toast.update(query, {
-                        render: "Данные сохранены",
-                        type: "success",
-                        containerId: "report",
-                        isLoading: false,
-                        autoClose: 1200,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: false,
-                        position: "top-center",
-                    });
-                    getFilteredManagementReports();
-                    getAvailableMonths();
-                    setManagementEditorState(false);
-                } else {
-                    toast.dismiss(query);
-                    toast.error("Ошибка сохранения данных", {
-                        containerId: "report",
-                        isLoading: false,
-                        autoClose: 1500,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: false,
-                        position: "top-center",
-                    });
-                }
-            })
-            .catch((error) => {
-                toast.dismiss(query);
-                toast.error(error.message || "Ошибка при обновлении", {
-                    containerId: "report",
-                    isLoading: false,
-                    autoClose: 5000,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-            });
-    };
+    //     postData(
+    //         "POST",
+    //         `${import.meta.env.VITE_API_URL}management-reports`,
+    //         extendReportData
+    //     )
+    //         .then((response) => {
+    //             if (response?.ok) {
+    //                 toast.update(query, {
+    //                     render: "Данные сохранены",
+    //                     type: "success",
+    //                     containerId: "report",
+    //                     isLoading: false,
+    //                     autoClose: 1200,
+    //                     pauseOnFocusLoss: false,
+    //                     pauseOnHover: false,
+    //                     position: "top-center",
+    //                 });
+    //                 getFilteredManagementReports();
+    //                 getAvailableMonths();
+    //                 setManagementEditorState(false);
+    //             } else {
+    //                 toast.dismiss(query);
+    //                 toast.error("Ошибка сохранения данных", {
+    //                     containerId: "report",
+    //                     isLoading: false,
+    //                     autoClose: 1500,
+    //                     pauseOnFocusLoss: false,
+    //                     pauseOnHover: false,
+    //                     position: "top-center",
+    //                 });
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             toast.dismiss(query);
+    //             toast.error(error.message || "Ошибка при обновлении", {
+    //                 containerId: "report",
+    //                 isLoading: false,
+    //                 autoClose: 5000,
+    //                 pauseOnFocusLoss: false,
+    //                 pauseOnHover: false,
+    //                 position: "top-center",
+    //             });
+    //         });
+    // };
 
     // Обновляем  отчёт Менеджмента
-    const updateReport = (extendReportData) => {
-        query = toast.loading("Обновление", {
-            containerId: "report",
-            position: "top-center",
-        });
+    // const updateReport = (extendReportData) => {
+    //     query = toast.loading("Обновление", {
+    //         containerId: "report",
+    //         position: "top-center",
+    //     });
 
-        postData(
-            "PATCH",
-            `${import.meta.env.VITE_API_URL}management-reports/${
-                extendReportData.id
-            }`,
-            extendReportData
-        ).then((response) => {
-            if (response?.ok) {
-                toast.update(query, {
-                    render: "Данные обновлены",
-                    type: "success",
-                    containerId: "report",
-                    isLoading: false,
-                    autoClose: 1200,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-                getFilteredManagementReports();
-                getAvailableMonths();
-                setManagementEditorState(false);
-            } else {
-                toast.dismiss(query);
-                toast.error("Ошибка обновления данных", {
-                    containerId: "report",
-                    isLoading: false,
-                    autoClose: 1500,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-            }
-        });
-    };
+    //     postData(
+    //         "PATCH",
+    //         `${import.meta.env.VITE_API_URL}management-reports/${
+    //             extendReportData.id
+    //         }`,
+    //         extendReportData
+    //     ).then((response) => {
+    //         if (response?.ok) {
+    //             toast.update(query, {
+    //                 render: "Данные обновлены",
+    //                 type: "success",
+    //                 containerId: "report",
+    //                 isLoading: false,
+    //                 autoClose: 1200,
+    //                 pauseOnFocusLoss: false,
+    //                 pauseOnHover: false,
+    //                 position: "top-center",
+    //             });
+    //             getFilteredManagementReports();
+    //             getAvailableMonths();
+    //             setManagementEditorState(false);
+    //         } else {
+    //             toast.dismiss(query);
+    //             toast.error("Ошибка обновления данных", {
+    //                 containerId: "report",
+    //                 isLoading: false,
+    //                 autoClose: 1500,
+    //                 pauseOnFocusLoss: false,
+    //                 pauseOnHover: false,
+    //                 position: "top-center",
+    //             });
+    //         }
+    //     });
+    // };
 
     // Обновляем отчет Проекта
     const updateReportDetails = (report, action) => {
@@ -405,7 +406,7 @@ const Reports = () => {
         setManagementEditorState(false);
         setReportWindowsState(false);
         setReportId(null);
-        // setReportData({});
+        setReportData({});
     }, [activeTab]);
 
     useEffect(() => {
@@ -693,13 +694,13 @@ const Reports = () => {
                             style={{ minHeight: "calc(100vh - 10%)" }}
                         >
                             <ReportRateEditor
-                                // {...reportData}
+                                reportData={reportData}
                                 closeEditor={() => setReportWindowsState(false)}
                                 updateReportDetails={updateReportDetails}
                                 mode={mode}
                             />
 
-                            <ManagementReportEditor
+                            {/* <ManagementReportEditor
                                 managementReportData={managementReportData}
                                 setManagementReportData={
                                     setManagementReportData
@@ -710,7 +711,7 @@ const Reports = () => {
                                 sendNewReport={sendNewReport}
                                 updateReport={updateReport}
                                 mode={mode}
-                            />
+                            /> */}
                         </div>
                     )}
                 </section>
