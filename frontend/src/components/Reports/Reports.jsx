@@ -247,7 +247,7 @@ const Reports = () => {
     };
 
     // Открытие окна редактора отчета Сотрудника
-    const openManagementReportEditor = (props, mode = "read") => {
+    const openManagementReportEditor = (props) => {
         // setPopupState(false);
         setReportData(props);
         // setManagementReportData(props);
@@ -262,7 +262,7 @@ const Reports = () => {
                     ...reportData,
                     general_assessment: 0,
                 };
-                openManagementReportEditor(newReportData, "edit");
+                openManagementReportEditor(newReportData);
                 break;
             }
 
@@ -271,7 +271,7 @@ const Reports = () => {
                     ...reportData,
                     general_assessment: 1,
                 };
-                openManagementReportEditor(newReportData, "edit");
+                openManagementReportEditor(newReportData);
                 break;
             }
 

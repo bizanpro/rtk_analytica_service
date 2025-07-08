@@ -13,7 +13,7 @@ const ManagementItem = ({
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
             onClick={() => {
-                openManagementReportEditor(props, "edit");
+                openManagementReportEditor(props);
             }}
         >
             {columns.map(({ key }) => {
@@ -104,17 +104,6 @@ const ManagementItem = ({
                     );
                 }
             })}
-            {/* <td>
-                <button
-                    type="button"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        openManagementReportEditor(props, "edit");
-                    }}
-                >
-                    Изменить
-                </button>
-            </td> */}
         </tr>
     );
 };

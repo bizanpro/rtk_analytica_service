@@ -30,7 +30,9 @@ const ReportRateEditor = ({
     };
 
     useEffect(() => {
-        setReportRateData(reportData);
+        if (reportData) {
+            setReportRateData({ ...reportData });
+        }
     }, [reportData]);
 
     return (
@@ -118,7 +120,7 @@ const ReportRateEditor = ({
                     <textarea
                         className="w-full border-2 border-gray-300 p-5 flex-grow max-h-[300px]"
                         placeholder="Описание"
-                        value={reportRateData.general_summary}
+                        value={reportRateData.general_summary || ""}
                         onChange={(evt) =>
                             rateHandler("general_summary", evt.target.value)
                         }
