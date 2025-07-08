@@ -4,7 +4,7 @@ interface RateSwitchProps {
     reportRateData: Record<string, number | undefined>;
 }
 
-const RateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
+const ManagementItemRateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
     return (
         <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2">
             <button
@@ -15,7 +15,7 @@ const RateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
                 title="Поставить оценку Плохо"
                 onClick={(evt) => {
                     evt.stopPropagation();
-                    rateHandler(name, 0);
+                    rateHandler(reportRateData, 0);
                 }}
             ></button>
             <button
@@ -26,7 +26,7 @@ const RateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
                 title="Поставить оценку Средне"
                 onClick={(evt) => {
                     evt.stopPropagation();
-                    rateHandler(name, 1);
+                    rateHandler(reportRateData, 1);
                 }}
             ></button>
             <button
@@ -37,11 +37,11 @@ const RateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
                 title="Поставить оценку Хорошо"
                 onClick={(evt) => {
                     evt.stopPropagation();
-                    rateHandler(name, 2);
+                    rateHandler(reportRateData, 2);
                 }}
             ></button>
         </nav>
     );
 };
 
-export default RateSwitch;
+export default ManagementItemRateSwitch;

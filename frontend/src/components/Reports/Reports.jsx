@@ -54,7 +54,7 @@ const Reports = () => {
 
     const [activeTab, setActiveTab] = useState("projects");
     const [isLoading, setIsLoading] = useState(true);
-    const [mode, setMode] = useState("read");
+    // const [mode, setMode] = useState("read");
 
     const [reportsList, setReportsList] = useState([]);
     const [managementList, setManagementList] = useState([]);
@@ -251,8 +251,47 @@ const Reports = () => {
         // setPopupState(false);
         setReportData(props);
         // setManagementReportData(props);
-        setMode(mode);
+        // setMode(mode);
         setManagementEditorState(true);
+    };
+
+    const managementReportEditorHandler = (reportData, rate) => {
+        switch (rate) {
+            case 0: {
+                const newReportData = {
+                    ...reportData,
+                    general_assessment: 0,
+                };
+                openManagementReportEditor(newReportData, "edit");
+                break;
+            }
+
+            case 1: {
+                const newReportData = {
+                    ...reportData,
+                    general_assessment: 1,
+                };
+                openManagementReportEditor(newReportData, "edit");
+                break;
+            }
+
+            case 2: {
+                const newReportData = {
+                    ...reportData,
+                    general_assessment: 2,
+                    bank_assessment: 2,
+                    customer_assessment: 2,
+                    team_assessment: 2,
+                    contractor_assessment: 2,
+                };
+
+                updateReportDetails(newReportData, "approve");
+                break;
+            }
+
+            default:
+                break;
+        }
     };
 
     const closeManagementReportEditor = () => {
@@ -380,7 +419,8 @@ const Reports = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-                    setReportWindowsState(false);
+                    closeManagementReportEditor();
+                    getFilteredManagementReports();
                 } else {
                     toast.dismiss(query);
                     toast.error("Ошибка обновления данных", {
@@ -683,6 +723,9 @@ const Reports = () => {
                                         props={item}
                                         openManagementReportEditor={
                                             openManagementReportEditor
+                                        }
+                                        managementReportEditorHandler={
+                                            managementReportEditorHandler
                                         }
                                     />
                                 ))

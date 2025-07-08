@@ -1,9 +1,14 @@
 import { format, parseISO } from "date-fns";
 import { ru } from "date-fns/locale";
 
-import RateSwitch from "../RateSwitch";
+import ManagementItemRateSwitch from "./ManagementItemRateSwitch";
 
-const ManagementItem = ({ columns, props, openManagementReportEditor }) => {
+const ManagementItem = ({
+    columns,
+    props,
+    openManagementReportEditor,
+    managementReportEditorHandler,
+}) => {
     return (
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
@@ -82,7 +87,13 @@ const ManagementItem = ({ columns, props, openManagementReportEditor }) => {
                                 } else if (key === "score") {
                                     return (
                                         <div className="w-[80px]">
-                                            {/* <RateSwitch /> */}
+                                            <ManagementItemRateSwitch
+                                                name={"general_assessment"}
+                                                rateHandler={
+                                                    managementReportEditorHandler
+                                                }
+                                                reportRateData={props}
+                                            />
                                         </div>
                                     );
                                 } else {

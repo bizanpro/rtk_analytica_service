@@ -30,7 +30,6 @@ const ReportRateEditor = ({
     };
 
     useEffect(() => {
-        console.log(reportRateData);
         setReportRateData(reportData);
     }, [reportData]);
 
