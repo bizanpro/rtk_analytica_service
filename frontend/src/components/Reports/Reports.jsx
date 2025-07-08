@@ -362,31 +362,43 @@ const Reports = () => {
             "PATCH",
             `${import.meta.env.VITE_API_URL}reports/${report.id}`,
             report
-        ).then((response) => {
-            if (response?.ok) {
-                toast.update(query, {
-                    render: "Данные обновлены",
-                    type: "success",
-                    containerId: "report",
-                    isLoading: false,
-                    autoClose: 1200,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-                setReportWindowsState(false);
-            } else {
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: "Данные обновлены",
+                        type: "success",
+                        containerId: "report",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                    setReportWindowsState(false);
+                } else {
+                    toast.dismiss(query);
+                    toast.error("Ошибка обновления данных", {
+                        containerId: "report",
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                }
+            })
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка обновления данных", {
+                toast.error(error.message || "Ошибка обновления данных", {
                     containerId: "report",
                     isLoading: false,
-                    autoClose: 1500,
+                    autoClose: 5000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
                     position: "top-center",
                 });
-            }
-        });
+            });
     };
 
     // Получение договоров для детального отчёта
