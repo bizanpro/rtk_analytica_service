@@ -37,7 +37,7 @@ const ProjectCard = () => {
     const navigate = useNavigate();
 
     const [projectData, setProjectData] = useState({});
-    const [formFields, setFormFields] = useState({});
+    const [formFields, setFormFields] = useState({ action: "presave" });
 
     const [mode, setMode] = useState(location.state?.mode || "read");
     const [activeReportTab, setActiveReportTab] = useState("projectReports");
