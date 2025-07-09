@@ -18,7 +18,7 @@ const ProjectReportWindow = ({
 }) => {
     const [reportData, setReportData] = useState({
         report_status_id: 1,
-        report_type_id: 1,
+        report_type_id: "",
         budget_in_billions: "",
         service_cost_in_rubles: "",
         approval_date: "2025-01-01",
@@ -369,6 +369,10 @@ const ProjectReportWindow = ({
         }
     }, [isDataLoaded, reportId]);
 
+    useEffect(() => {
+        console.log(reportData.report_type_id);
+    }, [reportData.report_type_id]);
+
     return (
         <div className="grid gap-6 relative bg-white">
             {!isDataLoaded && <Loader />}
@@ -387,6 +391,7 @@ const ProjectReportWindow = ({
                             value={reportData.report_type_id}
                             disabled={mode === "read"}
                         >
+                            <option value="">Выбрать тип</option>
                             {reportTypes.length > 0 &&
                                 reportTypes.map((type) => (
                                     <option key={type.id} value={type.id}>
