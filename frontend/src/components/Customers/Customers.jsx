@@ -1,11 +1,13 @@
 import { useEffect, useState, useMemo } from "react";
+
 import getData from "../../utils/getData";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
+import { createDebounce } from "../../utils/debounce";
+
 import ProjectItem from "./CustomerItem";
 import Select from "../Select";
 import Search from "../Search/Search";
-import { createDebounce } from "../../utils/debounce";
 
 const Customers = () => {
     const [list, setList] = useState([]);

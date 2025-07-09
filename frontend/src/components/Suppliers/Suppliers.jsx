@@ -1,16 +1,25 @@
 import { useEffect, useState, useMemo } from "react";
+
 import getData from "../../utils/getData";
+import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
+import { createDebounce } from "../../utils/debounce";
+
 import SupplierItem from "./SupplierItem";
 import Select from "../Select";
 import Search from "../Search/Search";
-import { createDebounce } from "../../utils/debounce";
 
 const Suppliers = () => {
     const [list, setList] = useState([]);
     const [selectedName, setSelectedName] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
     const [isLoading, setIsLoading] = useState(true);
+    const [isFiltering, setIsFiltering] = useState(false);
+    const [page, setPage] = useState(1);
+    const [meta, setMeta] = useState({
+        current_page: 1,
+        last_page: 1,
+    });
 
     const URL = `${import.meta.env.VITE_API_URL}suppliers/?active=true`;
 
@@ -45,7 +54,7 @@ const Suppliers = () => {
         getData(`${URL}&search=${searchQuery}`, { Accept: "application/json" })
             .then((response) => {
                 if (response.status == 200) {
-                    setList(response.data);
+                    setList(response.data.data);
                 }
             })
             .finally(() => setIsLoading(false));
@@ -78,12 +87,26 @@ const Suppliers = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        getData(URL, { Accept: "application/json" })
+        getData(`${URL}&page=${page}`, { Accept: "application/json" })
             .then((response) => {
-                setList((prev) => [...prev, ...response.data]);
+                setList((prev) => [...prev, ...response.data.data]);
+                setMeta(response.data.meta);
             })
             .finally(() => setIsLoading(false));
-    }, []);
+    }, [page]);
+
+    useEffect(() => {
+        selectedName === "default" && selectedStatus === "default"
+            ? setIsFiltering(false)
+            : setIsFiltering(true);
+    }, [selectedName, selectedStatus]);
+
+    const loaderRef = useInfiniteScroll({
+        isLoading,
+        meta,
+        setPage,
+        isFiltering,
+    });
 
     return (
         <main className="page">
@@ -162,6 +185,7 @@ const Suppliers = () => {
                         </tbody>
                     </table>
 
+                    <div ref={loaderRef} className="h-4" />
                     {isLoading && <div className="mt-4">Загрузка...</div>}
                 </div>
             </div>

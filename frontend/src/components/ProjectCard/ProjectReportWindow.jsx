@@ -292,7 +292,7 @@ const ProjectReportWindow = ({
             }
 
             if (suppliersRes.status === "fulfilled")
-                setSuppliers(suppliersRes.value.data); // Получение подрядчиков
+                setSuppliers(suppliersRes.value.data.data); // Получение подрядчиков
 
             if (rolesRes.status === "fulfilled")
                 setRoles(rolesRes.value.data.data); // Получение ролей
