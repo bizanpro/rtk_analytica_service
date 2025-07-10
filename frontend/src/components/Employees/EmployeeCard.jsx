@@ -15,6 +15,8 @@ import EmployeeWorkloadSummary from "./EmployeeWorkloadSummary";
 
 import "react-toastify/dist/ReactToastify.css";
 
+import months from "../../data/months.json";
+
 const EmployeeCard = () => {
     const { employeeId } = useParams();
     const navigate = useNavigate();
@@ -26,30 +28,22 @@ const EmployeeCard = () => {
     const [mode, setMode] = useState("read");
     const [errors, setErrors] = useState({});
     const [availableYears, setAvailableYears] = useState([]);
-    const [selectedPesonalYear, setSelectedPesonalYear] = useState("");
-    const [selectedPesonalMonth, setSelectedPesonalMonth] = useState("1");
+    const [selectedPersonalYear, setSelectedPersonalYear] = useState(2024);
+    const [selectedPersonalMonth, setSelectedPersonalMonth] = useState("1");
     const [selectedSummaryYear, setSelectedSummaryYear] = useState("");
     const [selectedSummaryMonth, setSelectedSummaryMonth] = useState("1");
     const [selectedTypes, setSelecterTypes] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
     const [positions, setPositions] = useState([]);
 
-    const months = [
-        "Январь",
-        "Февраль",
-        "Март",
-        "Апрель",
-        "Май",
-        "Июнь",
-        "Июль",
-        "Август",
-        "Сентябрь",
-        "Октябрь",
-        "Ноябрь",
-        "Декабрь",
-    ];
-
     const PhoneMask = "+{7} (000) 000 00 00";
+
+    const currentMonthName = months[new Date().getMonth()];
+    const currentMonthIndex = months.indexOf(currentMonthName);
+    const availableMonths =
+        currentMonthIndex !== -1
+            ? months.slice(0, currentMonthIndex + 1)
+            : months;
 
     let query;
 
@@ -109,7 +103,7 @@ const EmployeeCard = () => {
             (response) => {
                 if (response.status == 200) {
                     setAvailableYears(response.data);
-                    setSelectedPesonalYear(
+                    setSelectedPersonalYear(
                         response.data[response.data.length - 1]
                     );
                     setSelectedSummaryYear(
@@ -253,8 +247,8 @@ const EmployeeCard = () => {
     // Получение трудозатрат
     const personalWorkloadFilter = () => {
         const payload = {
-            year: selectedPesonalYear,
-            month: selectedPesonalMonth,
+            year: selectedPersonalYear,
+            month: selectedPersonalMonth,
         };
 
         getData(
@@ -282,14 +276,14 @@ const EmployeeCard = () => {
         const data = isOtherWorkload
             ? {
                   load_percentage: +personalWorkloadData?.other_workload,
-                  year: +selectedPesonalYear,
-                  month: +selectedPesonalMonth,
+                  year: +selectedPersonalYear,
+                  month: +selectedPersonalMonth,
                   is_other_workload: isOtherWorkload,
               }
             : {
                   load_percentage: +personalWorkloadData?.load_percentage,
-                  year: +selectedPesonalYear,
-                  month: +selectedPesonalMonth,
+                  year: +selectedPersonalYear,
+                  month: +selectedPersonalMonth,
                   project_id: personalWorkloadData?.project_id,
               };
 
@@ -330,10 +324,10 @@ const EmployeeCard = () => {
     };
 
     useEffect(() => {
-        if (selectedPesonalYear && selectedPesonalMonth) {
+        if (selectedPersonalYear && selectedPersonalMonth) {
             personalWorkloadFilter();
         }
-    }, [selectedPesonalYear, selectedPesonalMonth]);
+    }, [selectedPersonalYear, selectedPersonalMonth]);
 
     useEffect(() => {
         if (selectedSummaryYear && selectedSummaryMonth) {
@@ -718,11 +712,11 @@ const EmployeeCard = () => {
                                             <select
                                                 className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
                                                 onChange={(e) =>
-                                                    setSelectedPesonalYear(
+                                                    setSelectedPersonalYear(
                                                         e.target.value
                                                     )
                                                 }
-                                                value={selectedPesonalYear}
+                                                value={selectedPersonalYear}
                                             >
                                                 {availableYears.length > 0 &&
                                                     availableYears.map(
@@ -745,12 +739,16 @@ const EmployeeCard = () => {
                                             <select
                                                 className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
                                                 onChange={(e) =>
-                                                    setSelectedPesonalMonth(
+                                                    setSelectedPersonalMonth(
                                                         e.target.value
                                                     )
                                                 }
                                             >
-                                                {months.map((month, index) => (
+                                                {(selectedPersonalYear ===
+                                                new Date().getFullYear()
+                                                    ? availableMonths
+                                                    : months
+                                                ).map((month, index) => (
                                                     <option
                                                         value={index + 1}
                                                         key={index}
