@@ -344,17 +344,19 @@ const SingleBook = () => {
         delete data?.projects_count;
         delete data?.updated_at;
 
-        if (
-            !data.name ||
-            ((bookId === "report-types" || bookId === "banks") &&
-                !data.full_name)
-        ) {
-            alert(
-                bookId === "report-types" || bookId === "banks"
-                    ? "Полное и сокращенное наименования должны быть заполнены."
-                    : "'Наименование' должно быть заполнено."
-            );
-            return;
+        if (bookId !== "working-hours") {
+            if (
+                !data.name ||
+                ((bookId === "report-types" || bookId === "banks") &&
+                    !data.full_name)
+            ) {
+                alert(
+                    bookId === "report-types" || bookId === "banks"
+                        ? "Полное и сокращенное наименования должны быть заполнены."
+                        : "'Наименование' должно быть заполнено."
+                );
+                return;
+            }
         }
 
         query = toast.loading("Обновление", {

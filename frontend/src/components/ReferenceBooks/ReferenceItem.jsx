@@ -224,7 +224,7 @@ const ReferenceItem = ({
                                             : "border border-gray-300"
                                     }`}
                                     name={key}
-                                    value={value.toString()  || ""}
+                                    value={value.toString() || ""}
                                     onChange={(e) =>
                                         handleInputChange(e, key, data.id)
                                     }
@@ -239,6 +239,21 @@ const ReferenceItem = ({
                                 format(parseISO(value), "d MMMM yyyy, HH:mm", {
                                     locale: ru,
                                 }) || "—"
+                            ) : key === "hours" ? (
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="number"
+                                        className={`w-full transition-colors border ${
+                                            mode === "read"
+                                                ? "border-transparent"
+                                                : "border-gray-300"
+                                        }`}
+                                        value={value?.toString() || "—"}
+                                        onChange={(e) =>
+                                            handleInputChange(e, key, data.id)
+                                        }
+                                    />
+                                </div>
                             ) : (
                                 value?.toString() || "—"
                             )}
