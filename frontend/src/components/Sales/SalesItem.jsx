@@ -1,11 +1,9 @@
 import { useNavigate } from "react-router-dom";
 
-import handleStatus from "../../utils/handleStatus";
-
 import { format, parseISO } from "date-fns";
 import { ru } from "date-fns/locale";
 
-const SalesItem = ({ props, columns }) => {
+const SalesItem = ({ props, columns, deleteProject }) => {
     const navigate = useNavigate();
 
     const handleRowClick = () => {
@@ -153,6 +151,17 @@ const SalesItem = ({ props, columns }) => {
                     }
                 }
             })}
+
+            <td className="w-[24px] h-[20px]">
+                <button
+                    className="delete-icon flex-none w-[20px] h-[20px]"
+                    title="Удалить проект"
+                    onClick={(e) => {
+                        deleteProject(props.id);
+                        e.stopPropagation();
+                    }}
+                ></button>
+            </td>
         </tr>
     );
 };

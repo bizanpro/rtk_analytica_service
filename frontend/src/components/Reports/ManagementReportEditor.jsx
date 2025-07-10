@@ -33,7 +33,7 @@ const ManagementReportEditor = ({
                         {managementReportData.report_month}
                     </div>
 
-                    <div>В работе</div>
+                    <div>{managementReportData.status}</div>
                 </div>
 
                 <button

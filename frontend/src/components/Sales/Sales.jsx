@@ -129,6 +129,15 @@ const Sales = () => {
         });
     };
 
+    // Удаление проекта
+    const deleteProject = (projectId) => {
+        postData("DELETE", `${URL}/${projectId}`, {}).then((response) => {
+            if (response.ok) {
+                getList();
+            }
+        });
+    };
+
     useEffect(() => {
         getList();
     }, []);
@@ -253,6 +262,7 @@ const Sales = () => {
                                         key={item.id}
                                         props={item}
                                         columns={COLUMNS}
+                                        deleteProject={deleteProject}
                                     />
                                 ))
                             )}

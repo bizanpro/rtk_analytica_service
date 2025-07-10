@@ -45,7 +45,7 @@ const ReportRateEditor = ({
                         </div>
 
                         <div className="text-base mb-2">
-                            {reportRateData.physical_person}
+                            {reportRateData.physical_person?.name}
                         </div>
 
                         <ul className="flex items-center gap-2">
