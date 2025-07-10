@@ -19,7 +19,7 @@ const EmployeePersonalWorkloadItem = ({ props, mode, setWorkloads }) => {
                     placeholder="0"
                     max="100"
                     min="0"
-                    value={props?.load_percentage}
+                    defaultValue={props?.load_percentage}
                     onChange={(evt) => {
                         const value = parseInt(evt.target.value, 10);
                         if (value >= 0 && value <= 100) {

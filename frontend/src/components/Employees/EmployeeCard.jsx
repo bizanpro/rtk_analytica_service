@@ -50,10 +50,6 @@ const EmployeeCard = () => {
 
     let query;
 
-    useEffect(() => {
-        console.log(workloads);
-    }, [workloads]);
-
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -267,6 +263,7 @@ const EmployeeCard = () => {
             if (response.status === 200) {
                 setPersonalWorkload(response.data);
                 setOtherWorkloadPercentage(response.data.other_workload);
+                setWorkloads(response.data.workload);
                 // setVacationWorkload(response.data.vacation_workload);
             }
         });
@@ -274,53 +271,68 @@ const EmployeeCard = () => {
 
     // Изменение процентов в блоке Трудозатраты
     const updateLoadPercentage = () => {
-        query = toast.loading("Обновление", {
-            containerId: "employee",
-            position: "top-center",
-        });
+        const totalPercentage =
+            workloads.reduce((sum, item) => sum + item.load_percentage, 0) +
+            otherWorkloadPercentage;
 
-        const data = {
-            workloads: workloads,
-            year: +selectedPersonalYear,
-            month: +selectedPersonalMonth,
-            other_workload_percentage: otherWorkloadPercentage,
-            // vacation_workload: vacationWorkload,
-        };
+        if (totalPercentage === 100) {
+            query = toast.loading("Обновление", {
+                containerId: "employee",
+                position: "top-center",
+            });
 
-        postData(
-            "PATCH",
-            `${
-                import.meta.env.VITE_API_URL
-            }physical-persons/${employeeId}/personal-workload`,
-            data
-        )
-            .then((response) => {
-                if (response?.ok) {
-                    personalWorkloadFilter();
-                    getWorkloadSummary();
-                    toast.update(query, {
-                        render: "Успешно обновлено!",
-                        type: "success",
+            const data = {
+                workloads: workloads,
+                year: +selectedPersonalYear,
+                month: +selectedPersonalMonth,
+                other_workload_percentage: otherWorkloadPercentage,
+                // vacation_workload: vacationWorkload,
+            };
+
+            postData(
+                "PATCH",
+                `${
+                    import.meta.env.VITE_API_URL
+                }physical-persons/${employeeId}/personal-workload`,
+                data
+            )
+                .then((response) => {
+                    if (response?.ok) {
+                        personalWorkloadFilter();
+                        getWorkloadSummary();
+                        toast.update(query, {
+                            render: "Успешно обновлено!",
+                            type: "success",
+                            containerId: "employee",
+                            isLoading: false,
+                            autoClose: 1200,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: false,
+                            position: "top-center",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    toast.dismiss(query);
+                    toast.error(error.message || "Ошибка при обновлении", {
                         containerId: "employee",
                         isLoading: false,
-                        autoClose: 1200,
+                        autoClose: 4000,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
                         position: "top-center",
                     });
-                }
-            })
-            .catch((error) => {
-                toast.dismiss(query);
-                toast.error(error.message || "Ошибка при обновлении", {
-                    containerId: "employee",
-                    isLoading: false,
-                    autoClose: 5000,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
                 });
+        } else {
+            toast.error("Сумма всех трудозатрат должна равняться 100%", {
+                containerId: "employee",
+                isLoading: false,
+                autoClose: 4000,
+                pauseOnFocusLoss: false,
+                pauseOnHover: false,
+                position: "top-center",
             });
+        }
     };
 
     useEffect(() => {
