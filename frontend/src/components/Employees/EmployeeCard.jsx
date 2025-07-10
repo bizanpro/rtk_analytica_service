@@ -36,8 +36,6 @@ const EmployeeCard = () => {
     const [reportTypes, setReportTypes] = useState([]);
     const [positions, setPositions] = useState([]);
     const [workloads, setWorkloads] = useState([]);
-    const [otherWorkloadPercentage, setOtherWorkloadPercentage] = useState();
-    // const [vacationWorkload, setVacationWorkload] = useState();
 
     const PhoneMask = "+{7} (000) 000 00 00";
 
@@ -262,9 +260,7 @@ const EmployeeCard = () => {
         ).then((response) => {
             if (response.status === 200) {
                 setPersonalWorkload(response.data);
-                setOtherWorkloadPercentage(response.data.other_workload);
                 setWorkloads(response.data.workload);
-                // setVacationWorkload(response.data.vacation_workload);
             }
         });
     };
@@ -273,7 +269,7 @@ const EmployeeCard = () => {
     const updateLoadPercentage = () => {
         const totalPercentage =
             workloads.reduce((sum, item) => sum + item.load_percentage, 0) +
-            otherWorkloadPercentage;
+            personalWorkload.other_workload;
 
         if (totalPercentage === 100) {
             query = toast.loading("Обновление", {
@@ -285,7 +281,7 @@ const EmployeeCard = () => {
                 workloads: workloads,
                 year: +selectedPersonalYear,
                 month: +selectedPersonalMonth,
-                other_workload_percentage: otherWorkloadPercentage,
+                other_workload_percentage: personalWorkload.other_workload,
                 // vacation_workload: vacationWorkload,
             };
 
@@ -350,6 +346,10 @@ const EmployeeCard = () => {
     useEffect(() => {
         getEmployee();
     }, []);
+
+    useEffect(() => {
+        console.log(personalWorkload);
+    }, [personalWorkload]);
 
     return (
         <main className="page">
@@ -809,7 +809,7 @@ const EmployeeCard = () => {
                                                         )
                                                     )}
 
-                                                    {otherWorkloadPercentage !==
+                                                    {personalWorkload.other_workload !==
                                                         null && (
                                                         <li className="grid items-center grid-cols-[1fr_35%_15%] gap-3 mb-2">
                                                             <div className="text-lg">
@@ -826,7 +826,7 @@ const EmployeeCard = () => {
                                                                     max="100"
                                                                     min="0"
                                                                     value={
-                                                                        otherWorkloadPercentage
+                                                                        personalWorkload.other_workload
                                                                     }
                                                                     onChange={(
                                                                         e
@@ -844,8 +844,14 @@ const EmployeeCard = () => {
                                                                             value <=
                                                                                 100
                                                                         ) {
-                                                                            setOtherWorkloadPercentage(
-                                                                                value
+                                                                            setPersonalWorkload(
+                                                                                (
+                                                                                    prev
+                                                                                ) => ({
+                                                                                    ...prev,
+                                                                                    ["other_workload"]:
+                                                                                        value,
+                                                                                })
                                                                             );
                                                                         }
                                                                     }}
