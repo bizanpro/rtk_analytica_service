@@ -1,0 +1,78 @@
+{
+    "industries": [
+        { "label": "Наименование", "key": "name" },
+        { "label": "Кол-во элементов", "key": "projects_count" },
+        { "label": "Последнее изменение", "key": "updated_at" },
+        { "label": "Автор измнения", "key": "author" }
+    ],
+    "report-types": [
+        { "label": "Сокращённое наименование", "key": "name" },
+        { "label": "Полное наименование", "key": "full_name" },
+        { "label": "Регулярный", "key": "is_regular" },
+        { "label": "Указывать стоимость в отчете", "key": "show_cost" },
+        { "label": "Кол-во проектов", "key": "count" },
+        { "label": "Последнее изменение", "key": "updated_at" },
+        { "label": "Автор измнения", "key": "author" }
+    ],
+    "roles": [
+        { "label": "Наименование", "key": "name" },
+        { "label": "Ответственный за отчеты по проектам", "key": "is_project_report_responsible" },
+        { "label": "Кол-во ролей в отчётах", "key": "count" },
+        { "label": "Последнее изменение", "key": "updated_at" },
+        { "label": "Автор измнения", "key": "author" }
+    ],
+    "banks": [
+        { "label": "Сокращённое наименование", "key": "name" },
+        { "label": "Полное наименование", "key": "full_name" },
+        { "label": "Кол-во проектов", "key": "projects_count" },
+        { "label": "Последнее изменение", "key": "updated_at" },
+        { "label": "Автор измнения", "key": "author" }
+    ],
+    "contragent": [
+        { "label": "Наименование Заказчика", "key": "" },
+        { "label": "ФИО / должность", "key": "" },
+        { "label": "Кол-во проектов", "key": "" },
+        { "label": "Контакты", "key": "" },
+        { "label": "Последнее изменение", "key": "" },
+        { "label": "Автор измнения", "key": "" }
+    ],
+    "creditor": [
+        { "label": "Наименование кредитора", "key": "" },
+        { "label": "ФИО / должность", "key": "" },
+        { "label": "Кол-во проектов", "key": "" },
+        { "label": "Контакты", "key": "" },
+        { "label": "Последнее изменение", "key": "" },
+        { "label": "Автор измнения", "key": "" }
+    ],
+    "working-hours": [
+        { "label": "Месяц", "key": "month_name" },
+        { "label": "Часы", "key": "hours" }
+    ],
+    "positions": [
+        { "label": "Наименование", "key": "name" },
+        { "label": "Тип должности", "key": "type" },
+        { "label": "Кол-во сотрудников", "key": "employees_count" },
+        { "label": "Последнее изменение", "key": "updated_at" },
+        { "label": "Автор измнения", "key": "author" }
+    ],
+    "suppliers-with-reports": [
+        { "label": "Наименование Подрядчика", "key": "" },
+        { "label": "ФИО / должность", "key": "" },
+        { "label": "Контакты", "key": "" },
+        { "label": "Последнее изменение", "key": "" },
+        { "label": "Автор измнения", "key": "" }
+    ],
+    "management-report-types": [
+        { "label": "Наименование", "key": "name" },
+        { "label": "Должность отвественного", "key": "position_id" },
+        { "label": "Кол-во отчётов", "key": "count" },
+        { "label": "Последнее изменение", "key": "updated_at" },
+        { "label": "Автор измнения", "key": "author" }
+    ],
+    "request-sources": [
+        { "label": "Наименование", "key": "name" },
+        { "label": "Кол-во проектов", "key": "projects_count" },
+        { "label": "Последнее изменение", "key": "updated_at" },
+        { "label": "Автор измнения", "key": "author" }
+    ]
+}

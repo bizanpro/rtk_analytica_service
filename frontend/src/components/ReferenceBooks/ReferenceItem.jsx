@@ -216,6 +216,23 @@ const ReferenceItem = ({
                                     <option value="true">Да</option>
                                     <option value="false">Нет</option>
                                 </select>
+                            ) : key === "is_project_report_responsible" ? (
+                                <select
+                                    className={`w-full min-h-[30px] ${
+                                        mode == "read"
+                                            ? ""
+                                            : "border border-gray-300"
+                                    }`}
+                                    name={key}
+                                    value={value.toString()  || ""}
+                                    onChange={(e) =>
+                                        handleInputChange(e, key, data.id)
+                                    }
+                                    disabled={mode == "read"}
+                                >
+                                    <option value="true">Да</option>
+                                    <option value="false">Нет</option>
+                                </select>
                             ) : (key === "updated_at" ||
                                   key === "last_updated") &&
                               value ? (

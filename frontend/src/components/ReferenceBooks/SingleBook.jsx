@@ -1,110 +1,24 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
+
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
+
 // import Select from "../Select";
 import Popup from "../Popup/Popup";
 import ReferenceItem from "./ReferenceItem";
 import ReferenceItemExtended from "./ReferenceItemExtended";
 import ReferenceItemExtendedContacts from "./ReferenceItemExtendedContacts";
+import ReferenceItemNew from "./ReferenceItemNew";
 
 import { IMaskInput } from "react-imask";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import COLUMNS from "../../data/reference_book_columns.json";
+import TITLES from "../../data/reference_book_titles.json";
+
 const SingleBook = () => {
-    const COLUMNS = {
-        industries: [
-            { label: "Наименование", key: "name" },
-            { label: "Кол-во элементов", key: "projects_count" },
-            { label: "Последнее изменение", key: "updated_at" },
-            { label: "Автор измнения", key: "author" },
-        ],
-        "report-types": [
-            { label: "Сокращённое наименование", key: "name" },
-            { label: "Полное наименование", key: "full_name" },
-            { label: "Регулярный", key: "is_regular" },
-            { label: "Указывать стоимость в отчете", key: "show_cost" },
-            { label: "Кол-во проектов", key: "count" },
-            { label: "Последнее изменение", key: "updated_at" },
-            { label: "Автор измнения", key: "author" },
-        ],
-        roles: [
-            { label: "Наименование", key: "name" },
-            { label: "Кол-во ролей в отчётах", key: "count" },
-            { label: "Последнее изменение", key: "updated_at" },
-            { label: "Автор измнения", key: "author" },
-        ],
-        banks: [
-            { label: "Сокращённое наименование", key: "name" },
-            { label: "Полное наименование", key: "full_name" },
-            { label: "Кол-во проектов", key: "projects_count" },
-            { label: "Последнее изменение", key: "updated_at" },
-            { label: "Автор измнения", key: "author" },
-        ],
-        contragent: [
-            { label: "Наименование Заказчика", key: "" },
-            { label: "ФИО / должность", key: "" },
-            { label: "Кол-во проектов", key: "" },
-            { label: "Контакты", key: "" },
-            { label: "Последнее изменение", key: "" },
-            { label: "Автор измнения", key: "" },
-        ],
-        creditor: [
-            { label: "Наименование кредитора", key: "" },
-            { label: "ФИО / должность", key: "" },
-            { label: "Кол-во проектов", key: "" },
-            { label: "Контакты", key: "" },
-            { label: "Последнее изменение", key: "" },
-            { label: "Автор измнения", key: "" },
-        ],
-        "working-hours": [
-            { label: "Месяц", key: "month_name" },
-            { label: "Часы", key: "hours" },
-        ],
-        positions: [
-            { label: "Наименование", key: "name" },
-            { label: "Тип должности", key: "type" },
-            { label: "Кол-во сотрудников", key: "employees_count" },
-            { label: "Последнее изменение", key: "updated_at" },
-            { label: "Автор измнения", key: "author" },
-        ],
-        "suppliers-with-reports": [
-            { label: "Наименование Подрядчика", key: "" },
-            { label: "ФИО / должность", key: "" },
-            { label: "Контакты", key: "" },
-            { label: "Последнее изменение", key: "" },
-            { label: "Автор измнения", key: "" },
-        ],
-        "management-report-types": [
-            { label: "Наименование", key: "name" },
-            { label: "Должность отвественного", key: "position_id" },
-            { label: "Кол-во отчётов", key: "count" },
-            { label: "Последнее изменение", key: "updated_at" },
-            { label: "Автор измнения", key: "author" },
-        ],
-        "request-sources": [
-            { label: "Наименование", key: "name" },
-            { label: "Кол-во проектов", key: "projects_count" },
-            { label: "Последнее изменение", key: "updated_at" },
-            { label: "Автор измнения", key: "author" },
-        ],
-    };
-
-    const TITLES = {
-        industries: "Отрасли проектов",
-        "report-types": "Типы услуг / отчетов",
-        roles: "Роли в проектах",
-        banks: "Кредиторы",
-        contragent: "Контакты заказчика",
-        creditor: "Контакты кредитора",
-        "working-hours": "Рабочие часы",
-        positions: "Должности сотрудников",
-        "suppliers-with-reports": "Контакты Подрядчиков",
-        "management-report-types": "Типы отчётов Менеджмента",
-        "request-sources": "Источники запросов в воронке продаж",
-    };
-
     const { bookId } = useParams();
 
     const columns = bookId ? COLUMNS[bookId] : COLUMNS;
@@ -288,7 +202,11 @@ const SingleBook = () => {
     const handleNewElementInputChange = (e, name) => {
         let value;
 
-        if (name === "is_regular" || name === "show_cost") {
+        if (
+            name === "is_regular" ||
+            name === "show_cost" ||
+            name === "is_project_report_responsible"
+        ) {
             value = e.target.value === "true";
         } else {
             value = e.target.value;
@@ -303,7 +221,11 @@ const SingleBook = () => {
 
         if (name === "phone") {
             value = e;
-        } else if (name === "is_regular" || name === "show_cost") {
+        } else if (
+            name === "is_regular" ||
+            name === "show_cost" ||
+            name === "is_project_report_responsible"
+        ) {
             value = e.target.value === "true";
         } else {
             value = e.target.value;
@@ -768,6 +690,23 @@ const SingleBook = () => {
                         </thead>
 
                         <tbody>
+                            {mode === "edit" &&
+                                bookId != "creditor" &&
+                                bookId != "contragent" &&
+                                bookId != "suppliers-with-reports" &&
+                                bookId != "working-hours" && (
+                                    <ReferenceItemNew
+                                        handleNewElementInputChange={
+                                            handleNewElementInputChange
+                                        }
+                                        columns={columns}
+                                        formFields={formFields}
+                                        bookId={bookId}
+                                        positions={positions}
+                                        addNewElement={addNewElement}
+                                    />
+                                )}
+
                             {isLoading ? (
                                 <tr>
                                     <td className="text-base px-4 py-2">
@@ -775,248 +714,63 @@ const SingleBook = () => {
                                     </td>
                                 </tr>
                             ) : (
-                                <>
-                                    {mode === "edit" &&
-                                        bookId != "creditor" &&
-                                        bookId != "contragent" &&
-                                        bookId != "suppliers-with-reports" &&
-                                        bookId != "working-hours" && (
-                                            <tr className="border-gray-300 text-base border-b text-left">
-                                                {columns.map(({ key }) => (
-                                                    <td
-                                                        key={key}
-                                                        className="px-4 py-7 min-w-[180px] max-w-[200px]"
-                                                    >
-                                                        {key === "name" ||
-                                                        key ===
-                                                            "counterparty_name" ||
-                                                        key === "full_name" ? (
-                                                            <div
-                                                                key={key}
-                                                                className="flex items-center gap-2"
-                                                            >
-                                                                <input
-                                                                    type="text"
-                                                                    className="w-full"
-                                                                    placeholder="Новый элемент"
-                                                                    name={key}
-                                                                    value={
-                                                                        formFields[
-                                                                            key
-                                                                        ] || ""
-                                                                    }
-                                                                    onChange={(
-                                                                        e
-                                                                    ) =>
-                                                                        handleNewElementInputChange(
-                                                                            e,
-                                                                            key
-                                                                        )
-                                                                    }
-                                                                />
-                                                            </div>
-                                                        ) : key === "type" ||
-                                                          key ===
-                                                              "position_id" ? (
-                                                            <select
-                                                                className="w-full border border-gray-300 min-h-[30px]"
-                                                                name={key}
-                                                                value={
-                                                                    formFields[
-                                                                        key
-                                                                    ] || ""
-                                                                }
-                                                                onChange={(e) =>
-                                                                    handleNewElementInputChange(
-                                                                        e,
-                                                                        key
-                                                                    )
-                                                                }
-                                                            >
-                                                                {bookId ===
-                                                                "management-report-types" ? (
-                                                                    <>
-                                                                        <option value="">
-                                                                            Должность
-                                                                        </option>
-                                                                        {positions.map(
-                                                                            (
-                                                                                position
-                                                                            ) => (
-                                                                                <option
-                                                                                    value={
-                                                                                        position.id
-                                                                                    }
-                                                                                    key={
-                                                                                        position.id
-                                                                                    }
-                                                                                >
-                                                                                    {
-                                                                                        position.name
-                                                                                    }
-                                                                                </option>
-                                                                            )
-                                                                        )}
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <option value="">
-                                                                            Тип
-                                                                        </option>
-                                                                        <option value="one_to_one">
-                                                                            Один
-                                                                            к
-                                                                            одному
-                                                                        </option>
-                                                                        <option value="one_to_many">
-                                                                            Один
-                                                                            ко
-                                                                            многим
-                                                                        </option>
-                                                                    </>
-                                                                )}
-                                                            </select>
-                                                        ) : key ===
-                                                          "is_regular" ? (
-                                                            <select
-                                                                className="w-full border border-gray-300 min-h-[30px]"
-                                                                name={key}
-                                                                defaultValue=""
-                                                                onChange={(e) =>
-                                                                    handleNewElementInputChange(
-                                                                        e,
-                                                                        key
-                                                                    )
-                                                                }
-                                                            >
-                                                                <option value="">
-                                                                    Выбрать
-                                                                </option>
-                                                                <option value="true">
-                                                                    Да
-                                                                </option>
-                                                                <option value="false">
-                                                                    Нет
-                                                                </option>
-                                                            </select>
-                                                        ) : key ===
-                                                          "show_cost" ? (
-                                                            <select
-                                                                className="w-full border border-gray-300 min-h-[30px]"
-                                                                name={key}
-                                                                defaultValue=""
-                                                                onChange={(e) =>
-                                                                    handleNewElementInputChange(
-                                                                        e,
-                                                                        key
-                                                                    )
-                                                                }
-                                                            >
-                                                                <option value="">
-                                                                    Выбрать
-                                                                </option>
-                                                                <option value="true">
-                                                                    Да
-                                                                </option>
-                                                                <option value="false">
-                                                                    Нет
-                                                                </option>
-                                                            </select>
-                                                        ) : (
-                                                            "—"
-                                                        )}
-                                                    </td>
-                                                ))}
-                                                <td className="px-4 py-7 min-w-[50px] text-center">
-                                                    <div className="flex items-center justify-end gap-3">
-                                                        <button
-                                                            type="button"
-                                                            className="save-icon"
-                                                            style={{
-                                                                opacity:
-                                                                    formFields
-                                                                        .name
-                                                                        ?.length >
-                                                                    1
-                                                                        ? 1
-                                                                        : 0,
-                                                            }}
-                                                            onClick={
-                                                                addNewElement
-                                                            }
-                                                        ></button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        )}
+                                filteredProjects?.length > 0 &&
+                                filteredProjects.map((item) => {
+                                    if (
+                                        bookId === "creditor" ||
+                                        bookId === "contragent"
+                                    ) {
+                                        return (
+                                            <ReferenceItemExtended
+                                                key={item.id}
+                                                data={item}
+                                                mode={mode}
+                                                bookId={bookId}
+                                                editContragentAndCreditorContact={
+                                                    editContragentAndCreditorContact
+                                                }
+                                                deleteContact={deleteContact}
+                                            />
+                                        );
+                                    }
 
-                                    {filteredProjects?.length > 0 &&
-                                        filteredProjects.map((item) => {
-                                            if (
-                                                bookId === "creditor" ||
-                                                bookId === "contragent"
-                                            ) {
-                                                return (
-                                                    <ReferenceItemExtended
-                                                        key={item.id}
-                                                        data={item}
-                                                        mode={mode}
-                                                        bookId={bookId}
-                                                        editContragentAndCreditorContact={
-                                                            editContragentAndCreditorContact
-                                                        }
-                                                        deleteContact={
-                                                            deleteContact
-                                                        }
-                                                    />
-                                                );
+                                    if (bookId === "suppliers-with-reports") {
+                                        return (
+                                            <ReferenceItemExtendedContacts
+                                                key={item.id}
+                                                data={item}
+                                                mode={mode}
+                                                handleContactInputChange={
+                                                    handleContactInputChange
+                                                }
+                                                deleteContactElem={
+                                                    deleteContactElem
+                                                }
+                                                editContactElem={
+                                                    editContactElem
+                                                }
+                                                setPopupState={setPopupState}
+                                                setnewElem={setnewElem}
+                                            />
+                                        );
+                                    }
+
+                                    return (
+                                        <ReferenceItem
+                                            key={item.id}
+                                            data={item}
+                                            columns={columns}
+                                            mode={mode}
+                                            bookId={bookId}
+                                            handleInputChange={
+                                                handleInputChange
                                             }
-
-                                            if (
-                                                bookId ===
-                                                "suppliers-with-reports"
-                                            ) {
-                                                return (
-                                                    <ReferenceItemExtendedContacts
-                                                        key={item.id}
-                                                        data={item}
-                                                        mode={mode}
-                                                        handleContactInputChange={
-                                                            handleContactInputChange
-                                                        }
-                                                        deleteContactElem={
-                                                            deleteContactElem
-                                                        }
-                                                        editContactElem={
-                                                            editContactElem
-                                                        }
-                                                        setPopupState={
-                                                            setPopupState
-                                                        }
-                                                        setnewElem={setnewElem}
-                                                    />
-                                                );
-                                            }
-
-                                            return (
-                                                <ReferenceItem
-                                                    key={item.id}
-                                                    data={item}
-                                                    columns={columns}
-                                                    mode={mode}
-                                                    bookId={bookId}
-                                                    handleInputChange={
-                                                        handleInputChange
-                                                    }
-                                                    deleteElement={
-                                                        deleteElement
-                                                    }
-                                                    editElement={editElement}
-                                                    positions={positions}
-                                                />
-                                            );
-                                        })}
-                                </>
+                                            deleteElement={deleteElement}
+                                            editElement={editElement}
+                                            positions={positions}
+                                        />
+                                    );
+                                })
                             )}
                         </tbody>
                     </table>
