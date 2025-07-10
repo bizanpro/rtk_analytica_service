@@ -35,6 +35,9 @@ const EmployeeCard = () => {
     const [selectedTypes, setSelecterTypes] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
     const [positions, setPositions] = useState([]);
+    const [workloads, setWorkloads] = useState([]);
+    const [otherWorkloadPercentage, setOtherWorkloadPercentage] = useState();
+    // const [vacationWorkload, setVacationWorkload] = useState();
 
     const PhoneMask = "+{7} (000) 000 00 00";
 
@@ -46,6 +49,10 @@ const EmployeeCard = () => {
             : months;
 
     let query;
+
+    useEffect(() => {
+        console.log(workloads);
+    }, [workloads]);
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -259,33 +266,26 @@ const EmployeeCard = () => {
         ).then((response) => {
             if (response.status === 200) {
                 setPersonalWorkload(response.data);
+                setOtherWorkloadPercentage(response.data.other_workload);
+                // setVacationWorkload(response.data.vacation_workload);
             }
         });
     };
 
     // Изменение процентов в блоке Трудозатраты
-    const updateLoadPercentage = (
-        personalWorkloadData,
-        isOtherWorkload = false
-    ) => {
+    const updateLoadPercentage = () => {
         query = toast.loading("Обновление", {
             containerId: "employee",
             position: "top-center",
         });
 
-        const data = isOtherWorkload
-            ? {
-                  load_percentage: +personalWorkloadData?.other_workload,
-                  year: +selectedPersonalYear,
-                  month: +selectedPersonalMonth,
-                  is_other_workload: isOtherWorkload,
-              }
-            : {
-                  load_percentage: +personalWorkloadData?.load_percentage,
-                  year: +selectedPersonalYear,
-                  month: +selectedPersonalMonth,
-                  project_id: personalWorkloadData?.project_id,
-              };
+        const data = {
+            workloads: workloads,
+            year: +selectedPersonalYear,
+            month: +selectedPersonalMonth,
+            other_workload_percentage: otherWorkloadPercentage,
+            // vacation_workload: vacationWorkload,
+        };
 
         postData(
             "PATCH",
@@ -702,6 +702,17 @@ const EmployeeCard = () => {
                                     <span className="flex items-center justify-center border border-gray-300 text-gray-400 p-1 rounded-[50%] w-[18px] h-[18px]">
                                         ?
                                     </span>
+
+                                    {mode == "edit" && (
+                                        <button
+                                            type="button"
+                                            className="save-icon w-[20px] h-[20px]"
+                                            onClick={() =>
+                                                updateLoadPercentage()
+                                            }
+                                            title="Обновить запись"
+                                        ></button>
+                                    )}
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
                                     <div className="grid grid-cols-2 items-center gap-3 mb-5">
@@ -779,37 +790,21 @@ const EmployeeCard = () => {
                                                                 key={item?.id}
                                                                 mode={mode}
                                                                 props={item}
-                                                                updateLoadPercentage={
-                                                                    updateLoadPercentage
+                                                                setWorkloads={
+                                                                    setWorkloads
                                                                 }
                                                             />
                                                         )
                                                     )}
 
-                                                    {personalWorkload?.other_workload !==
+                                                    {otherWorkloadPercentage !==
                                                         null && (
-                                                        <li className="grid items-center grid-cols-[1fr_35%_20px_15%] gap-3 mb-2">
+                                                        <li className="grid items-center grid-cols-[1fr_35%_15%] gap-3 mb-2">
                                                             <div className="text-lg">
                                                                 Прочие задачи
                                                             </div>
 
                                                             <div></div>
-
-                                                            {mode == "edit" ? (
-                                                                <button
-                                                                    type="button"
-                                                                    className="save-icon w-[20px] h-[20px]"
-                                                                    onClick={() =>
-                                                                        updateLoadPercentage(
-                                                                            personalWorkload,
-                                                                            true
-                                                                        )
-                                                                    }
-                                                                    title="Обновить запись"
-                                                                ></button>
-                                                            ) : (
-                                                                <div></div>
-                                                            )}
 
                                                             <div className="flex items-center border-2 border-gray-300 p-1">
                                                                 <input
@@ -819,7 +814,57 @@ const EmployeeCard = () => {
                                                                     max="100"
                                                                     min="0"
                                                                     value={
-                                                                        personalWorkload?.other_workload
+                                                                        otherWorkloadPercentage
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) => {
+                                                                        const value =
+                                                                            parseInt(
+                                                                                e
+                                                                                    .target
+                                                                                    .value,
+                                                                                10
+                                                                            );
+                                                                        if (
+                                                                            value >=
+                                                                                0 &&
+                                                                            value <=
+                                                                                100
+                                                                        ) {
+                                                                            setOtherWorkloadPercentage(
+                                                                                value
+                                                                            );
+                                                                        }
+                                                                    }}
+                                                                    disabled={
+                                                                        mode ==
+                                                                        "read"
+                                                                    }
+                                                                />
+                                                                %
+                                                            </div>
+                                                        </li>
+                                                    )}
+
+                                                    {/* {vacationWorkload !==
+                                                        null && (
+                                                        <li className="grid items-center grid-cols-[1fr_35%_15%] gap-3 mb-2">
+                                                            <div className="text-lg">
+                                                                Отпуск
+                                                            </div>
+
+                                                            <div></div>
+
+                                                            <div className="flex items-center border-2 border-gray-300 p-1">
+                                                                <input
+                                                                    className="min-w-0"
+                                                                    type="number"
+                                                                    placeholder="0"
+                                                                    max="100"
+                                                                    min="0"
+                                                                    value={
+                                                                        vacationWorkload
                                                                     }
                                                                     onChange={(
                                                                         e
@@ -842,7 +887,7 @@ const EmployeeCard = () => {
                                                                                     prev
                                                                                 ) => ({
                                                                                     ...prev,
-                                                                                    other_workload:
+                                                                                    vacation_workload:
                                                                                         value,
                                                                                 })
                                                                             );
@@ -856,7 +901,7 @@ const EmployeeCard = () => {
                                                                 %
                                                             </div>
                                                         </li>
-                                                    )}
+                                                    )} */}
 
                                                     {personalWorkload?.total_workload !==
                                                         null && (
