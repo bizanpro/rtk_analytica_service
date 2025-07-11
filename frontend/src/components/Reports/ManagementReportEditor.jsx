@@ -3,9 +3,9 @@ import { useState } from "react";
 const ManagementReportEditor = ({
     managementReportData,
     setManagementReportData,
-    setManagementEditorState,
+    closeManagementReportEditor,
     mode,
-    sendNewReport,
+    // sendNewReport,
     updateReport,
 }) => {
     const [currentTab, setCurrentTab] = useState("status_summary");
@@ -39,7 +39,7 @@ const ManagementReportEditor = ({
                 <button
                     type="button"
                     onClick={() => {
-                        setManagementEditorState(false);
+                        closeManagementReportEditor();
                     }}
                     className="border rounded-[50%] flex items-center justify-center w-[20px] h-[20px] leading-4"
                     title="Закрыть отчёт"
@@ -83,15 +83,14 @@ const ManagementReportEditor = ({
             </div>
 
             <div className="mt-5 grid grid-cols-2 items-center gap-6 shrink-0">
-                {/* {mode === "edit" && ( */}
-                {/* <> */}
                 <button
                     type="button"
                     className="border rounded-lg py-2 px-5 bg-black text-white"
-                    onClick={() =>
-                        managementReportData.id
-                            ? updateReport(managementReportData)
-                            : sendNewReport(managementReportData)
+                    onClick={
+                        () =>
+                            // managementReportData.id ?
+                            updateReport(managementReportData)
+                        // : sendNewReport(managementReportData)
                     }
                     title="Сохранить и утвердить"
                 >
@@ -101,17 +100,16 @@ const ManagementReportEditor = ({
                 <button
                     type="button"
                     className="border rounded-lg py-2 px-5"
-                    onClick={() =>
-                        managementReportData.id
-                            ? updateReport(managementReportData)
-                            : sendNewReport(managementReportData)
+                    onClick={
+                        () =>
+                            // managementReportData.id ?
+                            updateReport(managementReportData)
+                        // : sendNewReport(managementReportData)
                     }
                     title="Сохранить без утверждения"
                 >
                     Сохранить без утверждения
                 </button>
-                {/* </>
-                )} */}
             </div>
         </div>
     );

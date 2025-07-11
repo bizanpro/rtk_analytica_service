@@ -7,13 +7,16 @@ const ManagementItem = ({
     columns,
     props,
     openManagementReportEditor,
+    openRateReportEditor,
     managementReportEditorHandler,
 }) => {
     return (
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
             onClick={() => {
-                openManagementReportEditor(props);
+                !props.is_management
+                    ? openRateReportEditor(props)
+                    : openManagementReportEditor(props);
             }}
         >
             {columns.map(({ key }) => {
@@ -84,7 +87,10 @@ const ManagementItem = ({
                                             locale: ru,
                                         }) || "—"
                                     );
-                                } else if (key === "score") {
+                                } else if (
+                                    key === "score" &&
+                                    !props.is_management
+                                ) {
                                     return (
                                         <div className="w-[80px]">
                                             <ManagementItemRateSwitch
@@ -94,6 +100,30 @@ const ManagementItem = ({
                                                 }
                                                 reportRateData={props}
                                             />
+                                        </div>
+                                    );
+                                } else if (
+                                    key === "name" &&
+                                    !props.is_management
+                                ) {
+                                    return (
+                                        <div className="flex flex-col gap-2">
+                                            {value?.toString() || "—"}
+
+                                            {props.misc?.length > 0 && (
+                                                <ul className="flex flex-col gap-2">
+                                                    {props.misc?.map(
+                                                        (item, index) => (
+                                                            <li
+                                                                className="text-gray-300 border rounded-3xl border-gray-300 py-1.5 px-4 w-fit text-sm"
+                                                                key={index}
+                                                            >
+                                                                {item}
+                                                            </li>
+                                                        )
+                                                    )}
+                                                </ul>
+                                            )}
                                         </div>
                                     );
                                 } else {

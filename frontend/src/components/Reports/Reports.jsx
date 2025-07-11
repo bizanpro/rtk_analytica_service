@@ -59,8 +59,9 @@ const Reports = () => {
     const [reportsList, setReportsList] = useState([]);
     const [managementList, setManagementList] = useState([]);
 
-    const [managementEditorState, setManagementEditorState] = useState(false); // Конструктор отчёта
-    const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
+    const [managementEditorState, setManagementEditorState] = useState(false); // Редактор оценки
+    const [rateEditorState, setRateEditorState] = useState(false); // Редактор отчёта менеджмента
+    const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
 
     const [reportData, setReportData] = useState({});
     const [contracts, setContracts] = useState([]);
@@ -81,17 +82,17 @@ const Reports = () => {
     const [selectedPhysicalPerson, setSelectedPhysicalPerson] =
         useState("default"); // Выбранный отвественный
 
-    // const [managementReportData, setManagementReportData] = useState({
-    //     name: "",
-    //     physical_person_id: 1,
-    //     report_month: "",
-    //     status_summary: "",
-    //     problems: "",
-    //     prospects: "",
-    //     team: "",
-    //     legal_issues: "",
-    //     misc: "",
-    // });
+    const [managementReportData, setManagementReportData] = useState({
+        name: "",
+        physical_person_id: 1,
+        report_month: "",
+        status_summary: "",
+        problems: "",
+        prospects: "",
+        team: "",
+        legal_issues: "",
+        misc: "",
+    });
 
     const filteredReports = useMemo(() => {
         const result = managementList.filter((report) => {
@@ -236,7 +237,7 @@ const Reports = () => {
         });
     };
 
-    // Открытие окна отчёта
+    // Открытие окна отчёта проекта
     const openReportEditor = (reportData) => {
         getContracts(reportData.contragent?.id);
         setReportId(reportData.id);
@@ -246,13 +247,28 @@ const Reports = () => {
         }
     };
 
-    // Открытие окна редактора отчета Сотрудника
-    const openManagementReportEditor = (props) => {
-        // setPopupState(false);
+    // Открытие окна редактора оценки отчета
+    const openRateReportEditor = (props) => {
         setReportData(props);
-        // setManagementReportData(props);
-        // setMode(mode);
+        setRateEditorState(true);
+    };
+
+    // Закрытие окно редактора отчета менеджмента
+    const closeRateReportEditor = () => {
+        setReportData({});
+        setRateEditorState(false);
+    };
+
+    // Открытие окна редактора отчета менеджмента
+    const openManagementReportEditor = (props) => {
+        setManagementReportData(props);
         setManagementEditorState(true);
+    };
+
+    // Закрытие окно редактора отчета менеджмента
+    const closeManagementReportEditor = () => {
+        setManagementReportData({});
+        setManagementEditorState(false);
     };
 
     const managementReportEditorHandler = (reportData, rate) => {
@@ -294,12 +310,7 @@ const Reports = () => {
         }
     };
 
-    const closeManagementReportEditor = () => {
-        setReportData({});
-        setManagementEditorState(false);
-    };
-
-    // Отправляем новый отчёт Сотрудника
+    // Отправляем новый отчёт менеджмента
     // const sendNewReport = (extendReportData) => {
     //     query = toast.loading("Выполняется отправка", {
     //         containerId: "report",
@@ -351,49 +362,61 @@ const Reports = () => {
     //         });
     // };
 
-    // Обновляем  отчёт Менеджмента
-    // const updateReport = (extendReportData) => {
-    //     query = toast.loading("Обновление", {
-    //         containerId: "report",
-    //         position: "top-center",
-    //     });
+    // Обновляем  отчёт менеджмента
+    const updateReport = (extendReportData) => {
+        query = toast.loading("Обновление", {
+            containerId: "report",
+            position: "top-center",
+        });
 
-    //     postData(
-    //         "PATCH",
-    //         `${import.meta.env.VITE_API_URL}management-reports/${
-    //             extendReportData.id
-    //         }`,
-    //         extendReportData
-    //     ).then((response) => {
-    //         if (response?.ok) {
-    //             toast.update(query, {
-    //                 render: "Данные обновлены",
-    //                 type: "success",
-    //                 containerId: "report",
-    //                 isLoading: false,
-    //                 autoClose: 1200,
-    //                 pauseOnFocusLoss: false,
-    //                 pauseOnHover: false,
-    //                 position: "top-center",
-    //             });
-    //             getFilteredManagementReports();
-    //             getAvailableMonths();
-    //             setManagementEditorState(false);
-    //         } else {
-    //             toast.dismiss(query);
-    //             toast.error("Ошибка обновления данных", {
-    //                 containerId: "report",
-    //                 isLoading: false,
-    //                 autoClose: 1500,
-    //                 pauseOnFocusLoss: false,
-    //                 pauseOnHover: false,
-    //                 position: "top-center",
-    //             });
-    //         }
-    //     });
-    // };
+        postData(
+            "PATCH",
+            `${import.meta.env.VITE_API_URL}management-reports/${
+                extendReportData.id
+            }`,
+            extendReportData
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: "Данные обновлены",
+                        type: "success",
+                        containerId: "report",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                    getFilteredManagementReports();
+                    getAvailableMonths();
+                    setManagementEditorState(false);
+                } else {
+                    toast.dismiss(query);
+                    toast.error("Ошибка обновления данных", {
+                        containerId: "report",
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                }
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка при обновлении", {
+                    containerId: "report",
+                    isLoading: false,
+                    autoClose: 5000,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
+    };
 
-    // Обновляем отчет Проекта
+    // Обновляем отчет с оценками
     const updateReportDetails = (report, action) => {
         query = toast.loading("Обновление", {
             containerId: "report",
@@ -419,7 +442,7 @@ const Reports = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-                    closeManagementReportEditor();
+                    closeRateReportEditor();
                     getFilteredManagementReports();
                 } else {
                     toast.dismiss(query);
@@ -461,9 +484,11 @@ const Reports = () => {
 
     useEffect(() => {
         setManagementEditorState(false);
+        setRateEditorState(false);
         setReportWindowsState(false);
         setReportId(null);
         setReportData({});
+        setManagementReportData({});
     }, [activeTab]);
 
     useEffect(() => {
@@ -724,6 +749,9 @@ const Reports = () => {
                                         openManagementReportEditor={
                                             openManagementReportEditor
                                         }
+                                        openRateReportEditor={
+                                            openRateReportEditor
+                                        }
                                         managementReportEditorHandler={
                                             managementReportEditorHandler
                                         }
@@ -748,30 +776,44 @@ const Reports = () => {
                         </div>
                     )}
 
-                    {activeTab === "management" && managementEditorState && (
-                        <div
-                            className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
-                            style={{ minHeight: "calc(100vh - 10%)" }}
-                        >
-                            <ReportRateEditor
-                                reportData={reportData}
-                                closeEditor={closeManagementReportEditor}
-                                updateReportDetails={updateReportDetails}
-                            />
+                    {activeTab === "management" && (
+                        <>
+                            {rateEditorState && (
+                                <div
+                                    className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
+                                    style={{ minHeight: "calc(100vh - 10%)" }}
+                                >
+                                    <ReportRateEditor
+                                        reportData={reportData}
+                                        closeEditor={closeRateReportEditor}
+                                        updateReportDetails={
+                                            updateReportDetails
+                                        }
+                                    />
+                                </div>
+                            )}
 
-                            {/* <ManagementReportEditor
-                                managementReportData={managementReportData}
-                                setManagementReportData={
-                                    setManagementReportData
-                                }
-                                setManagementEditorState={
-                                    setManagementEditorState
-                                }
-                                sendNewReport={sendNewReport}
-                                updateReport={updateReport}
-                                mode={mode}
-                            /> */}
-                        </div>
+                            {managementEditorState && (
+                                <div
+                                    className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
+                                    style={{ minHeight: "calc(100vh - 10%)" }}
+                                >
+                                    <ManagementReportEditor
+                                        managementReportData={
+                                            managementReportData
+                                        }
+                                        setManagementReportData={
+                                            setManagementReportData
+                                        }
+                                        // sendNewReport={sendNewReport}
+                                        updateReport={updateReport}
+                                        closeManagementReportEditor={
+                                            closeManagementReportEditor
+                                        }
+                                    />
+                                </div>
+                            )}
+                        </>
                     )}
                 </section>
             </div>

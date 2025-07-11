@@ -37,7 +37,7 @@ const ReportRateEditor = ({
 
     return (
         <div className="p-5 h-full flex flex-col border-2 border-gray-300">
-            <div className="flex items-start justify-between mb-3">
+            <div className="flex items-start gap-2 justify-between mb-3">
                 <div className="flex items-start gap-5 flex-grow">
                     <div>
                         <div className="text-2xl mb-2">
@@ -49,16 +49,19 @@ const ReportRateEditor = ({
                         </div>
 
                         <ul className="flex items-center gap-2">
-                            <li className="border rounded-3xl border-gray-300 text-gray-300 py-1.5 px-4">
-                                ФТМ 1Q25
-                            </li>
-                            <li className="border rounded-3xl border-gray-300 text-gray-300 py-1.5 px-4">
-                                ИЗ Мар'25
-                            </li>
+                            {reportRateData.misc.length > 0 &&
+                                reportRateData.misc?.map((item, index) => (
+                                    <li
+                                        className="border rounded-3xl border-gray-300 text-gray-300 py-1.5 px-4 w-fit text-sm"
+                                        key={index}
+                                    >
+                                        {item}
+                                    </li>
+                                ))}
                         </ul>
                     </div>
 
-                    <div className="mt-2">{reportRateData.status}</div>
+                    <div className="mt-2 whitespace-nowrap">{reportRateData.status}</div>
                 </div>
 
                 <button
