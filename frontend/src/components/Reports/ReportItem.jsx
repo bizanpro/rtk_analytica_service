@@ -115,7 +115,7 @@ const ReportItem = ({
                                 <div className="text-base">млрд руб.</div>
                             </td>
                         );
-                    } else if (key === "status") {
+                    } else if (key === "report_status") {
                         return (
                             <td
                                 className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"

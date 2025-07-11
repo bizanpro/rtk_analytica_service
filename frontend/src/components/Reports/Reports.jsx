@@ -27,7 +27,7 @@ const Reports = () => {
             { label: "Бюджет", key: "project_budget" },
             { label: "Срок", key: "implementation_period" },
             { label: "Руководитель проекта", key: "project_managers" },
-            { label: "Статус", key: "status" },
+            { label: "Статус", key: "report_status" },
             { label: "Период выполнения", key: "days" },
         ],
         [
