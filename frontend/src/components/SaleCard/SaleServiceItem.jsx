@@ -2,29 +2,29 @@ import pepcentColorHandler from "../../utils/percentColorHandler";
 
 const SaleServiceItem = ({
     service,
-    setAddWorkScore,
-    addWorkScore,
+    // setAddWorkScore,
+    // addWorkScore,
     mode,
     deleteService,
-    getStages,
+    // getStages,
 }) => {
     return (
         <li
-            className="grid items-center grid-cols-[1fr_40%] gap-3 mb-2 cursor-pointer"
+            className="grid items-center grid-cols-[1fr_40%] gap-3 mb-2"
             key={service.id}
-            onClick={() => {
-                if (addWorkScore != service.id) {
-                    setAddWorkScore(service.id);
-                    getStages(service.id);
-                }
-            }}
+            // onClick={() => {
+            //     if (addWorkScore != service.id) {
+            //         setAddWorkScore(service.id);
+            //         getStages(service.id);
+            //     }
+            // }}
         >
             <div className="flex items-center gap-3">
-                <div
+                {/* <div
                     className={`w-[10px] h-[10px] rounded-[50%] transition ${
                         addWorkScore === service.id ? "bg-gray-400" : ""
                     }`}
-                ></div>
+                ></div> */}
                 {service.full_name}
             </div>
             <div className="flex items-center justify-between">

@@ -42,7 +42,6 @@ const SaleCard = () => {
     const [sources, setSources] = useState([]);
     const [saleStages, setSaleStages] = useState([]);
     const [newService, setNewService] = useState({});
-    const [selectedService, setSelectedService] = useState({});
     const [stageMetrics, setStageMetrics] = useState({});
 
     let query;
@@ -288,14 +287,14 @@ const SaleCard = () => {
     };
 
     // Получаем этапы в воронке продаж
-    const getStages = (serviceId) => {
+    const getStages = () => {
         setActiveStage("");
         setSaleStages([]);
 
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }sales-funnel-projects/${saleId}/services/${serviceId}/stages`
+            }sales-funnel-projects/${saleId}/stages`
         ).then((response) => {
             if (response?.status == 200) {
                 setSaleStages(response.data);
@@ -316,7 +315,7 @@ const SaleCard = () => {
         }
     };
 
-    // Обновляем детализацию выбранного этапа
+    // Обновляем детализацию этапа продажи
     const updateStageDetails = () => {
         postData(
             "PATCH",
@@ -339,7 +338,7 @@ const SaleCard = () => {
                         position: "top-center",
                     });
 
-                    getStages(addWorkScore);
+                    getStages();
                 }
             })
             .catch((response) => {
@@ -360,7 +359,7 @@ const SaleCard = () => {
             "POST",
             `${
                 import.meta.env.VITE_API_URL
-            }sales-funnel-projects/${saleId}/services/${addWorkScore}/stages`,
+            }sales-funnel-projects/${saleId}/stages`,
             { stage_id }
         )
             .then((response) => {
@@ -374,7 +373,7 @@ const SaleCard = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-                    getStages(addWorkScore);
+                    getStages();
                 }
             })
             .catch((response) => {
@@ -470,23 +469,11 @@ const SaleCard = () => {
         if (saleId) {
             getProject(saleId);
         }
-    }, []);
 
-    useEffect(() => {
-        if (addWorkScore !== "") {
-            setSelectedService((prev) => ({
-                ...prev,
-                work_scope:
-                    services.find((serive) => serive.id === addWorkScore)?.pivot
-                        ?.work_scope || "",
-                report_type_id:
-                    services.find((serive) => serive.id === addWorkScore)?.id ||
-                    "",
-            }));
-        } else {
-            setSelectedService("");
+        if (services.length > 0) {
+            getStages();
         }
-    }, [addWorkScore]);
+    }, []);
 
     useEffect(() => {
         if (mode === "read") {
@@ -1073,9 +1060,9 @@ const SaleCard = () => {
                                                                     deleteService={
                                                                         deleteService
                                                                     }
-                                                                    getStages={
-                                                                        getStages
-                                                                    }
+                                                                    // getStages={
+                                                                    //     getStages
+                                                                    // }
                                                                     mode={mode}
                                                                 />
                                                             )
@@ -1138,54 +1125,6 @@ const SaleCard = () => {
                                 </div>
 
                                 <div className="flex flex-col gap-3">
-                                    {/* <div className="flex flex-col gap-2 h-[200px]">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-gray-400">
-                                                Перечень работ
-                                            </span>
-                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                ?
-                                            </span>
-                                            {mode === "edit" &&
-                                                addWorkScore != "" &&
-                                                selectedService.work_scope &&
-                                                selectedService.work_scope
-                                                    .length > 1 && (
-                                                    <button
-                                                        type="button"
-                                                        className="save-icon w-[20px] h-[20px]"
-                                                        title="Сохранить перечень работ"
-                                                        onClick={() =>
-                                                            updateService()
-                                                        }
-                                                    ></button>
-                                                )}
-                                        </div>
-
-                                        <textarea
-                                            className="border-2 border-gray-300 p-5 h-full"
-                                            placeholder="Заполните перечень работ"
-                                            style={{ resize: "none" }}
-                                            type="text"
-                                            value={
-                                                selectedService.work_scope || ""
-                                            }
-                                            onChange={(evt) => {
-                                                setSelectedService((prev) => ({
-                                                    ...prev,
-                                                    work_scope:
-                                                        evt.target.value,
-                                                }));
-                                            }}
-                                            disabled={
-                                                mode == "edit" &&
-                                                addWorkScore != ""
-                                                    ? false
-                                                    : true
-                                            }
-                                        />
-                                    </div> */}
-
                                     <div className="flex flex-col gap-2 flex-grow">
                                         <div className="flex items-center gap-2">
                                             <span className="text-gray-400">
@@ -1205,15 +1144,18 @@ const SaleCard = () => {
                                         </div>
 
                                         <div className="border-2 border-gray-300 py-5 px-4 h-full">
-                                            {activeStage != "" && (
-                                                <SaleStageDetails
-                                                    stageMetrics={stageMetrics}
-                                                    setStageMetrics={
-                                                        setStageMetrics
-                                                    }
-                                                    mode={mode}
-                                                />
-                                            )}
+                                            {activeStage != "" &&
+                                                services.length > 0 && (
+                                                    <SaleStageDetails
+                                                        stageMetrics={
+                                                            stageMetrics
+                                                        }
+                                                        setStageMetrics={
+                                                            setStageMetrics
+                                                        }
+                                                        mode={mode}
+                                                    />
+                                                )}
                                         </div>
                                     </div>
                                 </div>
