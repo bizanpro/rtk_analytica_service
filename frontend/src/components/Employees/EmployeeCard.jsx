@@ -347,10 +347,6 @@ const EmployeeCard = () => {
         getEmployee();
     }, []);
 
-    useEffect(() => {
-        console.log(personalWorkload);
-    }, [personalWorkload]);
-
     return (
         <main className="page">
             <div className="pt-8 pb-15">
