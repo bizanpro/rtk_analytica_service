@@ -37,7 +37,7 @@ const ProjectCard = () => {
     const navigate = useNavigate();
 
     const [projectData, setProjectData] = useState({});
-    const [formFields, setFormFields] = useState({ action: "presave" });
+    const [formFields, setFormFields] = useState();
 
     const [mode, setMode] = useState(location.state?.mode || "read");
     const [activeReportTab, setActiveReportTab] = useState("projectReports");
@@ -489,9 +489,6 @@ const ProjectCard = () => {
 
         data.project_id = projectId;
 
-        // setReportData(data);
-
-        // if (!addReport) {
         query = toast.loading("Выполняется отправка", {
             containerId: "projectCard",
             position: "top-center",
@@ -540,12 +537,6 @@ const ProjectCard = () => {
                     position: "top-center",
                 });
             });
-        // } else {
-        //     if (Object.keys(data).length > 0) {
-        //         setReportWindowsState(false);
-        //         // setReportEditorState(true);
-        //     }
-        // }
     };
 
     // Обновление отчёта
@@ -563,12 +554,9 @@ const ProjectCard = () => {
         data.execution_start_date = formatDate(data.execution_period.start);
         data.execution_end_date = formatDate(data.execution_period.end);
         data.approval_date = formatDate(data.approval_date);
-
+        data.action = "presave";
         data.project_id = projectId;
 
-        // setReportData(data);
-
-        // if (!addReport) {
         if (mode === "read") return;
 
         query = toast.loading("Обновление", {
@@ -610,12 +598,6 @@ const ProjectCard = () => {
                     position: "top-center",
                 });
             });
-        // } else {
-        //     if (Object.keys(data).length > 0) {
-        //         setReportWindowsState(false);
-        //         setReportEditorState(true);
-        //     }
-        // }
     };
 
     useEffect(() => {

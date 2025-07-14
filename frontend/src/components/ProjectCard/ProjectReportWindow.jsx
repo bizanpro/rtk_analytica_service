@@ -21,19 +21,19 @@ const ProjectReportWindow = ({
         report_type_id: "",
         budget_in_billions: "",
         service_cost_in_rubles: "",
-        approval_date: "2025-01-01",
+        approval_date: new Date(),
         contract_id: contracts.length > 0 ? contracts[0].id : 1,
         report_period: {
-            start: new Date("2025-01-01"),
-            end: new Date("2025-12-31"),
+            start: new Date(),
+            end: new Date(),
         },
         implementation_period: {
-            start: new Date("2025-01-01"),
-            end: new Date("2025-12-31"),
+            start: new Date(),
+            end: new Date(),
         },
         execution_period: {
-            start: new Date("2025-01-01"),
-            end: new Date("2025-12-31"),
+            start: new Date(),
+            end: new Date(),
         },
         responsible_persons: [],
         contragents: [],
@@ -258,10 +258,28 @@ const ProjectReportWindow = ({
     };
 
     const parseDate = (dateString) => {
-        if (dateString) {
-            const [day, month, year] = dateString.split(".");
-            return new Date(`${year}-${month}-${day}`);
+        if (!dateString) return null;
+
+        if (dateString instanceof Date) {
+            return dateString;
         }
+
+        if (typeof dateString === "string") {
+            const [day, month, year] = dateString.split(".");
+
+            if (
+                day &&
+                month &&
+                year &&
+                !isNaN(day) &&
+                !isNaN(month) &&
+                !isNaN(year)
+            ) {
+                return new Date(`${year}-${month}-${day}`);
+            }
+        }
+
+        return null;
     };
 
     useEffect(() => {
@@ -368,10 +386,6 @@ const ProjectReportWindow = ({
             );
         }
     }, [isDataLoaded, reportId]);
-
-    useEffect(() => {
-        console.log(reportData.report_type_id);
-    }, [reportData.report_type_id]);
 
     return (
         <div className="grid gap-6 relative bg-white">
@@ -561,10 +575,13 @@ const ProjectReportWindow = ({
                     </span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        selected={
-                            parseDate(reportData?.approval_date) ||
-                            new Date("2025-01-01")
+                        startDate={
+                            parseDate(reportData.approval_date) || new Date()
                         }
+                        selected={
+                            parseDate(reportData.approval_date) || new Date()
+                        }
+                        // onChange={handleChangeDateRange("approval_date")}
                         onChange={(e) => handleInputChange(e, "approval_date")}
                         dateFormat="dd.MM.yyyy"
                         disabled={mode === "read"}
