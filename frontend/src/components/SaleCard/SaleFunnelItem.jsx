@@ -1,5 +1,4 @@
-import { format, parseISO } from "date-fns";
-import { ru } from "date-fns/locale";
+import DatePicker from "react-datepicker";
 
 const SaleFunnelItem = ({
     stage,
@@ -7,6 +6,8 @@ const SaleFunnelItem = ({
     activeStage,
     setActiveStage,
     requestNextStage,
+    handleActiveStageDate,
+    mode,
 }) => {
     let statusLabel = "";
 
@@ -42,13 +43,14 @@ const SaleFunnelItem = ({
             </div>
 
             <div>
-                <div className="border-2 border-gray-300 p-1 w-full h-[32px]">
-                    {stage?.created_at
-                        ? format(parseISO(stage.created_at), "dd.MM.yyyy", {
-                              locale: ru,
-                          })
-                        : ""}
-                </div>
+                <DatePicker
+                    className="border-2 border-gray-300 p-1 w-full h-[32px]"
+                    startDate={stage.updated_at || new Date()}
+                    selected={stage.updated_at || new Date()}
+                    onChange={(date) => handleActiveStageDate(date, stage.id)}
+                    dateFormat="dd.MM.yyyy"
+                    disabled={mode === "read"}
+                />
             </div>
 
             {stage.hasOwnProperty("next_possible_stages") &&

@@ -5,6 +5,7 @@ import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 
 import Select from "react-select";
+
 import NewCustomerWindow from "./NewCustomerWindow";
 import SaleServiceItem from "./SaleServiceItem";
 import SaleFunnelStages from "./SaleFunnelStages";
@@ -23,6 +24,7 @@ const SaleCard = () => {
     const navigate = useNavigate();
 
     const [mode, setMode] = useState(location.state?.mode || "read");
+    const [isFirstInit, setIsFirstInit] = useState(true);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     const [projectData, setProjectData] = useState({});
@@ -315,8 +317,33 @@ const SaleCard = () => {
         }
     };
 
+    const handleActiveStageDate = (date, stageId) => {
+        const formattedDate = date.toISOString().split("T")[0];
+
+        setSaleStages((prev) => {
+            const updatedStages = prev.stages.map((stage) => {
+                if (stage.id === stageId) {
+                    return {
+                        ...stage,
+                        updated_at: formattedDate,
+                    };
+                }
+                return stage;
+            });
+
+            return { ...prev, stages: updatedStages };
+        });
+    };
+
     // Обновляем детализацию этапа продажи
     const updateStageDetails = () => {
+        const activeStageData = saleStages.stages.find(
+            (item) => item.id === stageMetrics.stage_id
+        );
+
+        let stageMetricsData = stageMetrics;
+        stageMetricsData.updated_at = activeStageData.updated_at;
+
         postData(
             "PATCH",
             `${
@@ -324,7 +351,7 @@ const SaleCard = () => {
             }sales-funnel-projects/${saleId}/stages/${
                 stageMetrics.stage_id
             }/metrics`,
-            stageMetrics
+            stageMetricsData
         )
             .then((response) => {
                 if (response?.ok) {
@@ -490,11 +517,12 @@ const SaleCard = () => {
     }, [newService]);
 
     useEffect(() => {
-        if (saleStages.stages) {
+        if (saleStages.stages && isFirstInit) {
             setActiveStage(saleStages.stages[saleStages.stages?.length - 1].id);
             getStageDetails(
                 saleStages.stages[saleStages.stages?.length - 1].id
             );
+            setIsFirstInit(false);
         }
     }, [saleStages]);
 
@@ -1117,6 +1145,10 @@ const SaleCard = () => {
                                                         setActiveStage={
                                                             setActiveStage
                                                         }
+                                                        handleActiveStageDate={
+                                                            handleActiveStageDate
+                                                        }
+                                                        mode={mode}
                                                     />
                                                 )}
                                             </ul>

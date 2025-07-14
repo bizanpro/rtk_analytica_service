@@ -6,6 +6,8 @@ const SaleFunnelStages = ({
     getStageDetails,
     activeStage,
     setActiveStage,
+    handleActiveStageDate,
+    mode,
 }) => {
     return (
         saleStages.stages?.length > 0 &&
@@ -17,6 +19,8 @@ const SaleFunnelStages = ({
                 activeStage={activeStage}
                 setActiveStage={setActiveStage}
                 requestNextStage={requestNextStage}
+                handleActiveStageDate={handleActiveStageDate}
+                mode={mode}
             />
         ))
     );
