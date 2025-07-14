@@ -87,7 +87,7 @@ const ExecutorBlock = ({
                     </div>
                 </div>
 
-                {type === "lender" && (
+                {type === "creditor" && (
                     <div
                         className={`p-1 border-t transition-all ${
                             mode === "edit"

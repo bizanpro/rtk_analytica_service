@@ -1,38 +1,101 @@
 import { useState } from "react";
+
+import CreatableSelect from "react-select/creatable";
 import { IMaskInput } from "react-imask";
+
+const CREDITOR_TEMPLATE = {
+    full_name: "",
+    phone: "",
+    position: "",
+    email: "",
+    creditor_id: 1,
+};
+
+const CUSTOMER_TEMPLATE = {
+    full_name: "",
+    phone: "",
+    position: "",
+    email: "",
+};
 
 const EmptyExecutorBlock = ({
     removeBlock,
-    handleNewExecutor,
     banks,
     borderClass,
     type,
     sendExecutor,
-    data,
+    contragentContacts,
+    creditorContacts,
 }) => {
     const PhoneMask = "+{7}(000) 000 00 00";
 
     const [errors, setErrors] = useState({});
+
+    const [newContact, setNewContact] = useState(
+        type === "creditor" ? CREDITOR_TEMPLATE : CUSTOMER_TEMPLATE
+    );
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
 
+    const allContacts =
+        type === "creditor"
+            ? creditorContacts.flatMap((creditor) =>
+                  creditor.projects.flatMap((project) =>
+                      project.contacts.map((person) => ({
+                          value: person.full_name,
+                          label: person.full_name,
+                          email: person.email,
+                          phone: person.phone,
+                          position: person.position,
+                      }))
+                  )
+              )
+            : contragentContacts.flatMap((contragent) =>
+                  contragent.projects.flatMap((project) =>
+                      project.responsible_persons.map((person) => ({
+                          value: person.full_name,
+                          label: person.full_name,
+                          email: person.email,
+                          phone: person.phone,
+                          position: person.position,
+                      }))
+                  )
+              );
+
+    const handleNewExecutor = (e, name) => {
+        setNewContact({
+            ...newContact,
+            [name]: name === "phone" ? e : e.target.value,
+        });
+    };
+
+    const handleChange = (newValue) => {
+        setNewContact({
+            ...newContact,
+            full_name: newValue.value,
+            phone: newValue.phone,
+            email: newValue.email,
+            position: newValue.position,
+        });
+    };
+
     const handleSave = () => {
         const newErrors = {
-            full_name: !data.full_name,
-            phone: !data.phone,
-            position: !data.position,
-            email: !data.email || !validateEmail(data.email),
-            creditor_id: type === "lender" ? !data.creditor_id : false,
+            full_name: !newContact.full_name,
+            phone: !newContact.phone,
+            position: !newContact.position,
+            email: !newContact.email || !validateEmail(newContact.email),
+            creditor_id: type === "creditor" ? !newContact.creditor_id : false,
         };
 
         setErrors(newErrors);
 
         if (Object.values(newErrors).some((err) => err)) return;
 
-        sendExecutor(type);
+        sendExecutor(type, newContact);
     };
 
     return (
@@ -46,14 +109,14 @@ const EmptyExecutorBlock = ({
                     <div
                         className={`p-1 border-r transition-all ${borderClass}`}
                     >
-                        <input
+                        <CreatableSelect
+                            isClearable
+                            onChange={handleChange}
+                            options={allContacts}
                             className="w-full"
-                            type="text"
-                            placeholder="ФИО"
-                            onChange={(e) =>
-                                handleNewExecutor(type, e, "full_name")
-                            }
-                            value={data.full_name}
+                            isValidNewOption={() => false}
+                            placeholder="Введите ФИО"
+                            noOptionsMessage={() => "Совпадений нет"}
                         />
                         {errors.full_name && (
                             <p className="text-red-500 text-sm">
@@ -69,9 +132,9 @@ const EmptyExecutorBlock = ({
                             type="tel"
                             inputMode="tel"
                             onAccept={(value) =>
-                                handleNewExecutor(type, value || "", "phone")
+                                handleNewExecutor(value || "", "phone")
                             }
-                            value={data.phone || ""}
+                            value={newContact.phone || ""}
                             placeholder="+7 999 999 99 99"
                         />
                         {errors.phone && (
@@ -89,10 +152,8 @@ const EmptyExecutorBlock = ({
                             className="w-full"
                             type="text"
                             placeholder="Должность"
-                            value={data.position}
-                            onChange={(e) =>
-                                handleNewExecutor(type, e, "position")
-                            }
+                            value={newContact.position}
+                            onChange={(e) => handleNewExecutor(e, "position")}
                         />
                         {errors.position && (
                             <p className="text-red-500 text-sm">
@@ -105,10 +166,8 @@ const EmptyExecutorBlock = ({
                             className="w-full"
                             type="email"
                             placeholder="mail@mail.ru"
-                            value={data.email}
-                            onChange={(e) =>
-                                handleNewExecutor(type, e, "email")
-                            }
+                            value={newContact.email}
+                            onChange={(e) => handleNewExecutor(e, "email")}
                         />
                         {errors.email && (
                             <p className="text-red-500 text-sm">
@@ -118,14 +177,17 @@ const EmptyExecutorBlock = ({
                     </div>
                 </div>
 
-                {type === "lender" && (
+                {type === "creditor" && (
                     <div
                         className={`p-1 border-t transition-all ${borderClass}`}
                     >
                         <select
                             className="w-full"
                             onChange={(e) =>
-                                handleNewExecutor(type, e, "creditor_id")
+                                setNewContact({
+                                    ...newContact,
+                                    creditor_id: e.target.value,
+                                })
                             }
                         >
                             <option value="">Выберите банк</option>

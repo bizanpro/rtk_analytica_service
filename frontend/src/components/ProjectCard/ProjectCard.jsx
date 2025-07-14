@@ -54,21 +54,6 @@ const ProjectCard = () => {
     const [addLender, setAddLender] = useState(false);
     const [addCustomer, setAddCustomer] = useState(false);
 
-    const [newLender, setNewLender] = useState({
-        full_name: "",
-        phone: "",
-        position: "",
-        email: "",
-        creditor_id: 1,
-    });
-
-    const [newCustomer, setNewCustomer] = useState({
-        full_name: "",
-        phone: "",
-        position: "",
-        email: "",
-    });
-
     const [reports, setReports] = useState([]);
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
 
@@ -78,6 +63,9 @@ const ProjectCard = () => {
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [firstInit, setFirstInit] = useState(true);
+
+    const [contragentContacts, setContragentContacts] = useState([]);
+    const [creditorContacts, setCreditorContacts] = useState([]);
 
     let query;
 
@@ -130,21 +118,6 @@ const ProjectCard = () => {
             )
         );
     }, []);
-
-    // Обработчик ввода данных блока заказчика и кредитора
-    const handleNewExecutor = (type, e, name) => {
-        if (type === "lender") {
-            setNewLender({
-                ...newLender,
-                [name]: name === "phone" ? e : e.target.value,
-            });
-        } else if (type === "customer") {
-            setNewCustomer({
-                ...newCustomer,
-                [name]: name === "phone" ? e : e.target.value,
-            });
-        }
-    };
 
     // Получение отраслей
     const fetchIndustries = () => {
@@ -227,6 +200,26 @@ const ProjectCard = () => {
         });
     };
 
+    const getCreditorContacts = () => {
+        getData(
+            `${import.meta.env.VITE_API_URL}responsible-persons/creditor`
+        ).then((response) => {
+            if (response.status == 200) {
+                setCreditorContacts(response.data.data);
+            }
+        });
+    };
+
+    const getContragentsContacts = () => {
+        getData(
+            `${import.meta.env.VITE_API_URL}responsible-persons/contragent`
+        ).then((response) => {
+            if (response.status == 200) {
+                setContragentContacts(response.data.data);
+            }
+        });
+    };
+
     // Получение проекта
     const getProject = async (id) => {
         setIsDataLoaded(false);
@@ -284,35 +277,56 @@ const ProjectCard = () => {
     };
 
     // Отправляем кредитора и заказчика
-    const sendExecutor = (type) => {
+    const sendExecutor = (type, data) => {
         query = toast.loading("Выполняется отправка", {
             containerId: "projectCard",
             position: "top-center",
         });
 
-        if (type === "lender") {
-            setNewLender((prev) => {
-                const updatedLender = {
-                    ...prev,
-                    project_id: projectId,
-                };
+        data.project_id = projectId;
+
+        if (type === "creditor") {
+            postData(
+                "POST",
+                `${import.meta.env.VITE_API_URL}responsible-persons/creditor`,
+                data
+            ).then((response) => {
+                if (response?.ok) {
+                    getProject(projectId);
+                    setAddLender(false);
+
+                    toast.update(query, {
+                        render: response.message,
+                        type: "success",
+                        containerId: "projectCard",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                }
+            });
+        } else if (type === "customer") {
+            if (projectData?.contragent_id) {
+                data.contragent_id = projectData?.contragent_id;
+
                 postData(
                     "POST",
                     `${
                         import.meta.env.VITE_API_URL
-                    }responsible-persons/creditor`,
-                    updatedLender
+                    }responsible-persons/contragent`,
+                    data
                 ).then((response) => {
                     if (response?.ok) {
-                        getProject(projectId);
+                        setAddCustomer(false);
 
-                        setNewLender({
-                            full_name: "",
-                            phone: "",
-                            position: "",
-                            email: "",
-                            creditor_id: 1,
-                        });
+                        if (response?.responsible_person) {
+                            setCustomers((prevCustomer) => [
+                                ...prevCustomer,
+                                response.responsible_person,
+                            ]);
+                        }
 
                         toast.update(query, {
                             render: response.message,
@@ -325,53 +339,6 @@ const ProjectCard = () => {
                             position: "top-center",
                         });
                     }
-                });
-                return updatedLender;
-            });
-        } else if (type === "customer") {
-            if (projectData?.contragent_id) {
-                setNewCustomer((prev) => {
-                    const updatedCustomer = {
-                        ...prev,
-                        project_id: projectId,
-                        contragent_id: projectData?.contragent_id,
-                    };
-
-                    postData(
-                        "POST",
-                        `${
-                            import.meta.env.VITE_API_URL
-                        }responsible-persons/contragent`,
-                        updatedCustomer
-                    ).then((response) => {
-                        if (response?.ok) {
-                            if (response?.responsible_person) {
-                                setCustomers((prevCustomer) => [
-                                    ...prevCustomer,
-                                    response.responsible_person,
-                                ]);
-                            }
-
-                            setNewCustomer({
-                                full_name: "",
-                                phone: "",
-                                position: "",
-                                email: "",
-                            });
-
-                            toast.update(query, {
-                                render: response.message,
-                                type: "success",
-                                containerId: "projectCard",
-                                isLoading: false,
-                                autoClose: 1200,
-                                pauseOnFocusLoss: false,
-                                pauseOnHover: false,
-                                position: "top-center",
-                            });
-                        }
-                    });
-                    return updatedCustomer;
                 });
             } else {
                 alert("Необходимо назначить заказчика");
@@ -603,6 +570,8 @@ const ProjectCard = () => {
     useEffect(() => {
         if (projectId) {
             getProject(projectId);
+            getCreditorContacts();
+            getContragentsContacts();
         }
     }, []);
 
@@ -1019,12 +988,14 @@ const ProjectCard = () => {
                                             <EmptyExecutorBlock
                                                 borderClass={"border-gray-300"}
                                                 type={"customer"}
-                                                data={newCustomer}
                                                 removeBlock={() =>
                                                     setAddCustomer(false)
                                                 }
-                                                handleNewExecutor={
-                                                    handleNewExecutor
+                                                creditorContacts={
+                                                    creditorContacts
+                                                }
+                                                contragentContacts={
+                                                    contragentContacts
                                                 }
                                                 sendExecutor={sendExecutor}
                                             />
@@ -1126,13 +1097,15 @@ const ProjectCard = () => {
                                             <EmptyExecutorBlock
                                                 borderClass={"border-gray-300"}
                                                 banks={banks}
-                                                data={newLender}
-                                                type={"lender"}
+                                                type={"creditor"}
                                                 removeBlock={() =>
                                                     setAddLender(false)
                                                 }
-                                                handleNewExecutor={
-                                                    handleNewExecutor
+                                                creditorContacts={
+                                                    creditorContacts
+                                                }
+                                                contragentContacts={
+                                                    contragentContacts
                                                 }
                                                 sendExecutor={sendExecutor}
                                             />
@@ -1146,7 +1119,7 @@ const ProjectCard = () => {
                                                     contanct={lender}
                                                     mode={mode}
                                                     banks={banks}
-                                                    type={"lender"}
+                                                    type={"creditor"}
                                                     deleteBlock={deleteLender}
                                                     handleChange={handleChange}
                                                 />
