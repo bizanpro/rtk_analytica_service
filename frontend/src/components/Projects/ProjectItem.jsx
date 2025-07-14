@@ -50,7 +50,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                                                               <div
                                                                   className={`rounded px-8 py-1 text-center flex-grow
                                             ${
-                                                item.status.name === "Завершен"
+                                                item.status?.name === "Завершен"
                                                     ? "bg-green-400"
                                                     : "bg-gray-200"
                                             }
@@ -59,7 +59,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                                                                   {
                                                                       item
                                                                           .status
-                                                                          .name
+                                                                          ?.name
                                                                   }
                                                               </div>
                                                           </div>
