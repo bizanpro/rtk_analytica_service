@@ -105,19 +105,19 @@ const ProjectCard = () => {
     }, []);
 
     // Обработка состояния добавочного блока при изменении
-    const handleChange = useCallback((id, field, value, data, method) => {
-        method(
-            data.map((block) =>
-                block.id === id
-                    ? {
-                          ...block,
-                          borderClass: "border-gray-300",
-                          [field]: value,
-                      }
-                    : block
-            )
-        );
-    }, []);
+    // const handleChange = useCallback((id, field, value, data, method) => {
+    //     method(
+    //         data.map((block) =>
+    //             block.id === id
+    //                 ? {
+    //                       ...block,
+    //                       borderClass: "border-gray-300",
+    //                       [field]: value,
+    //                   }
+    //                 : block
+    //         )
+    //     );
+    // }, []);
 
     // Получение отраслей
     const fetchIndustries = () => {
@@ -347,7 +347,7 @@ const ProjectCard = () => {
     };
 
     // Удаление кредитора
-    const deleteLender = (id) => {
+    const deleteCreditor = (id) => {
         postData(
             "DELETE",
             `${import.meta.env.VITE_API_URL}responsible-persons/creditor/${id}`,
@@ -983,24 +983,26 @@ const ProjectCard = () => {
                                         )}
                                     </div>
 
-                                    <ul className="mt-[55px] flex flex-col gap-4 items-start overflow-y-auto h-[205px]">
-                                        {addCustomer && (
-                                            <EmptyExecutorBlock
-                                                borderClass={"border-gray-300"}
-                                                type={"customer"}
-                                                removeBlock={() =>
-                                                    setAddCustomer(false)
-                                                }
-                                                creditorContacts={
-                                                    creditorContacts
-                                                }
-                                                contragentContacts={
-                                                    contragentContacts
-                                                }
-                                                sendExecutor={sendExecutor}
-                                            />
-                                        )}
+                                    {addCustomer && (
+                                        <EmptyExecutorBlock
+                                            borderClass={"border-gray-300"}
+                                            type={"customer"}
+                                            removeBlock={() =>
+                                                setAddCustomer(false)
+                                            }
+                                            creditorContacts={creditorContacts}
+                                            contragentContacts={
+                                                contragentContacts
+                                            }
+                                            sendExecutor={sendExecutor}
+                                        />
+                                    )}
 
+                                    <ul
+                                        className={`flex flex-col gap-4 items-start overflow-y-auto h-[205px] ${
+                                            addCustomer ? "" : "mt-[55px]"
+                                        }`}
+                                    >
                                         {customers.length > 0 ? (
                                             customers.map((customer) => (
                                                 <ExecutorBlock
@@ -1009,7 +1011,6 @@ const ProjectCard = () => {
                                                     mode={mode}
                                                     type={"customer"}
                                                     deleteBlock={deleteCustomer}
-                                                    handleChange={handleChange}
                                                 />
                                             ))
                                         ) : (
@@ -1092,25 +1093,23 @@ const ProjectCard = () => {
                                         )}
                                     </ul>
 
-                                    <ul className="mt-[10px] flex flex-col gap-4 items-start overflow-y-auto h-[270px]">
-                                        {addLender && (
-                                            <EmptyExecutorBlock
-                                                borderClass={"border-gray-300"}
-                                                banks={banks}
-                                                type={"creditor"}
-                                                removeBlock={() =>
-                                                    setAddLender(false)
-                                                }
-                                                creditorContacts={
-                                                    creditorContacts
-                                                }
-                                                contragentContacts={
-                                                    contragentContacts
-                                                }
-                                                sendExecutor={sendExecutor}
-                                            />
-                                        )}
+                                    {addLender && (
+                                        <EmptyExecutorBlock
+                                            borderClass={"border-gray-300"}
+                                            banks={banks}
+                                            type={"creditor"}
+                                            removeBlock={() =>
+                                                setAddLender(false)
+                                            }
+                                            creditorContacts={creditorContacts}
+                                            contragentContacts={
+                                                contragentContacts
+                                            }
+                                            sendExecutor={sendExecutor}
+                                        />
+                                    )}
 
+                                    <ul className="mt-[10px] flex flex-col gap-4 items-start overflow-y-auto h-[270px]">
                                         {filteredLenders.length > 0 &&
                                         banks.length > 0 ? (
                                             filteredLenders.map((lender) => (
@@ -1120,8 +1119,7 @@ const ProjectCard = () => {
                                                     mode={mode}
                                                     banks={banks}
                                                     type={"creditor"}
-                                                    deleteBlock={deleteLender}
-                                                    handleChange={handleChange}
+                                                    deleteBlock={deleteCreditor}
                                                 />
                                             ))
                                         ) : (

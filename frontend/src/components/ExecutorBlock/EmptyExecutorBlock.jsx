@@ -3,6 +3,8 @@ import { useState } from "react";
 import CreatableSelect from "react-select/creatable";
 import { IMaskInput } from "react-imask";
 
+import "./ExecutorBlock.scss";
+
 const CREDITOR_TEMPLATE = {
     full_name: "",
     phone: "",
@@ -99,21 +101,19 @@ const EmptyExecutorBlock = ({
     };
 
     return (
-        <li className="flex items-center justify-between gap-6 w-full">
+        <div className="flex items-center justify-between gap-6 w-full">
             <div
                 className={`executor-block flex-grow border transition-all ${borderClass}`}
             >
                 <div
                     className={`grid grid-cols-[60%_40%] border-b transition-all ${borderClass}`}
                 >
-                    <div
-                        className={`p-1 border-r transition-all ${borderClass}`}
-                    >
+                    <div className={`border-r transition-all ${borderClass}`}>
                         <CreatableSelect
                             isClearable
                             onChange={handleChange}
                             options={allContacts}
-                            className="w-full"
+                            className="w-full executor-block__name-field"
                             isValidNewOption={() => false}
                             placeholder="Введите ФИО"
                             noOptionsMessage={() => "Совпадений нет"}
@@ -124,10 +124,10 @@ const EmptyExecutorBlock = ({
                             </p>
                         )}
                     </div>
-                    <div className="p-1 pr-3">
+                    <div className="py-2 px-3">
                         <IMaskInput
                             mask={PhoneMask}
-                            className="w-full"
+                            className="w-full h-full"
                             name="phone"
                             type="tel"
                             inputMode="tel"
@@ -146,10 +146,10 @@ const EmptyExecutorBlock = ({
                 </div>
                 <div className="grid grid-cols-[60%_40%]">
                     <div
-                        className={`p-1 border-r transition-all ${borderClass}`}
+                        className={`py-2 px-3 border-r transition-all ${borderClass}`}
                     >
                         <input
-                            className="w-full"
+                            className="w-full h-full"
                             type="text"
                             placeholder="Должность"
                             value={newContact.position}
@@ -161,9 +161,9 @@ const EmptyExecutorBlock = ({
                             </p>
                         )}
                     </div>
-                    <div className="p-1 pr-3">
+                    <div className="py-2 px-3">
                         <input
-                            className="w-full"
+                            className="w-full h-full"
                             type="email"
                             placeholder="mail@mail.ru"
                             value={newContact.email}
@@ -179,10 +179,10 @@ const EmptyExecutorBlock = ({
 
                 {type === "creditor" && (
                     <div
-                        className={`p-1 border-t transition-all ${borderClass}`}
+                        className={`py-2 px-3 border-t transition-all ${borderClass}`}
                     >
                         <select
-                            className="w-full"
+                            className="w-full h-full"
                             onChange={(e) =>
                                 setNewContact({
                                     ...newContact,
@@ -218,7 +218,7 @@ const EmptyExecutorBlock = ({
                     <span className="delete-icon"></span>
                 </button>
             </div>
-        </li>
+        </div>
     );
 };
 

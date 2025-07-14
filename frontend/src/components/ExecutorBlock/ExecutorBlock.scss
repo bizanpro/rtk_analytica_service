@@ -1,0 +1,16 @@
+.executor-block {
+    input {
+        width: 100%;
+    }
+}
+
+.executor-block__name-field > div {
+    border: none;
+    border-radius: 0;
+}
+
+// .executor-block__name-field > div[class*="-menu"] {
+//     background-color: aqua;
+//     max-height: 200px;
+//     overflow-y: auto;
+// }
