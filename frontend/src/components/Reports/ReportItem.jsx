@@ -100,7 +100,7 @@ const ReportItem = ({
                                 {value?.toString() || "—"}
                                 <br />
                                 <span className="text-base">
-                                    {props?.execution_period?.toString()}
+                                    {props?.report_period_code?.toString()}
                                 </span>
                             </td>
                         );
@@ -186,21 +186,6 @@ const ReportItem = ({
                     }
                 }
             })}
-
-            {/* <td className="px-4 py-2.5 min-w-[80px]">
-                {props.has_conclusion && (
-                    <button
-                        type="button"
-                        className="info-icon flex-none"
-                        style={{ height: "25px", width: "25px" }}
-                        title="Посмотреть заключение"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            openSubReportEditor(props.id);
-                        }}
-                    ></button>
-                )}
-            </td> */}
         </tr>
     );
 };

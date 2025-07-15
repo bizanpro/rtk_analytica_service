@@ -17,6 +17,14 @@ import "react-toastify/dist/ReactToastify.css";
 
 import months from "../../data/months.json";
 
+const customStyles = {
+    option: (base, { data, isFocused, isSelected }) => ({
+        ...base,
+        backgroundColor: isSelected ? "#2684FF" : isFocused ? "#eee" : "white",
+        color: data.isFull ? "black" : "red",
+    }),
+};
+
 const EmployeeCard = () => {
     const { employeeId } = useParams();
     const navigate = useNavigate();
@@ -25,26 +33,23 @@ const EmployeeCard = () => {
     const [workload, setworkload] = useState({});
     const [personalWorkload, setPersonalWorkload] = useState();
     const [workloadSummary, setWorkloadSummary] = useState();
+
     const [mode, setMode] = useState("read");
     const [errors, setErrors] = useState({});
+
+    const [datesData, setDatesData] = useState([]);
     const [availableYears, setAvailableYears] = useState([]);
     const [selectedPersonalYear, setSelectedPersonalYear] = useState(2024);
-    const [selectedPersonalMonth, setSelectedPersonalMonth] = useState("1");
+    const [selectedPersonalMonth, setSelectedPersonalMonth] = useState({});
     const [selectedSummaryYear, setSelectedSummaryYear] = useState("");
     const [selectedSummaryMonth, setSelectedSummaryMonth] = useState("1");
     const [selectedTypes, setSelecterTypes] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
     const [positions, setPositions] = useState([]);
     const [workloads, setWorkloads] = useState([]);
+    const [availablePersonalMonths, setAvailablePersonalMonths] = useState([]);
 
     const PhoneMask = "+{7} (000) 000 00 00";
-
-    const currentMonthName = months[new Date().getMonth()];
-    const currentMonthIndex = months.indexOf(currentMonthName);
-    const availableMonths =
-        currentMonthIndex !== -1
-            ? months.slice(0, currentMonthIndex + 1)
-            : months;
 
     let query;
 
@@ -100,19 +105,26 @@ const EmployeeCard = () => {
 
     // Получаем года для блока Трудозатраты
     const getYears = () => {
-        getData(`${import.meta.env.VITE_API_URL}available-years`).then(
-            (response) => {
-                if (response.status == 200) {
-                    setAvailableYears(response.data);
-                    setSelectedPersonalYear(
-                        response.data[response.data.length - 1]
-                    );
-                    setSelectedSummaryYear(
-                        response.data[response.data.length - 1]
-                    );
-                }
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }available-years/?physical_person_id=${employeeId}`
+        ).then((response) => {
+            if (response.status == 200) {
+                setDatesData(response.data);
+                setAvailableYears(response.data.map((item) => item.year));
+                setSelectedPersonalYear(
+                    response.data.map((item) => item.year)[
+                        response.data.length - 1
+                    ]
+                );
+                setSelectedSummaryYear(
+                    response.data.map((item) => item.year)[
+                        response.data.length - 1
+                    ]
+                );
             }
-        );
+        });
     };
 
     const getTypes = () => {
@@ -247,22 +259,24 @@ const EmployeeCard = () => {
 
     // Получение трудозатрат
     const personalWorkloadFilter = () => {
-        const payload = {
-            year: selectedPersonalYear,
-            month: selectedPersonalMonth,
-        };
+        if ("value" in selectedPersonalMonth) {
+            const payload = {
+                year: selectedPersonalYear,
+                month: selectedPersonalMonth.value,
+            };
 
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }physical-persons/${employeeId}/personal-workload`,
-            { params: payload }
-        ).then((response) => {
-            if (response.status === 200) {
-                setPersonalWorkload(response.data);
-                setWorkloads(response.data.workload);
-            }
-        });
+            getData(
+                `${
+                    import.meta.env.VITE_API_URL
+                }physical-persons/${employeeId}/personal-workload`,
+                { params: payload }
+            ).then((response) => {
+                if (response.status === 200) {
+                    setPersonalWorkload(response.data);
+                    setWorkloads(response.data.workload);
+                }
+            });
+        }
     };
 
     // Изменение процентов в блоке Трудозатраты
@@ -272,53 +286,55 @@ const EmployeeCard = () => {
             personalWorkload.other_workload;
 
         if (totalPercentage === 100) {
-            query = toast.loading("Обновление", {
-                containerId: "employee",
-                position: "top-center",
-            });
+            if ("value" in selectedPersonalMonth) {
+                query = toast.loading("Обновление", {
+                    containerId: "employee",
+                    position: "top-center",
+                });
 
-            const data = {
-                workloads: workloads,
-                year: +selectedPersonalYear,
-                month: +selectedPersonalMonth,
-                other_workload_percentage: personalWorkload.other_workload,
-                // vacation_workload: vacationWorkload,
-            };
+                const data = {
+                    workloads: workloads,
+                    year: +selectedPersonalYear,
+                    month: +selectedPersonalMonth.value,
+                    other_workload_percentage: personalWorkload.other_workload,
+                    // vacation_workload: vacationWorkload,
+                };
 
-            postData(
-                "PATCH",
-                `${
-                    import.meta.env.VITE_API_URL
-                }physical-persons/${employeeId}/personal-workload`,
-                data
-            )
-                .then((response) => {
-                    if (response?.ok) {
-                        personalWorkloadFilter();
-                        getWorkloadSummary();
-                        toast.update(query, {
-                            render: "Успешно обновлено!",
-                            type: "success",
+                postData(
+                    "PATCH",
+                    `${
+                        import.meta.env.VITE_API_URL
+                    }physical-persons/${employeeId}/personal-workload`,
+                    data
+                )
+                    .then((response) => {
+                        if (response?.ok) {
+                            personalWorkloadFilter();
+                            getWorkloadSummary();
+                            toast.update(query, {
+                                render: "Успешно обновлено!",
+                                type: "success",
+                                containerId: "employee",
+                                isLoading: false,
+                                autoClose: 1200,
+                                pauseOnFocusLoss: false,
+                                pauseOnHover: false,
+                                position: "top-center",
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        toast.dismiss(query);
+                        toast.error(error.message || "Ошибка при обновлении", {
                             containerId: "employee",
                             isLoading: false,
-                            autoClose: 1200,
+                            autoClose: 4000,
                             pauseOnFocusLoss: false,
                             pauseOnHover: false,
                             position: "top-center",
                         });
-                    }
-                })
-                .catch((error) => {
-                    toast.dismiss(query);
-                    toast.error(error.message || "Ошибка при обновлении", {
-                        containerId: "employee",
-                        isLoading: false,
-                        autoClose: 4000,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: false,
-                        position: "top-center",
                     });
-                });
+            }
         } else {
             toast.error("Сумма всех трудозатрат должна равняться 100%", {
                 containerId: "employee",
@@ -342,6 +358,27 @@ const EmployeeCard = () => {
             getWorkloadSummary();
         }
     }, [selectedSummaryYear, selectedSummaryMonth, selectedTypes]);
+
+    useEffect(() => {
+        if (datesData.length > 0) {
+            setAvailablePersonalMonths(
+                datesData
+                    .find((item) => item.year === selectedPersonalYear)
+                    .months.map((month) => ({
+                        value: month.number,
+                        label: month.name,
+                        isFull: month.is_full_workload,
+                    }))
+            );
+            setSelectedPersonalMonth();
+        }
+    }, [selectedPersonalYear]);
+
+    useEffect(() => {
+        if (availablePersonalMonths.length > 0) {
+            setSelectedPersonalMonth(availablePersonalMonths[0]);
+        }
+    }, [availablePersonalMonths]);
 
     useEffect(() => {
         getEmployee();
@@ -755,27 +792,18 @@ const EmployeeCard = () => {
                                             <span className="block mb-2 text-gray-400">
                                                 Месяц
                                             </span>
-                                            <select
-                                                className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
-                                                onChange={(e) =>
-                                                    setSelectedPersonalMonth(
-                                                        e.target.value
-                                                    )
+                                            <Select
+                                                options={
+                                                    availablePersonalMonths
                                                 }
-                                            >
-                                                {(selectedPersonalYear ===
-                                                new Date().getFullYear()
-                                                    ? availableMonths
-                                                    : months
-                                                ).map((month, index) => (
-                                                    <option
-                                                        value={index + 1}
-                                                        key={index}
-                                                    >
-                                                        {month}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                                styles={customStyles}
+                                                // className="border-2 h-[32px] p-1 border-gray-300 min-w-[170px]"
+                                                placeholder="Выберите месяц"
+                                                value={selectedPersonalMonth}
+                                                onChange={(e) =>
+                                                    setSelectedPersonalMonth(e)
+                                                }
+                                            />
                                         </div>
                                     </div>
 
