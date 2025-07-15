@@ -515,13 +515,23 @@ const ProjectCard = () => {
         data.report_period = `${formatDate(
             data.report_period.start
         )} - ${formatDate(data.report_period.end)}`;
+
         data.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
+
         data.execution_start_date = formatDate(data.execution_period.start);
         data.execution_end_date = formatDate(data.execution_period.end);
-        data.approval_date = formatDate(data.approval_date);
+
+        if (
+            data.approval_date instanceof Date &&
+            !isNaN(data.approval_date.getTime())
+        ) {
+            data.approval_date = formatDate(data.approval_date);
+        }
+
         data.action = "presave";
+
         data.project_id = projectId;
 
         if (mode === "read") return;

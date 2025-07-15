@@ -146,46 +146,41 @@ const ProjectReportWindow = ({
     };
 
     // Обработка инпутов
-    const handleInputChange = useCallback(
-        (e, name) => {
-            let value = name === "approval_date" ? e : e.target.value;
+    const handleInputChange = (e, name) => {
+        let value = name === "approval_date" ? e : e.target.value;
 
-            if (
-                name === "budget_in_billions" ||
-                name === "service_cost_in_rubles"
-            ) {
-                value = value.replace(/[^0-9.,]/g, "");
-                value = value.replace(".", ",");
+        if (
+            name === "budget_in_billions" ||
+            name === "service_cost_in_rubles"
+        ) {
+            value = value.replace(/[^0-9.,]/g, "");
+            value = value.replace(".", ",");
 
-                const parts = value.split(",");
-                if (parts.length > 2) {
-                    value = parts[0] + "," + parts[1];
-                }
-
-                if (parts[1]?.length > 5) {
-                    value = `${parts[0]},${parts[1].slice(0, 5)}`;
-                }
+            const parts = value.split(",");
+            if (parts.length > 2) {
+                value = parts[0] + "," + parts[1];
             }
 
-            setReportData((prev) => ({
-                ...prev,
-                [name]: value,
-            }));
-        },
-        [setReportData]
-    );
+            if (parts[1]?.length > 5) {
+                value = `${parts[0]},${parts[1].slice(0, 5)}`;
+            }
+        }
+
+        setReportData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
 
     // Обработка дат
-    const handleChangeDateRange = useCallback(
+    const handleChangeDateRange =
         (id) =>
-            ([newStartDate, newEndDate]) => {
-                setReportData((prev) => ({
-                    ...prev,
-                    [id]: { start: newStartDate, end: newEndDate || "" },
-                }));
-            },
-        [setReportData]
-    );
+        ([newStartDate, newEndDate]) => {
+            setReportData((prev) => ({
+                ...prev,
+                [id]: { start: newStartDate, end: newEndDate || "" },
+            }));
+        };
 
     // Добавление блока заказчика или кредитора
     const addBlock = useCallback((type) => {
@@ -581,7 +576,6 @@ const ProjectReportWindow = ({
                         selected={
                             parseDate(reportData.approval_date) || new Date()
                         }
-                        // onChange={handleChangeDateRange("approval_date")}
                         onChange={(e) => handleInputChange(e, "approval_date")}
                         dateFormat="dd.MM.yyyy"
                         disabled={mode === "read"}
