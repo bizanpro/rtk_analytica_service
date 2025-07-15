@@ -1,12 +1,11 @@
 const CardReportsListItem = ({
     id,
-    report_name,
+    report_period_code,
     report_period,
     status,
     role,
     execution_period,
     days,
-
     openReportEditor,
     projectData,
 }) => {
@@ -25,7 +24,7 @@ const CardReportsListItem = ({
             </div>
 
             <div className="flex flex-col">
-                <div className="text-lg">{report_name}</div>
+                <div className="text-lg">{report_period_code}</div>
                 <span className="text-sm">{report_period}</span>
             </div>
 

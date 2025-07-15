@@ -21,19 +21,19 @@ const ProjectReportWindow = ({
         report_type_id: "",
         budget_in_billions: "",
         service_cost_in_rubles: "",
-        approval_date: new Date(),
-        contract_id: contracts.length > 0 ? contracts[0].id : 1,
+        approval_date: null,
+        contract_id: "",
         report_period: {
-            start: new Date(),
-            end: new Date(),
+            start: null,
+            end: null,
         },
         implementation_period: {
-            start: new Date(),
-            end: new Date(),
+            start: null,
+            end: null,
         },
         execution_period: {
-            start: new Date(),
-            end: new Date(),
+            start: null,
+            end: null,
         },
         responsible_persons: [],
         contragents: [],
@@ -386,7 +386,7 @@ const ProjectReportWindow = ({
         <div className="grid gap-6 relative bg-white">
             {!isDataLoaded && <Loader />}
 
-            <div className="text-2xl w-full">{reportData.report_name}</div>
+            <div className="text-2xl w-full">{reportData.report_period_code}</div>
 
             <div className="grid gap-3 grid-cols-2">
                 <div className="flex flex-col gap-2 justify-between">
@@ -422,6 +422,7 @@ const ProjectReportWindow = ({
                         endDate={reportData["report_period"].end}
                         onChange={handleChangeDateRange("report_period")}
                         dateFormat="dd.MM.yyyy"
+                        placeholderText="Выбрать дату"
                         selectsRange
                         disabled={mode === "read"}
                     />
@@ -463,6 +464,7 @@ const ProjectReportWindow = ({
                             "implementation_period"
                         )}
                         dateFormat="dd.MM.yyyy"
+                        placeholderText="Выбрать дату"
                         selectsRange
                         disabled={mode === "read"}
                     />
@@ -481,6 +483,7 @@ const ProjectReportWindow = ({
                             value={reportData.contract_id || ""}
                             disabled={mode === "read"}
                         >
+                            <option value="">Выбрать договор</option>
                             {contracts.length > 0 &&
                                 contracts.map((contract) => (
                                     <option
@@ -537,6 +540,7 @@ const ProjectReportWindow = ({
                         endDate={reportData["execution_period"].end}
                         onChange={handleChangeDateRange("execution_period")}
                         dateFormat="dd.MM.yyyy"
+                        placeholderText="Выбрать дату"
                         selectsRange
                         disabled={mode === "read"}
                     />
@@ -570,13 +574,10 @@ const ProjectReportWindow = ({
                     </span>
                     <DatePicker
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        startDate={
-                            parseDate(reportData.approval_date) || new Date()
-                        }
-                        selected={
-                            parseDate(reportData.approval_date) || new Date()
-                        }
+                        startDate={parseDate(reportData.approval_date)}
+                        selected={parseDate(reportData.approval_date)}
                         onChange={(e) => handleInputChange(e, "approval_date")}
+                        placeholderText="Выбрать дату"
                         dateFormat="dd.MM.yyyy"
                         disabled={mode === "read"}
                     />

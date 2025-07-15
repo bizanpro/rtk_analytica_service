@@ -20,7 +20,7 @@ const Reports = () => {
 
     const COLUMNS = [
         [
-            { label: "Отчёт", key: "name" },
+            { label: "Отчёт", key: "report_period_code" },
             { label: "Проект", key: "project" },
             { label: "Заказкчик", key: "contragent" },
             { label: "Банк", key: "creditors" },

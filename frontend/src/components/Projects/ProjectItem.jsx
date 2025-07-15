@@ -44,7 +44,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                                                                       flex: "0 0 40px",
                                                                   }}
                                                               >
-                                                                  {item.name}
+                                                                  {item.report_period_code}
                                                               </div>
 
                                                               <div

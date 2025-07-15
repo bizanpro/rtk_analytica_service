@@ -1,5 +1,3 @@
-import handleStatus from "../../utils/handleStatus";
-
 const CustomerProjectItem = ({
     id,
     name,

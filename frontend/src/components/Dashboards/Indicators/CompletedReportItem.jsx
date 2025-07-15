@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const CompletedReportItem = ({
     project,
     id,
-    report_name,
+    report_period_code,
     days,
     execution_period,
 }) => {
@@ -33,7 +33,7 @@ const CompletedReportItem = ({
                 title="Открыть отчёт в карточке проекта"
             >
                 <div className="flex flex-col flex-grow">
-                    <div className="text-lg">{report_name}</div>
+                    <div className="text-lg">{report_period_code}</div>
                     <span className="text-sm">{execution_period}</span>
                 </div>
             </Link>

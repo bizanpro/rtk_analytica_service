@@ -91,7 +91,7 @@ const ReportItem = ({
                         );
                     }
                 } else {
-                    if (key === "name") {
+                    if (key === "report_period_code") {
                         return (
                             <td
                                 className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-lg"
@@ -100,7 +100,7 @@ const ReportItem = ({
                                 {value?.toString() || "—"}
                                 <br />
                                 <span className="text-base">
-                                    {props?.report_period_code?.toString()}
+                                    {props?.report_period?.toString()}
                                 </span>
                             </td>
                         );

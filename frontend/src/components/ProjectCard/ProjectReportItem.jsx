@@ -1,25 +1,23 @@
 const ProjectReportItem = ({
     id,
-    report_name,
+    report_period_code,
     status,
     report_period,
     days,
     execution_period,
-    // setReportEditorName,
     openReportEditor,
     deleteReport,
     mode,
 }) => {
     return (
         <li
-            className="grid items-center grid-cols-[33%_20%_33%_1fr] gap-3 cursor-pointer"
+            className="grid items-center grid-cols-[33%_25%_33%_1fr] gap-3 cursor-pointer"
             onClick={() => {
-                // setReportEditorName(report_name);
                 openReportEditor(id);
             }}
         >
             <div className="flex flex-col">
-                <div className="text-lg">{report_name}</div>
+                <div className="text-lg">{report_period_code}</div>
                 <span className="text-sm">{report_period}</span>
             </div>
 
