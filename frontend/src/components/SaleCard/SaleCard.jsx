@@ -318,14 +318,12 @@ const SaleCard = () => {
     };
 
     const handleActiveStageDate = (date, stageId) => {
-        const formattedDate = date.toISOString().split("T")[0];
-
         setSaleStages((prev) => {
             const updatedStages = prev.stages.map((stage) => {
                 if (stage.id === stageId) {
                     return {
                         ...stage,
-                        updated_at: formattedDate,
+                        updated_at: date,
                     };
                 }
                 return stage;
@@ -341,8 +339,12 @@ const SaleCard = () => {
             (item) => item.id === stageMetrics.stage_id
         );
 
+        const newDate = activeStageData.updated_at.toLocaleDateString("ru-RU");
+        const [day, month, year] = newDate.split(".");
+        const formattedDate = `${year}-${month}-${day}`;
+
         let stageMetricsData = stageMetrics;
-        stageMetricsData.updated_at = activeStageData.updated_at;
+        stageMetricsData.updated_at = formattedDate;
 
         postData(
             "PATCH",
