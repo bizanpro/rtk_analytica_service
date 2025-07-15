@@ -100,7 +100,7 @@ const ReportItem = ({
                                 {value?.toString() || "—"}
                                 <br />
                                 <span className="text-base">
-                                    {props?.report_period?.toString()}
+                                    {props?.execution_period?.toString()}
                                 </span>
                             </td>
                         );

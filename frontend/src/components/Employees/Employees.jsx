@@ -1,13 +1,17 @@
 import { useEffect, useState, useMemo } from "react";
+
 import getData from "../../utils/getData";
-import EmployeeItem from "./EmployeeItem";
-import Search from "../Search/Search";
 import { createDebounce } from "../../utils/debounce";
+
+import EmployeeItem from "./EmployeeItem";
+import Select from "../Select";
+import Search from "../Search/Search";
 
 const Employees = () => {
     const [list, setList] = useState([]);
     const [selectedType, setSelectedType] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
+    const [selectedName, setSelectedName] = useState("default");
     const [isLoading, setIsLoading] = useState(true);
 
     const COLUMNS = [
@@ -28,12 +32,15 @@ const Employees = () => {
                     : true) &&
                 (selectedStatus !== "default"
                     ? employee.is_active === (selectedStatus === "true")
+                    : true) &&
+                (selectedName !== "default"
+                    ? employee.name === selectedName
                     : true)
             );
         });
 
         return result;
-    }, [list, selectedType, selectedStatus]);
+    }, [list, selectedType, selectedStatus, selectedName]);
 
     const handleSearch = (event) => {
         const searchQuery = event.value.toLowerCase();
@@ -53,6 +60,15 @@ const Employees = () => {
     };
 
     const debounce = createDebounce(handleSearch, 300, true);
+
+    // Заполняем селектор сотрудников
+    const nameOptions = useMemo(() => {
+        const allNames = list
+            .map((item) => item.name)
+            .filter((name) => name !== null);
+
+        return Array.from(new Set(allNames));
+    }, [list]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -81,6 +97,19 @@ const Employees = () => {
                             className="search-fullpage"
                             placeholder="Поиск сотрудника"
                         />
+
+                        {nameOptions.length > 0 && (
+                            <Select
+                                className={
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                }
+                                title={"Сотрудник"}
+                                items={nameOptions}
+                                onChange={(evt) => {
+                                    setSelectedName(evt.target.value);
+                                }}
+                            />
+                        )}
 
                         <select
                             className={

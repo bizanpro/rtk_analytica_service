@@ -97,8 +97,6 @@ const Sales = () => {
     const getList = (query = "") => {
         setIsLoading(true);
 
-        console.log(query);
-
         getData(`${URL}?${query}`, { Accept: "application/json" })
             .then((response) => {
                 setList(response.data);

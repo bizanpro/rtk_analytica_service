@@ -1,10 +1,12 @@
 import { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
+
 import ProjectItem from "./ProjectItem";
 import Popup from "../Popup/Popup";
 import Select from "../Select";
-import { useNavigate } from "react-router-dom";
 
 const Projects = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
@@ -14,9 +16,10 @@ const Projects = () => {
     const [list, setList] = useState([]);
     const [popupState, setPopupState] = useState(false);
     const [newProjectName, setNewProjectName] = useState("");
-    const [selectedSector, setSelectedSector] = useState("");
-    const [selectedBank, setSelectedBank] = useState("");
-    const [selectedManager, setSelectedManager] = useState("");
+    const [selectedName, setSelectedName] = useState("default");
+    const [selectedSector, setSelectedSector] = useState("default");
+    const [selectedBank, setSelectedBank] = useState("default");
+    const [selectedManager, setSelectedManager] = useState("default");
     const [isLoading, setIsLoading] = useState(true);
 
     const COLUMNS = [
@@ -45,11 +48,23 @@ const Projects = () => {
                     : true) &&
                 (selectedManager && selectedManager !== "default"
                     ? project.manager === selectedManager
+                    : true) &&
+                (selectedName && selectedName !== "default"
+                    ? project.name === selectedName
                     : true)
             );
         });
         return result;
-    }, [list, selectedSector, selectedBank, selectedManager]);
+    }, [list, selectedSector, selectedBank, selectedManager, selectedName]);
+
+    // Заполняем селектор проектов
+    const nameOptions = useMemo(() => {
+        const allNames = list
+            .map((item) => item.name)
+            .filter((name) => name !== null);
+
+        return Array.from(new Set(allNames));
+    }, [list]);
 
     // Заполняем селектор отраслей
     const sectorOptions = useMemo(() => {
@@ -134,6 +149,19 @@ const Projects = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
+                        {nameOptions.length > 0 && (
+                            <Select
+                                className={
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                }
+                                title={"Проект"}
+                                items={nameOptions}
+                                onChange={(evt) => {
+                                    setSelectedName(evt.target.value);
+                                }}
+                            />
+                        )}
+
                         {sectorOptions.length > 0 && (
                             <Select
                                 className={
