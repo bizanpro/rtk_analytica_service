@@ -21,6 +21,7 @@ import ProjectImplementationPeriod from "./ProjectImplementationPeriod";
 import ProjectBudget from "./ProjectBudget";
 import Loader from "../Loader";
 import AutoResizeTextarea from "../AutoResizeTextarea";
+import ManagementReportsTab from "../ManagementReportsTab/ManagementReportsTab";
 
 import Select from "react-select";
 
@@ -43,6 +44,8 @@ const ProjectCard = () => {
     const [mode, setMode] = useState(location.state?.mode || "read");
     const [activeReportTab, setActiveReportTab] = useState("projectReports");
 
+    const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
+
     const [industries, setIndustries] = useState([]);
     const [contragents, setContragents] = useState([]);
     const [banks, setBanks] = useState([]);
@@ -56,7 +59,6 @@ const ProjectCard = () => {
     const [addCustomer, setAddCustomer] = useState(false);
 
     const [reports, setReports] = useState([]);
-    const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
 
     const [teamData, setTeamData] = useState([]);
     const [services, setServices] = useState([]);
@@ -104,21 +106,6 @@ const ProjectCard = () => {
         setFormFields((prev) => ({ ...prev, [name]: e.target.value }));
         setProjectData((prev) => ({ ...prev, [name]: e.target.value }));
     }, []);
-
-    // Обработка состояния добавочного блока при изменении
-    // const handleChange = useCallback((id, field, value, data, method) => {
-    //     method(
-    //         data.map((block) =>
-    //             block.id === id
-    //                 ? {
-    //                       ...block,
-    //                       borderClass: "border-gray-300",
-    //                       [field]: value,
-    //                   }
-    //                 : block
-    //         )
-    //     );
-    // }, []);
 
     // Получение отраслей
     const fetchIndustries = () => {
@@ -916,15 +903,6 @@ const ProjectCard = () => {
                                     <span className="text-gray-400">
                                         Местоположение
                                     </span>
-                                    {/* <input
-                                        className="border-2 border-gray-300 py-1 px-5"
-                                        type="text"
-                                        disabled={mode == "read"}
-                                        value={projectData?.location || ""}
-                                        onChange={(e) =>
-                                            handleInputChange(e, "location")
-                                        }
-                                    /> */}
 
                                     <AutoResizeTextarea
                                         disabled={mode === "read"}
@@ -940,14 +918,7 @@ const ProjectCard = () => {
                             <div className="grid gap-[20px] grid-cols-2 mb-5">
                                 <div className="flex flex-col gap-2">
                                     <span className="text-gray-400">ТЭП</span>
-                                    {/* <input
-                                        className="border-2 border-gray-300 py-1 px-5"
-                                        type="text"
-                                        disabled={mode == "read"}
-                                        value={projectData?.tep || ""}
-                                        onChange={(e) =>
-                                            handleInputChange(e, "tep")
-                                        } */}
+
                                     <AutoResizeTextarea
                                         disabled={mode === "read"}
                                         value={projectData?.tep || ""}
@@ -1176,27 +1147,28 @@ const ProjectCard = () => {
                                     <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                         ?
                                     </span>
-                                    {mode == "edit" && (
-                                        <button
-                                            type="button"
-                                            className="add-button"
-                                            onClick={() =>
-                                                setReportWindowsState(true)
-                                            }
-                                            disabled={
-                                                projectData.contragent_id
-                                                    ? false
-                                                    : true
-                                            }
-                                            title={
-                                                projectData.contragent_id
-                                                    ? "Открыть конструктор отчёта"
-                                                    : "Необходимо назначить заказчика"
-                                            }
-                                        >
-                                            <span></span>
-                                        </button>
-                                    )}
+                                    {mode == "edit" &&
+                                        activeReportTab == "projectReports" && (
+                                            <button
+                                                type="button"
+                                                className="add-button"
+                                                onClick={() =>
+                                                    setReportWindowsState(true)
+                                                }
+                                                disabled={
+                                                    projectData.contragent_id
+                                                        ? false
+                                                        : true
+                                                }
+                                                title={
+                                                    projectData.contragent_id
+                                                        ? "Открыть конструктор отчёта"
+                                                        : "Необходимо назначить заказчика"
+                                                }
+                                            >
+                                                <span></span>
+                                            </button>
+                                        )}
                                 </div>
 
                                 <div className="relative border-2 border-gray-300 py-3 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
@@ -1237,42 +1209,57 @@ const ProjectCard = () => {
                                         </button>
                                     </nav>
 
-                                    {!reportWindowsState ? (
-                                        <ul className="grid gap-3">
-                                            {!isDataLoaded && <Loader />}
+                                    {activeReportTab === "projectReports" &&
+                                        (!reportWindowsState ? (
+                                            <ul className="grid gap-3">
+                                                {!isDataLoaded && <Loader />}
 
-                                            <li className="grid items-center grid-cols-[33%_20%_33%_1fr] gap-3 mb-2 text-gray-400">
-                                                <span>Отчет</span>
-                                                <span>Статус</span>
-                                                <span>Период выполнения</span>
-                                            </li>
+                                                <li className="grid items-center grid-cols-[33%_20%_33%_1fr] gap-3 mb-2 text-gray-400">
+                                                    <span>Отчет</span>
+                                                    <span>Статус</span>
+                                                    <span>
+                                                        Период выполнения
+                                                    </span>
+                                                </li>
 
-                                            {reports.length > 0 &&
-                                                reports.map((report, index) => (
-                                                    <ProjectReportItem
-                                                        key={report.id || index}
-                                                        {...report}
-                                                        deleteReport={
-                                                            deleteReport
-                                                        }
-                                                        openReportEditor={
-                                                            openReportEditor
-                                                        }
-                                                        mode={mode}
-                                                    />
-                                                ))}
-                                        </ul>
-                                    ) : (
-                                        <ProjectReportWindow
-                                            reportWindowsState={
-                                                setReportWindowsState
-                                            }
-                                            sendReport={sendReport}
-                                            contracts={contracts}
-                                            updateReport={updateReport}
-                                            reportId={reportId}
-                                            setReportId={setReportId}
-                                            mode={mode}
+                                                {reports.length > 0 &&
+                                                    reports.map(
+                                                        (report, index) => (
+                                                            <ProjectReportItem
+                                                                key={
+                                                                    report.id ||
+                                                                    index
+                                                                }
+                                                                {...report}
+                                                                deleteReport={
+                                                                    deleteReport
+                                                                }
+                                                                openReportEditor={
+                                                                    openReportEditor
+                                                                }
+                                                                mode={mode}
+                                                            />
+                                                        )
+                                                    )}
+                                            </ul>
+                                        ) : (
+                                            <ProjectReportWindow
+                                                reportWindowsState={
+                                                    setReportWindowsState
+                                                }
+                                                sendReport={sendReport}
+                                                contracts={contracts}
+                                                updateReport={updateReport}
+                                                reportId={reportId}
+                                                setReportId={setReportId}
+                                                mode={mode}
+                                            />
+                                        ))}
+
+                                    {activeReportTab ===
+                                        "managementReports" && (
+                                        <ManagementReportsTab
+                                            projectId={projectId}
                                         />
                                     )}
                                 </div>

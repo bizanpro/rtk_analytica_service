@@ -68,7 +68,7 @@ const ProjectReportWindow = ({
             newErrors.budget_in_billions = "Бюджет должен быть больше 0";
         }
 
-        if (reportData.show_cost) {
+        if (reportData.show_cost === true) {
             if (
                 !reportData.service_cost_in_rubles ||
                 reportData.service_cost_in_rubles <= 0
