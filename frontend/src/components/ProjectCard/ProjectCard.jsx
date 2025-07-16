@@ -20,6 +20,7 @@ import ReportServices from "./ReportServices";
 import ProjectImplementationPeriod from "./ProjectImplementationPeriod";
 import ProjectBudget from "./ProjectBudget";
 import Loader from "../Loader";
+import AutoResizeTextarea from "../AutoResizeTextarea";
 
 import Select from "react-select";
 
@@ -447,9 +448,11 @@ const ProjectCard = () => {
         data.report_period = `${formatDate(
             data.report_period.start
         )} - ${formatDate(data.report_period.end)}`;
+
         data.implementation_period = `${formatDate(
             data.implementation_period.start
         )} - ${formatDate(data.implementation_period.end)}`;
+
         data.execution_start_date = formatDate(data.execution_period.start);
         data.execution_end_date = formatDate(data.execution_period.end);
         data.approval_date = formatDate(data.approval_date);
@@ -913,7 +916,7 @@ const ProjectCard = () => {
                                     <span className="text-gray-400">
                                         Местоположение
                                     </span>
-                                    <input
+                                    {/* <input
                                         className="border-2 border-gray-300 py-1 px-5"
                                         type="text"
                                         disabled={mode == "read"}
@@ -921,6 +924,15 @@ const ProjectCard = () => {
                                         onChange={(e) =>
                                             handleInputChange(e, "location")
                                         }
+                                    /> */}
+
+                                    <AutoResizeTextarea
+                                        disabled={mode === "read"}
+                                        value={projectData?.location || ""}
+                                        onChange={(e) =>
+                                            handleInputChange(e, "location")
+                                        }
+                                        placeholder="Введите местоположение"
                                     />
                                 </div>
                             </div>
@@ -928,14 +940,21 @@ const ProjectCard = () => {
                             <div className="grid gap-[20px] grid-cols-2 mb-5">
                                 <div className="flex flex-col gap-2">
                                     <span className="text-gray-400">ТЭП</span>
-                                    <input
+                                    {/* <input
                                         className="border-2 border-gray-300 py-1 px-5"
                                         type="text"
                                         disabled={mode == "read"}
                                         value={projectData?.tep || ""}
                                         onChange={(e) =>
                                             handleInputChange(e, "tep")
+                                        } */}
+                                    <AutoResizeTextarea
+                                        disabled={mode === "read"}
+                                        value={projectData?.tep || ""}
+                                        onChange={(e) =>
+                                            handleInputChange(e, "tep")
                                         }
+                                        placeholder="Введите ТЭП"
                                     />
                                 </div>
                             </div>

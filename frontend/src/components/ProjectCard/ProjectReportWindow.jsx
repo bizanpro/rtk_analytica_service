@@ -2,8 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import DatePicker from "react-datepicker";
 import getData from "../../utils/getData";
 
+// import { IMaskInput } from "react-imask";
+
 import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
+import MaskedInput from "./MaskedInput";
 
 import Loader from "../Loader";
 
@@ -386,7 +389,9 @@ const ProjectReportWindow = ({
         <div className="grid gap-6 relative bg-white">
             {!isDataLoaded && <Loader />}
 
-            <div className="text-2xl w-full">{reportData.report_period_code}</div>
+            <div className="text-2xl w-full">
+                {reportData.report_period_code}
+            </div>
 
             <div className="grid gap-3 grid-cols-2">
                 <div className="flex flex-col gap-2 justify-between">
@@ -422,9 +427,16 @@ const ProjectReportWindow = ({
                         endDate={reportData["report_period"].end}
                         onChange={handleChangeDateRange("report_period")}
                         dateFormat="dd.MM.yyyy"
-                        placeholderText="Выбрать дату"
+                        placeholderText="дд.мм.гггг - дд.мм.гггг"
                         selectsRange
                         disabled={mode === "read"}
+                        // customInput={
+                        //     <MaskedInput
+                        //         startDate={reportData["report_period"].start}
+                        //         endDate={reportData["report_period"].end}
+                        //         placeholder="дд.мм.гггг - дд.мм.гггг"
+                        //     />
+                        // }
                     />
                 </div>
             </div>
