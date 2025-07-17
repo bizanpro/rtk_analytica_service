@@ -37,6 +37,8 @@ const EmptyExecutorBlock = ({
         type === "creditor" ? CREDITOR_TEMPLATE : CUSTOMER_TEMPLATE
     );
 
+    const [inputValue, setInputValue] = useState(newContact.full_name || "");
+
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -111,13 +113,51 @@ const EmptyExecutorBlock = ({
                     <div className={`border-r transition-all ${borderClass}`}>
                         <CreatableSelect
                             isClearable
-                            onChange={handleChange}
                             options={allContacts}
                             className="w-full executor-block__name-field"
-                            isValidNewOption={() => false}
                             placeholder="Введите ФИО"
                             noOptionsMessage={() => "Совпадений нет"}
+                            isValidNewOption={() => false}
+                            inputValue={inputValue}
+                            onInputChange={(newVal, { action }) => {
+                                if (action === "input-change") {
+                                    setInputValue(newVal);
+                                    setNewContact((prev) => ({
+                                        ...prev,
+                                        full_name: newVal,
+                                    }));
+                                }
+                            }}
+                            value={
+                                newContact.full_name
+                                    ? {
+                                          label: newContact.full_name,
+                                          value: newContact.full_name,
+                                      }
+                                    : null
+                            }
+                            onChange={(selectedOption) => {
+                                if (selectedOption) {
+                                    setNewContact({
+                                        ...newContact,
+                                        full_name: selectedOption.value,
+                                        phone: selectedOption.phone || "",
+                                        email: selectedOption.email || "",
+                                        position: selectedOption.position || "",
+                                    });
+
+                                    // ВАЖНО: очищаем inputValue, чтобы отображался value
+                                    setInputValue("");
+                                } else {
+                                    setNewContact((prev) => ({
+                                        ...prev,
+                                        full_name: "",
+                                    }));
+                                    setInputValue("");
+                                }
+                            }}
                         />
+
                         {errors.full_name && (
                             <p className="text-red-500 text-sm">
                                 Заполните ФИО
