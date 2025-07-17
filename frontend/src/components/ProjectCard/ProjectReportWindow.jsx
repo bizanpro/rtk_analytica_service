@@ -2,11 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import DatePicker from "react-datepicker";
 import getData from "../../utils/getData";
 
-// import { IMaskInput } from "react-imask";
+import { IMaskInput } from "react-imask";
 
 import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
-import MaskedInput from "./MaskedInput";
 
 import Loader from "../Loader";
 
@@ -57,8 +56,22 @@ const ProjectReportWindow = ({
     const validateFields = () => {
         const newErrors = {};
 
+        const selectedType = reportTypes.find(
+            (type) => type.id === +reportData.report_type_id
+        );
+
         if (!reportData.report_type_id) {
             newErrors.report_type_id = "Тип отчёта обязателен";
+        } else {
+            if (selectedType.show_cost === true) {
+                if (
+                    !reportData.service_cost_in_rubles ||
+                    reportData.service_cost_in_rubles <= 0
+                ) {
+                    newErrors.service_cost_in_rubles =
+                        "Стоимость услуг для этого типа отчета обязательна";
+                }
+            }
         }
 
         if (
@@ -66,16 +79,6 @@ const ProjectReportWindow = ({
             reportData.budget_in_billions <= 0
         ) {
             newErrors.budget_in_billions = "Бюджет должен быть больше 0";
-        }
-
-        if (reportData.show_cost === true) {
-            if (
-                !reportData.service_cost_in_rubles ||
-                reportData.service_cost_in_rubles <= 0
-            ) {
-                newErrors.service_cost_in_rubles =
-                    "Стоимость услуг должна быть больше 0";
-            }
         }
 
         if (!reportData.contract_id) {
@@ -113,9 +116,7 @@ const ProjectReportWindow = ({
             }
         }
 
-        if (reportData.contragents.length === 0) {
-            newErrors.contragents = "Добавьте хотя бы одного подрядчика";
-        } else {
+        if (reportData.contragents.length > 0) {
             const invalidContragents = reportData.contragents.filter(
                 (contractor) =>
                     !contractor.contract_id ||
@@ -430,13 +431,6 @@ const ProjectReportWindow = ({
                         placeholderText="дд.мм.гггг - дд.мм.гггг"
                         selectsRange
                         disabled={mode === "read"}
-                        // customInput={
-                        //     <MaskedInput
-                        //         startDate={reportData["report_period"].start}
-                        //         endDate={reportData["report_period"].end}
-                        //         placeholder="дд.мм.гггг - дд.мм.гггг"
-                        //     />
-                        // }
                     />
                 </div>
             </div>
@@ -584,13 +578,13 @@ const ProjectReportWindow = ({
                     <span className="block mb-2 text-gray-400">
                         Дата утверждения
                     </span>
-                    <DatePicker
+
+                    <IMaskInput
+                        mask="00.00.0000"
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        startDate={parseDate(reportData.approval_date)}
-                        selected={parseDate(reportData.approval_date)}
-                        onChange={(e) => handleInputChange(e, "approval_date")}
-                        placeholderText="Выбрать дату"
-                        dateFormat="dd.MM.yyyy"
+                        onAccept={(e) => handleInputChange(e, "approval_date")}
+                        value={reportData.approval_date}
+                        placeholder="дд.мм.гггг"
                         disabled={mode === "read"}
                     />
                 </div>
