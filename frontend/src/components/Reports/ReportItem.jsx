@@ -143,7 +143,7 @@ const ReportItem = ({
                                 {value?.toString() || "—"}
 
                                 <div className="text-base">
-                                    {props?.execution_period}
+                                    {props?.execution_period_code}
                                 </div>
                             </td>
                         );
@@ -170,7 +170,7 @@ const ReportItem = ({
                                 </div>
 
                                 <div className="text-base">
-                                    до {props?.implementation_period_string}
+                                    до {props?.implementation_period_end}
                                 </div>
                             </td>
                         );

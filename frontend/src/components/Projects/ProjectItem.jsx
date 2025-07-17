@@ -160,7 +160,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                                 </div>
 
                                 <div className="text-base">
-                                    до {props?.implementation_period_string}
+                                    до {props?.implementation_period_end}
                                 </div>
                             </td>
                         );
