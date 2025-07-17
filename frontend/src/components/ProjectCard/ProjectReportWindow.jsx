@@ -566,11 +566,12 @@ const ProjectReportWindow = ({
 
                     <IMaskInput
                         mask="00.00.0000"
-                        className="form-field border-2 border-gray-300 p-1 w-full h-[32px]"
+                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
                         onAccept={(e) => handleInputChange(e, "approval_date")}
                         value={reportData.approval_date}
                         placeholder="дд.мм.гггг"
                         disabled={
+                            mode === "read" ||
                             !isFirstDateValid(reportData.execution_period)
                         }
                     />
