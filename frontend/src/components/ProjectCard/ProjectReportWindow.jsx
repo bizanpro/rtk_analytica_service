@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
+
 import getData from "../../utils/getData";
+import formatMoney from "../../utils/formatMoney";
 
 import { IMaskInput } from "react-imask";
 
@@ -50,6 +52,7 @@ const ProjectReportWindow = ({
     const [reportStatuses, setReportStatuses] = useState([]);
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Валидация полей
     const validateFields = () => {
@@ -158,10 +161,7 @@ const ProjectReportWindow = ({
             value = e.target.value;
         }
 
-        if (
-            name === "budget_in_billions" ||
-            name === "service_cost_in_rubles"
-        ) {
+        if (name === "budget_in_billions") {
             value = value.replace(/[^0-9.,]/g, "");
             value = value.replace(".", ",");
 
@@ -173,6 +173,10 @@ const ProjectReportWindow = ({
             if (parts[1]?.length > 5) {
                 value = `${parts[0]},${parts[1].slice(0, 5)}`;
             }
+        }
+
+        if (name === "service_cost_in_rubles") {
+            value = formatMoney(value);
         }
 
         setReportData((prev) => ({
@@ -294,6 +298,20 @@ const ProjectReportWindow = ({
     }, []);
 
     useEffect(() => {
+        if (isDataLoaded && reportId) {
+            getData(`${import.meta.env.VITE_API_URL}reports/${reportId}`).then(
+                (response) => {
+                    setReportData(response.data);
+                    setTeammates(response.data.responsible_persons);
+                    setContractors(response.data.contragents);
+                    setIsLoading(false);
+                }
+            );
+        }
+    }, [isDataLoaded, reportId]);
+
+    // Проверяем, нужно ли указывать Стоимость услуг в зависимости от выбранного типа отчета
+    useEffect(() => {
         const selectedType = reportTypes.find(
             (type) => type.id === +reportData.report_type_id
         );
@@ -332,26 +350,9 @@ const ProjectReportWindow = ({
     //     updateStatus();
     // }, [reportData["execution_period"]]);
 
-    useEffect(() => {
-        if (isDataLoaded && reportId) {
-            getData(`${import.meta.env.VITE_API_URL}reports/${reportId}`).then(
-                (response) => {
-                    setReportData(response.data);
-
-                    setTeammates(response.data.responsible_persons);
-                    setContractors(response.data.contragents);
-                }
-            );
-        }
-    }, [isDataLoaded, reportId]);
-
-    useEffect(() => {
-        console.log(reportData);
-    }, [reportData]);
-
     return (
         <div className="grid gap-6 relative bg-white">
-            {!isDataLoaded && <Loader />}
+            {reportId ? isLoading && <Loader /> : !isDataLoaded && <Loader />}
 
             <div className="text-2xl w-full">
                 {reportData.report_period_code}
@@ -480,9 +481,8 @@ const ProjectReportWindow = ({
                                 type="text"
                                 className="w-full"
                                 placeholder="0.0"
-                                value={reportData.service_cost_in_rubles?.replace(
-                                    ".",
-                                    ","
+                                value={formatMoney(
+                                    reportData.service_cost_in_rubles
                                 )}
                                 onChange={(e) =>
                                     handleInputChange(

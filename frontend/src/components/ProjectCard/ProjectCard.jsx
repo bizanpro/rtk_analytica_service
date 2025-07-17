@@ -31,6 +31,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const parseFormattedMoney = (value) => {
+    if (!value) return "";
+    return value.replace(/\s/g, "").replace(",", ".");
+};
+
 const ProjectCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
     const location = useLocation();
@@ -432,6 +437,12 @@ const ProjectCard = () => {
             data.budget_in_billions = data.budget_in_billions.replace(",", ".");
         }
 
+        if (data.service_cost_in_rubles) {
+            data.service_cost_in_rubles = parseFormattedMoney(
+                data.service_cost_in_rubles
+            );
+        }
+
         data.project_id = projectId;
 
         query = toast.loading("Выполняется отправка", {
@@ -488,6 +499,12 @@ const ProjectCard = () => {
     const updateReport = (data, reportId) => {
         if (data.budget_in_billions) {
             data.budget_in_billions = data.budget_in_billions.replace(",", ".");
+        }
+
+        if (data.service_cost_in_rubles) {
+            data.service_cost_in_rubles = parseFormattedMoney(
+                data.service_cost_in_rubles
+            );
         }
 
         data.action = "presave";
