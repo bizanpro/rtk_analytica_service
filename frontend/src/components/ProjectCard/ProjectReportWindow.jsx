@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import DatePicker from "react-datepicker";
 import getData from "../../utils/getData";
 
 import { IMaskInput } from "react-imask";
@@ -8,6 +7,15 @@ import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
 
 import Loader from "../Loader";
+
+const isValidDateRange = (str) => {
+    const regex = /^(\d{2})\.(\d{2})\.(\d{4}) - (\d{2})\.(\d{2})\.(\d{4})$/;
+    return regex.test(str);
+};
+const isFirstDateValid = (str) => {
+    const match = str.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
+    return !!match;
+};
 
 const ProjectReportWindow = ({
     sendReport,
@@ -23,20 +31,11 @@ const ProjectReportWindow = ({
         report_type_id: "",
         budget_in_billions: "",
         service_cost_in_rubles: "",
-        approval_date: null,
+        approval_date: "",
         contract_id: "",
-        report_period: {
-            start: null,
-            end: null,
-        },
-        implementation_period: {
-            start: null,
-            end: null,
-        },
-        execution_period: {
-            start: null,
-            end: null,
-        },
+        report_period: "",
+        implementation_period: "",
+        execution_period: "",
         responsible_persons: [],
         contragents: [],
         show_cost: true,
@@ -56,14 +55,10 @@ const ProjectReportWindow = ({
     const validateFields = () => {
         const newErrors = {};
 
-        const selectedType = reportTypes.find(
-            (type) => type.id === +reportData.report_type_id
-        );
-
         if (!reportData.report_type_id) {
             newErrors.report_type_id = "Тип отчёта обязателен";
         } else {
-            if (selectedType.show_cost === true) {
+            if (reportData.show_cost === true) {
                 if (
                     !reportData.service_cost_in_rubles ||
                     reportData.service_cost_in_rubles <= 0
@@ -85,19 +80,16 @@ const ProjectReportWindow = ({
             newErrors.contract_id = "Договор обязателен";
         }
 
-        if (!reportData.report_period.start || !reportData.report_period.end) {
+        if (!isValidDateRange(reportData.report_period)) {
             newErrors.report_period = "Укажите полный отчетный период";
         }
 
-        if (
-            !reportData.implementation_period.start ||
-            !reportData.implementation_period.end
-        ) {
+        if (!isValidDateRange(reportData.implementation_period)) {
             newErrors.implementation_period =
                 "Укажите полный период реализации";
         }
 
-        if (!reportData.execution_period.start) {
+        if (!isFirstDateValid(reportData.execution_period)) {
             newErrors.execution_period = "Укажите начало периода выполнения";
         }
 
@@ -138,6 +130,8 @@ const ProjectReportWindow = ({
         const newErrors = validateFields();
 
         if (Object.keys(newErrors).length === 0) {
+            console.log(reportData);
+
             reportId
                 ? updateReport(reportData, reportId)
                 : sendReport(reportData);
@@ -151,7 +145,18 @@ const ProjectReportWindow = ({
 
     // Обработка инпутов
     const handleInputChange = (e, name) => {
-        let value = name === "approval_date" ? e : e.target.value;
+        let value;
+
+        if (
+            name === "approval_date" ||
+            name === "report_period" ||
+            name === "implementation_period" ||
+            name === "execution_period"
+        ) {
+            value = e;
+        } else {
+            value = e.target.value;
+        }
 
         if (
             name === "budget_in_billions" ||
@@ -175,16 +180,6 @@ const ProjectReportWindow = ({
             [name]: value,
         }));
     };
-
-    // Обработка дат
-    const handleChangeDateRange =
-        (id) =>
-        ([newStartDate, newEndDate]) => {
-            setReportData((prev) => ({
-                ...prev,
-                [id]: { start: newStartDate, end: newEndDate || "" },
-            }));
-        };
 
     // Добавление блока заказчика или кредитора
     const addBlock = useCallback((type) => {
@@ -256,31 +251,6 @@ const ProjectReportWindow = ({
         });
     };
 
-    const parseDate = (dateString) => {
-        if (!dateString) return null;
-
-        if (dateString instanceof Date) {
-            return dateString;
-        }
-
-        if (typeof dateString === "string") {
-            const [day, month, year] = dateString.split(".");
-
-            if (
-                day &&
-                month &&
-                year &&
-                !isNaN(day) &&
-                !isNaN(month) &&
-                !isNaN(year)
-            ) {
-                return new Date(`${year}-${month}-${day}`);
-            }
-        }
-
-        return null;
-    };
-
     useEffect(() => {
         const fetchData = async () => {
             const [
@@ -323,31 +293,44 @@ const ProjectReportWindow = ({
         fetchData();
     }, []);
 
-    // Обновление статуса проекта в отчете
     useEffect(() => {
-        const updateStatus = () => {
-            const today = new Date();
-            const { start, end } = reportData["execution_period"];
-            let newStatus = reportData.report_status_id;
+        const selectedType = reportTypes.find(
+            (type) => type.id === +reportData.report_type_id
+        );
 
-            if (start <= today && (end === null || today < end)) {
-                newStatus = 1;
-            } else if (start > today) {
-                newStatus = 2;
-            } else if (end && end < today) {
-                newStatus = 4;
-            }
+        if (selectedType) {
+            setReportData((prev) => ({
+                ...prev,
+                show_cost: selectedType.show_cost,
+            }));
+        }
+    }, [reportData.report_type_id]);
 
-            if (newStatus !== reportData.report_status_id) {
-                setReportData((prev) => ({
-                    ...prev,
-                    report_status_id: newStatus,
-                }));
-            }
-        };
+    // Обновление статуса проекта в отчете
+    // useEffect(() => {
+    //     const updateStatus = () => {
+    //         const today = new Date();
+    //         const { start, end } = reportData["execution_period"];
+    //         let newStatus = reportData.report_status_id;
 
-        updateStatus();
-    }, [reportData["execution_period"]]);
+    //         if (start <= today && (end === null || today < end)) {
+    //             newStatus = 1;
+    //         } else if (start > today) {
+    //             newStatus = 2;
+    //         } else if (end && end < today) {
+    //             newStatus = 4;
+    //         }
+
+    //         if (newStatus !== reportData.report_status_id) {
+    //             setReportData((prev) => ({
+    //                 ...prev,
+    //                 report_status_id: newStatus,
+    //             }));
+    //         }
+    //     };
+
+    //     updateStatus();
+    // }, [reportData["execution_period"]]);
 
     useEffect(() => {
         if (isDataLoaded && reportId) {
@@ -355,36 +338,16 @@ const ProjectReportWindow = ({
                 (response) => {
                     setReportData(response.data);
 
-                    [
-                        "implementation_period",
-                        "execution_period",
-                        "report_period",
-                    ].forEach((key) => {
-                        setReportData((prev) => ({
-                            ...prev,
-                            [key]: {
-                                start:
-                                    parseDate(
-                                        response.data[key]
-                                            ?.split("-")[0]
-                                            ?.trim()
-                                    ) || "",
-                                end:
-                                    parseDate(
-                                        response.data[key]
-                                            ?.split("-")[1]
-                                            ?.trim()
-                                    ) || "",
-                            },
-                        }));
-                    });
-
                     setTeammates(response.data.responsible_persons);
                     setContractors(response.data.contragents);
                 }
             );
         }
     }, [isDataLoaded, reportId]);
+
+    useEffect(() => {
+        console.log(reportData);
+    }, [reportData]);
 
     return (
         <div className="grid gap-6 relative bg-white">
@@ -421,15 +384,13 @@ const ProjectReportWindow = ({
                     <span className="block mb-2 text-gray-400">
                         Отчетный период
                     </span>
-                    <DatePicker
+
+                    <IMaskInput
+                        mask="00.00.0000 - 00.00.0000"
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        selected={reportData["report_period"].start}
-                        startDate={reportData["report_period"].start}
-                        endDate={reportData["report_period"].end}
-                        onChange={handleChangeDateRange("report_period")}
-                        dateFormat="dd.MM.yyyy"
-                        placeholderText="дд.мм.гггг - дд.мм.гггг"
-                        selectsRange
+                        onAccept={(e) => handleInputChange(e, "report_period")}
+                        value={reportData.report_period}
+                        placeholder="дд.мм.гггг - дд.мм.гггг"
                         disabled={mode === "read"}
                     />
                 </div>
@@ -461,17 +422,15 @@ const ProjectReportWindow = ({
                     <span className="block mb-2 text-gray-400">
                         Период реализации
                     </span>
-                    <DatePicker
+
+                    <IMaskInput
+                        mask="00.00.0000 - 00.00.0000"
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        selected={reportData["implementation_period"].start}
-                        startDate={reportData["implementation_period"].start}
-                        endDate={reportData["implementation_period"].end}
-                        onChange={handleChangeDateRange(
-                            "implementation_period"
-                        )}
-                        dateFormat="dd.MM.yyyy"
-                        placeholderText="Выбрать дату"
-                        selectsRange
+                        onAccept={(e) =>
+                            handleInputChange(e, "implementation_period")
+                        }
+                        value={reportData.implementation_period}
+                        placeholder="дд.мм.гггг - дд.мм.гггг"
                         disabled={mode === "read"}
                     />
                 </div>
@@ -506,10 +465,12 @@ const ProjectReportWindow = ({
 
             <div
                 className={`grid gap-3 ${
-                    reportData.show_cost ? "grid-cols-2" : " grid-cols-1"
+                    reportData.show_cost === true
+                        ? "grid-cols-2"
+                        : " grid-cols-1"
                 }`}
             >
-                {reportData.show_cost && (
+                {reportData.show_cost === true && (
                     <div className="flex flex-col gap-2 justify-between">
                         <span className="text-gray-400">
                             Стоимость услуг, руб.
@@ -539,15 +500,15 @@ const ProjectReportWindow = ({
                     <span className="block mb-2 text-gray-400">
                         Период выполнения
                     </span>
-                    <DatePicker
+
+                    <IMaskInput
+                        mask="00.00.0000 - 00.00.0000"
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        selected={reportData["execution_period"].start}
-                        startDate={reportData["execution_period"].start}
-                        endDate={reportData["execution_period"].end}
-                        onChange={handleChangeDateRange("execution_period")}
-                        dateFormat="dd.MM.yyyy"
-                        placeholderText="Выбрать дату"
-                        selectsRange
+                        onAccept={(e) =>
+                            handleInputChange(e, "execution_period")
+                        }
+                        value={reportData.execution_period}
+                        placeholder="дд.мм.гггг - дд.мм.гггг"
                         disabled={mode === "read"}
                     />
                 </div>

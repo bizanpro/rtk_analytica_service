@@ -432,18 +432,6 @@ const ProjectCard = () => {
             data.budget_in_billions = data.budget_in_billions.replace(",", ".");
         }
 
-        data.report_period = `${formatDate(
-            data.report_period.start
-        )} - ${formatDate(data.report_period.end)}`;
-
-        data.implementation_period = `${formatDate(
-            data.implementation_period.start
-        )} - ${formatDate(data.implementation_period.end)}`;
-
-        data.execution_start_date = formatDate(data.execution_period.start);
-        data.execution_end_date = formatDate(data.execution_period.end);
-        data.approval_date = formatDate(data.approval_date);
-
         data.project_id = projectId;
 
         query = toast.loading("Выполняется отправка", {
@@ -502,29 +490,8 @@ const ProjectCard = () => {
             data.budget_in_billions = data.budget_in_billions.replace(",", ".");
         }
 
-        data.report_period = `${formatDate(
-            data.report_period.start
-        )} - ${formatDate(data.report_period.end)}`;
-
-        data.implementation_period = `${formatDate(
-            data.implementation_period.start
-        )} - ${formatDate(data.implementation_period.end)}`;
-
-        data.execution_start_date = formatDate(data.execution_period.start);
-        data.execution_end_date = formatDate(data.execution_period.end);
-
-        if (
-            data.approval_date instanceof Date &&
-            !isNaN(data.approval_date.getTime())
-        ) {
-            data.approval_date = formatDate(data.approval_date);
-        }
-
         data.action = "presave";
-
         data.project_id = projectId;
-
-        if (mode === "read") return;
 
         query = toast.loading("Обновление", {
             containerId: "projectCard",

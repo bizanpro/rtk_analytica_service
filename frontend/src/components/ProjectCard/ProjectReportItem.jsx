@@ -4,7 +4,7 @@ const ProjectReportItem = ({
     status,
     report_period,
     days,
-    execution_period,
+    execution_period_code,
     openReportEditor,
     deleteReport,
     mode,
@@ -28,29 +28,11 @@ const ProjectReportItem = ({
             <div className="flex gap-3 items-center">
                 <div className="flex flex-col flex-grow">
                     <div className="text-lg">{days}</div>
-                    <span className="text-sm">{execution_period}</span>
+                    <span className="text-sm">{execution_period_code}</span>
                 </div>
             </div>
 
-            {/* <div className="flex justify-center">
-                {general_assessment && (
-                    <div className="text-lg">{general_assessment}/10</div>
-                )}
-            </div> */}
-
             <div className="flex items-center justify-end gap-2">
-                {/* {general_assessment && (
-                    <button
-                        type="button"
-                        className="info-icon flex-none w-[20px]"
-                        title="Посмотреть заключение"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            openSubReportEditor(id);
-                        }}
-                    ></button>
-                )} */}
-
                 {mode === "edit" && (
                     <button
                         className="delete-icon flex-none w-[20px] h-[20px]"

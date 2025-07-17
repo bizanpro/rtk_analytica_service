@@ -4,7 +4,7 @@ const CardReportsListItem = ({
     report_period,
     status,
     role,
-    execution_period,
+    execution_period_code,
     days,
     openReportEditor,
     projectData,
@@ -42,7 +42,7 @@ const CardReportsListItem = ({
             <div className="flex gap-3 items-center">
                 <div className="flex flex-col flex-grow">
                     <div className="text-lg">{days}</div>
-                    <span className="text-sm">{execution_period}</span>
+                    <span className="text-sm">{execution_period_code}</span>
                 </div>
             </div>
         </li>
