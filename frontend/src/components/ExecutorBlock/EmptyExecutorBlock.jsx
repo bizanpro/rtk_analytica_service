@@ -146,7 +146,6 @@ const EmptyExecutorBlock = ({
                                         position: selectedOption.position || "",
                                     });
 
-                                    // ВАЖНО: очищаем inputValue, чтобы отображался value
                                     setInputValue("");
                                 } else {
                                     setNewContact((prev) => ({

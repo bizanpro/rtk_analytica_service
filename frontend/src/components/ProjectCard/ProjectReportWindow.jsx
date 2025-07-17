@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 
 import getData from "../../utils/getData";
 import formatMoney from "../../utils/formatMoney";
+import parseDate from "../../utils/parseDate";
 
 import { IMaskInput } from "react-imask";
 
@@ -17,6 +18,10 @@ const isValidDateRange = (str) => {
 const isFirstDateValid = (str) => {
     const match = str.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
     return !!match;
+};
+const isValidDate = (str) => {
+    const regex = /^\d{2}\.\d{2}\.\d{4}$/;
+    return regex.test(str);
 };
 
 const ProjectReportWindow = ({
@@ -94,6 +99,25 @@ const ProjectReportWindow = ({
 
         if (!isFirstDateValid(reportData.execution_period)) {
             newErrors.execution_period = "Укажите начало периода выполнения";
+        } else {
+            const [startStr, endStr] = reportData.execution_period.split(" - ");
+
+            if (
+                endStr &&
+                isFirstDateValid(endStr) &&
+                isValidDate(reportData.approval_date)
+            ) {
+                const approvalDate = parseDate(reportData.approval_date);
+                const endDate = parseDate(endStr);
+
+                if (approvalDate < endDate) {
+                    newErrors.execution_period =
+                        "Дата утверждения не может быть раньше даты окончания периода выполнения";
+                } else if (approvalDate > endDate) {
+                    newErrors.execution_period =
+                        "Дата утверждения не может быть позже даты окончания периода выполнения";
+                }
+            }
         }
 
         if (reportData.responsible_persons.length === 0) {
@@ -133,8 +157,6 @@ const ProjectReportWindow = ({
         const newErrors = validateFields();
 
         if (Object.keys(newErrors).length === 0) {
-            console.log(reportData);
-
             reportId
                 ? updateReport(reportData, reportId)
                 : sendReport(reportData);
@@ -146,7 +168,7 @@ const ProjectReportWindow = ({
         }
     };
 
-    // Обработка инпутов
+    // Обработка полей
     const handleInputChange = (e, name) => {
         let value;
 
@@ -325,30 +347,32 @@ const ProjectReportWindow = ({
     }, [reportData.report_type_id]);
 
     // Обновление статуса проекта в отчете
-    // useEffect(() => {
-    //     const updateStatus = () => {
-    //         const today = new Date();
-    //         const { start, end } = reportData["execution_period"];
-    //         let newStatus = reportData.report_status_id;
+    useEffect(() => {
+        if (isValidDate(reportData.approval_date)) {
+            setReportData((prev) => ({
+                ...prev,
+                report_status_id: 4,
+            }));
+        } else {
+            if (isFirstDateValid(reportData.execution_period)) {
+                const today = new Date();
+                const [startStr] = reportData.execution_period.split(" - ");
+                const startDate = parseDate(startStr);
 
-    //         if (start <= today && (end === null || today < end)) {
-    //             newStatus = 1;
-    //         } else if (start > today) {
-    //             newStatus = 2;
-    //         } else if (end && end < today) {
-    //             newStatus = 4;
-    //         }
-
-    //         if (newStatus !== reportData.report_status_id) {
-    //             setReportData((prev) => ({
-    //                 ...prev,
-    //                 report_status_id: newStatus,
-    //             }));
-    //         }
-    //     };
-
-    //     updateStatus();
-    // }, [reportData["execution_period"]]);
+                if (today > startDate) {
+                    setReportData((prev) => ({
+                        ...prev,
+                        report_status_id: 1,
+                    }));
+                } else if (today < startDate) {
+                    setReportData((prev) => ({
+                        ...prev,
+                        report_status_id: 2,
+                    }));
+                }
+            }
+        }
+    }, [reportData.execution_period, reportData.approval_date]);
 
     return (
         <div className="grid gap-6 relative bg-white">
@@ -542,11 +566,13 @@ const ProjectReportWindow = ({
 
                     <IMaskInput
                         mask="00.00.0000"
-                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
+                        className="form-field border-2 border-gray-300 p-1 w-full h-[32px]"
                         onAccept={(e) => handleInputChange(e, "approval_date")}
                         value={reportData.approval_date}
                         placeholder="дд.мм.гггг"
-                        disabled={mode === "read"}
+                        disabled={
+                            !isFirstDateValid(reportData.execution_period)
+                        }
                     />
                 </div>
             </div>

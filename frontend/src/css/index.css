@@ -364,3 +364,9 @@ body {
     border: 5px solid #222222;
     animation: prixClipFix 2s linear infinite;
 }
+
+.form-field:disabled {
+    transition: opacity 0.2s ease-in-out;
+    opacity: 0.5;
+    pointer-events: none;
+}
