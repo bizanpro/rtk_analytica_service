@@ -966,6 +966,7 @@ const ProjectCard = () => {
                                         <EmptyExecutorBlock
                                             borderClass={"border-gray-300"}
                                             type={"customer"}
+                                            url={projectId}
                                             removeBlock={() =>
                                                 setAddCustomer(false)
                                             }
@@ -1076,6 +1077,7 @@ const ProjectCard = () => {
                                         <EmptyExecutorBlock
                                             borderClass={"border-gray-300"}
                                             banks={banks}
+                                            url={projectId}
                                             type={"creditor"}
                                             removeBlock={() =>
                                                 setAddLender(false)

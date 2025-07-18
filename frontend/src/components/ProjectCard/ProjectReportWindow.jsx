@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import getData from "../../utils/getData";
 import formatMoney from "../../utils/formatMoney";
 import parseDate from "../../utils/parseDate";
+import { createDebounce } from "../../utils/debounce";
 
 import { IMaskInput } from "react-imask";
 
@@ -59,6 +60,8 @@ const ProjectReportWindow = ({
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [errorMessage, setErrorMessage] = useState("");
+
     // Валидация полей
     const validateFields = () => {
         const newErrors = {};
@@ -100,6 +103,8 @@ const ProjectReportWindow = ({
         if (!isFirstDateValid(reportData.execution_period)) {
             newErrors.execution_period = "Укажите начало периода выполнения";
         } else {
+            const today = new Date();
+            const approvalDate = parseDate(reportData.approval_date);
             const [startStr, endStr] = reportData.execution_period.split(" - ");
 
             if (
@@ -107,15 +112,14 @@ const ProjectReportWindow = ({
                 isFirstDateValid(endStr) &&
                 isValidDate(reportData.approval_date)
             ) {
-                const approvalDate = parseDate(reportData.approval_date);
                 const endDate = parseDate(endStr);
 
                 if (approvalDate < endDate) {
                     newErrors.execution_period =
                         "Дата утверждения не может быть раньше даты окончания периода выполнения";
-                } else if (approvalDate > endDate) {
+                } else if (approvalDate > today) {
                     newErrors.execution_period =
-                        "Дата утверждения не может быть позже даты окончания периода выполнения";
+                        "Дата утверждения не может быть в будущем от текущей даты";
                 }
             }
         }
@@ -346,17 +350,46 @@ const ProjectReportWindow = ({
         }
     }, [reportData.report_type_id]);
 
-    // Обновление статуса проекта в отчете
-    useEffect(() => {
+    const validateApprovalDate = () => {
         if (isValidDate(reportData.approval_date)) {
-            setReportData((prev) => ({
-                ...prev,
-                report_status_id: 4,
-            }));
+            const today = new Date();
+            const approvalDate = parseDate(reportData.approval_date);
+            const [startStr, endStr] = reportData.execution_period.split(" - ");
+            // const startDate = parseDate(startStr);
+
+            // console.log("сегодня " + today);
+            // console.log("утверждение " + approvalDate);
+            // console.log("начало " + startDate);
+
+            if (
+                endStr &&
+                isFirstDateValid(endStr) &&
+                isValidDate(reportData.approval_date)
+            ) {
+                const endDate = parseDate(endStr);
+                // console.log("конец " + endDate);
+
+                if (approvalDate < endDate) {
+                    setErrorMessage(
+                        "Дата утверждения не может быть раньше даты окончания периода выполнения"
+                    );
+                } else if (approvalDate > today) {
+                    setErrorMessage(
+                        "Дата утверждения не может быть в будущем от текущей даты"
+                    );
+                } else {
+                    setErrorMessage("");
+                    setReportData((prev) => ({
+                        ...prev,
+                        report_status_id: 4,
+                    }));
+                }
+            }
         } else {
             if (isFirstDateValid(reportData.execution_period)) {
                 const today = new Date();
-                const [startStr] = reportData.execution_period.split(" - ");
+                const [startStr, endStr] =
+                    reportData.execution_period.split(" - ");
                 const startDate = parseDate(startStr);
 
                 if (today > startDate) {
@@ -372,6 +405,11 @@ const ProjectReportWindow = ({
                 }
             }
         }
+    };
+
+    // Обновление статуса проекта в отчете
+    useEffect(() => {
+        validateApprovalDate();
     }, [reportData.execution_period, reportData.approval_date]);
 
     return (
@@ -559,7 +597,7 @@ const ProjectReportWindow = ({
                     </div>
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col relative">
                     <span className="block mb-2 text-gray-400">
                         Дата утверждения
                     </span>
@@ -575,6 +613,12 @@ const ProjectReportWindow = ({
                             !isFirstDateValid(reportData.execution_period)
                         }
                     />
+
+                    {errorMessage !== "" && (
+                        <span className="text-red-400 absolute top-[100%] text-sm">
+                            {errorMessage}
+                        </span>
+                    )}
                 </div>
             </div>
 

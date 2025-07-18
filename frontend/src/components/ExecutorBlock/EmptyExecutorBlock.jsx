@@ -1,7 +1,11 @@
 import { useState } from "react";
 
+// import getData from "../../utils/getData";
 import CreatableSelect from "react-select/creatable";
 import { IMaskInput } from "react-imask";
+// import { createDebounce } from "../../utils/debounce";
+
+import Search from "../Search/Search";
 
 import "./ExecutorBlock.scss";
 
@@ -28,6 +32,7 @@ const EmptyExecutorBlock = ({
     sendExecutor,
     contragentContacts,
     creditorContacts,
+    url,
 }) => {
     const PhoneMask = "+{7}(000) 000 00 00";
 
@@ -43,6 +48,21 @@ const EmptyExecutorBlock = ({
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
+
+    // const handleSearch = (event) => {
+    //     const searchQuery = event.value.toLowerCase();
+
+    //     getData(`${URL}&search=${searchQuery}`, {
+    //         Accept: "application/json",
+    //     }).then((response) => {
+    //         if (response.status == 200) {
+    //             setList(response.data.data);
+    //         }
+    //     });
+    //     .finally(() => setIsLoading(false));
+    // };
+
+    // const debounce = createDebounce(handleSearch, 300, true);
 
     const allContacts =
         type === "creditor"
@@ -104,6 +124,12 @@ const EmptyExecutorBlock = ({
 
     return (
         <div className="flex items-center justify-between gap-6 w-full">
+            {/* <Search
+                onSearch={debounce}
+                className="search-fullpage"
+                placeholder="Поиск подрядчика"
+            /> */}
+
             <div
                 className={`executor-block flex-grow border transition-all ${borderClass}`}
             >
