@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import getData from "../../utils/getData";
 import formatMoney from "../../utils/formatMoney";
 import parseDate from "../../utils/parseDate";
-import { createDebounce } from "../../utils/debounce";
+// import { createDebounce } from "../../utils/debounce";
 
 import { IMaskInput } from "react-imask";
 
@@ -103,23 +103,26 @@ const ProjectReportWindow = ({
         if (!isFirstDateValid(reportData.execution_period)) {
             newErrors.execution_period = "Укажите начало периода выполнения";
         } else {
-            const today = new Date();
-            const approvalDate = parseDate(reportData.approval_date);
-            const [startStr, endStr] = reportData.execution_period.split(" - ");
+            if (isValidDate(reportData.approval_date)) {
+                const today = new Date();
+                const approvalDate = parseDate(reportData.approval_date);
+                const [startStr, endStr] =
+                    reportData.execution_period.split(" - ");
 
-            if (
-                endStr &&
-                isFirstDateValid(endStr) &&
-                isValidDate(reportData.approval_date)
-            ) {
-                const endDate = parseDate(endStr);
+                if (
+                    endStr &&
+                    isFirstDateValid(endStr) &&
+                    isValidDate(reportData.approval_date)
+                ) {
+                    const endDate = parseDate(endStr);
 
-                if (approvalDate < endDate) {
-                    newErrors.execution_period =
-                        "Дата утверждения не может быть раньше даты окончания периода выполнения";
-                } else if (approvalDate > today) {
-                    newErrors.execution_period =
-                        "Дата утверждения не может быть в будущем от текущей даты";
+                    if (approvalDate < endDate) {
+                        newErrors.execution_period =
+                            "Дата утверждения не может быть раньше даты окончания периода выполнения";
+                    } else if (approvalDate > today) {
+                        newErrors.execution_period =
+                            "Дата утверждения не может быть в будущем от текущей даты";
+                    }
                 }
             }
         }
@@ -355,11 +358,6 @@ const ProjectReportWindow = ({
             const today = new Date();
             const approvalDate = parseDate(reportData.approval_date);
             const [startStr, endStr] = reportData.execution_period.split(" - ");
-            // const startDate = parseDate(startStr);
-
-            // console.log("сегодня " + today);
-            // console.log("утверждение " + approvalDate);
-            // console.log("начало " + startDate);
 
             if (
                 endStr &&
@@ -367,7 +365,6 @@ const ProjectReportWindow = ({
                 isValidDate(reportData.approval_date)
             ) {
                 const endDate = parseDate(endStr);
-                // console.log("конец " + endDate);
 
                 if (approvalDate < endDate) {
                     setErrorMessage(

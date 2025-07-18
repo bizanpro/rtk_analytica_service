@@ -9,6 +9,7 @@ import {
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 import handleStatus from "../../utils/handleStatus";
+import parseFormattedMoney from "../../utils/parseFormattedMoney";
 
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
@@ -30,11 +31,6 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const parseFormattedMoney = (value) => {
-    if (!value) return "";
-    return value.replace(/\s/g, "").replace(",", ".");
-};
 
 const ProjectCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;

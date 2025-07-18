@@ -1,9 +1,15 @@
 const formatMoney = (input) => {
-    let cleaned = input.replace(/[^0-9,]/g, "");
+    if (input == null || input === "") return "";
 
-    cleaned = cleaned.replace(".", ",");
+    let cleaned = input.replace(/[^0-9.,]/g, "");
 
-    let [whole, fraction] = cleaned.split(",");
+    if (cleaned.includes(",") && cleaned.includes(".")) {
+        cleaned = cleaned.replace(/,/g, "");
+    } else {
+        cleaned = cleaned.replace(",", ".");
+    }
+
+    let [whole, fraction] = cleaned.split(".");
 
     whole = whole.replace(/^0+(?!$)/, "");
 

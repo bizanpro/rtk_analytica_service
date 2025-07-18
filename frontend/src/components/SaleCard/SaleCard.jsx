@@ -3,6 +3,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
+import parseFormattedMoney from "../../utils/parseFormattedMoney";
 
 import Select from "react-select";
 
@@ -358,12 +359,18 @@ const SaleCard = () => {
             (item) => item.id === stageMetrics.stage_id
         );
 
-        const newDate = activeStageData.updated_at.toLocaleDateString("ru-RU");
+        const dateStr = activeStageData.updated_at.replace(" ", "T");
+        const newDate = new Date(dateStr).toLocaleDateString("ru-RU");
+
         const [day, month, year] = newDate.split(".");
         const formattedDate = `${year}-${month}-${day}`;
 
         let stageMetricsData = stageMetrics;
         stageMetricsData.updated_at = formattedDate;
+
+        stageMetricsData.fta_value = parseFormattedMoney(
+            stageMetricsData.fta_value
+        );
 
         postData(
             "PATCH",
@@ -387,6 +394,15 @@ const SaleCard = () => {
                     });
 
                     getStages();
+                } else {
+                    toast.error(response.data.error || "Ошибка запроса", {
+                        containerId: "projectCard",
+                        isLoading: false,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
                 }
             })
             .catch((response) => {
@@ -560,10 +576,6 @@ const SaleCard = () => {
             setIsFirstInit(false);
         }
     }, [saleStages]);
-
-    useEffect(() => {
-        console.log(projectData);
-    }, [projectData]);
 
     return (
         <main className="page">

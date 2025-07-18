@@ -1,4 +1,5 @@
 import pepcentColorHandler from "../../utils/percentColorHandler";
+import formatMoney from "../../utils/formatMoney";
 
 const SaleStageDetails = ({ stageMetrics, setStageMetrics, mode }) => {
     return (
@@ -19,7 +20,9 @@ const SaleStageDetails = ({ stageMetrics, setStageMetrics, mode }) => {
                             <input
                                 type="text"
                                 className="w-full"
-                                value={stageMetrics.fta_value || ""}
+                                value={
+                                    formatMoney(stageMetrics.fta_value) || ""
+                                }
                                 onChange={(evt) => {
                                     setStageMetrics((prev) => ({
                                         ...prev,
