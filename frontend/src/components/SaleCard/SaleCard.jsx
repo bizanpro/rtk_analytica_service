@@ -6,6 +6,7 @@ import postData from "../../utils/postData";
 import parseFormattedMoney from "../../utils/parseFormattedMoney";
 
 import Select from "react-select";
+import MultiSelect from "../MultiSelect/MultiSelect";
 
 import NewCustomerWindow from "./NewCustomerWindow";
 import SaleServiceItem from "./SaleServiceItem";
@@ -44,7 +45,7 @@ const SaleCard = () => {
     const [services, setServices] = useState([]);
     const [sources, setSources] = useState([]);
     const [saleStages, setSaleStages] = useState([]);
-    const [newService, setNewService] = useState({});
+    const [newServices, setNewServices] = useState({ report_type_id: [] });
     const [stageMetrics, setStageMetrics] = useState({});
 
     let query;
@@ -156,7 +157,7 @@ const SaleCard = () => {
             `${
                 import.meta.env.VITE_API_URL
             }sales-funnel-projects/${saleId}/services`,
-            newService
+            newServices
         )
             .then((response) => {
                 if (response?.ok) {
@@ -562,10 +563,13 @@ const SaleCard = () => {
     }, [mode]);
 
     useEffect(() => {
-        if (newService.report_type_id && newService.report_type_id !== "") {
-            sendService();
+        if (services.length > 0) {
+            setNewServices((prev) => ({
+                ...prev,
+                report_type_id: services.map((item) => item.id),
+            }));
         }
-    }, [newService]);
+    }, [services]);
 
     useEffect(() => {
         if (saleStages.stages && isFirstInit) {
@@ -1062,16 +1066,22 @@ const SaleCard = () => {
                                             </div>
                                         </div>
 
-                                        <div className="border-2 border-gray-300 py-5 px-4 h-full overflow-x-hidden overflow-y-auto">
+                                        <div
+                                            className={`h-full ${
+                                                addServices
+                                                    ? "relative"
+                                                    : "overflow-x-hidden overflow-y-auto border-2 border-gray-300"
+                                            }`}
+                                        >
                                             {addServices ? (
-                                                <div className="border-2 border-gray-300 p-5">
-                                                    <select
+                                                <div className="px-2 py-4 absolute top-0 left-0 right-0 bg-white z-99 border-2 border-gray-300 overflow-x-hidden overflow-y-auto max-h-[500px]">
+                                                    {/* <select
                                                         className="w-full h-[21px]"
                                                         defaultValue=""
                                                         onChange={(
                                                             selectedOptions
                                                         ) => {
-                                                            setNewService(
+                                                            setNewServices(
                                                                 (prev) => ({
                                                                     ...prev,
                                                                     report_type_id:
@@ -1107,10 +1117,70 @@ const SaleCard = () => {
                                                                     </option>
                                                                 )
                                                             )}
-                                                    </select>
+                                                    </select> */}
+
+                                                    <MultiSelect
+                                                        options={reportTypes.map(
+                                                            (type) => ({
+                                                                value: type.id,
+                                                                label: type.full_name,
+                                                            })
+                                                        )}
+                                                        selectedValues={
+                                                            newServices.report_type_id ??
+                                                            []
+                                                        }
+                                                        onChange={(
+                                                            updatedField
+                                                        ) =>
+                                                            setNewServices(
+                                                                (prev) => ({
+                                                                    ...prev,
+                                                                    ...updatedField,
+                                                                })
+                                                            )
+                                                        }
+                                                        fieldName="report_type_id"
+                                                    />
+
+                                                    <div className="mt-5 flex items-center gap-6 justify-between">
+                                                        <button
+                                                            type="button"
+                                                            className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
+                                                            // onClick={() => }
+                                                            title="Применить добавление услуг"
+                                                        >
+                                                            Применить
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setAddServices(
+                                                                    false
+                                                                );
+                                                                setNewServices(
+                                                                    (prev) => ({
+                                                                        ...prev,
+                                                                        report_type_id:
+                                                                            services.map(
+                                                                                (
+                                                                                    item
+                                                                                ) =>
+                                                                                    item.id
+                                                                            ),
+                                                                    })
+                                                                );
+                                                            }}
+                                                            className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
+                                                            title="Отменить добавление услуг"
+                                                        >
+                                                            Отменить
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             ) : (
-                                                <ul className="grid gap-3">
+                                                <ul className="grid gap-3 py-5 px-4">
                                                     <li className="grid items-center grid-cols-[1fr_40%] gap-3 mb-2 text-gray-400">
                                                         <span>Тип услуги</span>
                                                         <span className="flex items-center gap-2">
