@@ -101,11 +101,6 @@ const ProjectCard = () => {
               );
     };
 
-    // Форматирование даты
-    const formatDate = (date) => {
-        return new Date(date).toLocaleDateString("ru-RU");
-    };
-
     // Обработка ввода данных проекта
     const handleInputChange = useCallback((e, name) => {
         setFormFields((prev) => ({ ...prev, [name]: e.target.value }));

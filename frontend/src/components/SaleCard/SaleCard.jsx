@@ -48,6 +48,24 @@ const SaleCard = () => {
 
     let query;
 
+    const validateFields = () => {
+        const newErrors = {};
+
+        if (!projectData?.contragent_id) {
+            newErrors.contragent_id = "Необходимо назначить заказчика";
+        }
+
+        if (!projectData?.industries.main) {
+            newErrors.industries = "Необходимо выбрать отрасль";
+        }
+
+        if (!projectData?.request_source_id) {
+            newErrors.request_source_id = "Необходимо выбрать источник";
+        }
+
+        return newErrors;
+    };
+
     // Обработка ввода данных проекта
     const handleInputChange = useCallback((e, name) => {
         setFormFields((prev) => ({ ...prev, [name]: e.target.value }));
@@ -236,6 +254,7 @@ const SaleCard = () => {
     // };
 
     // Обновление заказчика
+
     const updateContragent = async (showMessage = true, data) => {
         query = toast.loading("Обновление", {
             containerId: "projectCard",
@@ -494,6 +513,20 @@ const SaleCard = () => {
         }
     };
 
+    // Сохранение отчета
+    const handleSave = () => {
+        const newErrors = validateFields();
+
+        if (Object.keys(newErrors).length === 0) {
+            updateProject();
+        } else {
+            alert(
+                "Исправьте ошибки перед сохранением:\n" +
+                    Object.values(newErrors).join("\n")
+            );
+        }
+    };
+
     useEffect(() => {
         if (saleId) {
             getProject(saleId);
@@ -528,6 +561,10 @@ const SaleCard = () => {
         }
     }, [saleStages]);
 
+    useEffect(() => {
+        console.log(projectData);
+    }, [projectData]);
+
     return (
         <main className="page">
             <div className="new-project pt-8 pb-15">
@@ -555,7 +592,7 @@ const SaleCard = () => {
                                         type="button"
                                         className="update-icon"
                                         title="Обновить данные проекта"
-                                        onClick={() => updateProject()}
+                                        onClick={() => handleSave()}
                                     ></button>
                                 )}
                         </div>
@@ -953,6 +990,7 @@ const SaleCard = () => {
                                             <input
                                                 type="text"
                                                 className="w-full"
+                                                placeholder="Заполните ТЭП"
                                                 defaultValue={
                                                     projectData.tep || ""
                                                 }
