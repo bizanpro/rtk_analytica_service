@@ -8,16 +8,20 @@ const MultiSelect = ({ options, selectedValues = [], onChange, fieldName }) => {
     };
 
     return (
-        <ul>
+        <ul className="grid gap-2">
             {options.map((option) => (
                 <li key={option.value}>
                     <label
-                        className="px-1 py-2 flex items-start gap-2 cursor-pointer"
+                        className={`pr-1 py-1 flex items-start gap-2 cursor-pointer transition-colors ${
+                            selectedValues.includes(option.value)
+                                ? "bg-gray-100"
+                                : ""
+                        }`}
                         htmlFor={`${option.label}_${option.value}`}
                     >
                         <input
                             type="checkbox"
-                            className="mt-1"
+                            className="mt-1 opacity-0"
                             checked={selectedValues.includes(option.value)}
                             onChange={() => toggleValue(option.value)}
                             id={`${option.label}_${option.value}`}

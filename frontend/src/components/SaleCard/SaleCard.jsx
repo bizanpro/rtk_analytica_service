@@ -1147,7 +1147,9 @@ const SaleCard = () => {
                                                         <button
                                                             type="button"
                                                             className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                                                            // onClick={() => }
+                                                            onClick={() =>
+                                                                sendService()
+                                                            }
                                                             title="Применить добавление услуг"
                                                         >
                                                             Применить
