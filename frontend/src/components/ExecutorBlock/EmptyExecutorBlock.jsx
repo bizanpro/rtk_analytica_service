@@ -94,15 +94,15 @@ const EmptyExecutorBlock = ({
         });
     };
 
-    const handleChange = (newValue) => {
-        setNewContact({
-            ...newContact,
-            full_name: newValue.value,
-            phone: newValue.phone,
-            email: newValue.email,
-            position: newValue.position,
-        });
-    };
+    // const handleChange = (newValue) => {
+    //     setNewContact({
+    //         ...newContact,
+    //         full_name: newValue.value,
+    //         phone: newValue.phone,
+    //         email: newValue.email,
+    //         position: newValue.position,
+    //     });
+    // };
 
     const handleSave = () => {
         const newErrors = {

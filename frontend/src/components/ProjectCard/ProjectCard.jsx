@@ -25,6 +25,7 @@ import AutoResizeTextarea from "../AutoResizeTextarea";
 import ManagementReportsTab from "../ManagementReportsTab/ManagementReportsTab";
 
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -683,42 +684,66 @@ const ProjectCard = () => {
                                                     ?
                                                 </span>
                                             </span>
-                                            <div className="border-2 border-gray-300 p-3">
-                                                <select
-                                                    className="w-full h-[21px]"
-                                                    value={
-                                                        projectData?.contragent_id ||
-                                                        ""
-                                                    }
-                                                    onChange={(e) =>
-                                                        handleInputChange(
-                                                            e,
-                                                            "contragent_id"
+                                            <div className="border-2 border-gray-300">
+                                                <CreatableSelect
+                                                    isClearable
+                                                    options={
+                                                        contragents.length >
+                                                            0 &&
+                                                        contragents.map(
+                                                            (item) => ({
+                                                                value: item.id,
+                                                                label: item.program_name,
+                                                            })
                                                         )
                                                     }
-                                                    disabled={mode == "read"}
-                                                >
-                                                    <option value="">
-                                                        Выбрать заказчика
-                                                    </option>
-                                                    {contragents.length > 0 &&
-                                                        contragents.map(
-                                                            (item) => (
-                                                                <option
-                                                                    value={
-                                                                        item.id
-                                                                    }
-                                                                    key={
-                                                                        item.id
-                                                                    }
-                                                                >
-                                                                    {
-                                                                        item.program_name
-                                                                    }
-                                                                </option>
-                                                            )
-                                                        )}
-                                                </select>
+                                                    className="w-full executor-block__name-field"
+                                                    placeholder="Выбрать заказчика"
+                                                    noOptionsMessage={() =>
+                                                        "Совпадений нет"
+                                                    }
+                                                    isValidNewOption={() =>
+                                                        false
+                                                    }
+                                                    value={
+                                                        (contragents.length >
+                                                            0 &&
+                                                            contragents
+                                                                .map(
+                                                                    (item) => ({
+                                                                        value: item.id,
+                                                                        label: item.program_name,
+                                                                    })
+                                                                )
+                                                                .find(
+                                                                    (option) =>
+                                                                        option.value ===
+                                                                        projectData?.contragent_id
+                                                                )) ||
+                                                        null
+                                                    }
+                                                    onChange={(
+                                                        selectedOption
+                                                    ) => {
+                                                        setFormFields(
+                                                            (prev) => ({
+                                                                ...prev,
+                                                                contragent_id:
+                                                                    selectedOption.value ||
+                                                                    null,
+                                                            })
+                                                        );
+                                                        setProjectData(
+                                                            (prev) => ({
+                                                                ...prev,
+                                                                contragent_id:
+                                                                    selectedOption.value ||
+                                                                    null,
+                                                            })
+                                                        );
+                                                    }}
+                                                    isDisabled={mode == "read"}
+                                                />
                                             </div>
                                         </div>
                                     </div>
