@@ -1075,50 +1075,6 @@ const SaleCard = () => {
                                         >
                                             {addServices ? (
                                                 <div className="px-2 py-4 absolute top-0 left-0 right-0 bg-white z-99 border-2 border-gray-300 overflow-x-hidden overflow-y-auto max-h-[500px]">
-                                                    {/* <select
-                                                        className="w-full h-[21px]"
-                                                        defaultValue=""
-                                                        onChange={(
-                                                            selectedOptions
-                                                        ) => {
-                                                            setNewServices(
-                                                                (prev) => ({
-                                                                    ...prev,
-                                                                    report_type_id:
-                                                                        selectedOptions
-                                                                            .target
-                                                                            .value,
-                                                                })
-                                                            );
-                                                        }}
-                                                        disabled={
-                                                            mode == "read"
-                                                        }
-                                                    >
-                                                        <option value="">
-                                                            Выбрать тип отчёта
-                                                        </option>
-
-                                                        {reportTypes.length >
-                                                            0 &&
-                                                            reportTypes.map(
-                                                                (type) => (
-                                                                    <option
-                                                                        value={
-                                                                            type.id
-                                                                        }
-                                                                        key={
-                                                                            type.id
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            type.full_name
-                                                                        }
-                                                                    </option>
-                                                                )
-                                                            )}
-                                                    </select> */}
-
                                                     <MultiSelect
                                                         options={reportTypes.map(
                                                             (type) => ({
@@ -1309,6 +1265,7 @@ const SaleCard = () => {
                                                         setStageMetrics={
                                                             setStageMetrics
                                                         }
+                                                        services={services}
                                                         mode={mode}
                                                     />
                                                 )}

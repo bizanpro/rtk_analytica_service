@@ -1,7 +1,14 @@
 import pepcentColorHandler from "../../utils/percentColorHandler";
 import formatMoney from "../../utils/formatMoney";
 
-const SaleStageDetails = ({ stageMetrics, setStageMetrics, mode }) => {
+const SaleStageDetails = ({
+    stageMetrics,
+    setStageMetrics,
+    services,
+    mode,
+}) => {
+    console.log(services);
+
     return (
         <div className="flex flex-col gap-4">
             {stageMetrics.name?.toLowerCase() !== "получен запрос" && (

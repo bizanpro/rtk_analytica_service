@@ -1,9 +1,7 @@
 import { useState } from "react";
 
-// import getData from "../../utils/getData";
 import CreatableSelect from "react-select/creatable";
 import { IMaskInput } from "react-imask";
-// import { createDebounce } from "../../utils/debounce";
 
 import "./ExecutorBlock.scss";
 
@@ -30,7 +28,6 @@ const EmptyExecutorBlock = ({
     sendExecutor,
     contragentContacts,
     creditorContacts,
-    url,
 }) => {
     const PhoneMask = "+{7}(000) 000 00 00";
 
@@ -47,26 +44,11 @@ const EmptyExecutorBlock = ({
         return emailRegex.test(email);
     };
 
-    // const handleSearch = (event) => {
-    //     const searchQuery = event.value.toLowerCase();
-
-    //     getData(`${URL}&search=${searchQuery}`, {
-    //         Accept: "application/json",
-    //     }).then((response) => {
-    //         if (response.status == 200) {
-    //             setList(response.data.data);
-    //         }
-    //     });
-    //     .finally(() => setIsLoading(false));
-    // };
-
-    // const debounce = createDebounce(handleSearch, 300, true);
-
     const allContacts =
         type === "creditor"
             ? creditorContacts.flatMap((creditor) =>
-                  creditor.projects.flatMap((project) =>
-                      project.contacts.map((person) => ({
+                  creditor?.projects?.flatMap((project) =>
+                      project?.contacts?.map((person) => ({
                           value: person.full_name,
                           label: person.full_name,
                           email: person.email,
@@ -75,17 +57,13 @@ const EmptyExecutorBlock = ({
                       }))
                   )
               )
-            : contragentContacts.flatMap((contragent) =>
-                  contragent.projects.flatMap((project) =>
-                      project.responsible_persons.map((person) => ({
-                          value: person.full_name,
-                          label: person.full_name,
-                          email: person.email,
-                          phone: person.phone,
-                          position: person.position,
-                      }))
-                  )
-              );
+            : contragentContacts?.map((person) => ({
+                  value: person.full_name,
+                  label: person.full_name,
+                  email: person.email,
+                  phone: person.phone,
+                  position: person.position,
+              }));
 
     const handleNewExecutor = (e, name) => {
         setNewContact({
@@ -93,16 +71,6 @@ const EmptyExecutorBlock = ({
             [name]: name === "phone" ? e : e.target.value,
         });
     };
-
-    // const handleChange = (newValue) => {
-    //     setNewContact({
-    //         ...newContact,
-    //         full_name: newValue.value,
-    //         phone: newValue.phone,
-    //         email: newValue.email,
-    //         position: newValue.position,
-    //     });
-    // };
 
     const handleSave = () => {
         const newErrors = {
@@ -120,14 +88,10 @@ const EmptyExecutorBlock = ({
         sendExecutor(type, newContact);
     };
 
+    console.log(allContacts);
+
     return (
         <div className="flex items-center justify-between gap-6 w-full">
-            {/* <Search
-                onSearch={debounce}
-                className="search-fullpage"
-                placeholder="Поиск подрядчика"
-            /> */}
-
             <div
                 className={`executor-block flex-grow border transition-all ${borderClass}`}
             >

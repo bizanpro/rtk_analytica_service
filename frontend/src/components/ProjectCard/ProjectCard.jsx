@@ -185,9 +185,12 @@ const ProjectCard = () => {
         });
     };
 
+    // Получение доступных для добавления контактных лиц кредитора
     const getCreditorContacts = () => {
         getData(
-            `${import.meta.env.VITE_API_URL}responsible-persons/creditor`
+            `${
+                import.meta.env.VITE_API_URL
+            }responsible-persons/creditor/?project_id=${projectId}`
         ).then((response) => {
             if (response.status == 200) {
                 setCreditorContacts(response.data.data);
@@ -195,9 +198,12 @@ const ProjectCard = () => {
         });
     };
 
+    // Получение доступных для добавления контактных лиц заказчика
     const getContragentsContacts = () => {
         getData(
-            `${import.meta.env.VITE_API_URL}responsible-persons/contragent`
+            `${
+                import.meta.env.VITE_API_URL
+            }responsible-persons/contragent/?project_id=${projectId}`
         ).then((response) => {
             if (response.status == 200) {
                 setContragentContacts(response.data.data);
@@ -987,7 +993,6 @@ const ProjectCard = () => {
                                         <EmptyExecutorBlock
                                             borderClass={"border-gray-300"}
                                             type={"customer"}
-                                            url={projectId}
                                             removeBlock={() =>
                                                 setAddCustomer(false)
                                             }
@@ -1098,7 +1103,6 @@ const ProjectCard = () => {
                                         <EmptyExecutorBlock
                                             borderClass={"border-gray-300"}
                                             banks={banks}
-                                            url={projectId}
                                             type={"creditor"}
                                             removeBlock={() =>
                                                 setAddLender(false)
