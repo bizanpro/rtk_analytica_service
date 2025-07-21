@@ -1,17 +1,19 @@
 import { useEffect, useState, useMemo } from "react";
 
 import getData from "../../utils/getData";
-import { createDebounce } from "../../utils/debounce";
+// import { createDebounce } from "../../utils/debounce";
 
 import EmployeeItem from "./EmployeeItem";
 import Select from "../Select";
-import Search from "../Search/Search";
+// import Search from "../Search/Search";
+
+import CreatableSelect from "react-select/creatable";
 
 const Employees = () => {
     const [list, setList] = useState([]);
     const [selectedType, setSelectedType] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
-    const [selectedName, setSelectedName] = useState("default");
+    const [selectedName, setSelectedName] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     const COLUMNS = [
@@ -33,39 +35,38 @@ const Employees = () => {
                 (selectedStatus !== "default"
                     ? employee.is_active === (selectedStatus === "true")
                     : true) &&
-                (selectedName !== "default"
-                    ? employee.name === selectedName
-                    : true)
+                (selectedName !== null ? employee.name === selectedName : true)
             );
         });
 
         return result;
     }, [list, selectedType, selectedStatus, selectedName]);
 
-    const handleSearch = (event) => {
-        const searchQuery = event.value.toLowerCase();
+    // const handleSearch = (event) => {
+    //     const searchQuery = event.value.toLowerCase();
 
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }physical-persons/?search=${searchQuery}`,
-            { Accept: "application/json" }
-        )
-            .then((response) => {
-                if (response.status == 200) {
-                    setList(response.data);
-                }
-            })
-            .finally(() => setIsLoading(false));
-    };
+    //     getData(
+    //         `${
+    //             import.meta.env.VITE_API_URL
+    //         }physical-persons/?search=${searchQuery}`,
+    //         { Accept: "application/json" }
+    //     )
+    //         .then((response) => {
+    //             if (response.status == 200) {
+    //                 setList(response.data);
+    //             }
+    //         })
+    //         .finally(() => setIsLoading(false));
+    // };
 
-    const debounce = createDebounce(handleSearch, 300, true);
+    // const debounce = createDebounce(handleSearch, 300, true);
 
     // Заполняем селектор сотрудников
     const nameOptions = useMemo(() => {
-        const allNames = list
-            .map((item) => item.name)
-            .filter((name) => name !== null);
+        const allNames = list.map((item) => ({
+            value: item.id,
+            label: item.name,
+        }));
 
         return Array.from(new Set(allNames));
     }, [list]);
@@ -92,13 +93,29 @@ const Employees = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        <Search
+                        {/* <Search
                             onSearch={debounce}
                             className="search-fullpage"
                             placeholder="Поиск сотрудника"
+                        /> */}
+
+                        <CreatableSelect
+                            isClearable
+                            options={nameOptions}
+                            className="p-1 border border-gray-300 min-w-[250px] max-w-[300px] executor-block__name-field"
+                            placeholder="Сотрудник"
+                            noOptionsMessage={() => "Совпадений нет"}
+                            isValidNewOption={() => false}
+                            onChange={(selectedOption) => {
+                                if (selectedOption) {
+                                    setSelectedName(selectedOption.label);
+                                } else {
+                                    setSelectedName(null);
+                                }
+                            }}
                         />
 
-                        {nameOptions.length > 0 && (
+                        {/* {nameOptions.length > 0 && (
                             <Select
                                 className={
                                     "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
@@ -109,11 +126,11 @@ const Employees = () => {
                                     setSelectedName(evt.target.value);
                                 }}
                             />
-                        )}
+                        )} */}
 
                         <select
                             className={
-                                "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                "p-1 border border-gray-300 min-w-[120px] max-w-[200px] h-[48px]"
                             }
                             onChange={(evt) => {
                                 setSelectedType(evt.target.value);
@@ -126,7 +143,7 @@ const Employees = () => {
 
                         <select
                             className={
-                                "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                "p-1 border border-gray-300 min-w-[120px] max-w-[200px] h-[48px]"
                             }
                             onChange={(evt) => {
                                 setSelectedStatus(evt.target.value);
