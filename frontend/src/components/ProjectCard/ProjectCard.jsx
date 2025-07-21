@@ -733,20 +733,22 @@ const ProjectCard = () => {
                                                     onChange={(
                                                         selectedOption
                                                     ) => {
+                                                        const newValue =
+                                                            selectedOption?.value ||
+                                                            null;
+
                                                         setFormFields(
                                                             (prev) => ({
                                                                 ...prev,
                                                                 contragent_id:
-                                                                    selectedOption.value ||
-                                                                    null,
+                                                                    newValue,
                                                             })
                                                         );
                                                         setProjectData(
                                                             (prev) => ({
                                                                 ...prev,
                                                                 contragent_id:
-                                                                    selectedOption.value ||
-                                                                    null,
+                                                                    newValue,
                                                             })
                                                         );
                                                     }}
