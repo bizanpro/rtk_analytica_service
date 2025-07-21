@@ -244,6 +244,8 @@ const ProjectCard = () => {
                 getReports(),
                 getTeam(),
                 getServices(),
+                getCreditorContacts(),
+                getContragentsContacts(),
             ];
 
             if (!firstInit) {
@@ -390,6 +392,8 @@ const ProjectCard = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
+                    getCreditorContacts();
+                    getContragentsContacts();
                 }
                 return response;
             } catch (error) {
@@ -552,8 +556,6 @@ const ProjectCard = () => {
     useEffect(() => {
         if (projectId) {
             getProject(projectId);
-            getCreditorContacts();
-            getContragentsContacts();
         }
     }, []);
 
