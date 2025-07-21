@@ -3,16 +3,16 @@ import { useEffect, useState, useMemo } from "react";
 import getData from "../../utils/getData";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
-// import { createDebounce } from "../../utils/debounce";
+import { createDebounce } from "../../utils/debounce";
 
 import SupplierItem from "./SupplierItem";
-// import Select from "../Select";
-import CreatableSelect from "react-select/creatable";
-// import Search from "../Search/Search";
+import Select from "../Select";
+// import CreatableSelect from "react-select/creatable";
+import Search from "../Search/Search";
 
 const Suppliers = () => {
     const [list, setList] = useState([]);
-    const [selectedName, setSelectedName] = useState(null);
+    const [selectedName, setSelectedName] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
     const [isLoading, setIsLoading] = useState(true);
     const [isFiltering, setIsFiltering] = useState(false);
@@ -35,9 +35,10 @@ const Suppliers = () => {
 
     const filteredList = useMemo(() => {
         return list.filter((customer) => {
-            const matchName = selectedName
-                ? customer.program_name === selectedName
-                : true;
+            const matchName =
+                selectedName && selectedName !== "default"
+                    ? customer.program_name === selectedName
+                    : true;
 
             const matchStatus =
                 selectedStatus && selectedStatus !== "default"
@@ -48,32 +49,27 @@ const Suppliers = () => {
         });
     }, [list, selectedName, selectedStatus]);
 
-    // const handleSearch = (event) => {
-    //     const searchQuery = event.value.toLowerCase();
+    const handleSearch = (event) => {
+        const searchQuery = event.value.toLowerCase();
 
-    //     getData(`${URL}&search=${searchQuery}`, { Accept: "application/json" })
-    //         .then((response) => {
-    //             if (response.status == 200) {
-    //                 setList(response.data.data);
-    //             }
-    //         })
-    //         .finally(() => setIsLoading(false));
-    // };
+        getData(`${URL}&search=${searchQuery}`, { Accept: "application/json" })
+            .then((response) => {
+                if (response.status == 200) {
+                    setList(response.data.data);
+                }
+            })
+            .finally(() => setIsLoading(false));
+    };
 
-    // const debounce = createDebounce(handleSearch, 300, true);
+    const debounce = createDebounce(handleSearch, 300, true);
 
     // Заполняем селектор заказчиков
     const nameOptions = useMemo(() => {
-        const map = new Map();
+        const allNames = list
+            .map((item) => item.program_name)
+            .filter((program_name) => program_name !== null);
 
-        list.forEach((item) => {
-            map.set(item.id, {
-                label: item.program_name,
-                value: item.id,
-            });
-        });
-
-        return Array.from(map.values());
+        return Array.from(new Set(allNames));
     }, [list]);
 
     // Заполняем селектор статусов
@@ -101,7 +97,7 @@ const Suppliers = () => {
     }, [page]);
 
     useEffect(() => {
-        selectedStatus === "default"
+        selectedName === "default" && selectedStatus === "default"
             ? setIsFiltering(false)
             : setIsFiltering(true);
     }, [selectedName, selectedStatus]);
@@ -123,13 +119,13 @@ const Suppliers = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        {/* <Search
+                        <Search
                             onSearch={debounce}
                             className="search-fullpage"
                             placeholder="Поиск подрядчика"
-                        /> */}
+                        />
 
-                        {/* {nameOptions.length > 0 && (
+                        {nameOptions.length > 0 && (
                             <Select
                                 className={
                                     "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
@@ -140,9 +136,9 @@ const Suppliers = () => {
                                     setSelectedName(evt.target.value);
                                 }}
                             />
-                        )} */}
+                        )}
 
-                        <CreatableSelect
+                        {/* <CreatableSelect
                             isClearable
                             options={nameOptions}
                             className="p-1 border border-gray-300 min-w-[250px] max-w-[300px] executor-block__name-field"
@@ -156,12 +152,12 @@ const Suppliers = () => {
                                     setSelectedName(null);
                                 }
                             }}
-                        />
+                        /> */}
 
                         {statusOptions.length > 0 && (
                             <select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px] h-[48px]"
+                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
                                 onChange={(evt) =>
                                     setSelectedStatus(evt.target.value)
