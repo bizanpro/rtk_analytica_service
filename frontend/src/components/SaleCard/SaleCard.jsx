@@ -572,7 +572,7 @@ const SaleCard = () => {
     }, [services]);
 
     useEffect(() => {
-        if (saleStages.stages && isFirstInit) {
+        if (saleStages.stages && saleStages.stages.length > 0 && isFirstInit) {
             setActiveStage(saleStages.stages[saleStages.stages?.length - 1].id);
             getStageDetails(
                 saleStages.stages[saleStages.stages?.length - 1].id

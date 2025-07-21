@@ -5,8 +5,6 @@ import CreatableSelect from "react-select/creatable";
 import { IMaskInput } from "react-imask";
 // import { createDebounce } from "../../utils/debounce";
 
-import Search from "../Search/Search";
-
 import "./ExecutorBlock.scss";
 
 const CREDITOR_TEMPLATE = {
