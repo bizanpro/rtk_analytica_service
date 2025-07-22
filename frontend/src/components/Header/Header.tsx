@@ -1,13 +1,22 @@
+import { useState } from "react";
+
 import User from "../User/User";
 import HeaderNav from "../HeaderNav/HeaderNav";
+import Overlay from "../Overlay/Overlay";
 
 import "./Header.scss";
 
 import logo from "../../assets/logo.png";
 
 const Header = () => {
+    const [isActive, setIsActive] = useState(false);
+
+    const toggleMenu = () => {
+        setIsActive((prev) => !prev);
+    };
+
     return (
-        <header className="header border-b border-gray-200 py-6">
+        <header className="header">
             <div className="container header__container">
                 <div className="header__wrapper">
                     <a
@@ -19,9 +28,26 @@ const Header = () => {
                         <img src={logo} alt="Логотип РТК" />
                     </a>
 
-                    <HeaderNav />
+                    <div>
+                        <HeaderNav state={isActive} toggleMenu={toggleMenu} />
 
-                    <User />
+                        <Overlay state={isActive} toggleMenu={toggleMenu} />
+                    </div>
+
+                    <div className="header__menu-nav">
+                        <User />
+
+                        <button
+                            type="button"
+                            className={`header__menu-btn ${
+                                isActive ? "active" : ""
+                            }`}
+                            title="Меню"
+                            onClick={toggleMenu}
+                        >
+                            <span></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>

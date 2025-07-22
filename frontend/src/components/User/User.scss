@@ -1,27 +1,18 @@
 .user {
-    &__nav {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transition: opacity 0.15s ease-in-out;
+    height: 40px;
+    width: 40px;
+    flex: 0 0 40px;
+    cursor: pointer;
 
-        &.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: all;
-        }
-    }
-
-    &__info {
+    &__photo {
         display: flex;
         align-items: center;
         justify-content: center;
-        flex: 0 0 60px;
-        width: 60px;
-        height: 60px;
-        border: 2px solid oklch(0.872 0.01 258.338);
+        width: 40px;
+        height: 40px;
+        border: 1px solid oklch(0.872 0.01 258.338);
         border-radius: 50%;
-        cursor: pointer;
-        font-size: 18px;
+        font-size: 16px;
+        overflow: hidden;
     }
 }

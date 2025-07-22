@@ -1,5 +1,7 @@
 import { NavLink } from "react-router-dom";
 
+import "./HeaderNav.scss";
+
 type NavLinkItem = {
     url: string;
     title: string;
@@ -50,19 +52,30 @@ const LINKS: NavLinkItem[] = [
     },
 ];
 
-const HeaderNav = () => {
+const HeaderNav = ({
+    state,
+    toggleMenu,
+}: {
+    state: boolean;
+    toggleMenu: () => void;
+}) => {
     return (
-        <nav className="flex items-center gap-10 flex-grow text-xl">
+        <nav className={`header__nav ${state ? "active" : ""}`}>
             {LINKS.map((link) => (
                 <NavLink
                     to={link.url}
                     className={({ isActive }) =>
                         isActive
-                            ? "sidebar__list-item font-medium"
-                            : "sidebar__list-item"
+                            ? "header__nav-item active"
+                            : "header__nav-item"
                     }
                     title={link.title}
                     key={link.url}
+                    onClick={() => {
+                        if (state) {
+                            toggleMenu();
+                        }
+                    }}
                 >
                     {link.label}
                 </NavLink>

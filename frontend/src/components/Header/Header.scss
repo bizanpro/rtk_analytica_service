@@ -1,7 +1,16 @@
 .header {
+    position: relative;
+    height: 70px;
+    border-bottom: 1px solid var(--color-gray-40);
+
+    &__container {
+        height: 100%;
+    }
+
     &__logo {
-        width: 90px;
-        height: 70px;
+        // width: 72px;
+        height: 22px;
+        width: 100%;
 
         img {
             object-fit: contain;
@@ -13,7 +22,69 @@
         align-items: center;
         justify-content: space-between;
         gap: 50px;
-        border: 2px solid oklch(0.872 0.01 258.338);
-        padding: 10px 20px;
+        height: 100%;
+    }
+
+    &__menu-nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    &__menu-btn {
+        height: 40px;
+        width: 40px;
+        flex: 0 0 40px;
+        border: 2px solid var(--color-orange-70);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 11;
+
+        span {
+            display: inline-block;
+            position: relative;
+            background: var(--color-gray-100);
+            width: 20px;
+            height: 2px;
+            transition: all var(--trans);
+
+            &::before,
+            &::after {
+                content: "";
+                position: absolute;
+                background: var(--color-gray-100);
+                width: 20px;
+                height: 2px;
+                left: 50%;
+                transform: translateX(-50%);
+                transition: all var(--trans);
+            }
+
+            &::before {
+                top: -7px;
+            }
+
+            &::after {
+                bottom: -7px;
+            }
+        }
+
+        &.active {
+            span {
+                width: 0;
+
+                &::before {
+                    top: 0;
+                    transform: translateX(-50%) rotate(45deg);
+                }
+
+                &::after {
+                    bottom: 0;
+                    transform: translateX(-50%) rotate(-45deg);
+                }
+            }
+        }
     }
 }

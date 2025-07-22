@@ -1,0 +1,35 @@
+.header__nav {
+    position: absolute;
+    background: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    top: -100vh;
+    left: 0;
+    right: 0;
+    padding: 23px 60px 23px 23px;
+    width: 100vw;
+    height: fit-content;
+    transition: transform var(--trans);
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+    z-index: 10;
+
+    &.active {
+        transform: translate3d(0, 100vh, 0);
+    }
+
+    &-item {
+        color: var(--color-gray-70);
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 120%;
+        transition: color var(--trans);
+
+        &:hover,
+        &.active {
+            color: var(--color-orange-60);
+        }
+    }
+}
