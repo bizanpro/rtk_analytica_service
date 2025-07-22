@@ -1,19 +1,32 @@
+@use "../../styles/media-breakpoints" as *;
+
 .header {
     position: relative;
     height: 70px;
     border-bottom: 1px solid var(--color-gray-40);
+
+    @media (min-width: $media-xl) {
+        height: auto;
+    }
 
     &__container {
         height: 100%;
     }
 
     &__logo {
-        // width: 72px;
+        width: 72px;
         height: 22px;
-        width: 100%;
 
         img {
             object-fit: contain;
+        }
+    }
+
+    .overlay {
+        @media (min-width: $media-xl) {
+            display: none !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
         }
     }
 
@@ -41,6 +54,10 @@
         align-items: center;
         justify-content: center;
         z-index: 11;
+
+        @media (min-width: $media-xl) {
+            display: none;
+        }
 
         span {
             display: inline-block;

@@ -1,3 +1,5 @@
+@use "../../styles/media-breakpoints" as *;
+
 .header__nav {
     position: absolute;
     background: var(--color-white);
@@ -16,6 +18,19 @@
     will-change: transform;
     z-index: 10;
 
+    @media (min-width: $media-xl) {
+        position: relative;
+        top: auto;
+        left: auto;
+        right: auto;
+        transform: none !important;
+        background: transparent;
+        flex-direction: row;
+        width: fit-content;
+        padding: 23px 0 0;
+        gap: 30px;
+    }
+
     &.active {
         transform: translate3d(0, 100vh, 0);
     }
@@ -30,6 +45,20 @@
         &:hover,
         &.active {
             color: var(--color-orange-60);
+
+            @media (min-width: $media-xl) {
+                color: var(--color-gray-100);
+                border-bottom: 3px solid var(--color-orange-70);
+            }
+        }
+
+        @media (min-width: $media-xl) {
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 100%;
+            padding-bottom: 20px;
+            border-bottom: 3px solid transparent;
+            transition: color var(--trans), border var(--trans);
         }
     }
 }

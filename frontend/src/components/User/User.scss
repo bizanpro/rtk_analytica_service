@@ -1,8 +1,19 @@
+@use "../../styles/media-breakpoints" as *;
+
 .user {
     height: 40px;
     width: 40px;
     flex: 0 0 40px;
     cursor: pointer;
+
+    @media (min-width: $media-xl) {
+        display: flex;
+        align-items: center;
+        height: auto;
+        width: auto;
+        flex: 0 0 auto;
+        gap: 13px;
+    }
 
     &__photo {
         display: flex;
@@ -12,7 +23,38 @@
         height: 40px;
         border: 1px solid oklch(0.872 0.01 258.338);
         border-radius: 50%;
-        font-size: 16px;
+        font-size: 14px;
         overflow: hidden;
+
+        @media (min-width: $media-xl) {
+            width: 32px;
+            height: 32px;
+            flex: 0 0 32px;
+        }
+    }
+
+    &__info {
+        display: none;
+        flex-direction: column;
+        gap: 4px;
+
+        b {
+            color: var(--color-gray-100);
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 100%;
+            letter-spacing: 0%;
+        }
+        span {
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 100%;
+            letter-spacing: 0%;
+            color: var(--color-gray-70);
+        }
+
+        @media (min-width: $media-xl) {
+            display: flex;
+        }
     }
 }
