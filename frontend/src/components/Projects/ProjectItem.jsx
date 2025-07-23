@@ -30,70 +30,50 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                 if (Array.isArray(value) && value !== null) {
                     if (value?.length > 0) {
                         return (
-                            <td
-                                className="min-w-[180px] max-w-[250px]"
-                                key={key}
-                            >
+                            <td className="w-[150px]" key={key}>
                                 <table className="w-full">
                                     <tbody>
-                                        {key === "latest_reports"
-                                            ? value?.map((item, index) => (
-                                                  <tr key={`${key}_${index}`}>
-                                                      <td
-                                                          className={`${
-                                                              index !==
-                                                              value?.length - 1
-                                                                  ? "pb-[10px]"
-                                                                  : "pt-1"
-                                                          }`}
-                                                      >
-                                                          <div className="flex items-center gap-3 w-full">
-                                                              <div
-                                                                  className="text-lg"
-                                                                  style={{
-                                                                      flex: "0 0 40px",
-                                                                  }}
-                                                              >
-                                                                  {
-                                                                      item.report_period_code
-                                                                  }
-                                                              </div>
-
-                                                              <div
-                                                                  className={`rounded px-8 py-1 text-center flex-grow
-                                            ${
-                                                item.status?.name === "Завершен"
-                                                    ? "bg-green-400"
-                                                    : "bg-gray-200"
-                                            }
-                                        `}
-                                                              >
-                                                                  {
-                                                                      item
-                                                                          .status
-                                                                          ?.name
-                                                                  }
-                                                              </div>
-                                                          </div>
-                                                      </td>
-                                                  </tr>
-                                              ))
-                                            : value?.map((item, index) => (
-                                                  <tr key={`${key}_${index}`}>
-                                                      <td
-                                                          className={`px-4 ${
-                                                              index !==
-                                                              value?.length - 1
-                                                                  ? "pb-1"
-                                                                  : "pt-1"
-                                                          }`}
-                                                      >
-                                                          {key === "creditors"
-                                                              ? item.name
-                                                              : item?.toString()}
-                                                      </td>
-                                                  </tr>
-                                              ))}
+                                        {key === "latest_reports" ? (
+                                            <tr>
+                                                <td className="registry-table__item-last-report w-full">
+                                                    {value?.map(
+                                                        (item, index) => (
+                                                            <div
+                                                                className={`${
+                                                                    item.status
+                                                                        ?.name ===
+                                                                    "Завершен"
+                                                                        ? "completed"
+                                                                        : ""
+                                                                }`}
+                                                                key={index}
+                                                            >
+                                                                {
+                                                                    item.report_period_code
+                                                                }
+                                                            </div>
+                                                        )
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            value?.map((item, index) => (
+                                                <tr key={`${key}_${index}`}>
+                                                    <td
+                                                        className={`w-[100px] ${
+                                                            index !==
+                                                            value?.length - 1
+                                                                ? "pb-1"
+                                                                : "pt-1"
+                                                        }`}
+                                                    >
+                                                        {key === "creditors"
+                                                            ? item.name
+                                                            : item?.toString()}
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
                                     </tbody>
                                 </table>
                             </td>
@@ -143,39 +123,55 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                                 </div>
                             </td>
                         );
+                    } else if (key === "project_budget") {
+                        return (
+                            <td
+                                className="w-[100px] registry-table__item-budget"
+                                key={key}
+                            >
+                                <b>{value?.toString() || "—"}</b>
+                                <span>
+                                    {value?.toString() ? "млрд руб." : ""}
+                                </span>
+                            </td>
+                        );
                     } else if (key === "implementation_period") {
                         return (
                             <td
-                                className="min-w-[180px] max-w-[200px] text-2xl"
+                                className="w-[127px] registry-table__item-period"
                                 key={key}
                             >
-                                <div className="flex items-end gap-1">
-                                    <div className="flex items-end gap-1">
-                                        {value?.toString() || "—"}
-                                        <span className="text-base">мес.</span>
-                                    </div>
+                                {value?.toString() ? (
+                                    <>
+                                        <div className="flex items-end gap-[5px]">
+                                            <b className="flex items-end gap-1">
+                                                {value?.toString()}
+                                                <span>мес.</span>
+                                            </b>
 
-                                    {props?.completion_percentage && (
-                                        <div className="text-gray-300 border-gray-300 py-1 px-1 text-center border rounded-md text-sm">
-                                            {Math.round(
-                                                props?.completion_percentage
+                                            {props?.completion_percentage && (
+                                                <span>
+                                                    {Math.round(
+                                                        props?.completion_percentage
+                                                    )}
+                                                    %
+                                                </span>
                                             )}
-                                            %
                                         </div>
-                                    )}
-                                </div>
 
-                                <div className="text-base">
-                                    до {props?.implementation_period_end}
-                                </div>
+                                        <span>
+                                            до{" "}
+                                            {props?.implementation_period_end}
+                                        </span>
+                                    </>
+                                ) : (
+                                    "—"
+                                )}
                             </td>
                         );
                     } else {
                         return (
-                            <td
-                                className="min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[150px]" key={key}>
                                 {value?.toString() || "—"}
                             </td>
                         );

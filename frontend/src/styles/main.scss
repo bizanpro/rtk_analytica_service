@@ -464,6 +464,10 @@ body {
 
 .registry-table {
     &__item {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 150%;
+        color: var(--color-gray-100);
         border-bottom: 1px solid var(--color-gray-30);
 
         > td {
@@ -493,6 +497,58 @@ body {
             &_active {
                 color: var(--color-green-80);
                 background: var(--color-green-30);
+            }
+        }
+
+        &-budget {
+            b {
+                display: block;
+                font-weight: 600;
+                font-size: 16px;
+            }
+
+            span {
+                color: var(--color-gray-60);
+            }
+        }
+
+        &-period {
+            > span {
+                color: var(--color-gray-60);
+            }
+
+            div > span {
+                display: block;
+                padding: 4px 5px;
+                width: fit-content;
+                font-size: 12px;
+                line-height: 100%;
+                text-align: center;
+                color: var(--color-gray-60);
+                border: 1px solid var(--color-gray-60);
+                border-radius: 5px;
+            }
+        }
+
+        &-last-report {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+
+            div {
+                text-align: center;
+                width: 107px;
+                padding: 5px 8px;
+                border: 1px solid var(--color-gray-50);
+                color: var(--color-gray-70);
+                border-radius: 50px;
+                line-height: 100%;
+
+                &.completed {
+                    border: 1px solid var(--color-green-70);
+                    color: var(--color-green-70);
+                }
             }
         }
     }
