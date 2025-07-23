@@ -11,17 +11,27 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
 
     return (
         <tr
-            className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
+            className="registry-table__item transition text-base text-left cursor-pointer"
             onClick={handleRowClick}
         >
             {columns.map(({ key }) => {
                 const value = props[key];
 
+                let statusClass;
+
+                if (key === "status") {
+                    if (value === "completed") {
+                        statusClass = "registry-table__item-status_completed";
+                    } else if (value === "active") {
+                        statusClass = "registry-table__item-status_active";
+                    }
+                }
+
                 if (Array.isArray(value) && value !== null) {
                     if (value?.length > 0) {
                         return (
                             <td
-                                className="border-b border-gray-300 py-2.5 min-w-[180px] max-w-[250px]"
+                                className="min-w-[180px] max-w-[250px]"
                                 key={key}
                             >
                                 <table className="w-full">
@@ -30,10 +40,10 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                                             ? value?.map((item, index) => (
                                                   <tr key={`${key}_${index}`}>
                                                       <td
-                                                          className={`px-4 ${
+                                                          className={`${
                                                               index !==
                                                               value?.length - 1
-                                                                  ? "pb-1"
+                                                                  ? "pb-[10px]"
                                                                   : "pt-1"
                                                           }`}
                                                       >
@@ -44,7 +54,9 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                                                                       flex: "0 0 40px",
                                                                   }}
                                                               >
-                                                                  {item.report_period_code}
+                                                                  {
+                                                                      item.report_period_code
+                                                                  }
                                                               </div>
 
                                                               <div
@@ -88,10 +100,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                         );
                     } else {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[150px]" key={key}>
                                 —
                             </td>
                         );
@@ -99,16 +108,13 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                 } else if (typeof value === "object" && value !== null) {
                     key === "project_manager"
                         ? Object.entries(value).map(([subKey, subValue]) => (
-                              <td
-                                  className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                  key={subKey}
-                              >
+                              <td className="w-[150px] text-blue" key={subKey}>
                                   {subValue?.full_name?.toString() || "—"}
                               </td>
                           ))
                         : Object.entries(value).map(([subKey, subValue]) => (
                               <td
-                                  className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
+                                  className="min-w-[180px] max-w-[200px]"
                                   key={subKey}
                               >
                                   {subValue?.toString() || "—"}
@@ -117,35 +123,35 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                 } else {
                     if (key === "name") {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[150px] text-blue" key={key}>
                                 {value?.toString() || "—"}
-                                <br />
-                                <span className="text-gray-400 text-sm">
-                                    {props.industry}
-                                </span>
+                            </td>
+                        );
+                    } else if (key === "project_manager") {
+                        return (
+                            <td className="w-[150px] text-blue" key={key}>
+                                {value?.toString() || "—"}
                             </td>
                         );
                     } else if (key === "status") {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
-                                {handleStatus(value?.toString()) || "—"}
+                            <td className="w-[110px]" key={key}>
+                                <div
+                                    className={`registry-table__item-status ${statusClass}`}
+                                >
+                                    {handleStatus(value?.toString()) || "—"}
+                                </div>
                             </td>
                         );
                     } else if (key === "implementation_period") {
                         return (
                             <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-2xl"
+                                className="min-w-[180px] max-w-[200px] text-2xl"
                                 key={key}
                             >
                                 <div className="flex items-end gap-1">
                                     <div className="flex items-end gap-1">
-                                        {value?.toString() || "—"}{" "}
+                                        {value?.toString() || "—"}
                                         <span className="text-base">мес.</span>
                                     </div>
 
@@ -167,7 +173,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                     } else {
                         return (
                             <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
+                                className="min-w-[180px] max-w-[200px]"
                                 key={key}
                             >
                                 {value?.toString() || "—"}

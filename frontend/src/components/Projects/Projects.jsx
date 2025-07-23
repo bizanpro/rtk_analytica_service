@@ -8,6 +8,8 @@ import ProjectItem from "./ProjectItem";
 import Popup from "../Popup/Popup";
 import Select from "../Select";
 
+import "./Projects.scss";
+
 const Projects = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
     const navigate = useNavigate();
@@ -24,12 +26,13 @@ const Projects = () => {
 
     const COLUMNS = [
         { label: "Проект", key: "name" },
-        { label: "Заказчик", key: "contragent" },
-        { label: "Банк", key: "creditors" },
-        { label: "Бюджет (млрд руб.)", key: "project_budget" },
-        { label: "Срок (мес.)", key: "implementation_period" },
-        { label: "Руководитель проекта", key: "project_manager" },
         { label: "Статус", key: "status" },
+        { label: "Заказчик", key: "contragent" },
+        { label: "Основная отрасль", key: "industry" },
+        { label: "Банк", key: "creditors" },
+        { label: "Бюджет", key: "project_budget" },
+        { label: "Срок", key: "implementation_period" },
+        { label: "Руководитель проекта", key: "project_manager" },
         { label: "Последние отчёты", key: "latest_reports" },
     ];
 
@@ -139,9 +142,9 @@ const Projects = () => {
     }, []);
 
     return (
-        <main className="page">
-            <div className="container py-8">
-                <div className="flex justify-between items-center gap-6 mb-8">
+        <main className="page projects">
+            <div className="container projects__container">
+                <section className="projects__header flex justify-between items-center">
                     <h1 className="title">
                         Реестр проектов
                         {filteredProjects.length > 0 && (
@@ -188,7 +191,7 @@ const Projects = () => {
                             </div>
                         </nav> */}
                     </div>
-                </div>
+                </section>
 
                 <div className="flex items-center gap-6">
                     {nameOptions.length > 0 && (
@@ -244,13 +247,13 @@ const Projects = () => {
                     )}
                 </div>
 
-                <div className="overflow-x-auto w-full pb-5">
-                    <table className="table-auto w-full border-collapse border-gray-300 text-sm">
+                <section className="overflow-x-auto w-full pb-5">
+                    <table className="registry-table table-auto w-full border-collapse">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
                                 {COLUMNS.map(({ label, key }) => (
                                     <th
-                                        className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
+                                        className="text-base min-w-[150px]"
                                         rowSpan="2"
                                         key={key}
                                     >
@@ -281,7 +284,7 @@ const Projects = () => {
                             )}
                         </tbody>
                     </table>
-                </div>
+                </section>
 
                 {popupState && (
                     <Popup onClick={closePopup} title="Создание проекта">

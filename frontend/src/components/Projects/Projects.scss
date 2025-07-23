@@ -1,0 +1,11 @@
+@use "../../styles/media-breakpoints" as *;
+
+.projects {
+    &__header {
+        padding: 20px 0 30px;
+
+        @media (min-width: $media-lg) {
+            padding: 40px 0 30px;
+        }
+    }
+}
