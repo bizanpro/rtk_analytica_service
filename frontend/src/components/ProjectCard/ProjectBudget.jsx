@@ -1,3 +1,5 @@
+import getColorBySign from "../../utils/getColorBySign";
+
 const ProjectBudget = ({ projectData }) => {
     return (
         <div className="flex items-end gap-5 min-h-[42px]">
@@ -14,14 +16,18 @@ const ProjectBudget = ({ projectData }) => {
                 )}
             </div>
             <div className="flex flex-col gap-2">
-                <div className="flex gap-1 text-red-400 max-w-[50px] overflow-hidden text-ellipsis whitespace-nowrap">
-                    {projectData.budget_difference_percentage !== null && (
-                        <>
-                            +{projectData.budget_difference_percentage}
-                            <span>%</span>
-                        </>
-                    )}
-                </div>
+                {projectData.budget_difference_percentage !== null && (
+                    <div
+                        className={`flex gap-1 ${getColorBySign(
+                            projectData.budget_difference_percentage,
+                            "text-red-400",
+                            "text-green-400"
+                        )} max-w-[50px] overflow-hidden text-ellipsis whitespace-nowrap`}
+                    >
+                        {projectData.budget_difference_percentage}
+                        <span>%</span>
+                    </div>
+                )}
 
                 {projectData?.fta_budget !== null && (
                     <div className="flex gap-1">

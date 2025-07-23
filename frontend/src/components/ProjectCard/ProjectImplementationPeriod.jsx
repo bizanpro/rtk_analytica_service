@@ -1,4 +1,5 @@
 import ProgressBlock from "../ProgressBlock";
+import getColorBySign from "../../utils/getColorBySign";
 
 const ProjectImplementationPeriod = ({ projectData }) => {
     const percentage = projectData?.completion_percentage;
@@ -19,20 +20,23 @@ const ProjectImplementationPeriod = ({ projectData }) => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                    <div className="flex gap-1 text-red-400">
-                        {projectData?.implementation_period_difference_percentage !==
-                            null && (
-                            <>
-                                <div className="max-w-[50px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                    +
-                                    {
-                                        projectData?.implementation_period_difference_percentage
-                                    }
-                                </div>
-                                <span>%</span>
-                            </>
-                        )}
-                    </div>
+                    {projectData?.implementation_period_difference_percentage !==
+                        null && (
+                        <div
+                            className={`flex gap-1 ${getColorBySign(
+                                projectData.implementation_period_difference_percentage,
+                                "text-red-400",
+                                "text-green-400"
+                            )}`}
+                        >
+                            <div className="max-w-[50px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                {
+                                    projectData?.implementation_period_difference_percentage
+                                }
+                            </div>
+                            <span>%</span>
+                        </div>
+                    )}
 
                     {projectData?.fta_implementation_period > 0 && (
                         <div className="flex gap-1">

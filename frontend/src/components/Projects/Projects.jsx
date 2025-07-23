@@ -12,7 +12,7 @@ const Projects = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
     const navigate = useNavigate();
 
-    const [mode, setMode] = useState("read");
+    const [mode, setMode] = useState("edit");
     const [list, setList] = useState([]);
     const [popupState, setPopupState] = useState(false);
     const [newProjectName, setNewProjectName] = useState("");
@@ -142,76 +142,25 @@ const Projects = () => {
         <main className="page">
             <div className="container py-8">
                 <div className="flex justify-between items-center gap-6 mb-8">
-                    <h1 className="text-3xl font-medium">
-                        Реестр проектов{" "}
-                        {filteredProjects.length > 0 &&
-                            `(${filteredProjects.length})`}
+                    <h1 className="title">
+                        Реестр проектов
+                        {filteredProjects.length > 0 && (
+                            <span>{filteredProjects.length}</span>
+                        )}
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        {nameOptions.length > 0 && (
-                            <Select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                }
-                                title={"Проект"}
-                                items={nameOptions}
-                                onChange={(evt) => {
-                                    setSelectedName(evt.target.value);
-                                }}
-                            />
-                        )}
-
-                        {sectorOptions.length > 0 && (
-                            <Select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                }
-                                title={"Отрасль"}
-                                items={sectorOptions}
-                                onChange={(evt) => {
-                                    setSelectedSector(evt.target.value);
-                                }}
-                            />
-                        )}
-
-                        {bankOptions.length > 0 && (
-                            <Select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                }
-                                title={"Банк"}
-                                items={bankOptions}
-                                onChange={(evt) =>
-                                    setSelectedBank(evt.target.value)
-                                }
-                            />
-                        )}
-
-                        {projectManagerOptions.length > 0 && (
-                            <Select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[200px] max-w-[200px]"
-                                }
-                                title={"Руководитель проекта"}
-                                items={projectManagerOptions}
-                                onChange={(evt) =>
-                                    setSelectedManager(evt.target.value)
-                                }
-                            />
-                        )}
-
                         {mode === "edit" && (
                             <button
                                 type="button"
-                                className="p-1 px-4 text-gray-900 rounded-lg bg-gray-100 group text-lg"
+                                className="button-active"
                                 onClick={openPopup}
                             >
-                                Создать проект
+                                <span>Создать проект</span> +
                             </button>
                         )}
 
-                        <nav className="switch">
+                        {/* <nav className="switch">
                             <div>
                                 <input
                                     type="radio"
@@ -237,8 +186,62 @@ const Projects = () => {
                                     Редактирование
                                 </label>
                             </div>
-                        </nav>
+                        </nav> */}
                     </div>
+                </div>
+
+                <div className="flex items-center gap-6">
+                    {nameOptions.length > 0 && (
+                        <Select
+                            className={
+                                "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                            }
+                            title={"Проект"}
+                            items={nameOptions}
+                            onChange={(evt) => {
+                                setSelectedName(evt.target.value);
+                            }}
+                        />
+                    )}
+
+                    {sectorOptions.length > 0 && (
+                        <Select
+                            className={
+                                "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                            }
+                            title={"Отрасль"}
+                            items={sectorOptions}
+                            onChange={(evt) => {
+                                setSelectedSector(evt.target.value);
+                            }}
+                        />
+                    )}
+
+                    {bankOptions.length > 0 && (
+                        <Select
+                            className={
+                                "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                            }
+                            title={"Банк"}
+                            items={bankOptions}
+                            onChange={(evt) =>
+                                setSelectedBank(evt.target.value)
+                            }
+                        />
+                    )}
+
+                    {projectManagerOptions.length > 0 && (
+                        <Select
+                            className={
+                                "p-1 border border-gray-300 min-w-[200px] max-w-[200px]"
+                            }
+                            title={"Руководитель проекта"}
+                            items={projectManagerOptions}
+                            onChange={(evt) =>
+                                setSelectedManager(evt.target.value)
+                            }
+                        />
+                    )}
                 </div>
 
                 <div className="overflow-x-auto w-full pb-5">

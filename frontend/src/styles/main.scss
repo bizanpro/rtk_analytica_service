@@ -31,6 +31,11 @@
     }
 }
 
+body,
+.Toastify__toast {
+    font-family: var(--font-inter);
+}
+
 body *::-webkit-scrollbar,
 body::-webkit-scrollbar {
     width: 5px;
@@ -389,4 +394,67 @@ body {
     transition: opacity 0.2s ease-in-out;
     opacity: 0.5;
     pointer-events: none;
+}
+
+.title {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 120%;
+    vertical-align: middle;
+    color: var(--color-gray-100);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    span {
+        display: inline-block;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 120%;
+        color: var(--color-gray-60);
+
+        @media (min-width: $media-lg) {
+            font-size: 16px;
+        }
+    }
+
+    @media (min-width: $media-lg) {
+        align-items: flex-start;
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 120%;
+    }
+}
+
+.button-active {
+    background: var(--color-orange-70);
+    color: var(--color-white);
+    border-radius: 10px;
+    height: 40px;
+    width: 40px;
+    flex: 0 0 40px;
+    padding: 12px;
+    font-weight: 500;
+    font-size: 14px;
+
+    transition: background var(--trans);
+
+    span {
+        display: none;
+        @media (min-width: $media-lg) {
+            display: inline;
+        }
+    }
+
+    &:hover {
+        background: var(--color-orange-60);
+    }
+
+    @media (min-width: $media-lg) {
+        line-height: 150%;
+        height: auto;
+        width: auto;
+        flex: 0 0 auto;
+        padding: 6px 12px;
+    }
 }
