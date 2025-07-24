@@ -6,7 +6,7 @@ import Overlay from "../Overlay/Overlay";
 
 import "./Header.scss";
 
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.svg";
 
 const Header = () => {
     const [isActive, setIsActive] = useState(false);

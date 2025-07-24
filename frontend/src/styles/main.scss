@@ -436,7 +436,6 @@ body {
     padding: 12px;
     font-weight: 500;
     font-size: 14px;
-
     transition: background var(--trans);
 
     span {
@@ -444,6 +443,14 @@ body {
         @media (min-width: $media-lg) {
             display: inline;
         }
+    }
+
+    &__icon {
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     &:hover {
@@ -539,15 +546,20 @@ body {
             div {
                 text-align: center;
                 width: 107px;
-                padding: 5px 8px;
+                padding: 5px 8px 5px 28px;
                 border: 1px solid var(--color-gray-50);
                 color: var(--color-gray-70);
                 border-radius: 50px;
                 line-height: 100%;
+                background-image: url("../assets/icons/in-progress.svg");
+                background-size: 16px 16px;
+                background-position: left 8px top 50%;
+                background-repeat: no-repeat;
 
                 &.completed {
                     border: 1px solid var(--color-green-70);
                     color: var(--color-green-70);
+                    background-image: url("../assets/icons/success.svg");
                 }
             }
         }
