@@ -38,8 +38,8 @@ body,
 
 body *::-webkit-scrollbar,
 body::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 8px;
+    height: 8px;
 }
 
 body *::-webkit-scrollbar-track,
@@ -49,13 +49,8 @@ body::-webkit-scrollbar-track {
 
 body *::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
-    background: rgba(201, 201, 201, 0.8);
-    border-radius: 12px;
-}
-
-body *::-webkit-scrollbar-thumb:hover,
-body::-webkit-scrollbar-thumb:hover {
-    background: #bfbfbf;
+    background: var(--color-gray-50);
+    border-radius: 4px;
 }
 
 html,

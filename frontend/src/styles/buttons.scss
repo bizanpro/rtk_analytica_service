@@ -77,3 +77,20 @@
     border-radius: 10px;
     padding: 8px 16px;
 }
+
+.delete-button {
+    width: 20px;
+    height: 20px;
+
+    svg {
+        transition: color var(--trans);
+        color: var(--color-gray-50);
+        pointer-events: none;
+    }
+
+    &:hover {
+        svg {
+            color: var(--color-red-70);
+        }
+    }
+}

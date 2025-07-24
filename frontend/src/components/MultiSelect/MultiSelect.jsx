@@ -7,6 +7,9 @@ const MultiSelect = ({ options, selectedValues = [], onChange, fieldName }) => {
         onChange({ [fieldName]: newValues });
     };
 
+    console.log(options);
+    console.log(selectedValues);
+
     return (
         <ul className="grid gap-2">
             {options.map((option) => (

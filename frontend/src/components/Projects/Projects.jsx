@@ -7,6 +7,7 @@ import postData from "../../utils/postData";
 import ProjectItem from "./ProjectItem";
 import Popup from "../Popup/Popup";
 import Select from "../Select";
+import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
 
 import "./Projects.scss";
 
@@ -36,29 +37,29 @@ const Projects = () => {
         { label: "Последние отчёты", key: "latest_reports" },
     ];
 
-    const filteredProjects = useMemo(() => {
-        const result = list.filter((project) => {
-            return (
-                (selectedSector && selectedSector !== "default"
-                    ? project.industry === selectedSector
-                    : true) &&
-                (selectedBank && selectedBank !== "default"
-                    ? Array.isArray(project.creditors)
-                        ? project.creditors?.some(
-                              (bank) => bank.name === selectedBank
-                          )
-                        : false
-                    : true) &&
-                (selectedManager && selectedManager !== "default"
-                    ? project.manager === selectedManager
-                    : true) &&
-                (selectedName && selectedName !== "default"
-                    ? project.name === selectedName
-                    : true)
-            );
-        });
-        return result;
-    }, [list, selectedSector, selectedBank, selectedManager, selectedName]);
+    // const filteredProjects = useMemo(() => {
+    //     const result = list.filter((project) => {
+    //         return (
+    //             (selectedSector && selectedSector !== "default"
+    //                 ? project.industry === selectedSector
+    //                 : true) &&
+    //             (selectedBank && selectedBank !== "default"
+    //                 ? Array.isArray(project.creditors)
+    //                     ? project.creditors?.some(
+    //                           (bank) => bank.name === selectedBank
+    //                       )
+    //                     : false
+    //                 : true) &&
+    //             (selectedManager && selectedManager !== "default"
+    //                 ? project.manager === selectedManager
+    //                 : true) &&
+    //             (selectedName && selectedName !== "default"
+    //                 ? project.name === selectedName
+    //                 : true)
+    //         );
+    //     });
+    //     return result;
+    // }, [list, selectedSector, selectedBank, selectedManager, selectedName]);
 
     // Заполняем селектор проектов
     const nameOptions = useMemo(() => {
@@ -141,6 +142,30 @@ const Projects = () => {
         getProjects();
     }, []);
 
+    const [filters, setFilters] = useState({
+        selectedSectors: [],
+        selectedBanks: [],
+        selectedManagers: [],
+        selectedNames: [],
+    });
+
+    const filteredProjects = useMemo(() => {
+        return list.filter((project) => {
+            return (
+                (filters.selectedSectors.length === 0 ||
+                    filters.selectedSectors.includes(project.industry)) &&
+                (filters.selectedBanks.length === 0 ||
+                    project.creditors?.some((c) =>
+                        filters.selectedBanks.includes(c.name)
+                    )) &&
+                (filters.selectedManagers.length === 0 ||
+                    filters.selectedManagers.includes(project.manager)) &&
+                (filters.selectedNames.length === 0 ||
+                    filters.selectedNames.includes(project.name))
+            );
+        });
+    }, [list, filters]);
+
     return (
         <main className="page projects">
             <div className="container projects__container">
@@ -207,8 +232,21 @@ const Projects = () => {
                     </div>
                 </section>
 
-                <div className="flex items-center gap-6">
-                    {nameOptions.length > 0 && (
+                <div>
+                    <MultiSelectWithSearch
+                        label="Отрасли"
+                        options={nameOptions.map((name) => ({
+                            value: name,
+                            label: name,
+                        }))}
+                        selectedValues={filters.selectedSectors}
+                        onChange={(updated) =>
+                            setFilters((prev) => ({ ...prev, ...updated }))
+                        }
+                        fieldName="selectedSectors"
+                    />
+
+                    {/* {nameOptions.length > 0 && (
                         <Select
                             className={
                                 "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
@@ -258,7 +296,7 @@ const Projects = () => {
                                 setSelectedManager(evt.target.value)
                             }
                         />
-                    )}
+                    )} */}
                 </div>
 
                 <section className="overflow-x-auto w-full pb-5">
@@ -302,10 +340,10 @@ const Projects = () => {
 
                 {popupState && (
                     <Popup onClick={closePopup} title="Создание проекта">
-                        <div className="action-form__body form">
+                        <div className="action-form__body">
                             <label
                                 htmlFor="project_name"
-                                className="form__label"
+                                className="form-label"
                             >
                                 Название проекта <span>*</span>
                             </label>
@@ -313,7 +351,7 @@ const Projects = () => {
                                 type="text"
                                 name="project_name"
                                 id="project_name"
-                                className="form__field w-full"
+                                className="form-field w-full"
                                 placeholder="Ваш текст"
                                 value={newProjectName}
                                 onChange={(e) => handleProjectsNameChange(e)}

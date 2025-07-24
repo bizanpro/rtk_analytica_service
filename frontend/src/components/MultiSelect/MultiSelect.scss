@@ -1,0 +1,57 @@
+@use "../../styles/media-breakpoints" as *;
+
+.multi-select {
+    border-radius: 10px;
+    box-shadow: 0 12px 28px rgba(0, 32, 51, 0.04);
+    padding: 15px;
+    width: calc(100% - 30px);
+    max-width: 400px;
+    border: 1px solid var(--color-gray-40);
+    z-index: 9;
+
+    @media (min-width: $media-lg) {
+        width: 100%;
+    }
+
+    &__search {
+        margin-bottom: 15px;
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 15px;
+    }
+
+    &__list {
+        height: 261px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        border: 1px solid var(--color-gray-30);
+        border-radius: 4px;
+        padding: 12px;
+        display: grid;
+        gap: 12px;
+
+        &-item {
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 140%;
+
+            label {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    }
+
+    &__footer {
+        padding-top: 15px;
+        display: grid;
+        align-items: center;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+}
