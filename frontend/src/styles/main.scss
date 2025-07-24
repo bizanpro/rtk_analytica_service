@@ -427,146 +427,6 @@ body {
     }
 }
 
-.button-active {
-    background: var(--color-orange-70);
-    color: var(--color-white);
-    border-radius: 10px;
-    height: 40px;
-    width: 40px;
-    flex: 0 0 40px;
-    padding: 12px;
-    font-weight: 500;
-    font-size: 14px;
-    transition: background var(--trans);
-
-    span {
-        display: none;
-        @media (min-width: $media-lg) {
-            display: inline;
-        }
-    }
-
-    &__icon {
-        width: 16px;
-        height: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    &:hover {
-        background: var(--color-orange-60);
-    }
-
-    @media (min-width: $media-lg) {
-        line-height: 150%;
-        height: auto;
-        width: auto;
-        flex: 0 0 auto;
-        padding: 6px 12px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-}
-
-.registry-table {
-    &__item {
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 150%;
-        color: var(--color-gray-100);
-        border-bottom: 1px solid var(--color-gray-30);
-
-        > td {
-            padding: 15px;
-        }
-
-        > td:first-of-type {
-            padding-left: 0;
-        }
-
-        > td:last-of-type {
-            padding-right: 0;
-        }
-
-        &-status {
-            width: fit-content;
-            border-radius: 99px;
-            padding: 3px 8px;
-            color: var(--color-gray-70);
-            background: var(--color-gray-30);
-
-            &_completed {
-                color: var(--color-orange-80);
-                background: var(--color-orange-30);
-            }
-
-            &_active {
-                color: var(--color-green-80);
-                background: var(--color-green-30);
-            }
-        }
-
-        &-budget {
-            b {
-                display: block;
-                font-weight: 600;
-                font-size: 16px;
-            }
-
-            span {
-                color: var(--color-gray-60);
-            }
-        }
-
-        &-period {
-            > span {
-                color: var(--color-gray-60);
-            }
-
-            div > span {
-                display: block;
-                padding: 4px 5px;
-                width: fit-content;
-                font-size: 12px;
-                line-height: 100%;
-                text-align: center;
-                color: var(--color-gray-60);
-                border: 1px solid var(--color-gray-60);
-                border-radius: 5px;
-            }
-        }
-
-        &-last-report {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 10px;
-
-            div {
-                text-align: center;
-                width: 107px;
-                padding: 5px 8px 5px 28px;
-                border: 1px solid var(--color-gray-50);
-                color: var(--color-gray-70);
-                border-radius: 50px;
-                line-height: 100%;
-                background-image: url("../assets/icons/in-progress.svg");
-                background-size: 16px 16px;
-                background-position: left 8px top 50%;
-                background-repeat: no-repeat;
-
-                &.completed {
-                    border: 1px solid var(--color-green-70);
-                    color: var(--color-green-70);
-                    background-image: url("../assets/icons/success.svg");
-                }
-            }
-        }
-    }
-}
-
 .text-blue {
     color: var(--color-blue-80);
 }
@@ -574,13 +434,26 @@ body {
 .action-form {
     &__body {
         padding: 10px 20px 30px;
+
+        @media (min-width: $media-lg) {
+            padding: 18px 30px 20px;
+        }
     }
 
     &__footer {
         padding: 10px 20px 20px;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
+        justify-content: flex-end;
+
+        > div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @media (min-width: $media-lg) {
+            padding: 10px 30px 30px;
+        }
     }
 }

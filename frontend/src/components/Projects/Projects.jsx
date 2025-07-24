@@ -321,21 +321,24 @@ const Projects = () => {
                         </div>
 
                         <div className="action-form__footer">
-                            <button
-                                type="button"
-                                className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
-                                onClick={createProject}
-                            >
-                                Создать
-                            </button>
+                            <div className="max-w-[280px]">
+                                <button
+                                    type="button"
+                                    onClick={() => setPopupState(false)}
+                                    className="cancel-button flex-[1_0_auto]"
+                                >
+                                    Отменить
+                                </button>
 
-                            <button
-                                type="button"
-                                onClick={() => setPopupState(false)}
-                                className="border rounded-lg py-2 px-5 flex-[1_1_50%]"
-                            >
-                                Отменить
-                            </button>
+                                <button
+                                    type="button"
+                                    className="action-button flex-[1_0_auto]"
+                                    onClick={createProject}
+                                    disabled={newProjectName.length < 2}
+                                >
+                                    Создать проект
+                                </button>
+                            </div>
                         </div>
                     </Popup>
                 )}

@@ -1,0 +1,79 @@
+@use "./media-breakpoints" as *;
+
+.button-active {
+    background: var(--color-orange-70);
+    color: var(--color-white);
+    border-radius: 10px;
+    height: 40px;
+    width: 40px;
+    flex: 0 0 40px;
+    padding: 12px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: background var(--trans);
+
+    span {
+        display: none;
+        @media (min-width: $media-lg) {
+            display: inline;
+        }
+    }
+
+    &__icon {
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &:hover {
+        background: var(--color-orange-60);
+    }
+
+    @media (min-width: $media-lg) {
+        line-height: 150%;
+        height: auto;
+        width: auto;
+        flex: 0 0 auto;
+        padding: 6px 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+.action-button {
+    background: var(--color-orange-70);
+    color: var(--color-white);
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 150%;
+    text-align: center;
+    transition: background var(--trans), color var(--trans);
+    padding: 8px 16px;
+
+    &:hover {
+        background: var(--color-orange-60);
+    }
+
+    &:disabled {
+        color: var(--color-gray-50);
+        border: 1px solid var(--color-gray-30);
+        background: transparent;
+        pointer-events: none;
+        cursor: none;
+    }
+}
+
+.cancel-button {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 150%;
+    text-align: center;
+    color: var(--color-gray-70);
+    background: var(--color-gray-30);
+    border-radius: 10px;
+    padding: 8px 16px;
+}

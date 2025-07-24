@@ -1,3 +1,5 @@
+@use "./media-breakpoints" as *;
+
 .form {
     &__label {
         display: block;
