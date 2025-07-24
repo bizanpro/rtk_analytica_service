@@ -5,6 +5,7 @@ import "./styles/reset.scss";
 import "./styles/variables.scss";
 import "./styles/connected-fonts.scss";
 import "./styles/index.css";
+import "./styles/form.scss";
 import "./styles/main.scss";
 
 import App from "./components/App.jsx";

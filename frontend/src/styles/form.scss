@@ -1,0 +1,31 @@
+.form {
+    &__label {
+        display: block;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 150%;
+        color: var(--color-gray-70);
+        margin-bottom: 8px;
+
+        span {
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 150%;
+            color: var(--color-red-70);
+        }
+    }
+
+    &__field {
+        padding: 10px 13px;
+        border-radius: 10px;
+        border: 1px solid var(--color-gray-30);
+        background: var(--color-gray-20);
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 140%;
+
+        ::placeholder {
+            color: var(--color-gray-60);
+        }
+    }
+}

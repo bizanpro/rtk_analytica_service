@@ -161,7 +161,18 @@ const Projects = () => {
                             >
                                 <span>Создать проект</span>
                                 <div className="button-active__icon">
-                                    <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.75 5.75h3.75v1.5H6.75V11h-1.5V7.25H1.5v-1.5h3.75V2h1.5v3.75z" fill="#fff"/></svg>
+                                    <svg
+                                        width="12"
+                                        height="13"
+                                        viewBox="0 0 12 13"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M6.75 5.75h3.75v1.5H6.75V11h-1.5V7.25H1.5v-1.5h3.75V2h1.5v3.75z"
+                                            fill="#fff"
+                                        />
+                                    </svg>
                                 </div>
                             </button>
                         )}
@@ -291,42 +302,40 @@ const Projects = () => {
 
                 {popupState && (
                     <Popup onClick={closePopup} title="Создание проекта">
-                        <div className="min-w-[280px]">
-                            <div className="action-form__body">
-                                <label
-                                    htmlFor="project_name"
-                                    className="block mb-3"
-                                >
-                                    Введите наименование проекта
-                                </label>
-                                <input
-                                    type="text"
-                                    name="project_name"
-                                    id="project_name"
-                                    className="border-2 border-gray-300 p-3 w-full"
-                                    value={newProjectName}
-                                    onChange={(e) =>
-                                        handleProjectsNameChange(e)
-                                    }
-                                />
-                            </div>
-                            <div className="action-form__footer mt-5 flex items-center gap-6 justify-between">
-                                <button
-                                    type="button"
-                                    className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
-                                    onClick={createProject}
-                                >
-                                    Создать
-                                </button>
+                        <div className="action-form__body form">
+                            <label
+                                htmlFor="project_name"
+                                className="form__label"
+                            >
+                                Название проекта <span>*</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="project_name"
+                                id="project_name"
+                                className="form__field w-full"
+                                placeholder="Ваш текст"
+                                value={newProjectName}
+                                onChange={(e) => handleProjectsNameChange(e)}
+                            />
+                        </div>
 
-                                <button
-                                    type="button"
-                                    onClick={() => setPopupState(false)}
-                                    className="border rounded-lg py-2 px-5 flex-[1_1_50%]"
-                                >
-                                    Отменить
-                                </button>
-                            </div>
+                        <div className="action-form__footer">
+                            <button
+                                type="button"
+                                className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
+                                onClick={createProject}
+                            >
+                                Создать
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => setPopupState(false)}
+                                className="border rounded-lg py-2 px-5 flex-[1_1_50%]"
+                            >
+                                Отменить
+                            </button>
                         </div>
                     </Popup>
                 )}
