@@ -17,8 +17,6 @@ const MultiSelectWithSearch = ({
         setDraftSelected(selectedValues);
     }, [selectedValues]);
 
-    // console.log(draftSelected);
-
     const filteredOptions = Array.isArray(options)
         ? options.filter((opt) =>
               opt?.label
@@ -58,79 +56,57 @@ const MultiSelectWithSearch = ({
                 />
             </div>
 
-            {filteredOptions.length > 0 && (
-                <div className="multi-select__actions">
+            <div className="multi-select__actions">
+                <button
+                    className="multi-select__selectall-button"
+                    type="button"
+                    onClick={handleSelectAll}
+                >
+                    Выбрать все
+                </button>
+
+                {draftSelected.length > 0 && (
                     <button
-                        className="multi-select__selectall-button"
+                        className="multi-select__reset-button"
                         type="button"
-                        onClick={handleSelectAll}
+                        onClick={handleReset}
                     >
-                        Выбрать все
-                    </button>
-
-                    {draftSelected.length > 0 && (
-                        <button
-                            className="multi-select__reset-button"
-                            type="button"
-                            onClick={handleReset}
-                        >
-                            <span>
-                                <svg
-                                    width="12"
-                                    height="13"
-                                    viewBox="0 0 12 13"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        d="M7.06 6.5l2.652 2.652-1.06 1.06L6 7.561l-2.652 2.651-1.06-1.06L4.939 6.5 2.288 3.848l1.06-1.06L6 5.439l2.652-2.651 1.06 1.06L7.061 6.5z"
-                                        fill="#0078D2"
-                                    />
-                                </svg>
-                            </span>
-                            Сбросить
-                        </button>
-                    )}
-                </div>
-            )}
-
-            <ul
-                className={`multi-select__list ${
-                    filteredOptions.length > 0 ? "" : "max-h-[100px]"
-                }`}
-            >
-                {filteredOptions.length > 0 ? (
-                    filteredOptions.map((option) => (
-                        <li
-                            className="multi-select__list-item"
-                            key={option.value}
-                        >
-                            <label
-                                className="form-checkbox"
-                                htmlFor={option.value}
+                        <span>
+                            <svg
+                                width="12"
+                                height="13"
+                                viewBox="0 0 12 13"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
                             >
-                                <input
-                                    type="checkbox"
-                                    checked={draftSelected.includes(
-                                        option.value
-                                    )}
-                                    onChange={() => toggleValue(option.value)}
-                                    id={option.value}
+                                <path
+                                    d="M7.06 6.5l2.652 2.652-1.06 1.06L6 7.561l-2.652 2.651-1.06-1.06L4.939 6.5 2.288 3.848l1.06-1.06L6 5.439l2.652-2.651 1.06 1.06L7.061 6.5z"
+                                    fill="#0078D2"
                                 />
+                            </svg>
+                        </span>
+                        Сбросить
+                    </button>
+                )}
+            </div>
 
-                                <span className="checkbox"></span>
+            <ul className="multi-select__list">
+                {filteredOptions.map((option) => (
+                    <li className="multi-select__list-item" key={option.value}>
+                        <label className="form-checkbox" htmlFor={option.value}>
+                            <input
+                                type="checkbox"
+                                checked={draftSelected.includes(option.value)}
+                                onChange={() => toggleValue(option.value)}
+                                id={option.value}
+                            />
 
-                                <span>{option.label}</span>
-                            </label>
-                        </li>
-                    ))
-                ) : (
-                    <li className="multi-select__list-item">
-                        <label className="form-checkbox">
-                            <span className="text-gray-400">Список пуст</span>
+                            <span className="checkbox"></span>
+
+                            <span>{option.label}</span>
                         </label>
                     </li>
-                )}
+                ))}
             </ul>
 
             <div className="multi-select__footer">
@@ -142,15 +118,13 @@ const MultiSelectWithSearch = ({
                     Отменить
                 </button>
 
-                {filteredOptions.length > 0 && (
-                    <button
-                        type="button"
-                        className="action-button"
-                        onClick={handleApply}
-                    >
-                        Применить
-                    </button>
-                )}
+                <button
+                    type="button"
+                    className="action-button"
+                    onClick={handleApply}
+                >
+                    Применить
+                </button>
             </div>
         </div>
     );

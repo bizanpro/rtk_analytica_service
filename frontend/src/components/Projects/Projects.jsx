@@ -7,6 +7,7 @@ import postData from "../../utils/postData";
 import ProjectItem from "./ProjectItem";
 import Popup from "../Popup/Popup";
 import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
+import handleStatus from "../../utils/handleStatus";
 
 import "./Projects.scss";
 
@@ -21,41 +22,9 @@ const Projects = () => {
     const [list, setList] = useState([]);
 
     const [newProjectName, setNewProjectName] = useState("");
-
     const [openFilter, setOpenFilter] = useState("");
 
-    const [selectedName, setSelectedName] = useState("default");
-    const [selectedSector, setSelectedSector] = useState("default");
-    const [selectedBank, setSelectedBank] = useState("default");
-    const [selectedStatus, setSelectedStatus] = useState("default");
-    const [selectedManager, setSelectedManager] = useState("default");
-    const [selectedContragent, setSelectedContragent] = useState("default");
-
-    // const filteredProjects = useMemo(() => {
-    //     const result = list.filter((project) => {
-    //         return (
-    //             (selectedSector && selectedSector !== "default"
-    //                 ? project.industry === selectedSector
-    //                 : true) &&
-    //             (selectedBank && selectedBank !== "default"
-    //                 ? Array.isArray(project.creditors)
-    //                     ? project.creditors?.some(
-    //                           (bank) => bank.name === selectedBank
-    //                       )
-    //                     : false
-    //                 : true) &&
-    //             (selectedManager && selectedManager !== "default"
-    //                 ? project.manager === selectedManager
-    //                 : true) &&
-    //             (selectedName && selectedName !== "default"
-    //                 ? project.name === selectedName
-    //                 : true)
-    //         );
-    //     });
-    //     return result;
-    // }, [list, selectedSector, selectedBank, selectedManager, selectedName]);
-
-    // Заполняем селектор проектов
+    // Заполняем параметры фильтров
     const nameOptions = useMemo(() => {
         const allNames = list
             .map((item) => item.name)
@@ -64,7 +33,18 @@ const Projects = () => {
         return Array.from(new Set(allNames));
     }, [list]);
 
-    // Заполняем селектор отраслей
+    const statusOptions = useMemo(() => {
+        const allNames = list.map((item) => handleStatus(item.status));
+
+        return Array.from(new Set(allNames));
+    }, [list]);
+
+    const contragentOptions = useMemo(() => {
+        const allNames = list.map((item) => item.contragent);
+
+        return Array.from(new Set(allNames));
+    }, [list]);
+
     const sectorOptions = useMemo(() => {
         const allSectors = list
             .map((item) => item.industry)
@@ -73,7 +53,6 @@ const Projects = () => {
         return Array.from(new Set(allSectors));
     }, [list]);
 
-    // Заполняем селектор банков
     const bankOptions = useMemo(() => {
         const allBanks = list.flatMap((item) =>
             item.creditors?.map((bank) => bank.name)
@@ -81,7 +60,6 @@ const Projects = () => {
         return Array.from(new Set(allBanks));
     }, [list]);
 
-    // Заполняем селектор руководителей
     const projectManagerOptions = useMemo(() => {
         const allPM = list
             .map((item) => item.manager)
@@ -100,13 +78,13 @@ const Projects = () => {
             label: "Статус",
             key: "status",
             filter: "selectedStatuses",
-            options: [],
+            options: statusOptions,
         },
         {
             label: "Заказчик",
             key: "contragent",
             filter: "selectedContagents",
-            options: [],
+            options: contragentOptions,
         },
         {
             label: "Основная отрасль",
@@ -178,30 +156,6 @@ const Projects = () => {
         getProjects();
     }, []);
 
-    // const filteredProjects = useMemo(() => {
-    //     const result = list.filter((project) => {
-    //         return (
-    //             (selectedSector && selectedSector !== "default"
-    //                 ? project.industry === selectedSector
-    //                 : true) &&
-    //             (selectedBank && selectedBank !== "default"
-    //                 ? Array.isArray(project.creditors)
-    //                     ? project.creditors?.some(
-    //                           (bank) => bank.name === selectedBank
-    //                       )
-    //                     : false
-    //                 : true) &&
-    //             (selectedManager && selectedManager !== "default"
-    //                 ? project.manager === selectedManager
-    //                 : true) &&
-    //             (selectedName && selectedName !== "default"
-    //                 ? project.name === selectedName
-    //                 : true)
-    //         );
-    //     });
-    //     return result;
-    // }, [list, selectedSector, selectedBank, selectedManager, selectedName]);
-
     const [filters, setFilters] = useState({
         selectedNames: [],
         selectedStatuses: [],
@@ -223,7 +177,11 @@ const Projects = () => {
                 (filters.selectedManagers.length === 0 ||
                     filters.selectedManagers.includes(project.manager)) &&
                 (filters.selectedNames.length === 0 ||
-                    filters.selectedNames.includes(project.name))
+                    filters.selectedNames.includes(project.name)) &&
+                (filters.selectedStatuses.length === 0 ||
+                    filters.selectedStatuses.includes(handleStatus(project.status))) &&
+                (filters.selectedContagents.length === 0 ||
+                    filters.selectedContagents.includes(project.contragent))
             );
         });
     }, [list, filters]);
@@ -294,21 +252,6 @@ const Projects = () => {
                     </div>
                 </section>
 
-                <div>
-                    {/* {nameOptions.length > 0 && (
-                        <Select
-                            className={
-                                "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                            }
-                            title={"Проект"}
-                            items={nameOptions}
-                            onChange={(evt) => {
-                                setSelectedName(evt.target.value);
-                            }}
-                        />
-                    )}*/}
-                </div>
-
                 <section className="overflow-x-auto w-full pb-5">
                     <table className="registry-table table-auto w-full border-collapse">
                         <thead className="registry-table__thead">
@@ -363,43 +306,58 @@ const Projects = () => {
                                                                 </button>
                                                             )}
 
-                                                            <button
-                                                                className={`filter-button ${
-                                                                    openFilter ===
-                                                                    key
-                                                                        ? "active"
-                                                                        : ""
-                                                                }`}
-                                                                title={`Открыть фильтр ${label}`}
-                                                                onClick={() =>
-                                                                    setOpenFilter(
-                                                                        key
-                                                                    )
-                                                                }
-                                                            >
-                                                                <svg
-                                                                    width="16"
-                                                                    height="16"
-                                                                    viewBox="0 0 16 16"
-                                                                    fill="none"
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                >
-                                                                    <path
-                                                                        d="M2 5.093l4.8 3.429v6l2.4-1.286V8.522L14 5.093V2.522H2v2.571z"
-                                                                        fill="currentColor"
-                                                                    />
-                                                                </svg>
-                                                            </button>
+                                                            {options.length >
+                                                                0 &&
+                                                                options.some(
+                                                                    (val) =>
+                                                                        val !==
+                                                                        undefined
+                                                                ) && (
+                                                                    <button
+                                                                        className={`filter-button ${
+                                                                            openFilter ===
+                                                                            key
+                                                                                ? "active"
+                                                                                : ""
+                                                                        }`}
+                                                                        title={`Открыть фильтр ${label}`}
+                                                                        onClick={() =>
+                                                                            setOpenFilter(
+                                                                                key
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <svg
+                                                                            width="16"
+                                                                            height="16"
+                                                                            viewBox="0 0 16 16"
+                                                                            fill="none"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                        >
+                                                                            <path
+                                                                                d="M2 5.093l4.8 3.429v6l2.4-1.286V8.522L14 5.093V2.522H2v2.571z"
+                                                                                fill="currentColor"
+                                                                            />
+                                                                        </svg>
+                                                                    </button>
+                                                                )}
                                                         </div>
 
                                                         {openFilter === key && (
                                                             <MultiSelectWithSearch
-                                                                options={options.map(
-                                                                    (name) => ({
-                                                                        value: name,
-                                                                        label: name,
-                                                                    })
-                                                                )}
+                                                                options={
+                                                                    options.length >
+                                                                    0
+                                                                        ? options.map(
+                                                                              (
+                                                                                  name
+                                                                              ) => ({
+                                                                                  value: name,
+                                                                                  label: name,
+                                                                              })
+                                                                          )
+                                                                        : []
+                                                                }
                                                                 selectedValues={
                                                                     filters[
                                                                         filter
