@@ -7,6 +7,7 @@ const MultiSelectWithSearch = ({
     selectedValues = [],
     onChange,
     fieldName,
+    close,
 }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [draftSelected, setDraftSelected] = useState(selectedValues);
@@ -16,7 +17,7 @@ const MultiSelectWithSearch = ({
         setDraftSelected(selectedValues);
     }, [selectedValues]);
 
-    console.log(draftSelected);
+    // console.log(draftSelected);
 
     const filteredOptions = Array.isArray(options)
         ? options.filter((opt) =>
@@ -37,10 +38,12 @@ const MultiSelectWithSearch = ({
     };
 
     const handleSelectAll = () => setDraftSelected(allValues);
+
     const handleReset = () => setDraftSelected([]);
-    const handleCancel = () => setDraftSelected(selectedValues);
+
     const handleApply = () => {
         onChange({ [fieldName]: draftSelected });
+        close("");
     };
 
     return (
@@ -55,7 +58,7 @@ const MultiSelectWithSearch = ({
                 />
             </div>
 
-            {options.length > 0 && (
+            {filteredOptions.length > 0 && (
                 <div className="multi-select__actions">
                     <button
                         className="multi-select__selectall-button"
@@ -91,8 +94,12 @@ const MultiSelectWithSearch = ({
                 </div>
             )}
 
-            <ul className="multi-select__list">
-                {filteredOptions.length > 0 &&
+            <ul
+                className={`multi-select__list ${
+                    filteredOptions.length > 0 ? "" : "max-h-[100px]"
+                }`}
+            >
+                {filteredOptions.length > 0 ? (
                     filteredOptions.map((option) => (
                         <li
                             className="multi-select__list-item"
@@ -116,24 +123,34 @@ const MultiSelectWithSearch = ({
                                 <span>{option.label}</span>
                             </label>
                         </li>
-                    ))}
+                    ))
+                ) : (
+                    <li className="multi-select__list-item">
+                        <label className="form-checkbox">
+                            <span className="text-gray-400">Список пуст</span>
+                        </label>
+                    </li>
+                )}
             </ul>
 
             <div className="multi-select__footer">
                 <button
                     type="button"
                     className="cancel-button"
-                    onClick={handleCancel}
+                    onClick={() => close("")}
                 >
                     Отменить
                 </button>
-                <button
-                    type="button"
-                    className="action-button"
-                    onClick={handleApply}
-                >
-                    Применить
-                </button>
+
+                {filteredOptions.length > 0 && (
+                    <button
+                        type="button"
+                        className="action-button"
+                        onClick={handleApply}
+                    >
+                        Применить
+                    </button>
+                )}
             </div>
         </div>
     );

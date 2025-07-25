@@ -94,3 +94,17 @@
         }
     }
 }
+
+.filter-button {
+    svg {
+        color: var(--color-gray-50);
+        transition: color var(--trans);
+    }
+
+    &.active,
+    &:hover {
+        svg {
+            color: var(--color-blue-70);
+        }
+    }
+}

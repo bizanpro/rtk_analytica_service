@@ -34,18 +34,6 @@
                 flex: 0 0 16px;
                 height: 16px;
             }
-
-            svg {
-                color: var(--color-gray-50);
-                transition: color var(--trans);
-            }
-
-            &.active,
-            &:hover {
-                svg {
-                    color: var(--color-blue-70);
-                }
-            }
         }
 
         th {
