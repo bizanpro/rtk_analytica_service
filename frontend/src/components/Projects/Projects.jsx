@@ -31,22 +31,6 @@ const Projects = () => {
     const [selectedManager, setSelectedManager] = useState("default");
     const [selectedContragent, setSelectedContragent] = useState("default");
 
-    const COLUMNS = [
-        { label: "Проект", key: "name", filter: selectedName },
-        { label: "Статус", key: "status", filter: selectedStatus },
-        { label: "Заказчик", key: "contragent", filter: selectedContragent },
-        { label: "Основная отрасль", key: "industry", filter: selectedSector },
-        { label: "Банк", key: "creditors", filter: selectedBank },
-        { label: "Бюджет", key: "project_budget" },
-        { label: "Срок", key: "implementation_period" },
-        {
-            label: "Руководитель проекта",
-            key: "project_manager",
-            filter: selectedManager,
-        },
-        { label: "Последние отчёты", key: "latest_reports" },
-    ];
-
     // const filteredProjects = useMemo(() => {
     //     const result = list.filter((project) => {
     //         return (
@@ -104,6 +88,43 @@ const Projects = () => {
             .filter((manager) => manager !== null);
         return Array.from(new Set(allPM));
     }, [list]);
+
+    const COLUMNS = [
+        {
+            label: "Проект",
+            key: "name",
+            filter: selectedName,
+            options: nameOptions,
+        },
+        { label: "Статус", key: "status", filter: selectedStatus, options: [] },
+        {
+            label: "Заказчик",
+            key: "contragent",
+            filter: selectedContragent,
+            options: [],
+        },
+        {
+            label: "Основная отрасль",
+            key: "industry",
+            filter: selectedSector,
+            options: sectorOptions,
+        },
+        {
+            label: "Банк",
+            key: "creditors",
+            filter: selectedBank,
+            options: bankOptions,
+        },
+        { label: "Бюджет", key: "project_budget" },
+        { label: "Срок", key: "implementation_period" },
+        {
+            label: "Руководитель проекта",
+            key: "project_manager",
+            filter: selectedManager,
+            options: projectManagerOptions,
+        },
+        { label: "Последние отчёты", key: "latest_reports" },
+    ];
 
     const handleProjectsNameChange = (e) => {
         setNewProjectName(e.target.value);
@@ -261,86 +282,92 @@ const Projects = () => {
                     <table className="registry-table table-auto w-full border-collapse">
                         <thead className="registry-table__thead">
                             <tr>
-                                {COLUMNS.map(({ label, key, filter }) => {
-                                    return (
-                                        <th
-                                            className={`min-w-[150px] ${
-                                                filter
-                                                    ? "registry-table__thead-filter-item"
-                                                    : ""
-                                            }`}
-                                            rowSpan="2"
-                                            key={key}
-                                        >
-                                            {filter ? (
-                                                <>
-                                                    <button
-                                                        type="button"
-                                                        className={`registry-table__thead-item ${
-                                                            openFilter === key
-                                                                ? "active"
-                                                                : ""
-                                                        }`}
-                                                        title={`Открыть фильтр ${label}`}
-                                                        onClick={() =>
-                                                            setOpenFilter(key)
-                                                        }
-                                                    >
+                                {COLUMNS.map(
+                                    ({ label, key, filter, options }) => {
+                                        return (
+                                            <th
+                                                className={`min-w-[150px] ${
+                                                    filter
+                                                        ? "registry-table__thead-filter-item"
+                                                        : ""
+                                                }`}
+                                                rowSpan="2"
+                                                key={key}
+                                            >
+                                                {filter ? (
+                                                    <>
+                                                        <button
+                                                            type="button"
+                                                            className={`registry-table__thead-item ${
+                                                                openFilter ===
+                                                                key
+                                                                    ? "active"
+                                                                    : ""
+                                                            }`}
+                                                            title={`Открыть фильтр ${label}`}
+                                                            onClick={() =>
+                                                                setOpenFilter(
+                                                                    key
+                                                                )
+                                                            }
+                                                        >
+                                                            <div className="registry-table__thead-label">
+                                                                {label}
+                                                            </div>
+                                                            <span>
+                                                                <svg
+                                                                    width="16"
+                                                                    height="16"
+                                                                    viewBox="0 0 16 16"
+                                                                    fill="none"
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                >
+                                                                    <path
+                                                                        d="M2 5.093l4.8 3.429v6l2.4-1.286V8.522L14 5.093V2.522H2v2.571z"
+                                                                        fill="currentColor"
+                                                                    />
+                                                                </svg>
+                                                            </span>
+                                                        </button>
+
+                                                        {openFilter === key && (
+                                                            <MultiSelectWithSearch
+                                                                options={options.map(
+                                                                    (name) => ({
+                                                                        value: name,
+                                                                        label: name,
+                                                                    })
+                                                                )}
+                                                                selectedValues={
+                                                                    filters.selectedSectors
+                                                                }
+                                                                onChange={(
+                                                                    updated
+                                                                ) =>
+                                                                    setFilters(
+                                                                        (
+                                                                            prev
+                                                                        ) => ({
+                                                                            ...prev,
+                                                                            ...updated,
+                                                                        })
+                                                                    )
+                                                                }
+                                                                fieldName="selectedSectors"
+                                                            />
+                                                        )}
+                                                    </>
+                                                ) : (
+                                                    <div className="registry-table__thead-item">
                                                         <div className="registry-table__thead-label">
                                                             {label}
                                                         </div>
-                                                        <span>
-                                                            <svg
-                                                                width="16"
-                                                                height="16"
-                                                                viewBox="0 0 16 16"
-                                                                fill="none"
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                            >
-                                                                <path
-                                                                    d="M2 5.093l4.8 3.429v6l2.4-1.286V8.522L14 5.093V2.522H2v2.571z"
-                                                                    fill="currentColor"
-                                                                />
-                                                            </svg>
-                                                        </span>
-                                                    </button>
-
-                                                    {openFilter === key && (
-                                                        <MultiSelectWithSearch
-                                                            label="Отрасли"
-                                                            options={nameOptions.map(
-                                                                (name) => ({
-                                                                    value: name,
-                                                                    label: name,
-                                                                })
-                                                            )}
-                                                            selectedValues={
-                                                                filters.selectedSectors
-                                                            }
-                                                            onChange={(
-                                                                updated
-                                                            ) =>
-                                                                setFilters(
-                                                                    (prev) => ({
-                                                                        ...prev,
-                                                                        ...updated,
-                                                                    })
-                                                                )
-                                                            }
-                                                            fieldName="selectedSectors"
-                                                        />
-                                                    )}
-                                                </>
-                                            ) : (
-                                                <div className="registry-table__thead-item">
-                                                    <div className="registry-table__thead-label">
-                                                        {label}
                                                     </div>
-                                                </div>
-                                            )}
-                                        </th>
-                                    );
-                                })}
+                                                )}
+                                            </th>
+                                        );
+                                    }
+                                )}
                             </tr>
                         </thead>
 

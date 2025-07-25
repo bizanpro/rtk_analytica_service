@@ -13,7 +13,7 @@ import "./styles/main.scss";
 import App from "./components/App.jsx";
 
 createRoot(document.getElementById("root")).render(
-    <StrictMode>
+    // <StrictMode>
         <App />
-    </StrictMode>
+    // </StrictMode>
 );

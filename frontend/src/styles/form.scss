@@ -49,4 +49,39 @@
             color: var(--color-gray-60);
         }
     }
+
+    &-checkbox {
+        gap: 0 !important;
+
+        input {
+            -webkit-appearance: none;
+            appearance: none;
+
+            &:checked {
+                ~ .checkbox {
+                    background-color: var(--color-blue-70);
+                    border: 1px solid var(--color-blue-70);
+                }
+            }
+        }
+
+        .checkbox {
+            position: relative;
+            border: 1px solid var(--color-gray-50);
+            border-radius: 4px;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            transition: border var(--trans), background var(--trans);
+            cursor: pointer;
+            background-color: var(--color-white);
+            background-image: url("../assets/icons/check.svg");
+            background-position: center;
+            background-repeat: no-repeat;
+
+            &:hover {
+                border: 1px solid var(--color-blue-40);
+            }
+        }
+    }
 }
