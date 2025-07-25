@@ -41,20 +41,25 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                                                               <div
                                                                   className="text-lg"
                                                                   style={{
-                                                                      flex: "0 0 40px",
+                                                                      flex: "0 0 90px",
                                                                   }}
                                                               >
-                                                                  {item.report_period_code}
+                                                                  {
+                                                                      item.report_period_code
+                                                                  }
                                                               </div>
 
                                                               <div
                                                                   className={`rounded px-8 py-1 text-center flex-grow
-                                            ${
-                                                item.status?.name === "Завершен"
-                                                    ? "bg-green-400"
-                                                    : "bg-gray-200"
-                                            }
-                                        `}
+                                                                        ${
+                                                                            item
+                                                                                .status
+                                                                                ?.name ===
+                                                                            "Завершен"
+                                                                                ? "bg-green-400"
+                                                                                : "bg-gray-200"
+                                                                        }
+                                                                    `}
                                                               >
                                                                   {
                                                                       item
