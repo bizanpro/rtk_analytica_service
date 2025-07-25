@@ -1,6 +1,86 @@
 @use "./media-breakpoints" as *;
 
 .registry-table {
+    &__thead {
+        font-weight: 600;
+        font-size: 13px;
+        line-height: 150%;
+        text-align: left;
+
+        .multi-select {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+
+            @media (min-width: $media-lg) {
+                position: absolute;
+                top: 40px;
+            }
+        }
+
+        &-label {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            max-width: 130px;
+        }
+
+        &-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            span {
+                flex: 0 0 16px;
+                height: 16px;
+            }
+
+            svg {
+                color: var(--color-gray-50);
+                transition: color var(--trans);
+            }
+
+            &.active,
+            &:hover {
+                svg {
+                    color: var(--color-blue-70);
+                }
+            }
+        }
+
+        th {
+            padding: 15px;
+            position: relative;
+        }
+
+        .registry-table__thead-filter-item:first-of-type {
+            .multi-select {
+                @media (min-width: $media-lg) {
+                    left: 0;
+                    transform: none;
+                }
+            }
+        }
+
+        .registry-table__thead-filter-item:last-of-type {
+            .multi-select {
+                @media (min-width: $media-lg) {
+                    left: auto;
+                    transform: none;
+                    right: 0;
+                }
+            }
+        }
+
+        th:first-of-type {
+            padding-left: 0;
+        }
+
+        th:last-of-type {
+            padding-right: 0;
+        }
+    }
+
     &__item {
         font-size: 14px;
         font-weight: 400;

@@ -7,10 +7,11 @@
     width: calc(100% - 30px);
     max-width: 400px;
     border: 1px solid var(--color-gray-40);
+    background: var(--color-white);
     z-index: 9;
 
     @media (min-width: $media-lg) {
-        width: 100%;
+        width: 400px;
     }
 
     &__search {
