@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
+import handleStatus from "../../utils/handleStatus";
 
 import ProjectItem from "./ProjectItem";
 import Popup from "../Popup/Popup";
 import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
-import handleStatus from "../../utils/handleStatus";
+import OverlayTransparent from "../Overlay/OverlayTransparent";
 
 import "./Projects.scss";
 
@@ -179,7 +180,9 @@ const Projects = () => {
                 (filters.selectedNames.length === 0 ||
                     filters.selectedNames.includes(project.name)) &&
                 (filters.selectedStatuses.length === 0 ||
-                    filters.selectedStatuses.includes(handleStatus(project.status))) &&
+                    filters.selectedStatuses.includes(
+                        handleStatus(project.status)
+                    )) &&
                 (filters.selectedContagents.length === 0 ||
                     filters.selectedContagents.includes(project.contragent))
             );
@@ -252,7 +255,14 @@ const Projects = () => {
                     </div>
                 </section>
 
-                <section className="overflow-x-auto w-full pb-5">
+                <section className="projects__table overflow-x-auto w-full pb-5">
+                    {openFilter !== "" && (
+                        <OverlayTransparent
+                            state={true}
+                            toggleMenu={() => setOpenFilter("")}
+                        />
+                    )}
+
                     <table className="registry-table table-auto w-full border-collapse">
                         <thead className="registry-table__thead">
                             <tr>

@@ -9,12 +9,14 @@
 
         .multi-select {
             position: fixed;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%);
 
             @media (min-width: $media-lg) {
                 position: absolute;
                 top: 40px;
+                transform: translateX(-50%);
             }
         }
 
