@@ -254,46 +254,7 @@ const Projects = () => {
                                 setSelectedName(evt.target.value);
                             }}
                         />
-                    )}
-
-                    {sectorOptions.length > 0 && (
-                        <Select
-                            className={
-                                "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                            }
-                            title={"Отрасль"}
-                            items={sectorOptions}
-                            onChange={(evt) => {
-                                setSelectedSector(evt.target.value);
-                            }}
-                        />
-                    )}
-
-                    {bankOptions.length > 0 && (
-                        <Select
-                            className={
-                                "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                            }
-                            title={"Банк"}
-                            items={bankOptions}
-                            onChange={(evt) =>
-                                setSelectedBank(evt.target.value)
-                            }
-                        />
-                    )}
-
-                    {projectManagerOptions.length > 0 && (
-                        <Select
-                            className={
-                                "p-1 border border-gray-300 min-w-[200px] max-w-[200px]"
-                            }
-                            title={"Руководитель проекта"}
-                            items={projectManagerOptions}
-                            onChange={(evt) =>
-                                setSelectedManager(evt.target.value)
-                            }
-                        />
-                    )} */}
+                    )}*/}
                 </div>
 
                 <section className="overflow-x-auto w-full pb-5">
