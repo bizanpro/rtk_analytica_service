@@ -1,12 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 
 import getData from "../../utils/getData";
-// import { createDebounce } from "../../utils/debounce";
 
 import EmployeeItem from "./EmployeeItem";
-import Select from "../Select";
-// import Search from "../Search/Search";
-
 import CreatableSelect from "react-select/creatable";
 
 const Employees = () => {
@@ -42,25 +38,6 @@ const Employees = () => {
         return result;
     }, [list, selectedType, selectedStatus, selectedName]);
 
-    // const handleSearch = (event) => {
-    //     const searchQuery = event.value.toLowerCase();
-
-    //     getData(
-    //         `${
-    //             import.meta.env.VITE_API_URL
-    //         }physical-persons/?search=${searchQuery}`,
-    //         { Accept: "application/json" }
-    //     )
-    //         .then((response) => {
-    //             if (response.status == 200) {
-    //                 setList(response.data);
-    //             }
-    //         })
-    //         .finally(() => setIsLoading(false));
-    // };
-
-    // const debounce = createDebounce(handleSearch, 300, true);
-
     // Заполняем селектор сотрудников
     const nameOptions = useMemo(() => {
         const allNames = list.map((item) => ({
@@ -93,12 +70,6 @@ const Employees = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        {/* <Search
-                            onSearch={debounce}
-                            className="search-fullpage"
-                            placeholder="Поиск сотрудника"
-                        /> */}
-
                         <CreatableSelect
                             isClearable
                             options={nameOptions}
@@ -114,19 +85,6 @@ const Employees = () => {
                                 }
                             }}
                         />
-
-                        {/* {nameOptions.length > 0 && (
-                            <Select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                }
-                                title={"Сотрудник"}
-                                items={nameOptions}
-                                onChange={(evt) => {
-                                    setSelectedName(evt.target.value);
-                                }}
-                            />
-                        )} */}
 
                         <select
                             className={
