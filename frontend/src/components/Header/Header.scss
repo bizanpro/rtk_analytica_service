@@ -89,6 +89,7 @@
         }
 
         &.active {
+            z-index: 100;
             span {
                 width: 0;
 
