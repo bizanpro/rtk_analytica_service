@@ -644,20 +644,26 @@ const ProjectCard = () => {
 
                                 <span
                                     className={`
-                                            whitespace-nowrap 
+                                            status
                                                 ${
                                                     projectData?.status ===
                                                     "active"
-                                                        ? "text-green-500"
+                                                        ? "active"
                                                         : projectData?.status ===
                                                           "completed"
-                                                        ? "text-black"
-                                                        : "text-gray-300"
                                                 }
                                         `}
                                 >
                                     {handleStatus(projectData?.status)}
                                 </span>
+                            </div>
+
+                            <div className="card__row">
+                                <ProjectBudget projectData={projectData} />
+
+                                <ProjectImplementationPeriod
+                                    projectData={projectData}
+                                />
                             </div>
                         </section>
 
@@ -665,16 +671,6 @@ const ProjectCard = () => {
                             <div className="grid gap-[20px] grid-cols-2">
                                 <div className="flex flex-col">
                                     <div className="flex items-start justify-between gap-6 mb-10">
-                                        <div className="flex flex-col gap-3 min-w-[130px]">
-                                            <span className="text-gray-400">
-                                                Бюджет проекта
-                                            </span>
-
-                                            <ProjectBudget
-                                                projectData={projectData}
-                                            />
-                                        </div>
-
                                         <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
                                             <span className="flex items-center gap-2 text-gray-400">
                                                 Заказчик
@@ -749,16 +745,6 @@ const ProjectCard = () => {
                                     </div>
 
                                     <div className="flex items-start justify-between gap-6 mb-10">
-                                        <div className="flex flex-col gap-3 min-w-[130px] ">
-                                            <span className="text-gray-400">
-                                                Срок реализации
-                                            </span>
-
-                                            <ProjectImplementationPeriod
-                                                projectData={projectData}
-                                            />
-                                        </div>
-
                                         <div className="flex flex-col gap-5 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
                                             <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
                                                 <span className="flex items-center gap-2 text-gray-400">
@@ -1270,12 +1256,13 @@ const ProjectCard = () => {
             </section>
 
             <nav className="bottom-nav">
-                {mode === "edit" && projectData?.name?.length > 2 && (
+                {mode === "edit" && (
                     <button
                         type="button"
                         className="action-button"
                         title="Обновить данные проекта"
                         onClick={() => updateProject(projectId)}
+                        disabled={projectData?.name?.length < 2}
                     >
                         Сохранить
                     </button>

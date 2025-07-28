@@ -2,42 +2,50 @@ import getColorBySign from "../../utils/getColorBySign";
 
 const ProjectBudget = ({ projectData }) => {
     return (
-        <div className="flex items-end gap-5 min-h-[42px]">
-            <div className="flex items-end gap-2">
-                {projectData?.project_budget !== null && (
-                    <>
-                        <strong className="text-4xl font-normal max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
-                            {projectData.project_budget}
-                        </strong>
-                        <span className="text-1xl leading-6">
-                            млрд <br /> руб.
-                        </span>
-                    </>
-                )}
-            </div>
-            <div className="flex flex-col gap-2">
-                {projectData.budget_difference_percentage !== null && (
-                    <div
-                        className={`flex gap-1 ${getColorBySign(
-                            projectData.budget_difference_percentage,
-                            "text-red-400",
-                            "text-green-400"
-                        )} max-w-[50px] overflow-hidden text-ellipsis whitespace-nowrap`}
-                    >
-                        {projectData.budget_difference_percentage}
-                        <span>%</span>
-                    </div>
-                )}
+        <div
+            className={`project-budget__block ${
+                projectData?.project_budget !== null && "active"
+            }`}
+        >
+            <div className="project-budget__block-main">
+                <div className="flex items-end gap-[8px]">
+                    {projectData?.project_budget !== null && (
+                        <>
+                            <strong className="max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                {projectData.project_budget}
+                            </strong>
+                            <span>млрд руб.</span>
+                        </>
+                    )}
+                </div>
+                <div className="flex items-center gap-[10px]">
+                    {projectData?.fta_budget > 0 && (
+                        <span>{projectData.fta_budget} млрд</span>
+                    )}
 
-                {projectData?.fta_budget !== null && (
-                    <div className="flex gap-1">
-                        <div className="max-w-[50px] overflow-hidden text-ellipsis whitespace-nowrap">
-                            {projectData.fta_budget}
+                    {projectData.budget_difference_percentage > 0 && (
+                        <div
+                            className={`project-budget__block-percentage ${getColorBySign(
+                                projectData.budget_difference_percentage,
+                                "plus",
+                                "minus"
+                            )}`}
+                        >
+                            {projectData.budget_difference_percentage}%
                         </div>
+                    )}
+                </div>
+            </div>
 
-                        <span>млрд</span>
-                    </div>
-                )}
+            <div className="project-budget__block-title">
+                <span
+                    className={`${
+                        projectData?.project_budget !== null && "active"
+                    }`}
+                >
+                    бюджет проекта
+                </span>
+                {projectData?.project_budget == null && <b>Нет данных</b>}
             </div>
         </div>
     );

@@ -464,3 +464,21 @@ body {
     border-top: var(--color-gray-30);
     padding: 10px 15px 15px;
 }
+
+.status {
+    width: fit-content;
+    border-radius: 99px;
+    padding: 3px 8px;
+    color: var(--color-gray-70);
+    background: var(--color-gray-30);
+
+    &.completed {
+        color: var(--color-green-80);
+        background: var(--color-green-30);
+    }
+
+    &.active {
+        color: var(--color-orange-80);
+        background: var(--color-orange-30);
+    }
+}

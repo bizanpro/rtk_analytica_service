@@ -14,6 +14,16 @@
     &__main-content {
     }
 
+    &__row {
+        display: grid;
+        gap: 15px;
+
+        @media (min-width: $media-lg) {
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+    }
+
     &__main-name {
         border: 1px solid var(--color-gray-30);
         background: var(--color-gray-20);
@@ -22,6 +32,7 @@
         display: flex;
         align-items: center;
         gap: 15px;
+        margin-bottom: 15px;
 
         input {
             width: 100%;
