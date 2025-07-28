@@ -23,6 +23,7 @@ import ProjectBudget from "./ProjectBudget";
 import Loader from "../Loader";
 import AutoResizeTextarea from "../AutoResizeTextarea";
 import ManagementReportsTab from "../ManagementReportsTab/ManagementReportsTab";
+import Hint from "../Hint/Hint";
 
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
@@ -658,386 +659,377 @@ const ProjectCard = () => {
                                 </span>
                             </div>
 
-                            <div className="card__row">
+                            <div className="card__row project-card__budget-row">
                                 <ProjectBudget projectData={projectData} />
 
                                 <ProjectImplementationPeriod
                                     projectData={projectData}
                                 />
                             </div>
+
+                            <div className="project-card__services">
+                                <div className="form-label">
+                                    Услуги <Hint message={"Услугиx"} />
+                                </div>
+
+                                <ReportServices services={services} />
+                            </div>
                         </section>
 
-                        <div>
-                            <div className="grid gap-[20px] grid-cols-2">
-                                <div className="flex flex-col">
-                                    <div className="flex items-start justify-between gap-6 mb-10">
+                        <div className="grid gap-[20px] grid-cols-2">
+                            <div className="flex flex-col">
+                                <div className="flex items-start justify-between gap-6 mb-10">
+                                    <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
+                                        <span className="flex items-center gap-2 text-gray-400">
+                                            Заказчик
+                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                ?
+                                            </span>
+                                        </span>
+                                        <div className="border-2 border-gray-300">
+                                            <CreatableSelect
+                                                isClearable
+                                                options={
+                                                    contragents.length > 0 &&
+                                                    contragents.map((item) => ({
+                                                        value: item.id,
+                                                        label: item.program_name,
+                                                    }))
+                                                }
+                                                className="w-full executor-block__name-field"
+                                                placeholder="Выбрать заказчика"
+                                                noOptionsMessage={() =>
+                                                    "Совпадений нет"
+                                                }
+                                                isValidNewOption={() => false}
+                                                value={
+                                                    (contragents.length > 0 &&
+                                                        contragents
+                                                            .map((item) => ({
+                                                                value: item.id,
+                                                                label: item.program_name,
+                                                            }))
+                                                            .find(
+                                                                (option) =>
+                                                                    option.value ===
+                                                                    projectData?.contragent_id
+                                                            )) ||
+                                                    null
+                                                }
+                                                onChange={(selectedOption) => {
+                                                    const newValue =
+                                                        selectedOption?.value ||
+                                                        null;
+
+                                                    setFormFields((prev) => ({
+                                                        ...prev,
+                                                        contragent_id: newValue,
+                                                    }));
+                                                    setProjectData((prev) => ({
+                                                        ...prev,
+                                                        contragent_id: newValue,
+                                                    }));
+                                                }}
+                                                isDisabled={mode == "read"}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-start justify-between gap-6 mb-10">
+                                    <div className="flex flex-col gap-5 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
                                         <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
                                             <span className="flex items-center gap-2 text-gray-400">
-                                                Заказчик
+                                                Отрасль
                                                 <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                                     ?
                                                 </span>
                                             </span>
-                                            <div className="border-2 border-gray-300">
-                                                <CreatableSelect
-                                                    isClearable
-                                                    options={
-                                                        contragents.length >
-                                                            0 &&
-                                                        contragents.map(
-                                                            (item) => ({
-                                                                value: item.id,
-                                                                label: item.program_name,
-                                                            })
-                                                        )
-                                                    }
-                                                    className="w-full executor-block__name-field"
-                                                    placeholder="Выбрать заказчика"
-                                                    noOptionsMessage={() =>
-                                                        "Совпадений нет"
-                                                    }
-                                                    isValidNewOption={() =>
-                                                        false
-                                                    }
+                                            <div className="border-2 border-gray-300 p-3">
+                                                <select
+                                                    className="w-full h-[21px]"
                                                     value={
-                                                        (contragents.length >
-                                                            0 &&
-                                                            contragents
-                                                                .map(
-                                                                    (item) => ({
-                                                                        value: item.id,
-                                                                        label: item.program_name,
-                                                                    })
-                                                                )
-                                                                .find(
-                                                                    (option) =>
-                                                                        option.value ===
-                                                                        projectData?.contragent_id
-                                                                )) ||
-                                                        null
+                                                        projectData?.industries
+                                                            ?.main || ""
                                                     }
-                                                    onChange={(
-                                                        selectedOption
-                                                    ) => {
-                                                        const newValue =
-                                                            selectedOption?.value ||
-                                                            null;
-
-                                                        setFormFields(
-                                                            (prev) => ({
-                                                                ...prev,
-                                                                contragent_id:
-                                                                    newValue,
-                                                            })
-                                                        );
-                                                        setProjectData(
-                                                            (prev) => ({
-                                                                ...prev,
-                                                                contragent_id:
-                                                                    newValue,
-                                                            })
-                                                        );
-                                                    }}
-                                                    isDisabled={mode == "read"}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-start justify-between gap-6 mb-10">
-                                        <div className="flex flex-col gap-5 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
-                                            <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
-                                                <span className="flex items-center gap-2 text-gray-400">
-                                                    Отрасль
-                                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                        ?
-                                                    </span>
-                                                </span>
-                                                <div className="border-2 border-gray-300 p-3">
-                                                    <select
-                                                        className="w-full h-[21px]"
-                                                        value={
-                                                            projectData
-                                                                ?.industries
-                                                                ?.main || ""
-                                                        }
-                                                        onChange={(evt) => {
-                                                            setFormFields({
-                                                                ...formFields,
-                                                                industries: {
-                                                                    ...formFields.industries,
-                                                                    main: +evt
-                                                                        .target
-                                                                        .value,
-                                                                },
-                                                            });
-                                                            setProjectData({
-                                                                ...projectData,
-                                                                industries: {
-                                                                    ...projectData.industries,
-                                                                    main: +evt
-                                                                        .target
-                                                                        .value,
-                                                                },
-                                                            });
-                                                        }}
-                                                        disabled={
-                                                            mode == "read"
-                                                        }
-                                                    >
-                                                        <option value="">
-                                                            Выбрать отрасль
-                                                        </option>
-                                                        {industries.length >
-                                                            0 &&
-                                                            industries.map(
-                                                                (item) => (
-                                                                    <option
-                                                                        value={
-                                                                            item.id
-                                                                        }
-                                                                        key={
-                                                                            item.id
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            item.name
-                                                                        }
-                                                                    </option>
-                                                                )
-                                                            )}
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
-                                                <span className="flex items-center gap-2 text-gray-400">
-                                                    Вспомогательные отрасли
-                                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                        ?
-                                                    </span>
-                                                </span>
-
-                                                <Select
-                                                    closeMenuOnSelect={false}
-                                                    isMulti
-                                                    name="colors"
-                                                    options={industries.map(
-                                                        (industry) => ({
-                                                            value: industry.id,
-                                                            label: industry.name,
-                                                        })
-                                                    )}
-                                                    value={industries
-                                                        .filter((industry) =>
-                                                            projectData?.industries?.others?.includes(
-                                                                industry.id
-                                                            )
-                                                        )
-                                                        .map((industry) => ({
-                                                            value: industry.id,
-                                                            label: industry.name,
-                                                        }))}
-                                                    className="basic-multi-select min-h-[32px] w-full"
-                                                    classNamePrefix="select"
-                                                    placeholder="Выбрать отрасль"
-                                                    isDisabled={mode == "read"}
-                                                    onChange={(
-                                                        selectedOptions
-                                                    ) => {
+                                                    onChange={(evt) => {
                                                         setFormFields({
                                                             ...formFields,
                                                             industries: {
                                                                 ...formFields.industries,
-                                                                others: selectedOptions.map(
-                                                                    (option) =>
-                                                                        option.value
-                                                                ),
+                                                                main: +evt
+                                                                    .target
+                                                                    .value,
                                                             },
                                                         });
                                                         setProjectData({
                                                             ...projectData,
                                                             industries: {
                                                                 ...projectData.industries,
-                                                                others: selectedOptions.map(
-                                                                    (option) =>
-                                                                        option.value
-                                                                ),
+                                                                main: +evt
+                                                                    .target
+                                                                    .value,
                                                             },
                                                         });
                                                     }}
-                                                />
+                                                    disabled={mode == "read"}
+                                                >
+                                                    <option value="">
+                                                        Выбрать отрасль
+                                                    </option>
+                                                    {industries.length > 0 &&
+                                                        industries.map(
+                                                            (item) => (
+                                                                <option
+                                                                    value={
+                                                                        item.id
+                                                                    }
+                                                                    key={
+                                                                        item.id
+                                                                    }
+                                                                >
+                                                                    {item.name}
+                                                                </option>
+                                                            )
+                                                        )}
+                                                </select>
                                             </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
+                                            <span className="flex items-center gap-2 text-gray-400">
+                                                Вспомогательные отрасли
+                                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                    ?
+                                                </span>
+                                            </span>
+
+                                            <Select
+                                                closeMenuOnSelect={false}
+                                                isMulti
+                                                name="colors"
+                                                options={industries.map(
+                                                    (industry) => ({
+                                                        value: industry.id,
+                                                        label: industry.name,
+                                                    })
+                                                )}
+                                                value={industries
+                                                    .filter((industry) =>
+                                                        projectData?.industries?.others?.includes(
+                                                            industry.id
+                                                        )
+                                                    )
+                                                    .map((industry) => ({
+                                                        value: industry.id,
+                                                        label: industry.name,
+                                                    }))}
+                                                className="basic-multi-select min-h-[32px] w-full"
+                                                classNamePrefix="select"
+                                                placeholder="Выбрать отрасль"
+                                                isDisabled={mode == "read"}
+                                                onChange={(selectedOptions) => {
+                                                    setFormFields({
+                                                        ...formFields,
+                                                        industries: {
+                                                            ...formFields.industries,
+                                                            others: selectedOptions.map(
+                                                                (option) =>
+                                                                    option.value
+                                                            ),
+                                                        },
+                                                    });
+                                                    setProjectData({
+                                                        ...projectData,
+                                                        industries: {
+                                                            ...projectData.industries,
+                                                            others: selectedOptions.map(
+                                                                (option) =>
+                                                                    option.value
+                                                            ),
+                                                        },
+                                                    });
+                                                }}
+                                            />
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div className="flex flex-col gap-2">
-                                    <span className="flex items-center gap-2 text-gray-400">
-                                        Услуги{" "}
-                                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                            ?
-                                        </span>
-                                    </span>
+                        <div className="grid gap-[20px] grid-cols-2 mb-5">
+                            <div className="flex flex-col gap-2">
+                                <span className="text-gray-400">
+                                    Местоположение
+                                </span>
 
-                                    <ReportServices services={services} />
-                                </div>
+                                <AutoResizeTextarea
+                                    disabled={mode === "read"}
+                                    value={projectData?.location || ""}
+                                    onChange={(e) =>
+                                        handleInputChange(e, "location")
+                                    }
+                                    placeholder="Введите местоположение"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid gap-[20px] grid-cols-2 mb-5">
+                            <div className="flex flex-col gap-2">
+                                <span className="text-gray-400">ТЭП</span>
+
+                                <AutoResizeTextarea
+                                    disabled={mode === "read"}
+                                    value={projectData?.tep || ""}
+                                    onChange={(e) =>
+                                        handleInputChange(e, "tep")
+                                    }
+                                    placeholder="Введите ТЭП"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid gap-[20px] grid-cols-2 mb-5">
+                            <div className="flex flex-col gap-2">
+                                <span className="text-gray-400">
+                                    Краткое описание
+                                </span>
+                                <textarea
+                                    className="border-2 border-gray-300 p-5 min-h-[300px] max-h-[400px]"
+                                    placeholder="Заполните описание проекта"
+                                    type="text"
+                                    name="description"
+                                    disabled={mode == "read"}
+                                    value={projectData?.description || ""}
+                                    onChange={(e) =>
+                                        handleInputChange(e, "description")
+                                    }
+                                />
                             </div>
 
-                            <div className="grid gap-[20px] grid-cols-2 mb-5">
-                                <div className="flex flex-col gap-2">
+                            <ProjectTeam teamData={teamData} />
+                        </div>
+
+                        <div className="grid gap-[20px] grid-cols-2 items-start">
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-center gap-2">
                                     <span className="text-gray-400">
-                                        Местоположение
+                                        Ключевые лица Заказчика
                                     </span>
-
-                                    <AutoResizeTextarea
-                                        disabled={mode === "read"}
-                                        value={projectData?.location || ""}
-                                        onChange={(e) =>
-                                            handleInputChange(e, "location")
-                                        }
-                                        placeholder="Введите местоположение"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid gap-[20px] grid-cols-2 mb-5">
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-gray-400">ТЭП</span>
-
-                                    <AutoResizeTextarea
-                                        disabled={mode === "read"}
-                                        value={projectData?.tep || ""}
-                                        onChange={(e) =>
-                                            handleInputChange(e, "tep")
-                                        }
-                                        placeholder="Введите ТЭП"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid gap-[20px] grid-cols-2 mb-5">
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-gray-400">
-                                        Краткое описание
-                                    </span>
-                                    <textarea
-                                        className="border-2 border-gray-300 p-5 min-h-[300px] max-h-[400px]"
-                                        placeholder="Заполните описание проекта"
-                                        type="text"
-                                        name="description"
-                                        disabled={mode == "read"}
-                                        value={projectData?.description || ""}
-                                        onChange={(e) =>
-                                            handleInputChange(e, "description")
-                                        }
-                                    />
-                                </div>
-
-                                <ProjectTeam teamData={teamData} />
-                            </div>
-
-                            <div className="grid gap-[20px] grid-cols-2 items-start">
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-gray-400">
-                                            Ключевые лица Заказчика
-                                        </span>
-                                        {mode == "edit" && (
-                                            <button
-                                                type="button"
-                                                className="add-button"
-                                                onClick={() => {
-                                                    if (
-                                                        projectData?.contragent_id
-                                                    ) {
-                                                        if (!addCustomer) {
-                                                            setAddCustomer(
-                                                                true
-                                                            );
-                                                        }
-                                                    } else {
-                                                        alert(
-                                                            "Необходимо назначить заказчика"
-                                                        );
+                                    {mode == "edit" && (
+                                        <button
+                                            type="button"
+                                            className="add-button"
+                                            onClick={() => {
+                                                if (
+                                                    projectData?.contragent_id
+                                                ) {
+                                                    if (!addCustomer) {
+                                                        setAddCustomer(true);
                                                     }
-                                                }}
-                                                title="Добавить ключевое лицо Заказчика"
-                                            >
-                                                <span></span>
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    {addCustomer && (
-                                        <EmptyExecutorBlock
-                                            borderClass={"border-gray-300"}
-                                            type={"customer"}
-                                            removeBlock={() =>
-                                                setAddCustomer(false)
-                                            }
-                                            creditorContacts={creditorContacts}
-                                            contragentContacts={
-                                                contragentContacts
-                                            }
-                                            sendExecutor={sendExecutor}
-                                        />
+                                                } else {
+                                                    alert(
+                                                        "Необходимо назначить заказчика"
+                                                    );
+                                                }
+                                            }}
+                                            title="Добавить ключевое лицо Заказчика"
+                                        >
+                                            <span></span>
+                                        </button>
                                     )}
-
-                                    <ul
-                                        className={`flex flex-col gap-4 items-start overflow-y-auto h-[205px] ${
-                                            addCustomer ? "" : "mt-[55px]"
-                                        }`}
-                                    >
-                                        {customers.length > 0 ? (
-                                            customers.map((customer) => (
-                                                <ExecutorBlock
-                                                    key={customer.id}
-                                                    contanct={customer}
-                                                    mode={mode}
-                                                    type={"customer"}
-                                                    deleteBlock={deleteCustomer}
-                                                />
-                                            ))
-                                        ) : (
-                                            <li>
-                                                <p>Нет данных</p>
-                                            </li>
-                                        )}
-                                    </ul>
                                 </div>
 
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-gray-400">
-                                            Кредиторы
-                                        </span>
-                                        {mode == "edit" && (
-                                            <button
-                                                type="button"
-                                                className="add-button"
-                                                onClick={() => {
-                                                    if (!addLender) {
-                                                        setAddLender(true);
-                                                    }
-                                                }}
-                                                title="Добавить Кредитора"
-                                            >
-                                                <span></span>
-                                            </button>
-                                        )}
-                                    </div>
+                                {addCustomer && (
+                                    <EmptyExecutorBlock
+                                        borderClass={"border-gray-300"}
+                                        type={"customer"}
+                                        removeBlock={() =>
+                                            setAddCustomer(false)
+                                        }
+                                        creditorContacts={creditorContacts}
+                                        contragentContacts={contragentContacts}
+                                        sendExecutor={sendExecutor}
+                                    />
+                                )}
 
-                                    <ul className="flex gap-3 flex-wrap mb-2">
-                                        {matchedBanks.length > 0 && (
-                                            <>
-                                                <li className="radio-field_tab">
+                                <ul
+                                    className={`flex flex-col gap-4 items-start overflow-y-auto h-[205px] ${
+                                        addCustomer ? "" : "mt-[55px]"
+                                    }`}
+                                >
+                                    {customers.length > 0 ? (
+                                        customers.map((customer) => (
+                                            <ExecutorBlock
+                                                key={customer.id}
+                                                contanct={customer}
+                                                mode={mode}
+                                                type={"customer"}
+                                                deleteBlock={deleteCustomer}
+                                            />
+                                        ))
+                                    ) : (
+                                        <li>
+                                            <p>Нет данных</p>
+                                        </li>
+                                    )}
+                                </ul>
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-400">
+                                        Кредиторы
+                                    </span>
+                                    {mode == "edit" && (
+                                        <button
+                                            type="button"
+                                            className="add-button"
+                                            onClick={() => {
+                                                if (!addLender) {
+                                                    setAddLender(true);
+                                                }
+                                            }}
+                                            title="Добавить Кредитора"
+                                        >
+                                            <span></span>
+                                        </button>
+                                    )}
+                                </div>
+
+                                <ul className="flex gap-3 flex-wrap mb-2">
+                                    {matchedBanks.length > 0 && (
+                                        <>
+                                            <li className="radio-field_tab">
+                                                <input
+                                                    type="radio"
+                                                    name="active_bank"
+                                                    id="bank_all"
+                                                    value=""
+                                                    defaultChecked
+                                                    onChange={(evt) => {
+                                                        handleFilterLenders(
+                                                            evt
+                                                        );
+                                                    }}
+                                                />
+                                                <label
+                                                    htmlFor="bank_all"
+                                                    className="text-gray-700 py-1 px-2 text-center rounded-md"
+                                                >
+                                                    Все банки
+                                                </label>
+                                            </li>
+                                            {matchedBanks.map((bank) => (
+                                                <li
+                                                    key={bank.id}
+                                                    className="radio-field_tab"
+                                                >
                                                     <input
+                                                        id={`bank_${bank.id}`}
                                                         type="radio"
                                                         name="active_bank"
-                                                        id="bank_all"
-                                                        value=""
-                                                        defaultChecked
+                                                        value={bank.id}
                                                         onChange={(evt) => {
                                                             handleFilterLenders(
                                                                 evt
@@ -1045,210 +1037,171 @@ const ProjectCard = () => {
                                                         }}
                                                     />
                                                     <label
-                                                        htmlFor="bank_all"
+                                                        htmlFor={`bank_${bank.id}`}
                                                         className="text-gray-700 py-1 px-2 text-center rounded-md"
                                                     >
-                                                        Все банки
+                                                        {bank.name}
                                                     </label>
                                                 </li>
-                                                {matchedBanks.map((bank) => (
-                                                    <li
-                                                        key={bank.id}
-                                                        className="radio-field_tab"
-                                                    >
-                                                        <input
-                                                            id={`bank_${bank.id}`}
-                                                            type="radio"
-                                                            name="active_bank"
-                                                            value={bank.id}
-                                                            onChange={(evt) => {
-                                                                handleFilterLenders(
-                                                                    evt
-                                                                );
-                                                            }}
-                                                        />
-                                                        <label
-                                                            htmlFor={`bank_${bank.id}`}
-                                                            className="text-gray-700 py-1 px-2 text-center rounded-md"
-                                                        >
-                                                            {bank.name}
-                                                        </label>
-                                                    </li>
-                                                ))}{" "}
-                                            </>
-                                        )}
-                                    </ul>
-
-                                    {addLender && (
-                                        <EmptyExecutorBlock
-                                            borderClass={"border-gray-300"}
-                                            banks={banks}
-                                            type={"creditor"}
-                                            removeBlock={() =>
-                                                setAddLender(false)
-                                            }
-                                            creditorContacts={creditorContacts}
-                                            contragentContacts={
-                                                contragentContacts
-                                            }
-                                            sendExecutor={sendExecutor}
-                                        />
+                                            ))}{" "}
+                                        </>
                                     )}
+                                </ul>
 
-                                    <ul className="mt-[10px] flex flex-col gap-4 items-start overflow-y-auto h-[270px]">
-                                        {filteredLenders.length > 0 &&
-                                        banks.length > 0 ? (
-                                            filteredLenders.map((lender) => (
-                                                <ExecutorBlock
-                                                    key={lender.id}
-                                                    contanct={lender}
-                                                    mode={mode}
-                                                    banks={banks}
-                                                    type={"creditor"}
-                                                    deleteBlock={deleteCreditor}
-                                                />
-                                            ))
-                                        ) : (
-                                            <li>
-                                                <p>Нет данных</p>
-                                            </li>
-                                        )}
-                                    </ul>
-                                </div>
+                                {addLender && (
+                                    <EmptyExecutorBlock
+                                        borderClass={"border-gray-300"}
+                                        banks={banks}
+                                        type={"creditor"}
+                                        removeBlock={() => setAddLender(false)}
+                                        creditorContacts={creditorContacts}
+                                        contragentContacts={contragentContacts}
+                                        sendExecutor={sendExecutor}
+                                    />
+                                )}
+
+                                <ul className="mt-[10px] flex flex-col gap-4 items-start overflow-y-auto h-[270px]">
+                                    {filteredLenders.length > 0 &&
+                                    banks.length > 0 ? (
+                                        filteredLenders.map((lender) => (
+                                            <ExecutorBlock
+                                                key={lender.id}
+                                                contanct={lender}
+                                                mode={mode}
+                                                banks={banks}
+                                                type={"creditor"}
+                                                deleteBlock={deleteCreditor}
+                                            />
+                                        ))
+                                    ) : (
+                                        <li>
+                                            <p>Нет данных</p>
+                                        </li>
+                                    )}
+                                </ul>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="flex flex-col">
-                            <ProjectStatisticsBlock
-                                ref={statRef}
-                                projectId={projectId}
-                            />
+                    <div className="flex flex-col">
+                        <ProjectStatisticsBlock
+                            ref={statRef}
+                            projectId={projectId}
+                        />
 
-                            <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        История проекта
-                                    </span>
+                        <div className="flex flex-col gap-2 flex-grow">
+                            <div className="flex items-center gap-2">
+                                <span className="text-gray-400">
+                                    История проекта
+                                </span>
 
-                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                        ?
-                                    </span>
-                                    {mode == "edit" &&
-                                        activeReportTab == "projectReports" && (
-                                            <button
-                                                type="button"
-                                                className="add-button"
-                                                onClick={() =>
-                                                    setReportWindowsState(true)
-                                                }
-                                                disabled={
-                                                    projectData.contragent_id
-                                                        ? false
-                                                        : true
-                                                }
-                                                title={
-                                                    projectData.contragent_id
-                                                        ? "Открыть конструктор отчёта"
-                                                        : "Необходимо назначить заказчика"
-                                                }
-                                            >
-                                                <span></span>
-                                            </button>
-                                        )}
-                                </div>
-
-                                <div className="relative border-2 border-gray-300 py-3 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                    <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
+                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                    ?
+                                </span>
+                                {mode == "edit" &&
+                                    activeReportTab == "projectReports" && (
                                         <button
                                             type="button"
-                                            className={`py-2 transition-all border-b-2 ${
-                                                activeReportTab ==
-                                                "projectReports"
-                                                    ? "border-gray-500"
-                                                    : "border-transparent"
-                                            }`}
+                                            className="add-button"
                                             onClick={() =>
-                                                setActiveReportTab(
-                                                    "projectReports"
-                                                )
+                                                setReportWindowsState(true)
                                             }
-                                            title="Перейти на вкладку Отчёты проекта"
-                                        >
-                                            Отчёты проекта
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`py-2 transition-all border-b-2 ${
-                                                activeReportTab ==
-                                                "managementReports"
-                                                    ? "border-gray-500"
-                                                    : "border-transparent"
-                                            }`}
-                                            onClick={() =>
-                                                setActiveReportTab(
-                                                    "managementReports"
-                                                )
+                                            disabled={
+                                                projectData.contragent_id
+                                                    ? false
+                                                    : true
                                             }
-                                            title="Перейти на вкладку Отчёты руководителя проекта"
+                                            title={
+                                                projectData.contragent_id
+                                                    ? "Открыть конструктор отчёта"
+                                                    : "Необходимо назначить заказчика"
+                                            }
                                         >
-                                            Отчёты руководителя проекта
+                                            <span></span>
                                         </button>
-                                    </nav>
-
-                                    {activeReportTab === "projectReports" &&
-                                        (!reportWindowsState ? (
-                                            <ul className="grid gap-3">
-                                                {!isDataLoaded && <Loader />}
-
-                                                <li className="grid items-center grid-cols-[33%_20%_33%_1fr] gap-3 mb-2 text-gray-400">
-                                                    <span>Отчет</span>
-                                                    <span>Статус</span>
-                                                    <span>
-                                                        Период выполнения
-                                                    </span>
-                                                </li>
-
-                                                {reports.length > 0 &&
-                                                    reports.map(
-                                                        (report, index) => (
-                                                            <ProjectReportItem
-                                                                key={
-                                                                    report.id ||
-                                                                    index
-                                                                }
-                                                                {...report}
-                                                                deleteReport={
-                                                                    deleteReport
-                                                                }
-                                                                openReportEditor={
-                                                                    openReportEditor
-                                                                }
-                                                                mode={mode}
-                                                            />
-                                                        )
-                                                    )}
-                                            </ul>
-                                        ) : (
-                                            <ProjectReportWindow
-                                                reportWindowsState={
-                                                    setReportWindowsState
-                                                }
-                                                sendReport={sendReport}
-                                                contracts={contracts}
-                                                updateReport={updateReport}
-                                                reportId={reportId}
-                                                setReportId={setReportId}
-                                                mode={mode}
-                                            />
-                                        ))}
-
-                                    {activeReportTab ===
-                                        "managementReports" && (
-                                        <ManagementReportsTab
-                                            projectId={projectId}
-                                        />
                                     )}
-                                </div>
+                            </div>
+
+                            <div className="relative border-2 border-gray-300 py-3 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
+                                    <button
+                                        type="button"
+                                        className={`py-2 transition-all border-b-2 ${
+                                            activeReportTab == "projectReports"
+                                                ? "border-gray-500"
+                                                : "border-transparent"
+                                        }`}
+                                        onClick={() =>
+                                            setActiveReportTab("projectReports")
+                                        }
+                                        title="Перейти на вкладку Отчёты проекта"
+                                    >
+                                        Отчёты проекта
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`py-2 transition-all border-b-2 ${
+                                            activeReportTab ==
+                                            "managementReports"
+                                                ? "border-gray-500"
+                                                : "border-transparent"
+                                        }`}
+                                        onClick={() =>
+                                            setActiveReportTab(
+                                                "managementReports"
+                                            )
+                                        }
+                                        title="Перейти на вкладку Отчёты руководителя проекта"
+                                    >
+                                        Отчёты руководителя проекта
+                                    </button>
+                                </nav>
+
+                                {activeReportTab === "projectReports" &&
+                                    (!reportWindowsState ? (
+                                        <ul className="grid gap-3">
+                                            {!isDataLoaded && <Loader />}
+
+                                            <li className="grid items-center grid-cols-[33%_20%_33%_1fr] gap-3 mb-2 text-gray-400">
+                                                <span>Отчет</span>
+                                                <span>Статус</span>
+                                                <span>Период выполнения</span>
+                                            </li>
+
+                                            {reports.length > 0 &&
+                                                reports.map((report, index) => (
+                                                    <ProjectReportItem
+                                                        key={report.id || index}
+                                                        {...report}
+                                                        deleteReport={
+                                                            deleteReport
+                                                        }
+                                                        openReportEditor={
+                                                            openReportEditor
+                                                        }
+                                                        mode={mode}
+                                                    />
+                                                ))}
+                                        </ul>
+                                    ) : (
+                                        <ProjectReportWindow
+                                            reportWindowsState={
+                                                setReportWindowsState
+                                            }
+                                            sendReport={sendReport}
+                                            contracts={contracts}
+                                            updateReport={updateReport}
+                                            reportId={reportId}
+                                            setReportId={setReportId}
+                                            mode={mode}
+                                        />
+                                    ))}
+
+                                {activeReportTab === "managementReports" && (
+                                    <ManagementReportsTab
+                                        projectId={projectId}
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>

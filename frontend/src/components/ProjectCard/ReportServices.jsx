@@ -1,21 +1,33 @@
 const ReportServices = ({ services }) => {
     return (
-        <ul className="grid gap-3 max-h-[175px] overflow-y-auto">
-            {services.map((service, index) => (
-                <li
-                    key={index}
-                    className="grid grid-cols-[10%_1fr_20%_20%] items-center gap-4"
-                >
-                    <div className="text-lg">{service.name}</div>
-                    <div className="text-lg">{service.cost} млн руб.</div>
-                    <div className="text-lg">{service.period}</div>
-                    <div>
-                        <div className="bg-gray-200 py-1 px-3 text-center rounded-md">
+        <ul className="project-card__services-list">
+            {services.length > 0 ? (
+                services.map((service, index) => (
+                    <li
+                        key={index}
+                        className="project-card__services-list__item"
+                    >
+                        <div className="project-card__services-list__item-name">
+                            {service.name}
+                        </div>
+
+                        <div className="project-card__services-list__item-status">
                             {service.status}
                         </div>
-                    </div>
-                </li>
-            ))}
+
+                        <div className="project-card__services-list__item-period">
+                            {service.period}
+                        </div>
+
+                        <div className="project-card__services-list__item-cost">
+                            <div>{service.cost}</div>
+                            <div>млн руб.</div>
+                        </div>
+                    </li>
+                ))
+            ) : (
+                <li>Нет данных</li>
+            )}
         </ul>
     );
 };

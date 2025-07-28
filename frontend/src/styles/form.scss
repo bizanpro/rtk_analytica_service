@@ -2,7 +2,8 @@
 
 .form {
     &-label {
-        display: block;
+        display: flex;
+        align-items: center;
         font-weight: 400;
         font-size: 14px;
         line-height: 150%;
