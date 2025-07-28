@@ -33,6 +33,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import "../../styles/card.scss";
+
 const ProjectCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
     const location = useLocation();
@@ -43,7 +45,8 @@ const ProjectCard = () => {
     const [projectData, setProjectData] = useState({});
     const [formFields, setFormFields] = useState();
 
-    const [mode, setMode] = useState(location.state?.mode || "read");
+    // const [mode, setMode] = useState(location.state?.mode || "read");
+    const [mode, setMode] = useState("edit");
     const [activeReportTab, setActiveReportTab] = useState("projectReports");
 
     const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
@@ -554,12 +557,6 @@ const ProjectCard = () => {
     };
 
     useEffect(() => {
-        if (projectId) {
-            getProject(projectId);
-        }
-    }, []);
-
-    useEffect(() => {
         if (projectData.creditors) {
             setFormFields((prev) => ({
                 ...prev,
@@ -592,18 +589,51 @@ const ProjectCard = () => {
         }
     }, [searchParams]);
 
+    useEffect(() => {
+        if (projectId) {
+            getProject(projectId);
+        }
+    }, []);
+
     return (
         <main className="page">
-            <div className="new-project pt-8 pb-15">
-                <div className="container">
+            <section className="card project-card">
+                {/* <nav className="switch">
+                                    <div>
+                                        <input
+                                            type="radio"
+                                            name="mode"
+                                            id="read_mode"
+                                            onChange={() => {
+                                                setMode("read");
+                                            }}
+                                            checked={mode === "read" ? true : false}
+                                        />
+                                        <label htmlFor="read_mode">Чтение</label>
+                                    </div>
+
+                                    <div>
+                                        <input
+                                            type="radio"
+                                            name="mode"
+                                            id="edit_mode"
+                                            onChange={() => setMode("edit")}
+                                            checked={mode === "edit" ? true : false}
+                                        />
+                                        <label htmlFor="edit_mode">
+                                            Редактирование
+                                        </label>
+                                    </div>
+                                </nav> */}
+
+                <div className="container card__container project-card__container">
                     <ToastContainer containerId="projectCard" />
 
-                    <div className="flex justify-between items-center gap-10">
-                        <div className="flex items-center gap-3 flex-grow">
-                            <div className="flex flex-col gap-3 w-full">
+                    <div className="card__wrapper project-card__wrapper">
+                        <section className="card__main-content project-card__main-content">
+                            <div className="card__main-name">
                                 <input
                                     type="text"
-                                    className="text-3xl font-medium"
                                     name="name"
                                     value={projectData?.name}
                                     onChange={(e) =>
@@ -629,48 +659,8 @@ const ProjectCard = () => {
                                     {handleStatus(projectData?.status)}
                                 </span>
                             </div>
+                        </section>
 
-                            {mode === "edit" &&
-                                projectData?.name?.length > 2 && (
-                                    <button
-                                        type="button"
-                                        className="update-icon"
-                                        title="Обновить данные проекта"
-                                        onClick={() => updateProject(projectId)}
-                                    ></button>
-                                )}
-                        </div>
-
-                        <nav className="switch">
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="read_mode"
-                                    onChange={() => {
-                                        setMode("read");
-                                    }}
-                                    checked={mode === "read" ? true : false}
-                                />
-                                <label htmlFor="read_mode">Чтение</label>
-                            </div>
-
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="edit_mode"
-                                    onChange={() => setMode("edit")}
-                                    checked={mode === "edit" ? true : false}
-                                />
-                                <label htmlFor="edit_mode">
-                                    Редактирование
-                                </label>
-                            </div>
-                        </nav>
-                    </div>
-
-                    <div className="new-project__wrapper mt-15">
                         <div>
                             <div className="grid gap-[20px] grid-cols-2">
                                 <div className="flex flex-col">
@@ -1277,7 +1267,20 @@ const ProjectCard = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
+
+            <nav className="bottom-nav">
+                {mode === "edit" && projectData?.name?.length > 2 && (
+                    <button
+                        type="button"
+                        className="action-button"
+                        title="Обновить данные проекта"
+                        onClick={() => updateProject(projectId)}
+                    >
+                        Сохранить
+                    </button>
+                )}
+            </nav>
         </main>
     );
 };

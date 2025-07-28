@@ -98,13 +98,13 @@
             background: var(--color-gray-30);
 
             &_completed {
-                color: var(--color-orange-80);
-                background: var(--color-orange-30);
+                color: var(--color-green-80);
+                background: var(--color-green-30);
             }
 
             &_active {
-                color: var(--color-green-80);
-                background: var(--color-green-30);
+                color: var(--color-orange-80);
+                background: var(--color-orange-30);
             }
         }
 

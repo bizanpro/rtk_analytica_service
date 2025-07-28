@@ -7,7 +7,7 @@ const handleStatus = (status) => {
             return "Завершён";
 
         case "undefined":
-            return "Не установлен";
+            return "Не опредедён";
 
         default:
             return "—";
