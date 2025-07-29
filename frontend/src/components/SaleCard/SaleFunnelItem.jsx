@@ -54,6 +54,7 @@ const SaleFunnelItem = ({
             </div>
 
             {stage.hasOwnProperty("next_possible_stages") &&
+            stage.is_final == false &&
             stage.next_possible_stages.length > 0 ? (
                 <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 pr-8">
                     <button
