@@ -9,14 +9,14 @@ const EmployeeWorkloadItem = ({
             <div className="flex flex-col justify-between gap-2 min-w-[140px]">
                 <div className="text-lg">{project?.name}</div>
 
-                <span className="text-gray-400">{project?.industry}</span>
+                <span className="text-gray-400">{project?.main_industry}</span>
             </div>
 
-            <div className="flex flex-col justify-between gap-2">
-                <div className="text-lg">{report?.name}</div>
+            <div className="flex flex-col justify-start gap-2">
+                <div className="text-lg">{report?.report_period_code}</div>
                 <span className="text-xs">{report?.report_period}</span>
             </div>
-            <div className="flex flex-col justify-between items-center gap-2">
+            <div className="flex flex-col justify-start items-center gap-2">
                 <div className="relative h-[20px] w-full border border-gray-200 overflow-hidden text-center flex items-center justify-center">
                     <div className="min-w-min whitespace-nowrap">
                         {completion_percentage}%
@@ -29,7 +29,7 @@ const EmployeeWorkloadItem = ({
                         }}
                     ></div>
                 </div>
-                <span className="text-xs">{report?.implementation_period}</span>
+                <span className="text-xs">{report?.execution_period}</span>
             </div>
             <div className="leading-6">{role}</div>
         </li>
