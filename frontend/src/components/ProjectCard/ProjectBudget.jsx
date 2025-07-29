@@ -6,11 +6,11 @@ const ProjectBudget = ({ projectData }) => {
             <div className="flex items-end gap-2">
                 {projectData?.project_budget !== null && (
                     <>
-                        <strong className="text-4xl font-normal max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong className="text-4xl font-normal whitespace-nowrap">
                             {projectData.project_budget}
                         </strong>
                         <span className="text-1xl leading-6">
-                            млрд <br /> руб.
+                            млрд <br /> руб
                         </span>
                     </>
                 )}
