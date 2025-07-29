@@ -739,9 +739,9 @@ const ProjectCard = () => {
                                     />
                                 </div>
 
-                                <div className="project-card__contragent">
+                                <div className="project-card__industries">
                                     <div className="form-label">
-                                        Основная отрасль{" "}
+                                        Основная отрасль
                                         <Hint message={"Основная отрасль"} />
                                     </div>
 
@@ -782,124 +782,124 @@ const ProjectCard = () => {
                                             ))}
                                     </select>
                                 </div>
+
+                                <div className="flex flex-col gap-5 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
+                                    <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
+                                        <span className="flex items-center gap-2 text-gray-400">
+                                            Вспомогательные отрасли
+                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                                ?
+                                            </span>
+                                        </span>
+
+                                        <Select
+                                            closeMenuOnSelect={false}
+                                            isMulti
+                                            name="colors"
+                                            options={industries.map(
+                                                (industry) => ({
+                                                    value: industry.id,
+                                                    label: industry.name,
+                                                })
+                                            )}
+                                            value={industries
+                                                .filter((industry) =>
+                                                    projectData?.industries?.others?.includes(
+                                                        industry.id
+                                                    )
+                                                )
+                                                .map((industry) => ({
+                                                    value: industry.id,
+                                                    label: industry.name,
+                                                }))}
+                                            className="basic-multi-select form-select"
+                                            classNamePrefix="select"
+                                            placeholder="Выбрать отрасль"
+                                            isDisabled={mode == "read"}
+                                            onChange={(selectedOptions) => {
+                                                setFormFields({
+                                                    ...formFields,
+                                                    industries: {
+                                                        ...formFields.industries,
+                                                        others: selectedOptions.map(
+                                                            (option) =>
+                                                                option.value
+                                                        ),
+                                                    },
+                                                });
+                                                setProjectData({
+                                                    ...projectData,
+                                                    industries: {
+                                                        ...projectData.industries,
+                                                        others: selectedOptions.map(
+                                                            (option) =>
+                                                                option.value
+                                                        ),
+                                                    },
+                                                });
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="project-card__description">
+                                    <div className="form-label">
+                                        Краткое описание проекта
+                                        <Hint
+                                            message={"Краткое описание проекта"}
+                                        />
+                                    </div>
+
+                                    <AutoResizeTextarea
+                                        className="form-textarea"
+                                        placeholder="Например: создание производства заготовки с микрокристаллической структурой..."
+                                        type="text"
+                                        name="description"
+                                        disabled={mode == "read"}
+                                        value={projectData?.description || ""}
+                                        onChange={(e) =>
+                                            handleInputChange(e, "description")
+                                        }
+                                    />
+                                </div>
+
+                                <div className="project-card__location">
+                                    <div className="form-label">
+                                        Местоположение
+                                        <Hint message={"Местоположение"} />
+                                    </div>
+
+                                    <AutoResizeTextarea
+                                        className="form-textarea"
+                                        disabled={mode === "read"}
+                                        value={projectData?.location || ""}
+                                        onChange={(e) =>
+                                            handleInputChange(e, "location")
+                                        }
+                                        placeholder="Страна, город, область..."
+                                    />
+                                </div>
+
+                                <div className="project-card__tep">
+                                    <div className="form-label">
+                                        ТЭП
+                                        <Hint message={"ТЭП"} />
+                                    </div>
+
+                                    <AutoResizeTextarea
+                                        className="form-textarea"
+                                        disabled={mode === "read"}
+                                        value={projectData?.tep || ""}
+                                        onChange={(e) =>
+                                            handleInputChange(e, "tep")
+                                        }
+                                        placeholder="Заполните ТЭП"
+                                    />
+                                </div>
                             </section>
                         </section>
 
-                        <div className="grid gap-[20px] grid-cols-2">
-                            <div className="flex flex-col">
-                                <div className="flex items-start justify-between gap-6 mb-10">
-                                    <div className="flex flex-col gap-5 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
-                                        <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
-                                            <span className="flex items-center gap-2 text-gray-400">
-                                                Вспомогательные отрасли
-                                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                    ?
-                                                </span>
-                                            </span>
-
-                                            <Select
-                                                closeMenuOnSelect={false}
-                                                isMulti
-                                                name="colors"
-                                                options={industries.map(
-                                                    (industry) => ({
-                                                        value: industry.id,
-                                                        label: industry.name,
-                                                    })
-                                                )}
-                                                value={industries
-                                                    .filter((industry) =>
-                                                        projectData?.industries?.others?.includes(
-                                                            industry.id
-                                                        )
-                                                    )
-                                                    .map((industry) => ({
-                                                        value: industry.id,
-                                                        label: industry.name,
-                                                    }))}
-                                                className="basic-multi-select form-select"
-                                                classNamePrefix="select"
-                                                placeholder="Выбрать отрасль"
-                                                isDisabled={mode == "read"}
-                                                onChange={(selectedOptions) => {
-                                                    setFormFields({
-                                                        ...formFields,
-                                                        industries: {
-                                                            ...formFields.industries,
-                                                            others: selectedOptions.map(
-                                                                (option) =>
-                                                                    option.value
-                                                            ),
-                                                        },
-                                                    });
-                                                    setProjectData({
-                                                        ...projectData,
-                                                        industries: {
-                                                            ...projectData.industries,
-                                                            others: selectedOptions.map(
-                                                                (option) =>
-                                                                    option.value
-                                                            ),
-                                                        },
-                                                    });
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div className="grid gap-[20px] grid-cols-2 mb-5">
-                            <div className="flex flex-col gap-2">
-                                <span className="text-gray-400">
-                                    Местоположение
-                                </span>
-
-                                <AutoResizeTextarea
-                                    disabled={mode === "read"}
-                                    value={projectData?.location || ""}
-                                    onChange={(e) =>
-                                        handleInputChange(e, "location")
-                                    }
-                                    placeholder="Введите местоположение"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid gap-[20px] grid-cols-2 mb-5">
-                            <div className="flex flex-col gap-2">
-                                <span className="text-gray-400">ТЭП</span>
-
-                                <AutoResizeTextarea
-                                    disabled={mode === "read"}
-                                    value={projectData?.tep || ""}
-                                    onChange={(e) =>
-                                        handleInputChange(e, "tep")
-                                    }
-                                    placeholder="Введите ТЭП"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid gap-[20px] grid-cols-2 mb-5">
-                            <div className="flex flex-col gap-2">
-                                <span className="text-gray-400">
-                                    Краткое описание
-                                </span>
-                                <textarea
-                                    className="border-2 border-gray-300 p-5 min-h-[300px] max-h-[400px]"
-                                    placeholder="Заполните описание проекта"
-                                    type="text"
-                                    name="description"
-                                    disabled={mode == "read"}
-                                    value={projectData?.description || ""}
-                                    onChange={(e) =>
-                                        handleInputChange(e, "description")
-                                    }
-                                />
-                            </div>
-
                             <ProjectTeam teamData={teamData} />
                         </div>
 
