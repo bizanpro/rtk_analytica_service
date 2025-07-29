@@ -85,4 +85,55 @@
             }
         }
     }
+
+    &-select-extend {
+        > [class*="-control"] {
+            padding: 3px 5px;
+            border-radius: 10px;
+            border: 1px solid var(--color-gray-30);
+            background: var(--color-gray-20);
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 140%;
+            min-height: 20px;
+
+            [class*="-placeholder"] {
+                color: var(--color-gray-60);
+            }
+
+            [class*="-indicatorSeparator"],
+            [class*="-indicatorContainer"] svg {
+                display: none;
+            }
+
+            [class*="-indicatorContainer"] {
+                width: 36px;
+                height: 100%;
+                background: url("../assets/icons/arrow-right.svg") center
+                    no-repeat;
+                background-size: 16px;
+            }
+        }
+    }
+
+    &-select {
+        min-width: 100%;
+        padding: 10px 13px;
+        border-radius: 10px;
+        border: 1px solid var(--color-gray-30);
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 140%;
+        background: var(--color-gray-20) url("../assets/icons/arrow-right.svg")
+            no-repeat;
+        background-size: 16px;
+        background-position: right 12px top 50%;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+
+        ::placeholder {
+            color: var(--color-gray-60);
+        }
+    }
 }

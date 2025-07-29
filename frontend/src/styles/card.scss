@@ -19,6 +19,14 @@
     &__main-content {
     }
 
+    &__subtitle {
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 120%;
+        margin-top: 40px;
+        margin-bottom: 20px;
+    }
+
     &__row {
         display: grid;
         gap: 15px;

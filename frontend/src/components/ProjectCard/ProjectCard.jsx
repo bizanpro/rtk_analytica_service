@@ -685,53 +685,102 @@ const ProjectCard = () => {
                                         Заказчик <Hint message={"Заказчик"} />
                                     </div>
 
-                                    <div className="border-2 border-gray-300">
-                                        <CreatableSelect
-                                            isClearable
-                                            options={
-                                                contragents.length > 0 &&
-                                                contragents.map((item) => ({
-                                                    value: item.id,
-                                                    label: item.program_name,
-                                                }))
-                                            }
-                                            className="w-full executor-block__name-field"
-                                            placeholder="Выбрать заказчика"
-                                            noOptionsMessage={() =>
-                                                "Совпадений нет"
-                                            }
-                                            isValidNewOption={() => false}
-                                            value={
-                                                (contragents.length > 0 &&
-                                                    contragents
-                                                        .map((item) => ({
-                                                            value: item.id,
-                                                            label: item.program_name,
-                                                        }))
-                                                        .find(
-                                                            (option) =>
-                                                                option.value ===
-                                                                projectData?.contragent_id
-                                                        )) ||
-                                                null
-                                            }
-                                            onChange={(selectedOption) => {
-                                                const newValue =
-                                                    selectedOption?.value ||
-                                                    null;
+                                    <CreatableSelect
+                                        options={
+                                            contragents.length > 0 &&
+                                            contragents.map((item) => ({
+                                                value: item.id,
+                                                label: item.program_name,
+                                            }))
+                                        }
+                                        className="form-select-extend"
+                                        placeholder="Выбрать из списка"
+                                        noOptionsMessage={() =>
+                                            "Совпадений нет"
+                                        }
+                                        isValidNewOption={() => false}
+                                        value={
+                                            (contragents.length > 0 &&
+                                                contragents
+                                                    .map((item) => ({
+                                                        value: item.id,
+                                                        label: item.program_name,
+                                                    }))
+                                                    .find(
+                                                        (option) =>
+                                                            option.value ===
+                                                            projectData?.contragent_id
+                                                    )) ||
+                                            null
+                                        }
+                                        onChange={(selectedOption) => {
+                                            const newValue =
+                                                selectedOption?.value || null;
 
-                                                setFormFields((prev) => ({
-                                                    ...prev,
-                                                    contragent_id: newValue,
-                                                }));
-                                                setProjectData((prev) => ({
-                                                    ...prev,
-                                                    contragent_id: newValue,
-                                                }));
-                                            }}
-                                            isDisabled={mode == "read"}
-                                        />
+                                            setFormFields((prev) => ({
+                                                ...prev,
+                                                contragent_id: newValue,
+                                            }));
+                                            setProjectData((prev) => ({
+                                                ...prev,
+                                                contragent_id: newValue,
+                                            }));
+                                        }}
+                                        isDisabled={mode == "read"}
+                                        styles={{
+                                            input: (base) => ({
+                                                ...base,
+                                                maxWidth: "100%",
+                                                whiteSpace: "nowrap",
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                            }),
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="project-card__contragent">
+                                    <div className="form-label">
+                                        Основная отрасль{" "}
+                                        <Hint message={"Основная отрасль"} />
                                     </div>
+
+                                    <select
+                                        className="form-select"
+                                        value={
+                                            projectData?.industries?.main || ""
+                                        }
+                                        onChange={(evt) => {
+                                            setFormFields({
+                                                ...formFields,
+                                                industries: {
+                                                    ...formFields.industries,
+                                                    main: +evt.target.value,
+                                                },
+                                            });
+                                            setProjectData({
+                                                ...projectData,
+                                                industries: {
+                                                    ...projectData.industries,
+                                                    main: +evt.target.value,
+                                                },
+                                            });
+                                        }}
+                                        disabled={mode == "read"}
+                                    >
+                                        <option value="">
+                                            Выбрать из списка
+                                        </option>
+                                        {industries.length > 0 &&
+                                            industries.map((item) => (
+                                                <option
+                                                    value={item.id}
+                                                    key={item.id}
+                                                >
+                                                    {item.name}
+                                                </option>
+                                            ))}
+                                    </select>
                                 </div>
                             </section>
                         </section>
@@ -740,64 +789,6 @@ const ProjectCard = () => {
                             <div className="flex flex-col">
                                 <div className="flex items-start justify-between gap-6 mb-10">
                                     <div className="flex flex-col gap-5 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
-                                        <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
-                                            <span className="flex items-center gap-2 text-gray-400">
-                                                Отрасль
-                                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                    ?
-                                                </span>
-                                            </span>
-                                            <div className="border-2 border-gray-300 p-3">
-                                                <select
-                                                    className="w-full h-[21px]"
-                                                    value={
-                                                        projectData?.industries
-                                                            ?.main || ""
-                                                    }
-                                                    onChange={(evt) => {
-                                                        setFormFields({
-                                                            ...formFields,
-                                                            industries: {
-                                                                ...formFields.industries,
-                                                                main: +evt
-                                                                    .target
-                                                                    .value,
-                                                            },
-                                                        });
-                                                        setProjectData({
-                                                            ...projectData,
-                                                            industries: {
-                                                                ...projectData.industries,
-                                                                main: +evt
-                                                                    .target
-                                                                    .value,
-                                                            },
-                                                        });
-                                                    }}
-                                                    disabled={mode == "read"}
-                                                >
-                                                    <option value="">
-                                                        Выбрать отрасль
-                                                    </option>
-                                                    {industries.length > 0 &&
-                                                        industries.map(
-                                                            (item) => (
-                                                                <option
-                                                                    value={
-                                                                        item.id
-                                                                    }
-                                                                    key={
-                                                                        item.id
-                                                                    }
-                                                                >
-                                                                    {item.name}
-                                                                </option>
-                                                            )
-                                                        )}
-                                                </select>
-                                            </div>
-                                        </div>
-
                                         <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
                                             <span className="flex items-center gap-2 text-gray-400">
                                                 Вспомогательные отрасли
@@ -826,7 +817,7 @@ const ProjectCard = () => {
                                                         value: industry.id,
                                                         label: industry.name,
                                                     }))}
-                                                className="basic-multi-select min-h-[32px] w-full"
+                                                className="basic-multi-select form-select"
                                                 classNamePrefix="select"
                                                 placeholder="Выбрать отрасль"
                                                 isDisabled={mode == "read"}
