@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 import handleStatus from "../../utils/handleStatus";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 import { ToastContainer, toast } from "react-toastify";
 
@@ -227,6 +229,21 @@ const SupplierCard = () => {
         }
     }, []);
 
+    const block1Ref = useRef(null);
+    const block2Ref = useRef(null);
+    const block3Ref = useRef(null);
+    const block4Ref = useRef(null);
+    const block5Ref = useRef(null);
+    const block6Ref = useRef(null);
+
+    useOutsideClick(
+        [block1Ref, block2Ref, block3Ref, block4Ref, block5Ref, block6Ref],
+        () => {
+            setProjectData({});
+            setReports([]);
+        }
+    );
+
     return (
         <main className="page">
             <div className="pt-8 pb-15">
@@ -316,6 +333,7 @@ const SupplierCard = () => {
                                         style={{ resize: "none" }}
                                         placeholder="Заполните адрес центрального офиса"
                                         type="text"
+                                        ref={block1Ref}
                                         onChange={(e) =>
                                             handleInputChange(
                                                 e,
@@ -342,6 +360,7 @@ const SupplierCard = () => {
                                             value={
                                                 supplierData?.company_website
                                             }
+                                            ref={block2Ref}
                                             onChange={(e) =>
                                                 handleInputChange(
                                                     e,
@@ -365,6 +384,7 @@ const SupplierCard = () => {
                                             <button
                                                 type="button"
                                                 className="add-button"
+                                                ref={block3Ref}
                                                 onClick={() => {
                                                     if (!addRespPerson) {
                                                         setAddRespPerson(true);
@@ -429,6 +449,7 @@ const SupplierCard = () => {
                                     style={{ resize: "none" }}
                                     placeholder="Заполните описание"
                                     type="text"
+                                    ref={block4Ref}
                                     disabled={mode == "read" ? true : false}
                                     value={
                                         supplierData?.description_short || ""
@@ -449,7 +470,7 @@ const SupplierCard = () => {
                                     </span>
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                    <ul className="grid gap-3">
+                                    <ul className="grid gap-3" ref={block5Ref}>
                                         <li className="grid items-center grid-cols-[1fr_20%_1fr] gap-3 mb-2 text-gray-400">
                                             <span>Проект</span>
                                             <span>Бюджет</span>
@@ -491,7 +512,10 @@ const SupplierCard = () => {
                                     </span>
                                 </div>
 
-                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                <div
+                                    className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto"
+                                    ref={block6Ref}
+                                >
                                     <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
                                         <button
                                             type="button"
