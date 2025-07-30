@@ -61,13 +61,22 @@ const SupplierCard = () => {
     const getReports = (id) => {
         setReportWindowsState(false);
 
-        const targetProject = projects.find((project) => project.id === id);
+        let targetProject = projects.find((project) => project.id === id);
+        
         const targetManagerReport = supplierData.manager_reports?.filter(
             (report) => report.project_id === id
         );
 
-        if (targetProject && targetProject.reports?.length > 0) {
-            setReports(targetProject.reports);
+        targetProject = targetProject?.reports.map((report) => ({
+            ...report,
+            projectName: targetProject.name,
+            industries: targetProject.industries.map(
+                (industry) => industry.name
+            ),
+        }));
+
+        if (targetProject?.length > 0) {
+            setReports(targetProject);
         }
 
         if (targetManagerReport.length > 0) {
@@ -95,8 +104,14 @@ const SupplierCard = () => {
                 setSupplierData(response.data);
                 setProjects(response.data.projects);
                 setReports(
-                    response.data.projects?.flatMap(
-                        (project) => project.reports
+                    response.data.projects?.flatMap((project) =>
+                        project.reports.map((report) => ({
+                            ...report,
+                            projectName: project.name,
+                            industries: project.industries.map(
+                                (industry) => industry.name
+                            ),
+                        }))
                     )
                 );
                 setManagerReports(response.data.manager_reports);
@@ -255,7 +270,17 @@ const SupplierCard = () => {
         [block1Ref, block2Ref, block3Ref, block4Ref, block5Ref, block6Ref],
         () => {
             setProjectData({});
-            setReports(projects.flatMap((project) => project.reports));
+            setReports(
+                projects.flatMap((project) =>
+                    project.reports.map((report) => ({
+                        ...report,
+                        projectName: project.name,
+                        industries: project.industries.map(
+                            (industry) => industry.name
+                        ),
+                    }))
+                )
+            );
             setManagerReports(supplierData.manager_reports);
         }
     );
@@ -592,9 +617,6 @@ const SupplierCard = () => {
                                                                     index
                                                                 }
                                                                 {...report}
-                                                                projectData={
-                                                                    projectData
-                                                                }
                                                                 openReportEditor={
                                                                     openReportEditor
                                                                 }

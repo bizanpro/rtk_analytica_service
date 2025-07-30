@@ -7,7 +7,8 @@ const CardReportsListItem = ({
     execution_period_code,
     days,
     openReportEditor,
-    projectData,
+    projectName,
+    industries,
 }) => {
     return (
         <li
@@ -17,9 +18,14 @@ const CardReportsListItem = ({
             }}
         >
             <div className="flex flex-col">
-                <div className="text-lg">{projectData.name}</div>
+                <div className="text-lg">{projectName}</div>
                 <span className="text-sm text-gray-400">
-                    {projectData.industry}
+                    {industries?.map((item) => (
+                        <>
+                            {item}
+                            <br />
+                        </>
+                    ))}
                 </span>
             </div>
 
