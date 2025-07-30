@@ -1,6 +1,6 @@
 import getColorBySign from "../../utils/getColorBySign";
 
-const ProgressBlock = ({ percentage, date }) => {
+const ProgressBlock = ({ percentage }) => {
     const progress = percentage > 100 ? 0 : percentage;
 
     return (
@@ -35,52 +35,64 @@ const ProjectImplementationPeriod = ({ projectData }) => {
                     )}
                 </div>
                 <div className="flex items-center gap-[10px]">
-                    {projectData?.fta_implementation_period !== null && (
-                        <span>
-                            {projectData.fta_implementation_period} мес.
-                        </span>
-                    )}
+                    {projectData?.implementation_period > 0 && (
+                        <>
+                            {projectData?.fta_implementation_period !==
+                                null && (
+                                <span>
+                                    {projectData.fta_implementation_period} мес.
+                                </span>
+                            )}
 
-                    {projectData.implementation_period_difference_percentage >
-                        0 && (
-                        <div
-                            className={`project-budget__block-percentage ${getColorBySign(
-                                projectData.implementation_period_difference_percentage,
-                                "plus",
-                                "minus"
-                            )}`}
-                        >
-                            {
-                                projectData.implementation_period_difference_percentage
-                            }
-                            %
-                        </div>
+                            {projectData.implementation_period_difference_percentage >
+                                0 && (
+                                <div
+                                    className={`project-budget__block-percentage ${getColorBySign(
+                                        projectData.implementation_period_difference_percentage,
+                                        "plus",
+                                        "minus"
+                                    )}`}
+                                >
+                                    {
+                                        projectData.implementation_period_difference_percentage
+                                    }
+                                    %
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
 
             <div className="project-budget__block-title">
-                <span
-                    className={`${
-                        projectData?.implementation_period > 0 && "active"
-                    }`}
-                >
-                    срок реализации
-                </span>
-                {projectData?.implementation_period == 0 && <b>Нет данных</b>}
+                {projectData?.implementation_period > 0 ? (
+                    <>
+                        <span className="active">срок реализации</span>
 
-                {projectData?.completion_percentage !== 0 && (
-                    <span className="flex items-center gap-[10px]">
-                        <span>{projectData?.completion_percentage}%</span>
+                        {projectData?.completion_percentage !== 0 && (
+                            <span className="flex items-center gap-[10px]">
+                                <span>
+                                    {projectData?.completion_percentage}%
+                                </span>
 
-                        {projectData?.implementation_period_string}
-                    </span>
+                                {projectData?.implementation_period_string}
+                            </span>
+                        )}
+
+                        {percentage && (
+                            <ProgressBlock
+                                percentage={percentage}
+                                date={date}
+                            />
+                        )}
+                    </>
+                ) : (
+                    <>
+                        <span>срок реализации</span>
+                        <b>Нет данных</b>
+                    </>
                 )}
             </div>
-
-            {percentage && (
-                <ProgressBlock percentage={percentage} date={date} />
-            )}
         </div>
     );
 };

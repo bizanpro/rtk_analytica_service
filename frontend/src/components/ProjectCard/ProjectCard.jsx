@@ -783,63 +783,57 @@ const ProjectCard = () => {
                                     </select>
                                 </div>
 
-                                <div className="flex flex-col gap-5 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
-                                    <div className="flex flex-col gap-2 flex-shrink-0 flex-grow min-w-[200px] max-w-[200px] 2xl:min-w-[300px] 2xl:max-w-[300px]">
-                                        <span className="flex items-center gap-2 text-gray-400">
-                                            Вспомогательные отрасли
-                                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                ?
-                                            </span>
-                                        </span>
-
-                                        <Select
-                                            closeMenuOnSelect={false}
-                                            isMulti
-                                            name="colors"
-                                            options={industries.map(
-                                                (industry) => ({
-                                                    value: industry.id,
-                                                    label: industry.name,
-                                                })
-                                            )}
-                                            value={industries
-                                                .filter((industry) =>
-                                                    projectData?.industries?.others?.includes(
-                                                        industry.id
-                                                    )
-                                                )
-                                                .map((industry) => ({
-                                                    value: industry.id,
-                                                    label: industry.name,
-                                                }))}
-                                            className="basic-multi-select form-select"
-                                            classNamePrefix="select"
-                                            placeholder="Выбрать отрасль"
-                                            isDisabled={mode == "read"}
-                                            onChange={(selectedOptions) => {
-                                                setFormFields({
-                                                    ...formFields,
-                                                    industries: {
-                                                        ...formFields.industries,
-                                                        others: selectedOptions.map(
-                                                            (option) =>
-                                                                option.value
-                                                        ),
-                                                    },
-                                                });
-                                                setProjectData({
-                                                    ...projectData,
-                                                    industries: {
-                                                        ...projectData.industries,
-                                                        others: selectedOptions.map(
-                                                            (option) =>
-                                                                option.value
-                                                        ),
-                                                    },
-                                                });
-                                            }}
+                                <div className="project-card__industries">
+                                    <div className="form-label">
+                                        Дополнительная отрасль
+                                        <Hint
+                                            message={"Дополнительная отрасль"}
                                         />
                                     </div>
+
+                                    <Select
+                                        closeMenuOnSelect={false}
+                                        isMulti
+                                        name="colors"
+                                        options={industries.map((industry) => ({
+                                            value: industry.id,
+                                            label: industry.name,
+                                        }))}
+                                        value={industries
+                                            .filter((industry) =>
+                                                projectData?.industries?.others?.includes(
+                                                    industry.id
+                                                )
+                                            )
+                                            .map((industry) => ({
+                                                value: industry.id,
+                                                label: industry.name,
+                                            }))}
+                                        className="basic-multi-select form-select"
+                                        classNamePrefix="select"
+                                        placeholder="Выбрать отрасль"
+                                        isDisabled={mode == "read"}
+                                        onChange={(selectedOptions) => {
+                                            setFormFields({
+                                                ...formFields,
+                                                industries: {
+                                                    ...formFields.industries,
+                                                    others: selectedOptions.map(
+                                                        (option) => option.value
+                                                    ),
+                                                },
+                                            });
+                                            setProjectData({
+                                                ...projectData,
+                                                industries: {
+                                                    ...projectData.industries,
+                                                    others: selectedOptions.map(
+                                                        (option) => option.value
+                                                    ),
+                                                },
+                                            });
+                                        }}
+                                    />
                                 </div>
 
                                 <div className="project-card__description">
@@ -897,41 +891,72 @@ const ProjectCard = () => {
                                     />
                                 </div>
                             </section>
-                        </section>
 
-                        <div className="grid gap-[20px] grid-cols-2 mb-5">
-                            <ProjectTeam teamData={teamData} />
-                        </div>
+                            <section className="project-card__project-team">
+                                <h2 className="card__subtitle">
+                                    Команда проекта
+                                </h2>
 
-                        <div className="grid gap-[20px] grid-cols-2 items-start">
-                            <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        Ключевые лица Заказчика
-                                    </span>
-                                    {mode == "edit" && (
-                                        <button
-                                            type="button"
-                                            className="add-button"
-                                            onClick={() => {
-                                                if (
-                                                    projectData?.contragent_id
-                                                ) {
-                                                    if (!addCustomer) {
-                                                        setAddCustomer(true);
-                                                    }
-                                                } else {
-                                                    alert(
-                                                        "Необходимо назначить заказчика"
-                                                    );
-                                                }
-                                            }}
-                                            title="Добавить ключевое лицо Заказчика"
-                                        >
-                                            <span></span>
-                                        </button>
-                                    )}
+                                <div className="project-card__team">
+                                    <ProjectTeam teamData={teamData} />
                                 </div>
+                            </section>
+
+                            <section className="project-card__project-executors">
+                                <h2 className="card__subtitle">
+                                    Ключевые лица заказчика
+                                </h2>
+
+                                <ul className="project-card__executors-list">
+                                    {customers.length > 0 ? (
+                                        customers.map((customer) => (
+                                            <ExecutorBlock
+                                                key={customer.id}
+                                                contanct={customer}
+                                                mode={mode}
+                                                type={"customer"}
+                                                deleteBlock={deleteCustomer}
+                                            />
+                                        ))
+                                    ) : (
+                                        <li className="project-card__executors-list-nodata">
+                                            Нет данных
+                                        </li>
+                                    )}
+                                </ul>
+
+                                <button
+                                    type="button"
+                                    className="button-add"
+                                    onClick={() => {
+                                        if (projectData?.contragent_id) {
+                                            if (!addCustomer) {
+                                                setAddCustomer(true);
+                                            }
+                                        } else {
+                                            alert(
+                                                "Необходимо назначить заказчика"
+                                            );
+                                        }
+                                    }}
+                                    title="Добавить ключевое лицо Заказчика"
+                                >
+                                    Добавить
+                                    <span>
+                                        <svg
+                                            width="10"
+                                            height="9"
+                                            viewBox="0 0 10 9"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
+                                                fill="currentColor"
+                                            />
+                                        </svg>
+                                    </span>
+                                </button>
 
                                 {addCustomer && (
                                     <EmptyExecutorBlock
@@ -945,50 +970,10 @@ const ProjectCard = () => {
                                         sendExecutor={sendExecutor}
                                     />
                                 )}
+                            </section>
 
-                                <ul
-                                    className={`flex flex-col gap-4 items-start overflow-y-auto h-[205px] ${
-                                        addCustomer ? "" : "mt-[55px]"
-                                    }`}
-                                >
-                                    {customers.length > 0 ? (
-                                        customers.map((customer) => (
-                                            <ExecutorBlock
-                                                key={customer.id}
-                                                contanct={customer}
-                                                mode={mode}
-                                                type={"customer"}
-                                                deleteBlock={deleteCustomer}
-                                            />
-                                        ))
-                                    ) : (
-                                        <li>
-                                            <p>Нет данных</p>
-                                        </li>
-                                    )}
-                                </ul>
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        Кредиторы
-                                    </span>
-                                    {mode == "edit" && (
-                                        <button
-                                            type="button"
-                                            className="add-button"
-                                            onClick={() => {
-                                                if (!addLender) {
-                                                    setAddLender(true);
-                                                }
-                                            }}
-                                            title="Добавить Кредитора"
-                                        >
-                                            <span></span>
-                                        </button>
-                                    )}
-                                </div>
+                            <section className="project-card__project-executors">
+                                <h2 className="card__subtitle">Кредиторы</h2>
 
                                 <ul className="flex gap-3 flex-wrap mb-2">
                                     {matchedBanks.length > 0 && (
@@ -1041,18 +1026,6 @@ const ProjectCard = () => {
                                     )}
                                 </ul>
 
-                                {addLender && (
-                                    <EmptyExecutorBlock
-                                        borderClass={"border-gray-300"}
-                                        banks={banks}
-                                        type={"creditor"}
-                                        removeBlock={() => setAddLender(false)}
-                                        creditorContacts={creditorContacts}
-                                        contragentContacts={contragentContacts}
-                                        sendExecutor={sendExecutor}
-                                    />
-                                )}
-
                                 <ul className="mt-[10px] flex flex-col gap-4 items-start overflow-y-auto h-[270px]">
                                     {filteredLenders.length > 0 &&
                                     banks.length > 0 ? (
@@ -1072,148 +1045,198 @@ const ProjectCard = () => {
                                         </li>
                                     )}
                                 </ul>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div className="flex flex-col">
-                        <ProjectStatisticsBlock
-                            ref={statRef}
-                            projectId={projectId}
-                        />
-
-                        <div className="flex flex-col gap-2 flex-grow">
-                            <div className="flex items-center gap-2">
-                                <span className="text-gray-400">
-                                    История проекта
-                                </span>
-
-                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                    ?
-                                </span>
-                                {mode == "edit" &&
-                                    activeReportTab == "projectReports" && (
-                                        <button
-                                            type="button"
-                                            className="add-button"
-                                            onClick={() =>
-                                                setReportWindowsState(true)
-                                            }
-                                            disabled={
-                                                projectData.contragent_id
-                                                    ? false
-                                                    : true
-                                            }
-                                            title={
-                                                projectData.contragent_id
-                                                    ? "Открыть конструктор отчёта"
-                                                    : "Необходимо назначить заказчика"
-                                            }
-                                        >
-                                            <span></span>
-                                        </button>
-                                    )}
-                            </div>
-
-                            <div className="relative border-2 border-gray-300 py-3 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
-                                    <button
-                                        type="button"
-                                        className={`py-2 transition-all border-b-2 ${
-                                            activeReportTab == "projectReports"
-                                                ? "border-gray-500"
-                                                : "border-transparent"
-                                        }`}
-                                        onClick={() =>
-                                            setActiveReportTab("projectReports")
+                                <button
+                                    type="button"
+                                    className="add-button"
+                                    onClick={() => {
+                                        if (!addLender) {
+                                            setAddLender(true);
                                         }
-                                        title="Перейти на вкладку Отчёты проекта"
+                                    }}
+                                    title="Добавить Кредитора"
+                                >
+                                    <span></span>
+                                    <svg
+                                        width="10"
+                                        height="9"
+                                        viewBox="0 0 10 9"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
                                     >
-                                        Отчёты проекта
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`py-2 transition-all border-b-2 ${
-                                            activeReportTab ==
-                                            "managementReports"
-                                                ? "border-gray-500"
-                                                : "border-transparent"
-                                        }`}
-                                        onClick={() =>
-                                            setActiveReportTab(
-                                                "managementReports"
-                                            )
-                                        }
-                                        title="Перейти на вкладку Отчёты руководителя проекта"
-                                    >
-                                        Отчёты руководителя проекта
-                                    </button>
-                                </nav>
-
-                                {activeReportTab === "projectReports" &&
-                                    (!reportWindowsState ? (
-                                        <ul className="grid gap-3">
-                                            {!isDataLoaded && <Loader />}
-
-                                            <li className="grid items-center grid-cols-[33%_20%_33%_1fr] gap-3 mb-2 text-gray-400">
-                                                <span>Отчет</span>
-                                                <span>Статус</span>
-                                                <span>Период выполнения</span>
-                                            </li>
-
-                                            {reports.length > 0 &&
-                                                reports.map((report, index) => (
-                                                    <ProjectReportItem
-                                                        key={report.id || index}
-                                                        {...report}
-                                                        deleteReport={
-                                                            deleteReport
-                                                        }
-                                                        openReportEditor={
-                                                            openReportEditor
-                                                        }
-                                                        mode={mode}
-                                                    />
-                                                ))}
-                                        </ul>
-                                    ) : (
-                                        <ProjectReportWindow
-                                            reportWindowsState={
-                                                setReportWindowsState
-                                            }
-                                            sendReport={sendReport}
-                                            contracts={contracts}
-                                            updateReport={updateReport}
-                                            reportId={reportId}
-                                            setReportId={setReportId}
-                                            mode={mode}
+                                        <path
+                                            d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
+                                            fill="currentColor"
                                         />
-                                    ))}
+                                    </svg>
+                                </button>
 
-                                {activeReportTab === "managementReports" && (
-                                    <ManagementReportsTab
-                                        projectId={projectId}
+                                {addLender && (
+                                    <EmptyExecutorBlock
+                                        borderClass={"border-gray-300"}
+                                        banks={banks}
+                                        type={"creditor"}
+                                        removeBlock={() => setAddLender(false)}
+                                        creditorContacts={creditorContacts}
+                                        contragentContacts={contragentContacts}
+                                        sendExecutor={sendExecutor}
                                     />
                                 )}
+                            </section>
+                        </section>
+
+                        <section className="card__aside-content project-card__aside-content">
+                            <ProjectStatisticsBlock
+                                ref={statRef}
+                                projectId={projectId}
+                            />
+
+                            <div className="flex flex-col gap-2 flex-grow">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-400">
+                                        История проекта
+                                    </span>
+
+                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                        ?
+                                    </span>
+                                    {mode == "edit" &&
+                                        activeReportTab == "projectReports" && (
+                                            <button
+                                                type="button"
+                                                className="add-button"
+                                                onClick={() =>
+                                                    setReportWindowsState(true)
+                                                }
+                                                disabled={
+                                                    projectData.contragent_id
+                                                        ? false
+                                                        : true
+                                                }
+                                                title={
+                                                    projectData.contragent_id
+                                                        ? "Открыть конструктор отчёта"
+                                                        : "Необходимо назначить заказчика"
+                                                }
+                                            >
+                                                <span></span>
+                                            </button>
+                                        )}
+                                </div>
+
+                                <div className="relative border-2 border-gray-300 py-3 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                    <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
+                                        <button
+                                            type="button"
+                                            className={`py-2 transition-all border-b-2 ${
+                                                activeReportTab ==
+                                                "projectReports"
+                                                    ? "border-gray-500"
+                                                    : "border-transparent"
+                                            }`}
+                                            onClick={() =>
+                                                setActiveReportTab(
+                                                    "projectReports"
+                                                )
+                                            }
+                                            title="Перейти на вкладку Отчёты проекта"
+                                        >
+                                            Отчёты проекта
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`py-2 transition-all border-b-2 ${
+                                                activeReportTab ==
+                                                "managementReports"
+                                                    ? "border-gray-500"
+                                                    : "border-transparent"
+                                            }`}
+                                            onClick={() =>
+                                                setActiveReportTab(
+                                                    "managementReports"
+                                                )
+                                            }
+                                            title="Перейти на вкладку Отчёты руководителя проекта"
+                                        >
+                                            Отчёты руководителя проекта
+                                        </button>
+                                    </nav>
+
+                                    {activeReportTab === "projectReports" &&
+                                        (!reportWindowsState ? (
+                                            <ul className="grid gap-3">
+                                                {!isDataLoaded && <Loader />}
+
+                                                <li className="grid items-center grid-cols-[33%_20%_33%_1fr] gap-3 mb-2 text-gray-400">
+                                                    <span>Отчет</span>
+                                                    <span>Статус</span>
+                                                    <span>
+                                                        Период выполнения
+                                                    </span>
+                                                </li>
+
+                                                {reports.length > 0 &&
+                                                    reports.map(
+                                                        (report, index) => (
+                                                            <ProjectReportItem
+                                                                key={
+                                                                    report.id ||
+                                                                    index
+                                                                }
+                                                                {...report}
+                                                                deleteReport={
+                                                                    deleteReport
+                                                                }
+                                                                openReportEditor={
+                                                                    openReportEditor
+                                                                }
+                                                                mode={mode}
+                                                            />
+                                                        )
+                                                    )}
+                                            </ul>
+                                        ) : (
+                                            <ProjectReportWindow
+                                                reportWindowsState={
+                                                    setReportWindowsState
+                                                }
+                                                sendReport={sendReport}
+                                                contracts={contracts}
+                                                updateReport={updateReport}
+                                                reportId={reportId}
+                                                setReportId={setReportId}
+                                                mode={mode}
+                                            />
+                                        ))}
+
+                                    {activeReportTab ===
+                                        "managementReports" && (
+                                        <ManagementReportsTab
+                                            projectId={projectId}
+                                        />
+                                    )}
+                                </div>
                             </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
             </section>
 
-            <nav className="bottom-nav">
-                {mode === "edit" && (
-                    <button
-                        type="button"
-                        className="action-button"
-                        title="Обновить данные проекта"
-                        onClick={() => updateProject(projectId)}
-                        disabled={projectData?.name?.length < 2}
-                    >
-                        Сохранить
-                    </button>
-                )}
-            </nav>
+            {mode === "edit" && (
+                <nav className="bottom-nav">
+                    <div className="container bottom-nav__container">
+                        <button
+                            type="button"
+                            className="action-button"
+                            title="Обновить данные проекта"
+                            onClick={() => updateProject(projectId)}
+                            disabled={projectData?.name?.length < 2}
+                        >
+                            Сохранить
+                        </button>
+                    </div>
+                </nav>
+            )}
         </main>
     );
 };

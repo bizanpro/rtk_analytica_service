@@ -462,7 +462,11 @@ body {
     bottom: 0;
     background: var(--color-white);
     border-top: var(--color-gray-30);
-    padding: 10px 15px 15px;
+    padding: 10px 0 15px;
+
+    @media (min-width: $media-lg) {
+        padding: 10px 0 40px;
+    }
 }
 
 .status {

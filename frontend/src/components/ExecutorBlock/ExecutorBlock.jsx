@@ -1,126 +1,71 @@
 import { IMaskInput } from "react-imask";
 
-const ExecutorBlock = ({ contanct, deleteBlock, mode, banks, type }) => {
-    const { id, full_name, phone, position, email, creditor_id } = contanct;
+const ExecutorBlock = ({ contanct, deleteBlock, mode }) => {
+    const { id, full_name, phone, position, email } = contanct;
     const PhoneMask = "+{7}(000) 000 00 00";
 
     return (
-        <li className="flex items-center justify-between gap-6 w-full">
-            <div
-                className={`executor-block flex-grow border transition-all ${
-                    mode === "edit" ? "border-gray-300" : "border-transparent"
-                }`}
-            >
-                <div
-                    className={`grid grid-cols-[60%_40%] border-b transition-all ${
-                        mode === "edit"
-                            ? "border-gray-300"
-                            : "border-transparent"
-                    }`}
-                >
-                    <div
-                        className={`p-1 border-r transition-all ${
-                            mode === "edit"
-                                ? "border-gray-300"
-                                : "border-transparent"
-                        }`}
-                    >
-                        <input
-                            className="w-full"
-                            type="text"
-                            placeholder="ФИО"
-                            value={full_name}
-                            // disabled={mode == "read"}
-                            readOnly
-                        />
-                    </div>
-                    <div className="p-1 pr-3">
-                        <IMaskInput
-                            mask={PhoneMask}
-                            className="w-full"
-                            name="phone"
-                            type="tel"
-                            inputMode="tel"
-                            value={phone}
-                            // onAccept={(el) => {
-                            //     setFormFields({ ...formFields, ["phone"]: el });
-                            // }}
-                            placeholder="+7 999 999 99 99"
-                            // disabled={mode == "read"}
-                            readOnly
-                        />
-                    </div>
-                </div>
-                <div className="grid grid-cols-[60%_40%]">
-                    <div
-                        className={`p-1 border-r transition-all ${
-                            mode === "edit"
-                                ? "border-gray-300"
-                                : "border-transparent"
-                        }`}
-                    >
-                        <input
-                            className="w-full"
-                            type="text"
-                            placeholder="Должность"
-                            value={position}
-                            // disabled={mode == "read"}
-                            readOnly
-                        />
-                    </div>
-                    <div className="p-1 pr-3">
-                        <input
-                            className="w-full"
-                            type="email"
-                            placeholder="mail@mail.ru"
-                            value={email}
-                            // disabled={mode == "read"}
-                            readOnly
-                        />
-                    </div>
-                </div>
-
-                {type === "creditor" && (
-                    <div
-                        className={`p-1 border-t transition-all ${
-                            mode === "edit"
-                                ? "border-gray-300"
-                                : "border-transparent"
-                        }`}
-                    >
-                        <select
-                            className="w-full"
-                            value={creditor_id}
-                            // disabled={mode === "read"}
-                            disabled
-                        >
-                            {banks?.map((bank) => (
-                                <option value={bank.id} key={bank.id}>
-                                    {bank.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                )}
+        <li className="project-card__executors-item">
+            <div>
+                <b>{full_name}</b>
+                <span>{position}</span>
             </div>
 
-            {mode === "edit" ? (
-                <div className="flex gap-[10px] items-center">
-                    {/* <button
-                        title="Обновить исполнителя"
-                    >
-                        <span className="update-icon"></span>
-                    </button> */}
+            <div>
+                <span>
+                    <IMaskInput
+                        mask={PhoneMask}
+                        name="phone"
+                        type="tel"
+                        inputMode="tel"
+                        value={phone}
+                        placeholder="+7 999 999 99 99"
+                        readOnly
+                    />
+                </span>
+                <span>{email}</span>
+            </div>
+
+            {mode == "edit" && (
+                <div className="project-card__executors-item__actions">
                     <button
-                        className="delete-button"
+                        className="project-card__executors-item__edit"
+                        type="button"
+                        title="Изменить данные исполнителя"
+                    >
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M13.923 2.744l3.333 3.333a.833.833 0 010 1.179L8.09 16.423a.834.834 0 01-.426.228l-4.167.833a.833.833 0 01-.98-.98l.833-4.167a.834.834 0 01.228-.426l9.167-9.167a.833.833 0 011.178 0zM11.25 6.595l-6.315 6.316-.539 2.693 2.694-.538 6.315-6.316-2.155-2.155zm2.084-2.083l-.905.905 2.154 2.154.906-.904-2.155-2.155z"
+                                fill="currentColor"
+                            />
+                        </svg>
+                    </button>
+
+                    <button
+                        className="project-card__executors-item__delete"
                         title="Удалить исполнителя"
                         onClick={() => deleteBlock(id)}
                     >
-                        <span className="delete-icon"></span>
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M5.834 7.5v9.167h8.333V7.5h1.667v10c0 .46-.373.833-.833.833H5a.833.833 0 01-.834-.833v-10h1.667zm3.333 0V15H7.501V7.5h1.666zm3.334 0V15h-1.667V7.5h1.667zm0-5.833c.358 0 .677.23.79.57l.643 1.929h2.733v1.667H3.334V4.167l2.732-.001.644-1.93a.833.833 0 01.79-.57h5zM11.9 3.333H8.101l-.278.833h4.354l-.277-.833z"
+                                fill="currentColor"
+                            />
+                        </svg>
                     </button>
                 </div>
-            ) : (
-                <div className="h-[50px] w-[50px]"></div>
             )}
         </li>
     );
