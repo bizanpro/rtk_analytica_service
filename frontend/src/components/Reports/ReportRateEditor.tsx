@@ -4,7 +4,7 @@ import RateSwitch from "../RateSwitch";
 
 type Props = {
     closeEditor: () => void;
-    updateReportDetails: (report: object, action: string) => void;
+    updateReportDetails?: (report: object, action: string) => void;
     reportData: object;
 };
 

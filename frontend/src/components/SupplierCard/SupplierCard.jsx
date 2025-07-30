@@ -14,6 +14,7 @@ import CardReportsListItem from "../CardReportsListItem";
 import SupplierStatisticBlock from "./SupplierStatisticBlock";
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
+import SupplierManagementReportsTab from "./SupplierManagementReportsTab";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -93,6 +94,12 @@ const SupplierCard = () => {
             .then((response) => {
                 setSupplierData(response.data);
                 setProjects(response.data.projects);
+                setReports(
+                    response.data.projects?.flatMap(
+                        (project) => project.reports
+                    )
+                );
+                setManagerReports(response.data.manager_reports);
                 setResponsiblePersons(response.data.contacts);
             })
             .catch((error) => {
@@ -248,7 +255,8 @@ const SupplierCard = () => {
         [block1Ref, block2Ref, block3Ref, block4Ref, block5Ref, block6Ref],
         () => {
             setProjectData({});
-            setReports([]);
+            setReports(projects.flatMap((project) => project.reports));
+            setManagerReports(supplierData.manager_reports);
         }
     );
 
@@ -610,12 +618,12 @@ const SupplierCard = () => {
                                             />
                                         ))}
 
-                                    {/* {activeReportTab ===
+                                    {activeReportTab ===
                                         "managementReports" && (
-                                        <ManagementReportsTab
-                                            projectId={projectId}
+                                        <SupplierManagementReportsTab
+                                            managerReports={managerReports}
                                         />
-                                    )} */}
+                                    )}
                                 </div>
                             </div>
                         </div>
