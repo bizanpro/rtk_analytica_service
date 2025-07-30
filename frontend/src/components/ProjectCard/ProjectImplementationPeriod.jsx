@@ -32,7 +32,6 @@ const ProjectImplementationPeriod = ({ projectData }) => {
                                             projectData?.implementation_period_difference_percentage
                                         }
                                     </div>
-                                    <span>%</span>
                                 </div>
                             )}
 

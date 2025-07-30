@@ -27,7 +27,8 @@ const SupplierCard = () => {
     const [mode, setMode] = useState("read");
     const [activeReportTab, setActiveReportTab] = useState("projectReports");
 
-    const [reports, setReports] = useState([]); // История проекта
+    const [reports, setReports] = useState([]); // Отчёты проектов
+    const [managerReports, setManagerReports] = useState([]); // Отчёты руководителя проектов
     const [projects, setProjects] = useState([]); // Проекты
 
     const [projectData, setProjectData] = useState({
@@ -60,9 +61,16 @@ const SupplierCard = () => {
         setReportWindowsState(false);
 
         const targetProject = projects.find((project) => project.id === id);
+        const targetManagerReport = supplierData.manager_reports?.filter(
+            (report) => report.project_id === id
+        );
 
         if (targetProject && targetProject.reports?.length > 0) {
             setReports(targetProject.reports);
+        }
+
+        if (targetManagerReport.length > 0) {
+            setManagerReports(targetManagerReport);
         }
     };
 
@@ -553,46 +561,61 @@ const SupplierCard = () => {
                                         </button>
                                     </nav>
 
-                                    {!reportWindowsState ? (
-                                        <ul className="grid gap-3">
-                                            <li className="grid items-center grid-cols-[1fr_1fr_23%_34%] gap-4 mb-2 text-gray-400">
-                                                <span>Проект</span>
-                                                <span>Отчёт</span>
-                                                <span className="text-center">
-                                                    Статус / Роль
-                                                </span>
-                                                <span>Период выполнения</span>
-                                            </li>
+                                    {activeReportTab === "projectReports" &&
+                                        (!reportWindowsState ? (
+                                            <ul className="grid gap-3">
+                                                <li className="grid items-center grid-cols-[1fr_1fr_23%_34%] gap-4 mb-2 text-gray-400">
+                                                    <span>Проект</span>
+                                                    <span>Отчёт</span>
+                                                    <span className="text-center">
+                                                        Статус / Роль
+                                                    </span>
+                                                    <span>
+                                                        Период выполнения
+                                                    </span>
+                                                </li>
 
-                                            {reports.length > 0 &&
-                                                reports.map((report, index) => (
-                                                    <CardReportsListItem
-                                                        key={report.id || index}
-                                                        {...report}
-                                                        projectData={
-                                                            projectData
-                                                        }
-                                                        openReportEditor={
-                                                            openReportEditor
-                                                        }
-                                                        openSubReportEditor={
-                                                            openSubReportEditor
-                                                        }
-                                                        mode={"read"}
-                                                    />
-                                                ))}
-                                        </ul>
-                                    ) : (
-                                        <ProjectReportWindow
-                                            reportWindowsState={
-                                                setReportWindowsState
-                                            }
-                                            contracts={contracts}
-                                            reportId={reportId}
-                                            setReportId={setReportId}
-                                            mode={"read"}
+                                                {reports.length > 0 &&
+                                                    reports.map(
+                                                        (report, index) => (
+                                                            <CardReportsListItem
+                                                                key={
+                                                                    report.id ||
+                                                                    index
+                                                                }
+                                                                {...report}
+                                                                projectData={
+                                                                    projectData
+                                                                }
+                                                                openReportEditor={
+                                                                    openReportEditor
+                                                                }
+                                                                openSubReportEditor={
+                                                                    openSubReportEditor
+                                                                }
+                                                                mode={"read"}
+                                                            />
+                                                        )
+                                                    )}
+                                            </ul>
+                                        ) : (
+                                            <ProjectReportWindow
+                                                reportWindowsState={
+                                                    setReportWindowsState
+                                                }
+                                                contracts={contracts}
+                                                reportId={reportId}
+                                                setReportId={setReportId}
+                                                mode={"read"}
+                                            />
+                                        ))}
+
+                                    {/* {activeReportTab ===
+                                        "managementReports" && (
+                                        <ManagementReportsTab
+                                            projectId={projectId}
                                         />
-                                    )}
+                                    )} */}
                                 </div>
                             </div>
                         </div>

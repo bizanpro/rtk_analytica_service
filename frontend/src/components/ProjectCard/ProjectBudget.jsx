@@ -24,7 +24,6 @@ const ProjectBudget = ({ projectData }) => {
                                 )} max-w-[50px] overflow-hidden text-ellipsis whitespace-nowrap`}
                             >
                                 {projectData.budget_difference_percentage}
-                                <span>%</span>
                             </div>
                         )}
 
