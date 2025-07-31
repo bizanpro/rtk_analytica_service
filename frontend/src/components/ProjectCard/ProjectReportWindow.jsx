@@ -3,13 +3,11 @@ import { useState, useEffect, useCallback } from "react";
 import getData from "../../utils/getData";
 import formatMoney from "../../utils/formatMoney";
 import parseDate from "../../utils/parseDate";
-// import { createDebounce } from "../../utils/debounce";
 
 import { IMaskInput } from "react-imask";
 
 import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
-
 import Loader from "../Loader";
 
 const isValidDateRange = (str) => {
@@ -56,6 +54,7 @@ const ProjectReportWindow = ({
     const [roles, setRoles] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [reportStatuses, setReportStatuses] = useState([]);
+    const [regularityOptions, setRegularityOptions] = useState([]);
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -89,6 +88,10 @@ const ProjectReportWindow = ({
 
         if (!reportData.contract_id) {
             newErrors.contract_id = "Договор обязателен";
+        }
+
+        if (!reportData.regularity) {
+            newErrors.regularity = "Регулярность обязателена";
         }
 
         if (!isValidDateRange(reportData.report_period)) {
@@ -186,6 +189,8 @@ const ProjectReportWindow = ({
             name === "execution_period"
         ) {
             value = e;
+        } else if (name === "report_type_id") {
+            value = +e.target.value;
         } else {
             value = e.target.value;
         }
@@ -285,48 +290,6 @@ const ProjectReportWindow = ({
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            const [
-                reportTypesRes,
-                physicalPersonsRes,
-                suppliersRes,
-                rolesRes,
-                reportStatusesRes,
-            ] = await Promise.allSettled([
-                getData(
-                    `${
-                        import.meta.env.VITE_API_URL
-                    }report-types?with-count=true`
-                ),
-                getData(`${import.meta.env.VITE_API_URL}physical-persons`),
-                getData(`${import.meta.env.VITE_API_URL}suppliers`),
-                getData(`${import.meta.env.VITE_API_URL}roles`),
-                getData(`${import.meta.env.VITE_API_URL}report-statuses`),
-            ]);
-
-            if (reportTypesRes.status === "fulfilled")
-                setReportTypes(reportTypesRes.value.data.data); // Получение Типов отчета
-
-            if (physicalPersonsRes.status === "fulfilled") {
-                setPhysicalPersons(physicalPersonsRes.value.data); // Получение физ. лиц для команды проекта
-            }
-
-            if (suppliersRes.status === "fulfilled")
-                setSuppliers(suppliersRes.value.data.data); // Получение подрядчиков
-
-            if (rolesRes.status === "fulfilled")
-                setRoles(rolesRes.value.data.data); // Получение ролей
-
-            if (reportStatusesRes.status === "fulfilled")
-                setReportStatuses(reportStatusesRes.value.data); // Получение статусов отчета
-
-            setIsDataLoaded(true);
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
         if (isDataLoaded && reportId) {
             getData(`${import.meta.env.VITE_API_URL}reports/${reportId}`).then(
                 (response) => {
@@ -339,16 +302,22 @@ const ProjectReportWindow = ({
         }
     }, [isDataLoaded, reportId]);
 
-    // Проверяем, нужно ли указывать Стоимость услуг в зависимости от выбранного типа отчета
+    // События зависимости от выбранного типа отчета
     useEffect(() => {
         const selectedType = reportTypes.find(
             (type) => type.id === +reportData.report_type_id
         );
 
+        console.log(selectedType);
+
         if (selectedType) {
             setReportData((prev) => ({
                 ...prev,
                 show_cost: selectedType.show_cost,
+                is_regular: selectedType.is_regular,
+                ...(selectedType.is_regular === false && {
+                    regularity: "единоразовый",
+                }),
             }));
         }
     }, [reportData.report_type_id]);
@@ -408,6 +377,55 @@ const ProjectReportWindow = ({
     useEffect(() => {
         validateApprovalDate();
     }, [reportData.execution_period, reportData.approval_date]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const [
+                reportTypesRes,
+                physicalPersonsRes,
+                suppliersRes,
+                rolesRes,
+                reportStatusesRes,
+                regularityOptionsRes,
+            ] = await Promise.allSettled([
+                getData(
+                    `${
+                        import.meta.env.VITE_API_URL
+                    }report-types?with-count=true`
+                ),
+                getData(`${import.meta.env.VITE_API_URL}physical-persons`),
+                getData(`${import.meta.env.VITE_API_URL}suppliers`),
+                getData(`${import.meta.env.VITE_API_URL}roles`),
+                getData(`${import.meta.env.VITE_API_URL}report-statuses`),
+                getData(
+                    `${import.meta.env.VITE_API_URL}reports/regularity-options`
+                ),
+            ]);
+
+            if (reportTypesRes.status === "fulfilled")
+                setReportTypes(reportTypesRes.value.data.data); // Получение Типов отчета
+
+            if (physicalPersonsRes.status === "fulfilled") {
+                setPhysicalPersons(physicalPersonsRes.value.data); // Получение физ. лиц для команды проекта
+            }
+
+            if (suppliersRes.status === "fulfilled")
+                setSuppliers(suppliersRes.value.data.data); // Получение подрядчиков
+
+            if (rolesRes.status === "fulfilled")
+                setRoles(rolesRes.value.data.data); // Получение ролей
+
+            if (reportStatusesRes.status === "fulfilled")
+                setReportStatuses(reportStatusesRes.value.data); // Получение статусов отчета
+
+            if (regularityOptionsRes.status === "fulfilled")
+                setRegularityOptions(regularityOptionsRes.value.data); // Получение статусов отчета
+
+            setIsDataLoaded(true);
+        };
+
+        fetchData();
+    }, []);
 
     return (
         <div className="grid gap-6 relative bg-white">
@@ -570,6 +588,34 @@ const ProjectReportWindow = ({
                         placeholder="дд.мм.гггг - дд.мм.гггг"
                         disabled={mode === "read"}
                     />
+                </div>
+            </div>
+
+            <div className="grid gap-3 grid-cols-1">
+                <div className="flex flex-col gap-2 justify-between">
+                    <span className="text-gray-400">Регулярность</span>
+                    <div className="border-2 border-gray-300 p-1 h-[32px]">
+                        <select
+                            className="w-full h-full"
+                            onChange={(e) => handleInputChange(e, "regularity")}
+                            value={reportData.regularity || ""}
+                            disabled={
+                                mode === "read" ||
+                                reportData.is_regular === false
+                            }
+                        >
+                            <option value="">Выбрать из списка</option>
+                            {regularityOptions.length > 0 &&
+                                regularityOptions.map((item) => (
+                                    <option
+                                        value={item.toLowerCase()}
+                                        key={item}
+                                    >
+                                        {item}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
                 </div>
             </div>
 
