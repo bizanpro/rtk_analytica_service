@@ -47,6 +47,7 @@ const SaleCard = () => {
     const [saleStages, setSaleStages] = useState([]);
     const [newServices, setNewServices] = useState({ report_type_id: [] });
     const [stageMetrics, setStageMetrics] = useState({});
+    const [metrics, setMetrics] = useState([]); // Прослойка - значения динамических полей в детализации
 
     let query;
 
@@ -117,7 +118,7 @@ const SaleCard = () => {
 
                 if (response.data.length > 0) {
                     setAddWorkScore(response.data[0].id);
-                    getStages(response.data[0].id);
+                    getStages();
                 }
             }
         });
@@ -222,41 +223,7 @@ const SaleCard = () => {
         });
     };
 
-    // Обновляем услугу
-    // const updateService = () => {
-    //     query = toast.loading("Обновление", {
-    //         containerId: "projectCard",
-    //         position: "top-center",
-    //     });
-
-    //     postData(
-    //         "PATCH",
-    //         `${
-    //             import.meta.env.VITE_API_URL
-    //         }sales-funnel-projects/${saleId}/services/${
-    //             selectedService.report_type_id
-    //         }`,
-    //         selectedService
-    //     ).then((response) => {
-    //         if (response?.ok) {
-    //             toast.update(query, {
-    //                 render: response.message,
-    //                 type: "success",
-    //                 containerId: "projectCard",
-    //                 isLoading: false,
-    //                 autoClose: 1200,
-    //                 pauseOnFocusLoss: false,
-    //                 pauseOnHover: false,
-    //                 position: "top-center",
-    //             });
-    //             fetchServices();
-    //             setAddWorkScore("");
-    //         }
-    //     });
-    // };
-
     // Обновление заказчика
-
     const updateContragent = async (showMessage = true, data) => {
         query = toast.loading("Обновление", {
             containerId: "projectCard",
@@ -367,11 +334,13 @@ const SaleCard = () => {
         const formattedDate = `${year}-${month}-${day}`;
 
         let stageMetricsData = stageMetrics;
+        stageMetricsData = metrics;
         stageMetricsData.updated_at = formattedDate;
 
-        stageMetricsData.fta_value = parseFormattedMoney(
-            stageMetricsData.fta_value
-        );
+        stageMetricsData.metrics = stageMetricsData.metrics.map((item) => ({
+            ...item,
+            current_value: parseFormattedMoney(item.current_value),
+        }));
 
         postData(
             "PATCH",
@@ -1262,10 +1231,8 @@ const SaleCard = () => {
                                                         stageMetrics={
                                                             stageMetrics
                                                         }
-                                                        setStageMetrics={
-                                                            setStageMetrics
-                                                        }
-                                                        services={services}
+                                                        metrics={metrics}
+                                                        setMetrics={setMetrics}
                                                         mode={mode}
                                                     />
                                                 )}

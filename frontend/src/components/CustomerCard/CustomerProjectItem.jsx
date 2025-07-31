@@ -17,7 +17,7 @@ const CustomerProjectItem = ({
             }`}
             onClick={() => {
                 getReports(id);
-                setProjectData({ id, name, industry });
+                setProjectData({ id, name, industry }); // вероятно, больше не нужно
             }}
         >
             <div className="flex flex-col">
