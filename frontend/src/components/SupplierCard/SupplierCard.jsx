@@ -62,7 +62,7 @@ const SupplierCard = () => {
         setReportWindowsState(false);
 
         let targetProject = projects.find((project) => project.id === id);
-        
+
         const targetManagerReport = supplierData.manager_reports?.filter(
             (report) => report.project_id === id
         );
@@ -77,10 +77,14 @@ const SupplierCard = () => {
 
         if (targetProject?.length > 0) {
             setReports(targetProject);
+        } else {
+            setReports([]);
         }
 
         if (targetManagerReport.length > 0) {
             setManagerReports(targetManagerReport);
+        } else {
+            setManagerReports([]);
         }
     };
 
