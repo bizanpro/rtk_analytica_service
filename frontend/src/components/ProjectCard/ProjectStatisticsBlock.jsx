@@ -175,7 +175,64 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                             {revenue.gross_profit?.label}
                         </small>
                     </div>
+
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            (revenue.gross_margin?.value ?? 0).toLocaleString(
+                                "de-DE"
+                            ) +
+                            " " +
+                            revenue.gross_margin?.label
+                        }
+                    >
+                        <i className="text-xl">
+                            {(revenue.gross_margin?.value ?? 0).toLocaleString(
+                                "de-DE"
+                            )}
+                            {revenue.gross_margin?.label}
+                        </i>
+                        <i className="text-sm">рентабельность</i>
+                    </div>
                 </div>
+
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2 text-gray-400">
+                        ФОТ
+                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                            ?
+                        </span>
+                    </div>
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            (revenue.fot?.value ?? 0).toLocaleString("de-DE") +
+                            " " +
+                            revenue.fot?.label
+                        }
+                    >
+                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                            {revenue.fot?.value ?? 0}
+                        </strong>
+                        <small className="text-xl"> {revenue.fot?.label}</small>
+                    </div>
+
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            revenue.fot_percentage?.value +
+                            " " +
+                            revenue.fot_percentage?.label
+                        }
+                    >
+                        <i className="text-xl">
+                            {revenue.fot_percentage?.value}
+                            {revenue.fot_percentage?.label}
+                        </i>
+                        <i className="text-sm">от выручки</i>
+                    </div>
+                </div>
+
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-gray-400">
                         Подрячики
@@ -186,9 +243,9 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                     <div
                         className="flex items-center flex-grow gap-2"
                         title={
-                            (revenue.suppliers_expenses?.value ?? 0).toLocaleString(
-                                "de-DE"
-                            ) +
+                            (
+                                revenue.suppliers_expenses?.value ?? 0
+                            ).toLocaleString("de-DE") +
                             " " +
                             revenue.suppliers_expenses?.label
                         }
@@ -202,31 +259,20 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                             {revenue.suppliers_expenses?.label}
                         </small>
                     </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-gray-400">
-                        Валовая рент.
-                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                            ?
-                        </span>
-                    </div>
                     <div
                         className="flex items-center flex-grow gap-2"
                         title={
-                            (revenue.gross_margin?.value ?? 0).toLocaleString(
-                                "de-DE"
-                            ) +
+                            revenue.suppliers_fot_percentage?.value +
                             " " +
-                            revenue.gross_margin?.label
+                            revenue.suppliers_fot_percentage?.label
                         }
                     >
-                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
-                            {revenue.gross_margin?.value ?? 0}
-                        </strong>
-                        <small className="text-xl">
-                            {" "}
-                            {revenue.gross_margin?.label}
-                        </small>
+                        <i className="text-xl">
+                            {revenue.suppliers_fot_percentage?.value}
+
+                            {revenue.suppliers_fot_percentage?.label}
+                        </i>
+                        <i className="text-sm">от выручки</i>
                     </div>
                 </div>
             </div>
