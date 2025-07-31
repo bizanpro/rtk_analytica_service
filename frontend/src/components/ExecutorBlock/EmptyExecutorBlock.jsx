@@ -46,17 +46,13 @@ const EmptyExecutorBlock = ({
 
     const allContacts =
         type === "creditor"
-            ? creditorContacts.flatMap((creditor) =>
-                  creditor?.projects?.flatMap((project) =>
-                      project?.contacts?.map((person) => ({
-                          value: person.full_name,
-                          label: person.full_name,
-                          email: person.email,
-                          phone: person.phone,
-                          position: person.position,
-                      }))
-                  )
-              )
+            ? creditorContacts?.map((person) => ({
+                  value: person.full_name,
+                  label: person.full_name,
+                  email: person.email,
+                  phone: person.phone,
+                  position: person.position,
+              }))
             : contragentContacts?.map((person) => ({
                   value: person.full_name,
                   label: person.full_name,
