@@ -572,7 +572,7 @@ const SingleBook = () => {
                                           (projectSum, project) => {
                                               return (
                                                   projectSum +
-                                                  project[personContacts].length
+                                                  project[personContacts]?.length
                                               );
                                           },
                                           0

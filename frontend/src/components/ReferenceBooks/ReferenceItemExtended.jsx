@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 import { IMaskInput } from "react-imask";
 
@@ -26,7 +26,7 @@ const ReferenceItemExtended = ({
 
     const [editedContacts, setEditedContacts] = useState(() => {
         return data.projects.map((project) =>
-            project[personContacts].map((contact) => ({
+            project[personContacts]?.map((contact) => ({
                 full_name: contact.full_name,
                 position: contact.position,
                 phone: contact.phone,
@@ -95,7 +95,7 @@ const ReferenceItemExtended = ({
                                 <td className="py-3 px-4 min-w-[180px]">
                                     <table className="w-full">
                                         <tbody className="flex flex-col gap-3">
-                                            {project[personContacts].map(
+                                            {project[personContacts]?.map(
                                                 (contact, contactIndex) => (
                                                     <tr
                                                         key={contactIndex}
@@ -261,7 +261,7 @@ const ReferenceItemExtended = ({
                                 <td className="py-3 px-4 min-w-[180px]">
                                     <table className="w-full">
                                         <tbody className="flex flex-col gap-3">
-                                            {project[personContacts].map(
+                                            {project[personContacts]?.map(
                                                 (contact, contactIndex) => (
                                                     <tr
                                                         key={contactIndex}
@@ -457,7 +457,7 @@ const ReferenceItemExtended = ({
                                 <td className="py-3 px-4 min-w-[50px]">
                                     <table className="w-full">
                                         <tbody className="flex flex-col gap-3">
-                                            {project[personContacts].map(
+                                            {project[personContacts]?.map(
                                                 (contact) => (
                                                     <tr key={contact.id}>
                                                         <td className="py-3 px-4 min-w-[50px] text-center">
