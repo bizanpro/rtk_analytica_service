@@ -14,12 +14,9 @@ const ReferenceItemExtended = ({
 }) => {
     const PhoneMask = "+{7} (000) 000 00 00";
 
-    const personContacts =
-        bookId == "creditor" ? "contacts" : "responsible_persons";
-
     const [editedContacts, setEditedContacts] = useState(() => {
         return data.projects.map((project) =>
-            project[personContacts]?.map((contact) => ({
+            project.contacts?.map((contact) => ({
                 full_name: contact.full_name,
                 position: contact.position,
                 phone: contact.phone,
@@ -85,7 +82,7 @@ const ReferenceItemExtended = ({
                                 <td className="py-3 px-4 min-w-[180px]">
                                     <table className="w-full">
                                         <tbody className="flex flex-col gap-3">
-                                            {project[personContacts]?.map(
+                                            {project.contacts?.map(
                                                 (contact, contactIndex) => (
                                                     <tr
                                                         key={contactIndex}
@@ -251,7 +248,7 @@ const ReferenceItemExtended = ({
                                 <td className="py-3 px-4 min-w-[180px]">
                                     <table className="w-full">
                                         <tbody className="flex flex-col gap-3">
-                                            {project[personContacts]?.map(
+                                            {project.contacts?.map(
                                                 (contact, contactIndex) => (
                                                     <tr
                                                         key={contactIndex}
@@ -447,7 +444,7 @@ const ReferenceItemExtended = ({
                                 <td className="py-3 px-4 min-w-[50px]">
                                     <table className="w-full">
                                         <tbody className="flex flex-col gap-3">
-                                            {project[personContacts]?.map(
+                                            {project.contacts?.map(
                                                 (contact) => (
                                                     <tr key={contact.id}>
                                                         <td className="py-3 px-4 min-w-[50px] text-center">
