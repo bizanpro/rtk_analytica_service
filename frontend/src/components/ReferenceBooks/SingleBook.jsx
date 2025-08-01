@@ -460,13 +460,19 @@ const SingleBook = () => {
             position: "top-center",
         });
 
-        postData(
-            "DELETE",
-            `${
+        let url;
+
+        if (bookId == "creditor" || bookId == "contragent") {
+            url = `${
                 import.meta.env.VITE_API_URL
-            }${bookId}-responsible-persons/${id}`,
-            {}
-        )
+            }responsible-persons/${bookId}/contact/${id}`;
+        } else {
+            url = `${
+                import.meta.env.VITE_API_URL
+            }${bookId}-responsible-persons/${id}`;
+        }
+
+        postData("DELETE", url, {})
             .then((response) => {
                 if (response?.ok) {
                     getBooks();
@@ -572,7 +578,8 @@ const SingleBook = () => {
                                           (projectSum, project) => {
                                               return (
                                                   projectSum +
-                                                  project[personContacts]?.length
+                                                  project[personContacts]
+                                                      ?.length
                                               );
                                           },
                                           0
