@@ -36,9 +36,6 @@ const SingleBook = () => {
     const [popupState, setPopupState] = useState(false);
     const [positions, setPositions] = useState([]);
 
-    const personContacts =
-        bookId == "creditor" ? "contacts" : "responsible_persons";
-
     const [selectedCounterpartyName, setSelectedCounterpartyName] =
         useState("");
 
@@ -411,7 +408,7 @@ const SingleBook = () => {
 
         postData(
             "PATCH",
-            `${import.meta.env.VITE_API_URL}${bookId}-responsible-persons/${
+            `${import.meta.env.VITE_API_URL}responsible-persons/${bookId}/${
                 data.id
             }`,
             data
@@ -578,8 +575,7 @@ const SingleBook = () => {
                                           (projectSum, project) => {
                                               return (
                                                   projectSum +
-                                                  project[personContacts]
-                                                      ?.length
+                                                  project.contacts?.length
                                               );
                                           },
                                           0
