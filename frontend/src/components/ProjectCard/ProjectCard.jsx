@@ -24,7 +24,6 @@ import Loader from "../Loader";
 import AutoResizeTextarea from "../AutoResizeTextarea";
 import ManagementReportsTab from "../ManagementReportsTab/ManagementReportsTab";
 import Hint from "../Hint/Hint";
-
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
