@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// import { useNavigate } from "react-router-dom";
 
 import { IMaskInput } from "react-imask";
 
@@ -14,12 +13,6 @@ const ReferenceItemExtended = ({
     deleteContact,
 }) => {
     const PhoneMask = "+{7} (000) 000 00 00";
-
-    // const navigate = useNavigate();
-
-    // const handleRowClick = () => {
-    //     navigate(`/reference-books/${data.creditor_id}`);
-    // };
 
     const personContacts =
         bookId == "creditor" ? "contacts" : "responsible_persons";
@@ -71,10 +64,7 @@ const ReferenceItemExtended = ({
     }, []);
 
     return (
-        <tr
-            className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
-            // {...(!bookId && { onClick: handleRowClick })}
-        >
+        <tr className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer">
             <td className="pl-4">{data.name}</td>
 
             <td className="align-top">
@@ -477,29 +467,12 @@ const ReferenceItemExtended = ({
                                                                     ></button>
                                                                     <button
                                                                         onClick={() => {
-                                                                            // if (
-                                                                            //     data.projects_count
-                                                                            // ) {
-                                                                            //     if (
-                                                                            //         data.projects_count <
-                                                                            //         1
-                                                                            //     ) {
-                                                                            //         deleteContact(
-                                                                            //             contact.id
-                                                                            //         );
-                                                                            //     }
-                                                                            // } else {
                                                                             deleteContact(
                                                                                 contact.id
                                                                             );
-                                                                            // }
                                                                         }}
                                                                         className="delete-button delete-icon"
                                                                         title="Удалить контакт"
-                                                                        // disabled={
-                                                                        //     data.projects_count >
-                                                                        //     0
-                                                                        // }
                                                                     ></button>
                                                                 </div>
                                                             )}
