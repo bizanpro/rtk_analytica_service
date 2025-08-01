@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// import { useNavigate } from "react-router-dom";
 
 import { IMaskInput } from "react-imask";
 
@@ -15,18 +14,9 @@ const ReferenceItemExtended = ({
 }) => {
     const PhoneMask = "+{7} (000) 000 00 00";
 
-    // const navigate = useNavigate();
-
-    // const handleRowClick = () => {
-    //     navigate(`/reference-books/${data.creditor_id}`);
-    // };
-
-    const personContacts =
-        bookId == "creditor" ? "contacts" : "responsible_persons";
-
     const [editedContacts, setEditedContacts] = useState(() => {
         return data.projects.map((project) =>
-            project[personContacts]?.map((contact) => ({
+            project.contacts?.map((contact) => ({
                 full_name: contact.full_name,
                 position: contact.position,
                 phone: contact.phone,
@@ -95,7 +85,7 @@ const ReferenceItemExtended = ({
                                 <td className="py-3 px-4 min-w-[180px]">
                                     <table className="w-full">
                                         <tbody className="flex flex-col gap-3">
-                                            {project[personContacts]?.map(
+                                            {project.contacts?.map(
                                                 (contact, contactIndex) => (
                                                     <tr
                                                         key={contactIndex}
@@ -261,7 +251,7 @@ const ReferenceItemExtended = ({
                                 <td className="py-3 px-4 min-w-[180px]">
                                     <table className="w-full">
                                         <tbody className="flex flex-col gap-3">
-                                            {project[personContacts]?.map(
+                                            {project.contacts?.map(
                                                 (contact, contactIndex) => (
                                                     <tr
                                                         key={contactIndex}
@@ -457,7 +447,7 @@ const ReferenceItemExtended = ({
                                 <td className="py-3 px-4 min-w-[50px]">
                                     <table className="w-full">
                                         <tbody className="flex flex-col gap-3">
-                                            {project[personContacts]?.map(
+                                            {project.contacts?.map(
                                                 (contact) => (
                                                     <tr key={contact.id}>
                                                         <td className="py-3 px-4 min-w-[50px] text-center">
@@ -477,29 +467,12 @@ const ReferenceItemExtended = ({
                                                                     ></button>
                                                                     <button
                                                                         onClick={() => {
-                                                                            // if (
-                                                                            //     data.projects_count
-                                                                            // ) {
-                                                                            //     if (
-                                                                            //         data.projects_count <
-                                                                            //         1
-                                                                            //     ) {
-                                                                            //         deleteContact(
-                                                                            //             contact.id
-                                                                            //         );
-                                                                            //     }
-                                                                            // } else {
                                                                             deleteContact(
                                                                                 contact.id
                                                                             );
-                                                                            // }
                                                                         }}
                                                                         className="delete-button delete-icon"
                                                                         title="Удалить контакт"
-                                                                        // disabled={
-                                                                        //     data.projects_count >
-                                                                        //     0
-                                                                        // }
                                                                     ></button>
                                                                 </div>
                                                             )}
