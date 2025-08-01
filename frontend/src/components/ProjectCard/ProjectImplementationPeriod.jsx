@@ -20,7 +20,7 @@ const ProjectImplementationPeriod = ({ projectData }) => {
     return (
         <div
             className={`project-budget__block ${
-                projectData?.implementation_period > 0 && "active"
+                projectData?.implementation_period !== null && "active"
             }`}
         >
             <div className="project-budget__block-main">
@@ -37,15 +37,14 @@ const ProjectImplementationPeriod = ({ projectData }) => {
                 <div className="flex items-center gap-[10px]">
                     {projectData?.implementation_period > 0 && (
                         <>
-                            {projectData?.fta_implementation_period !==
-                                null && (
+                            {projectData?.base_implementation_period_for_difference > 0 && (
                                 <span>
-                                    {projectData.fta_implementation_period} мес.
+                                    {projectData.base_implementation_period_for_difference} мес.
                                 </span>
                             )}
 
-                            {projectData.implementation_period_difference_percentage >
-                                0 && (
+                            {projectData.implementation_period_difference_percentage !==
+                                null && (
                                 <div
                                     className={`project-budget__block-percentage ${getColorBySign(
                                         projectData.implementation_period_difference_percentage,
@@ -56,7 +55,6 @@ const ProjectImplementationPeriod = ({ projectData }) => {
                                     {
                                         projectData.implementation_period_difference_percentage
                                     }
-                                    %
                                 </div>
                             )}
                         </>
@@ -65,7 +63,7 @@ const ProjectImplementationPeriod = ({ projectData }) => {
             </div>
 
             <div className="project-budget__block-title">
-                {projectData?.implementation_period > 0 ? (
+                {projectData?.implementation_period !== null ? (
                     <>
                         <span className="active">срок реализации</span>
 

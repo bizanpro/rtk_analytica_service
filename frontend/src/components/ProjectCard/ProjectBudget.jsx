@@ -19,11 +19,13 @@ const ProjectBudget = ({ projectData }) => {
                     )}
                 </div>
                 <div className="flex items-center gap-[10px]">
-                    {projectData?.fta_budget > 0 && (
-                        <span>{projectData.fta_budget} млрд</span>
+                    {projectData?.base_budget_for_difference !== null && (
+                        <span>
+                            {projectData.base_budget_for_difference} млрд
+                        </span>
                     )}
 
-                    {projectData.budget_difference_percentage > 0 && (
+                    {projectData.budget_difference_percentage !== null && (
                         <div
                             className={`project-budget__block-percentage ${getColorBySign(
                                 projectData.budget_difference_percentage,
@@ -31,7 +33,7 @@ const ProjectBudget = ({ projectData }) => {
                                 "minus"
                             )}`}
                         >
-                            {projectData.budget_difference_percentage}%
+                            {projectData.budget_difference_percentage}
                         </div>
                     )}
                 </div>
