@@ -286,23 +286,40 @@ const ProjectCard = () => {
                 "POST",
                 `${import.meta.env.VITE_API_URL}responsible-persons/creditor`,
                 data
-            ).then((response) => {
-                if (response?.ok) {
-                    getProject(projectId);
-                    setAddLender(false);
+            )
+                .then((response) => {
+                    if (response?.ok) {
+                        getProject(projectId);
+                        setAddLender(false);
 
-                    toast.update(query, {
-                        render: response.message,
-                        type: "success",
-                        containerId: "projectCard",
-                        isLoading: false,
-                        autoClose: 1200,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: false,
-                        position: "top-center",
-                    });
-                }
-            });
+                        toast.update(query, {
+                            render:
+                                response.message ||
+                                "Ошибка прикрепления исполнителя",
+                            type: "success",
+                            containerId: "projectCard",
+                            isLoading: false,
+                            autoClose: 1200,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: false,
+                            position: "top-center",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    toast.dismiss(query);
+                    toast.error(
+                        error.message || "Ошибка прикрепления исполнителя",
+                        {
+                            containerId: "projectCard",
+                            isLoading: false,
+                            autoClose: 3500,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: false,
+                            position: "top-center",
+                        }
+                    );
+                });
         } else if (type === "customer") {
             if (projectData?.contragent_id) {
                 data.contragent_id = projectData?.contragent_id;
@@ -313,29 +330,46 @@ const ProjectCard = () => {
                         import.meta.env.VITE_API_URL
                     }responsible-persons/contragent`,
                     data
-                ).then((response) => {
-                    if (response?.ok) {
-                        setAddCustomer(false);
+                )
+                    .then((response) => {
+                        if (response?.ok) {
+                            setAddCustomer(false);
 
-                        if (response?.responsible_person) {
-                            setCustomers((prevCustomer) => [
-                                ...prevCustomer,
-                                response.responsible_person,
-                            ]);
+                            if (response?.responsible_person) {
+                                setCustomers((prevCustomer) => [
+                                    ...prevCustomer,
+                                    response.responsible_person?.contragent_contact,
+                                ]);
+                            }
+
+                            toast.update(query, {
+                                render:
+                                    response.message ||
+                                    "Ошибка прикрепления исполнителя",
+                                type: "success",
+                                containerId: "projectCard",
+                                isLoading: false,
+                                autoClose: 1200,
+                                pauseOnFocusLoss: false,
+                                pauseOnHover: false,
+                                position: "top-center",
+                            });
                         }
-
-                        toast.update(query, {
-                            render: response.message,
-                            type: "success",
-                            containerId: "projectCard",
-                            isLoading: false,
-                            autoClose: 1200,
-                            pauseOnFocusLoss: false,
-                            pauseOnHover: false,
-                            position: "top-center",
-                        });
-                    }
-                });
+                    })
+                    .catch((error) => {
+                        toast.dismiss(query);
+                        toast.error(
+                            error.message || "Ошибка прикрепления исполнителя",
+                            {
+                                containerId: "projectCard",
+                                isLoading: false,
+                                autoClose: 3500,
+                                pauseOnFocusLoss: false,
+                                pauseOnHover: false,
+                                position: "top-center",
+                            }
+                        );
+                    });
             } else {
                 alert("Необходимо назначить заказчика");
             }
@@ -348,11 +382,23 @@ const ProjectCard = () => {
             "DELETE",
             `${import.meta.env.VITE_API_URL}responsible-persons/creditor/${id}`,
             {}
-        ).then((response) => {
-            if (response?.ok) {
-                getProject(projectId);
-            }
-        });
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    getProject(projectId);
+                }
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка удаления исполнителя", {
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 3500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
     };
 
     // Удаление ответственного лица заказчика
@@ -363,11 +409,23 @@ const ProjectCard = () => {
                 import.meta.env.VITE_API_URL
             }responsible-persons/contragent/${id}`,
             {}
-        ).then((response) => {
-            if (response?.ok) {
-                setCustomers(customers.filter((item) => item.id !== id));
-            }
-        });
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    setCustomers(customers.filter((item) => item.id !== id));
+                }
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка удаления исполнителя", {
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 3500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
     };
 
     // Обновление проекта
@@ -400,8 +458,15 @@ const ProjectCard = () => {
                 }
                 return response;
             } catch (error) {
-                console.error("Ошибка при обновлении проекта:", error);
-                throw error;
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка обновления проекта", {
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 3500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
             }
         } else {
             toast.error("Необходимо назначить заказчика и отрасль", {
@@ -425,15 +490,23 @@ const ProjectCard = () => {
 
     // Удаление отчёта
     const deleteReport = (id) => {
-        postData(
-            "DELETE",
-            `${import.meta.env.VITE_API_URL}reports/${id}`,
-            {}
-        ).then((response) => {
-            if (response?.ok) {
-                getProject(projectId);
-            }
-        });
+        postData("DELETE", `${import.meta.env.VITE_API_URL}reports/${id}`, {})
+            .then((response) => {
+                if (response?.ok) {
+                    getProject(projectId);
+                }
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка удаления отчёта", {
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 3500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
     };
 
     // Отправка отчёта
@@ -1025,7 +1098,7 @@ const ProjectCard = () => {
                                     )}
                                 </ul>
 
-                                <ul className="mt-[10px] flex flex-col gap-4 items-start overflow-y-auto h-[270px]">
+                                <ul className="project-card__executors-list">
                                     {filteredLenders.length > 0 &&
                                     banks.length > 0 ? (
                                         filteredLenders.map((lender) => (
@@ -1047,7 +1120,7 @@ const ProjectCard = () => {
 
                                 <button
                                     type="button"
-                                    className="add-button"
+                                    className="button-add"
                                     onClick={() => {
                                         if (!addLender) {
                                             setAddLender(true);
@@ -1055,19 +1128,21 @@ const ProjectCard = () => {
                                     }}
                                     title="Добавить Кредитора"
                                 >
-                                    <span></span>
-                                    <svg
-                                        width="10"
-                                        height="9"
-                                        viewBox="0 0 10 9"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
-                                            fill="currentColor"
-                                        />
-                                    </svg>
+                                    Добавить
+                                    <span>
+                                        <svg
+                                            width="10"
+                                            height="9"
+                                            viewBox="0 0 10 9"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
+                                                fill="currentColor"
+                                            />
+                                        </svg>
+                                    </span>
                                 </button>
 
                                 {addLender && (
