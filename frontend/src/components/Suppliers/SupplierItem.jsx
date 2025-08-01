@@ -82,6 +82,15 @@ const SupplierItem = ({ props, columns }) => {
                                 )}
                             </td>
                         );
+                    } else if (key === "total_receipts") {
+                        return (
+                            <td
+                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
+                                key={key}
+                            >
+                                {value?.value || "—"}
+                            </td>
+                        );
                     } else {
                         return Object.entries(value).map(
                             ([subKey, subValue]) => (

@@ -1,13 +1,16 @@
+import { useEffect } from "react";
+
 import pepcentColorHandler from "../../utils/percentColorHandler";
 import formatMoney from "../../utils/formatMoney";
 
-const SaleStageDetails = ({
-    stageMetrics,
-    setStageMetrics,
-    services,
-    mode,
-}) => {
-    console.log(services);
+const SaleStageDetails = ({ stageMetrics, metrics, setMetrics, mode }) => {
+    useEffect(() => {
+        setMetrics((prev) => ({
+            ...prev,
+            metrics: stageMetrics.dynamic_metrics,
+            comment: stageMetrics.comment,
+        }));
+    }, [stageMetrics]);
 
     return (
         <div className="flex flex-col gap-4">
@@ -21,46 +24,47 @@ const SaleStageDetails = ({
                             </span>
                         </span>
 
-                        <div className="grid grid-cols-[50px_1fr] items-center gap-4">
-                            <span> ФТА:</span>
+                        {metrics.metrics?.length > 0 &&
+                            metrics.metrics?.map((item) => (
+                                <div
+                                    className="grid grid-cols-[50px_1fr] items-center gap-4"
+                                    key={item.report_type_id}
+                                >
+                                    <span>{item.report_type_short_name}:</span>
 
-                            <div className="border-2 border-gray-300 py-1 px-2">
-                                <input
-                                    type="text"
-                                    className="w-full"
-                                    value={
-                                        formatMoney(stageMetrics.fta_value) ||
-                                        ""
-                                    }
-                                    onChange={(evt) => {
-                                        setStageMetrics((prev) => ({
-                                            ...prev,
-                                            fta_value: evt.target.value,
-                                        }));
-                                    }}
-                                    disabled={mode == "read"}
-                                />
-                            </div>
-                        </div>
+                                    <div className="border-2 border-gray-300 py-1 px-2">
+                                        <input
+                                            type="text"
+                                            className="w-full"
+                                            value={
+                                                formatMoney(
+                                                    item.current_value
+                                                ) || ""
+                                            }
+                                            onChange={(evt) => {
+                                                const newValue =
+                                                    evt.target.value;
 
-                        <div className="grid grid-cols-[50px_1fr] items-center gap-4">
-                            <span>ТК:</span>
-
-                            <div className="border-2 border-gray-300 py-1 px-2">
-                                <input
-                                    type="text"
-                                    className="w-full"
-                                    value={stageMetrics.tk_value || ""}
-                                    onChange={(evt) => {
-                                        setStageMetrics((prev) => ({
-                                            ...prev,
-                                            tk_value: evt.target.value,
-                                        }));
-                                    }}
-                                    disabled={mode == "read"}
-                                />
-                            </div>
-                        </div>
+                                                setMetrics((prev) => ({
+                                                    ...prev,
+                                                    metrics: prev.metrics.map(
+                                                        (metric) =>
+                                                            metric.report_type_id ===
+                                                            item.report_type_id
+                                                                ? {
+                                                                      ...metric,
+                                                                      current_value:
+                                                                          newValue,
+                                                                  }
+                                                                : metric
+                                                    ),
+                                                }));
+                                            }}
+                                            disabled={mode == "read"}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
                     </div>
 
                     <div
@@ -74,29 +78,21 @@ const SaleStageDetails = ({
                             </span>
                         </span>
 
-                        <div
-                            className={`flex items-center border-2 border-gray-300 py-1 px-2 h-[30px] ${
-                                stageMetrics.fta_change_percent
-                                    ? pepcentColorHandler(
-                                          stageMetrics.fta_change_percent
-                                      )
-                                    : ""
-                            }`}
-                        >
-                            {stageMetrics.fta_change_percent || 0}%
-                        </div>
-
-                        <div
-                            className={`flex items-center border-2 border-gray-300 py-1 px-2 h-[30px] ${
-                                stageMetrics.tk_change_percent
-                                    ? pepcentColorHandler(
-                                          stageMetrics.tk_change_percent
-                                      )
-                                    : ""
-                            }`}
-                        >
-                            {stageMetrics.tk_change_percent || 0}%
-                        </div>
+                        {metrics.metrics?.length > 0 &&
+                            metrics.metrics?.map((item) => (
+                                <div
+                                    className={`flex items-center border-2 border-gray-300 py-1 px-2 h-[30px] ${
+                                        item.change_percent
+                                            ? pepcentColorHandler(
+                                                  item.change_percent
+                                              )
+                                            : ""
+                                    }`}
+                                    key={item.report_type_id}
+                                >
+                                    {item.change_percent || 0}%
+                                </div>
+                            ))}
                     </div>
                 </div>
             )}
@@ -105,6 +101,7 @@ const SaleStageDetails = ({
                 {stageMetrics.name?.toLowerCase() !== "получен запрос" && (
                     <span className="text-gray-400">Комментарий:</span>
                 )}
+
                 <textarea
                     className={`${
                         stageMetrics.name?.toLowerCase() === "получен запрос"
@@ -113,9 +110,9 @@ const SaleStageDetails = ({
                     } min-h-[300px]`}
                     placeholder="Оставьте комментарий по этапу"
                     style={{ resize: "none" }}
-                    value={stageMetrics.comment || ""}
+                    value={metrics?.comment || ""}
                     onChange={(evt) => {
-                        setStageMetrics((prev) => ({
+                        setMetrics((prev) => ({
                             ...prev,
                             comment: evt.target.value,
                         }));
