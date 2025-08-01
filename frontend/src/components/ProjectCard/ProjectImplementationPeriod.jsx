@@ -19,7 +19,7 @@ const ProjectImplementationPeriod = ({ projectData }) => {
 
     return (
         <div
-            className={`project-budget__block ${
+            className={`project-budget__block project-budget__block-implementation ${
                 projectData?.implementation_period !== null && "active"
             }`}
         >

@@ -218,6 +218,13 @@
         padding: 16px;
     }
 
+    &-implementation {
+        .project-budget__block-title {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+    }
+
     &-main {
         margin-bottom: 8px;
         display: flex;
@@ -292,7 +299,7 @@
             }
         }
 
-        b: {
+        b {
             font-weight: 500;
         }
     }
