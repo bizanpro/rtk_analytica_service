@@ -55,21 +55,9 @@ const SingleBook = () => {
                 selectedCounterpartyName !== "default"
                 ? book.role === selectedCounterpartyName
                 : true;
-            //     &&
-            // (selectedBank && selectedBank !== "default"
-            //     ? Array.isArray(book.credit_manager_bank_name)
-            //         ? book.credit_manager_bank_name.includes(selectedBank)
-            //         : book.credit_manager_bank_name === selectedBank
-            //     : true)
         });
         return result;
     }, [booksItems, selectedCounterpartyName]);
-
-    // const sectorOptions = useMemo(() => {
-    //     if (bookId != "contacts") return;
-    //     const allSectors = booksItems.flatMap((item) => item.counterparty_name);
-    //     return Array.from(new Set(allSectors));
-    // }, [booksItems]);
 
     let query;
 
@@ -618,34 +606,6 @@ const SingleBook = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        {/* {bookId === "contacts" && (
-                            <>
-                                <Select
-                                    className={
-                                        "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                    }
-                                    title={"Контрагент"}
-                                    items={sectorOptions}
-                                    onChange={(evt) => {
-                                        setSelectedCounterpartyName(
-                                            evt.target.value
-                                        );
-                                    }}
-                                />
-
-                                <Select
-                                    className={
-                                        "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                    }
-                                    title={"Банк"}
-                                    items={bankOptions}
-                                    onChange={(evt) =>
-                                        setSelectedBank(evt.target.value)
-                                    }
-                                />
-                            </>
-                        )} */}
-
                         <nav className="switch">
                             <div>
                                 <input
@@ -699,7 +659,8 @@ const SingleBook = () => {
                                 bookId != "creditor" &&
                                 bookId != "contragent" &&
                                 bookId != "suppliers-with-reports" &&
-                                bookId != "working-hours" && (
+                                bookId != "working-hours" &&
+                                bookId !== "report-types" && (
                                     <ReferenceItemNew
                                         handleNewElementInputChange={
                                             handleNewElementInputChange
