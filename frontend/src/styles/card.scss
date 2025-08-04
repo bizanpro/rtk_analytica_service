@@ -94,4 +94,45 @@
             vertical-align: middle;
         }
     }
+
+    &__tabs {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+
+        &-item {
+            input {
+                position: absolute;
+                display: none;
+                pointer-events: none;
+                visibility: hidden;
+
+                &:checked ~ label {
+                    color: var(--color-white);
+                    background: var(--color-blue-70);
+                }
+            }
+
+            label {
+                display: block;
+                border-radius: 8px;
+                padding: 7px 10px;
+                border: 1px solid var(--color-blue-70);
+                background: var(--color-white);
+                color: var(--color-blue-70);
+                transition: color var(--trans), background var(--trans);
+                font-weight: 500;
+                font-size: 14px;
+                line-height: 100%;
+                cursor: pointer;
+
+                &:hover {
+                    color: var(--color-white);
+                    background: var(--color-blue-70);
+                }
+            }
+        }
+    }
 }

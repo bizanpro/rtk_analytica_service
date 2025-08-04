@@ -229,12 +229,12 @@ body {
     overflow: hidden;
 }
 
-.radio-field_tab label {
-    border: 1px solid #e0e0e0;
-    white-space: nowrap;
-}
+// .radio-field_tab label {
+    // border: 1px solid #e0e0e0;
+    // white-space: nowrap;
+// }
 
-.radio-field_tab input,
+// .radio-field_tab input,
 .radio-field input,
 .switch input {
     position: absolute;
@@ -243,7 +243,7 @@ body {
     visibility: hidden;
 }
 
-.radio-field_tab label,
+// .radio-field_tab label,
 .radio-field label,
 .switch label {
     display: block;
@@ -261,7 +261,7 @@ body {
     text-align: left;
 }
 
-.radio-field_tab input:checked + label,
+// .radio-field_tab input:checked + label,
 .radio-field input:checked + label,
 .switch input:checked + label {
     pointer-events: none;
@@ -463,6 +463,7 @@ body {
     background: var(--color-white);
     border-top: var(--color-gray-30);
     padding: 10px 0 15px;
+    box-shadow: 0 -8px 24px #00203308;
 
     @media (min-width: $media-lg) {
         padding: 10px 0 40px;

@@ -338,7 +338,8 @@ const ProjectCard = () => {
                             if (response?.responsible_person) {
                                 setCustomers((prevCustomer) => [
                                     ...prevCustomer,
-                                    response.responsible_person?.contragent_contact,
+                                    response.responsible_person
+                                        ?.contragent_contact,
                                 ]);
                             }
 
@@ -1047,16 +1048,34 @@ const ProjectCard = () => {
                             <section className="project-card__project-executors">
                                 <h2 className="card__subtitle">Кредиторы</h2>
 
-                                <ul className="flex gap-3 flex-wrap mb-2">
-                                    {matchedBanks.length > 0 && (
-                                        <>
-                                            <li className="radio-field_tab">
+                                {matchedBanks.length > 0 && (
+                                    <ul className="card__tabs project-card__banks-tabs">
+                                        <li className="card__tabs-item radio-field_tab">
+                                            <input
+                                                type="radio"
+                                                name="active_bank"
+                                                id="bank_all"
+                                                value=""
+                                                defaultChecked
+                                                onChange={(evt) => {
+                                                    handleFilterLenders(evt);
+                                                }}
+                                            />
+                                            <label htmlFor="bank_all">
+                                                Все банки
+                                            </label>
+                                        </li>
+
+                                        {matchedBanks.map((bank) => (
+                                            <li
+                                                key={bank.id}
+                                                className="card__tabs-item radio-field_tab"
+                                            >
                                                 <input
+                                                    id={`bank_${bank.id}`}
                                                     type="radio"
                                                     name="active_bank"
-                                                    id="bank_all"
-                                                    value=""
-                                                    defaultChecked
+                                                    value={bank.id}
                                                     onChange={(evt) => {
                                                         handleFilterLenders(
                                                             evt
@@ -1064,39 +1083,14 @@ const ProjectCard = () => {
                                                     }}
                                                 />
                                                 <label
-                                                    htmlFor="bank_all"
-                                                    className="text-gray-700 py-1 px-2 text-center rounded-md"
+                                                    htmlFor={`bank_${bank.id}`}
                                                 >
-                                                    Все банки
+                                                    {bank.name}
                                                 </label>
                                             </li>
-                                            {matchedBanks.map((bank) => (
-                                                <li
-                                                    key={bank.id}
-                                                    className="radio-field_tab"
-                                                >
-                                                    <input
-                                                        id={`bank_${bank.id}`}
-                                                        type="radio"
-                                                        name="active_bank"
-                                                        value={bank.id}
-                                                        onChange={(evt) => {
-                                                            handleFilterLenders(
-                                                                evt
-                                                            );
-                                                        }}
-                                                    />
-                                                    <label
-                                                        htmlFor={`bank_${bank.id}`}
-                                                        className="text-gray-700 py-1 px-2 text-center rounded-md"
-                                                    >
-                                                        {bank.name}
-                                                    </label>
-                                                </li>
-                                            ))}{" "}
-                                        </>
-                                    )}
-                                </ul>
+                                        ))}
+                                    </ul>
+                                )}
 
                                 <ul className="project-card__executors-list">
                                     {filteredLenders.length > 0 &&
