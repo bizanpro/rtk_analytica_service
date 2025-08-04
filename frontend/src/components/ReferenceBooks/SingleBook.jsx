@@ -55,21 +55,9 @@ const SingleBook = () => {
                 selectedCounterpartyName !== "default"
                 ? book.role === selectedCounterpartyName
                 : true;
-            //     &&
-            // (selectedBank && selectedBank !== "default"
-            //     ? Array.isArray(book.credit_manager_bank_name)
-            //         ? book.credit_manager_bank_name.includes(selectedBank)
-            //         : book.credit_manager_bank_name === selectedBank
-            //     : true)
         });
         return result;
     }, [booksItems, selectedCounterpartyName]);
-
-    // const sectorOptions = useMemo(() => {
-    //     if (bookId != "contacts") return;
-    //     const allSectors = booksItems.flatMap((item) => item.counterparty_name);
-    //     return Array.from(new Set(allSectors));
-    // }, [booksItems]);
 
     let query;
 
@@ -290,9 +278,9 @@ const SingleBook = () => {
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка добавления записи", {
+                toast.error(error.message || "Ошибка добавления записи", {
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -386,9 +374,9 @@ const SingleBook = () => {
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка обновления записи", {
+                toast.error(error.message || "Ошибка обновления записи", {
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -437,9 +425,9 @@ const SingleBook = () => {
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка обновления контакта", {
+                toast.error(error.message || "Ошибка обновления контакта", {
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -496,9 +484,9 @@ const SingleBook = () => {
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка удаления контакта", {
+                toast.error(error.message || "Ошибка удаления контакта", {
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -544,9 +532,9 @@ const SingleBook = () => {
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка удаления записи", {
+                toast.error(error.message || "Ошибка удаления записи", {
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -618,34 +606,6 @@ const SingleBook = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        {/* {bookId === "contacts" && (
-                            <>
-                                <Select
-                                    className={
-                                        "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                    }
-                                    title={"Контрагент"}
-                                    items={sectorOptions}
-                                    onChange={(evt) => {
-                                        setSelectedCounterpartyName(
-                                            evt.target.value
-                                        );
-                                    }}
-                                />
-
-                                <Select
-                                    className={
-                                        "p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                    }
-                                    title={"Банк"}
-                                    items={bankOptions}
-                                    onChange={(evt) =>
-                                        setSelectedBank(evt.target.value)
-                                    }
-                                />
-                            </>
-                        )} */}
-
                         <nav className="switch">
                             <div>
                                 <input
@@ -699,7 +659,8 @@ const SingleBook = () => {
                                 bookId != "creditor" &&
                                 bookId != "contragent" &&
                                 bookId != "suppliers-with-reports" &&
-                                bookId != "working-hours" && (
+                                bookId != "working-hours" &&
+                                bookId !== "report-types" && (
                                     <ReferenceItemNew
                                         handleNewElementInputChange={
                                             handleNewElementInputChange
