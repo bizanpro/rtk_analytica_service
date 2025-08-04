@@ -272,21 +272,24 @@ const ReferenceItem = ({
                             className="delete-button save-icon"
                             title="Изменить элемент"
                         ></button>
-                        <button
-                            onClick={() => {
-                                if (data.projects_count) {
-                                    if (data.projects_count < 1) {
+
+                        {bookId !== "report-types" && (
+                            <button
+                                onClick={() => {
+                                    if (data.projects_count) {
+                                        if (data.projects_count < 1) {
+                                            deleteElement(data.id);
+                                        }
+                                    } else {
                                         deleteElement(data.id);
                                     }
-                                } else {
-                                    deleteElement(data.id);
-                                }
-                            }}
-                            className="delete-button delete-icon"
-                            title="Удалить элемент"
-                            id={data.id}
-                            disabled={data.projects_count > 0}
-                        ></button>
+                                }}
+                                className="delete-button delete-icon"
+                                title="Удалить элемент"
+                                id={data.id}
+                                disabled={data.projects_count > 0}
+                            ></button>
+                        )}
                     </div>
                 </td>
             )}
