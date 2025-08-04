@@ -47,6 +47,7 @@ const ReferenceItemExtended = ({
                     [
                         projectsRefs,
                         phoneRefs,
+                        projectsRefs,
                         lastChangeRefs,
                         authorRefs,
                         actionsRefs,
@@ -135,9 +136,20 @@ const ReferenceItemExtended = ({
             </td>
 
             <td className="align-top">
-                <div className="py-3 px-4 min-w-[180px]">
-                    {data.projects_count || "-"}
-                </div>
+                <table className="w-full">
+                    <tbody className="flex flex-col gap-3">
+                        {data.contacts.map((contact, index) => (
+                            <tr
+                                key={index}
+                                ref={(el) => (projectsRefs.current[index] = el)}
+                            >
+                                <td className="py-3 px-4 min-w-[180px]">
+                                    {contact.projects_count}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </td>
 
             <td className="align-top">

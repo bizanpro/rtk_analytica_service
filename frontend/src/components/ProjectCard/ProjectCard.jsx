@@ -397,8 +397,15 @@ const ProjectCard = () => {
                 }
                 return response;
             } catch (error) {
-                console.error("Ошибка при обновлении проекта:", error);
-                throw error;
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка обновления проекта", {
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                    containerId: "projectCard",
+                });
             }
         } else {
             toast.error("Необходимо назначить заказчика и отрасль", {

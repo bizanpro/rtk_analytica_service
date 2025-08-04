@@ -278,9 +278,9 @@ const SingleBook = () => {
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка добавления записи", {
+                toast.error(error.message || "Ошибка добавления записи", {
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -374,9 +374,9 @@ const SingleBook = () => {
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка обновления записи", {
+                toast.error(error.message || "Ошибка обновления записи", {
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -425,9 +425,9 @@ const SingleBook = () => {
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка обновления контакта", {
+                toast.error(error.message || "Ошибка обновления контакта", {
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -484,9 +484,9 @@ const SingleBook = () => {
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка удаления контакта", {
+                toast.error(error.message || "Ошибка удаления контакта", {
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -532,9 +532,9 @@ const SingleBook = () => {
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка удаления записи", {
+                toast.error(error.message || "Ошибка удаления записи", {
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
