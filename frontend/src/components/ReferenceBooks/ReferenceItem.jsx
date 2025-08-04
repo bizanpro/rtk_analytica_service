@@ -68,6 +68,8 @@ const ReferenceItem = ({
                                                                                 "full_name" ||
                                                                             field ===
                                                                                 "phone") &&
+                                                                        bookId !=
+                                                                            "report-types" &&
                                                                         mode ===
                                                                             "edit" ? (
                                                                             <div
@@ -136,6 +138,7 @@ const ReferenceItem = ({
                             {(key === "name" ||
                                 key === "full_name" ||
                                 key === "phone") &&
+                            bookId != "report-types" &&
                             mode === "edit" ? (
                                 <div className="flex items-center gap-2">
                                     <input
