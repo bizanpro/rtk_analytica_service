@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import { IMaskInput } from "react-imask";
 
@@ -35,27 +35,31 @@ const ReferenceItemExtended = ({
     const authorRefs = useRef([]);
     const actionsRefs = useRef([]);
 
-    useEffect(() => {
-        data.projects.forEach((_, index) => {
-            const targetHeight =
-                targetRefs.current[index]?.getBoundingClientRect().height;
+    useLayoutEffect(() => {
+        requestAnimationFrame(() => {
+            data.contacts?.forEach((_, index) => {
+                const targetEl = targetRefs.current[index];
+                if (!targetEl) return;
 
-            if (targetHeight) {
-                [
-                    projectsRefs,
-                    phoneRefs,
-                    lastChangeRefs,
-                    authorRefs,
-                    actionsRefs,
-                ].forEach((refs) => {
-                    const el = refs.current[index];
-                    if (el) {
-                        el.style.height = `${targetHeight}px`;
-                    }
-                });
-            }
+                const targetHeight = targetEl.getBoundingClientRect().height;
+
+                if (targetHeight) {
+                    [
+                        projectsRefs,
+                        phoneRefs,
+                        lastChangeRefs,
+                        authorRefs,
+                        actionsRefs,
+                    ].forEach((refs) => {
+                        const el = refs.current[index];
+                        if (el) {
+                            el.style.height = `${targetHeight}px`;
+                        }
+                    });
+                }
+            });
         });
-    }, []);
+    }, [data.contacts]);
 
     return (
         <tr className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer">
