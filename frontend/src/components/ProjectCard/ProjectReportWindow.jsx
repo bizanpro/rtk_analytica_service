@@ -308,8 +308,6 @@ const ProjectReportWindow = ({
             (type) => type.id === +reportData.report_type_id
         );
 
-        console.log(selectedType);
-
         if (selectedType) {
             setReportData((prev) => ({
                 ...prev,
@@ -606,14 +604,22 @@ const ProjectReportWindow = ({
                         >
                             <option value="">Выбрать из списка</option>
                             {regularityOptions.length > 0 &&
-                                regularityOptions.map((item) => (
-                                    <option
-                                        value={item.toLowerCase()}
-                                        key={item}
-                                    >
-                                        {item}
-                                    </option>
-                                ))}
+                                regularityOptions.map((item) => {
+                                    const value = item.toLowerCase();
+
+                                    if (
+                                        value === "единоразовый" &&
+                                        reportData.is_regular === true
+                                    ) {
+                                        return null;
+                                    }
+
+                                    return (
+                                        <option value={value} key={item}>
+                                            {item}
+                                        </option>
+                                    );
+                                })}
                         </select>
                     </div>
                 </div>

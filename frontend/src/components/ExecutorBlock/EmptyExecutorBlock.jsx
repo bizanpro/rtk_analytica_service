@@ -32,6 +32,7 @@ const EmptyExecutorBlock = ({
     const PhoneMask = "+{7}(000) 000 00 00";
 
     const [errors, setErrors] = useState({});
+    const [isReadonly, setIsReadonly] = useState(false);
 
     const [newContact, setNewContact] = useState(
         type === "creditor" ? CREDITOR_TEMPLATE : CUSTOMER_TEMPLATE
@@ -78,9 +79,7 @@ const EmptyExecutorBlock = ({
         };
 
         setErrors(newErrors);
-
         if (Object.values(newErrors).some((err) => err)) return;
-
         sendExecutor(type, newContact);
     };
 
@@ -108,6 +107,8 @@ const EmptyExecutorBlock = ({
                                         ...prev,
                                         full_name: newVal,
                                     }));
+
+                                    setIsReadonly(false);
                                 }
                             }}
                             value={
@@ -129,12 +130,14 @@ const EmptyExecutorBlock = ({
                                     });
 
                                     setInputValue("");
+                                    setIsReadonly(true);
                                 } else {
                                     setNewContact((prev) => ({
                                         ...prev,
                                         full_name: "",
                                     }));
                                     setInputValue("");
+                                    setIsReadonly(false);
                                 }
                             }}
                         />
@@ -157,6 +160,7 @@ const EmptyExecutorBlock = ({
                             }
                             value={newContact.phone || ""}
                             placeholder="+7 999 999 99 99"
+                            disabled={isReadonly}
                         />
                         {errors.phone && (
                             <p className="text-red-500 text-sm">
@@ -175,6 +179,7 @@ const EmptyExecutorBlock = ({
                             placeholder="Должность"
                             value={newContact.position}
                             onChange={(e) => handleNewExecutor(e, "position")}
+                            disabled={isReadonly}
                         />
                         {errors.position && (
                             <p className="text-red-500 text-sm">
@@ -189,6 +194,7 @@ const EmptyExecutorBlock = ({
                             placeholder="mail@mail.ru"
                             value={newContact.email}
                             onChange={(e) => handleNewExecutor(e, "email")}
+                            disabled={isReadonly}
                         />
                         {errors.email && (
                             <p className="text-red-500 text-sm">
