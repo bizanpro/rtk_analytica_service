@@ -84,6 +84,7 @@ const ProjectCard = () => {
         statRef.current?.refreshRevenue();
     };
 
+    // Закрепленные за карточкой банки для отображения вкладок
     const matchedBanks = banks.filter((bank) =>
         projectData.creditors?.some(
             (selectedBank) => selectedBank.id === bank.id
@@ -717,15 +718,13 @@ const ProjectCard = () => {
                                 />
 
                                 <span
-                                    className={`
-                                            status
-                                                ${
-                                                    projectData?.status ===
-                                                    "active"
-                                                        ? "active"
-                                                        : projectData?.status ===
-                                                          "completed"
-                                                }
+                                    className={`status
+                                            ${
+                                                projectData?.status === "active"
+                                                    ? "active"
+                                                    : projectData?.status ===
+                                                      "completed"
+                                            }
                                         `}
                                 >
                                     {handleStatus(projectData?.status)}
