@@ -68,8 +68,6 @@ const ReferenceItem = ({
                                                                                 "full_name" ||
                                                                             field ===
                                                                                 "phone") &&
-                                                                        bookId !=
-                                                                            "report-types" &&
                                                                         mode ===
                                                                             "edit" ? (
                                                                             <div
@@ -135,11 +133,20 @@ const ReferenceItem = ({
                             className="px-4 py-7 min-w-[180px] max-w-[200px]"
                             key={key}
                         >
-                            {(key === "name" ||
-                                key === "full_name" ||
-                                key === "phone") &&
-                            bookId != "report-types" &&
-                            mode === "edit" ? (
+                            {mode === "edit" &&
+                            (key === "name" || key === "phone") ? (
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="text"
+                                        className="w-full"
+                                        value={value?.toString() || "—"}
+                                        onChange={(e) =>
+                                            handleInputChange(e, key, data.id)
+                                        }
+                                    />
+                                </div>
+                            ) : key === "full_name" &&
+                              bookId != "report-types" ? (
                                 <div className="flex items-center gap-2">
                                     <input
                                         type="text"
