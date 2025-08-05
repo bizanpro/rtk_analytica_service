@@ -39,9 +39,6 @@ const SingleBook = () => {
     const [availableYears, setAvailableYears] = useState([]);
     const [currentYear, setCurrentYear] = useState("");
 
-    const [selectedCounterpartyName, setSelectedCounterpartyName] =
-        useState("");
-
     const [newElem, setnewElem] = useState({
         contragent_id: "",
         full_name: "",
@@ -51,16 +48,6 @@ const SingleBook = () => {
     });
 
     const PhoneMask = "+{7} (000) 000 00 00";
-
-    const filteredProjects = useMemo(() => {
-        const result = booksItems?.filter((book) => {
-            return selectedCounterpartyName &&
-                selectedCounterpartyName !== "default"
-                ? book.role === selectedCounterpartyName
-                : true;
-        });
-        return result;
-    }, [booksItems, selectedCounterpartyName]);
 
     let query;
 
@@ -391,6 +378,50 @@ const SingleBook = () => {
             });
     };
 
+    const saveAllList = () => {
+        query = toast.loading("Сохранение", {
+            containerId: "singleBook",
+            position: "top-center",
+        });
+
+        postData("PATCH", URL, { hours: booksItems, year: currentYear })
+            .then((response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: response.message || "Успешно сохранено",
+                        type: "success",
+                        containerId: "singleBook",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                } else {
+                    toast.dismiss(query);
+                    toast.error("Ошибка сохранения", {
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                        containerId: "singleBook",
+                    });
+                }
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка сохранения", {
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                    containerId: "singleBook",
+                });
+            });
+    };
+
     // Изменение записи
     const editContragentAndCreditorContact = (data) => {
         query = toast.loading("Обновление", {
@@ -640,7 +671,13 @@ const SingleBook = () => {
                         {TITLES[bookId]} ({listLength})
                     </h1>
 
-                    <div className="flex justify-between items-center gap-6 flex-grow">
+                    <div
+                        className={`flex ${
+                            bookId === "working-hours"
+                                ? "justify-between"
+                                : "justify-end"
+                        } items-center gap-6 flex-grow`}
+                    >
                         {bookId === "working-hours" && (
                             <select
                                 className="p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
@@ -658,33 +695,45 @@ const SingleBook = () => {
                             </select>
                         )}
 
-                        <nav className="switch">
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="read_mode"
-                                    onChange={() => {
-                                        setMode("read");
+                        <div className="flex items-center gap-6">
+                            {mode === "edit" && bookId === "working-hours" && (
+                                <button
+                                    onClick={() => {
+                                        saveAllList();
                                     }}
-                                    checked={mode === "read" ? true : false}
-                                />
-                                <label htmlFor="read_mode">Чтение</label>
-                            </div>
+                                    className="delete-button save-icon"
+                                    title="Сохранить рабочие часы"
+                                ></button>
+                            )}
 
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="edit_mode"
-                                    onChange={() => setMode("edit")}
-                                    checked={mode === "edit" ? true : false}
-                                />
-                                <label htmlFor="edit_mode">
-                                    Редактирование
-                                </label>
-                            </div>
-                        </nav>
+                            <nav className="switch">
+                                <div>
+                                    <input
+                                        type="radio"
+                                        name="mode"
+                                        id="read_mode"
+                                        onChange={() => {
+                                            setMode("read");
+                                        }}
+                                        checked={mode === "read" ? true : false}
+                                    />
+                                    <label htmlFor="read_mode">Чтение</label>
+                                </div>
+
+                                <div>
+                                    <input
+                                        type="radio"
+                                        name="mode"
+                                        id="edit_mode"
+                                        onChange={() => setMode("edit")}
+                                        checked={mode === "edit" ? true : false}
+                                    />
+                                    <label htmlFor="edit_mode">
+                                        Редактирование
+                                    </label>
+                                </div>
+                            </nav>
+                        </div>
                     </div>
                 </div>
 
@@ -733,8 +782,8 @@ const SingleBook = () => {
                                     </td>
                                 </tr>
                             ) : (
-                                filteredProjects?.length > 0 &&
-                                filteredProjects.map((item) => {
+                                booksItems?.length > 0 &&
+                                booksItems.map((item) => {
                                     if (
                                         bookId === "creditor" ||
                                         bookId === "contragent"
@@ -785,7 +834,6 @@ const SingleBook = () => {
                                                 handleInputChange={
                                                     handleInputChange
                                                 }
-                                                editElement={editElement}
                                             />
                                         );
                                     }

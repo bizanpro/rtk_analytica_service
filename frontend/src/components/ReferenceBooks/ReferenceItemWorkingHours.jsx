@@ -2,7 +2,6 @@ const ReferenceItemWorkingHours = ({
     data,
     columns,
     mode = "read",
-    editElement,
     handleInputChange,
 }) => {
     return (
@@ -98,20 +97,6 @@ const ReferenceItemWorkingHours = ({
                     );
                 }
             })}
-
-            {mode === "edit" && (
-                <td className="px-4 py-7 min-w-[50px] text-center">
-                    <div className="flex items-center justify-end gap-3">
-                        <button
-                            onClick={() => {
-                                editElement(data.id);
-                            }}
-                            className="delete-button save-icon"
-                            title="Изменить элемент"
-                        ></button>
-                    </div>
-                </td>
-            )}
         </tr>
     );
 };
