@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
@@ -9,13 +9,16 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import formatToUtcDateOnly from "../../utils/formatToUtcDateOnly";
 
+import { ru } from "date-fns/locale";
+import { format } from "date-fns";
+
 import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
 import EmployeePersonalWorkloadItem from "./EmployeePersonalWorkloadItem";
 import EmployeeWorkloadSummary from "./EmployeeWorkloadSummary";
 
 import "react-toastify/dist/ReactToastify.css";
 
-import months from "../../data/months.json";
+// import months from "../../data/months.json";
 
 const customStyles = {
     option: (base, { data, isFocused, isSelected }) => ({
@@ -41,17 +44,28 @@ const EmployeeCard = () => {
     const [availableYears, setAvailableYears] = useState([]);
     const [selectedPersonalYear, setSelectedPersonalYear] = useState(2024);
     const [selectedPersonalMonth, setSelectedPersonalMonth] = useState({});
-    const [selectedSummaryYear, setSelectedSummaryYear] = useState("");
-    const [selectedSummaryMonth, setSelectedSummaryMonth] = useState("1");
+    // const [selectedSummaryYear, setSelectedSummaryYear] = useState("");
+    // const [selectedSummaryMonth, setSelectedSummaryMonth] = useState("1");
     const [selectedTypes, setSelecterTypes] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
     const [positions, setPositions] = useState([]);
     const [workloads, setWorkloads] = useState([]);
     const [availablePersonalMonths, setAvailablePersonalMonths] = useState([]);
+    const [dateRange, setDateRange] = useState([null, null]);
+    const [startDate, endDate] = dateRange;
 
     const PhoneMask = "+{7} (000) 000 00 00";
 
     let query;
+
+    // Свод по трудозатратам, массив доступных дат периода
+    const allowedDates = useMemo(() => {
+        return datesData.flatMap((yearData) =>
+            yearData.months.map(
+                (month) => new Date(yearData.year, month.number - 1, 1)
+            )
+        );
+    }, [datesData]);
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -118,11 +132,11 @@ const EmployeeCard = () => {
                         response.data.length - 1
                     ]
                 );
-                setSelectedSummaryYear(
-                    response.data.map((item) => item.year)[
-                        response.data.length - 1
-                    ]
-                );
+                // setSelectedSummaryYear(
+                //     response.data.map((item) => item.year)[
+                //         response.data.length - 1
+                //     ]
+                // );
             }
         });
     };
@@ -149,8 +163,8 @@ const EmployeeCard = () => {
     // Получение свода по трудозатратам
     const getWorkloadSummary = () => {
         const payload = {
-            year: selectedSummaryYear,
-            month: selectedSummaryMonth,
+            "period[start]": format(dateRange[0], "MM-yyyy"),
+            "period[end]": format(dateRange[1], "MM-yyyy"),
             reports_ids: selectedTypes.join(","),
         };
 
@@ -354,10 +368,10 @@ const EmployeeCard = () => {
     }, [selectedPersonalYear, selectedPersonalMonth]);
 
     useEffect(() => {
-        if (selectedSummaryYear && selectedSummaryMonth) {
+        if (dateRange[0] && dateRange[1]) {
             getWorkloadSummary();
         }
-    }, [selectedSummaryYear, selectedSummaryMonth, selectedTypes]);
+    }, [dateRange, selectedTypes]);
 
     useEffect(() => {
         if (datesData.length > 0) {
@@ -634,7 +648,7 @@ const EmployeeCard = () => {
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
                                     <div className="grid grid-cols-1 items-start gap-4 mb-8">
-                                        <div className="grid grid-cols-2 items-center gap-3">
+                                        {/* <div className="grid grid-cols-2 items-center gap-3">
                                             <div className="flex flex-col">
                                                 <span className="block mb-2 text-gray-400">
                                                     Год
@@ -689,34 +703,60 @@ const EmployeeCard = () => {
                                                     )}
                                                 </select>
                                             </div>
-                                        </div>
+                                        </div> */}
 
-                                        <div className="flex flex-col">
-                                            <span className="block mb-2 text-gray-400">
-                                                Типы отчётов
-                                            </span>
-                                            <Select
-                                                closeMenuOnSelect={false}
-                                                isMulti
-                                                name="colors"
-                                                options={reportTypes.map(
-                                                    (type) => ({
-                                                        value: type.id,
-                                                        label: type.name,
-                                                    })
-                                                )}
-                                                className="basic-multi-select min-w-[170px] min-h-[32px]"
-                                                classNamePrefix="select"
-                                                placeholder="Выбрать тип отчёта"
-                                                onChange={(selectedOptions) => {
-                                                    setSelecterTypes(
-                                                        selectedOptions.map(
-                                                            (option) =>
-                                                                option.value
-                                                        )
-                                                    );
-                                                }}
-                                            />
+                                        <div className="grid grid-cols-2 items-center gap-3">
+                                            <div className="flex flex-col">
+                                                <span className="block mb-2 text-gray-400">
+                                                    Период
+                                                </span>
+
+                                                <DatePicker
+                                                    className="border-2 border-gray-300 p-1 w-full h-[32px]"
+                                                    selectsRange
+                                                    startDate={startDate}
+                                                    endDate={endDate}
+                                                    onChange={(update) =>
+                                                        setDateRange(update)
+                                                    }
+                                                    dateFormat="MM-yyyy"
+                                                    placeholderText="мм.гггг - мм.гггг"
+                                                    showMonthYearPicker
+                                                    includeDates={allowedDates}
+                                                    locale={ru}
+                                                    disabled={mode === "read"}
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-col">
+                                                <span className="block mb-2 text-gray-400">
+                                                    Типы отчётов
+                                                </span>
+                                                <Select
+                                                    closeMenuOnSelect={false}
+                                                    isMulti
+                                                    name="colors"
+                                                    options={reportTypes.map(
+                                                        (type) => ({
+                                                            value: type.id,
+                                                            label: type.name,
+                                                        })
+                                                    )}
+                                                    className="basic-multi-select min-w-[170px] min-h-[32px]"
+                                                    classNamePrefix="select"
+                                                    placeholder="Выбрать тип отчёта"
+                                                    onChange={(
+                                                        selectedOptions
+                                                    ) => {
+                                                        setSelecterTypes(
+                                                            selectedOptions.map(
+                                                                (option) =>
+                                                                    option.value
+                                                            )
+                                                        );
+                                                    }}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
 
