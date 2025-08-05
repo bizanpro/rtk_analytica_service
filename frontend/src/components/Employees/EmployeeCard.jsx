@@ -163,8 +163,8 @@ const EmployeeCard = () => {
     // Получение свода по трудозатратам
     const getWorkloadSummary = () => {
         const payload = {
-            "period[start]": format(dateRange[0], "MM-yyyy"),
-            "period[end]": format(dateRange[1], "MM-yyyy"),
+            dateFrom: format(dateRange[0], "MM-yyyy"),
+            dateTo: format(dateRange[1], "MM-yyyy"),
             reports_ids: selectedTypes.join(","),
         };
 
