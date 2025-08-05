@@ -196,6 +196,8 @@ const SingleBook = () => {
 
         if (name === "phone") {
             value = e;
+        } else if (name === "hours") {
+            value = +e.target.value;
         } else if (
             name === "is_regular" ||
             name === "show_cost" ||
@@ -384,7 +386,7 @@ const SingleBook = () => {
             position: "top-center",
         });
 
-        postData("PATCH", URL, { hours: booksItems, year: currentYear })
+        postData("PATCH", URL, { year: currentYear, hours: booksItems })
             .then((response) => {
                 if (response?.ok) {
                     toast.update(query, {

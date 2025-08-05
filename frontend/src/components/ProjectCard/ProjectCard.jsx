@@ -190,7 +190,7 @@ const ProjectCard = () => {
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }responsible-persons/creditor/?project_id=${projectId}`
+            }responsible-persons/creditor/?project_id=${projectId}&creditor_id=${""}`
         ).then((response) => {
             if (response.status == 200) {
                 setCreditorContacts(response.data.data);
