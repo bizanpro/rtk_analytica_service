@@ -724,7 +724,6 @@ const EmployeeCard = () => {
                                                     showMonthYearPicker
                                                     includeDates={allowedDates}
                                                     locale={ru}
-                                                    disabled={mode === "read"}
                                                 />
                                             </div>
 
