@@ -192,7 +192,7 @@ const EmployeeCard = () => {
                             position: "top-center",
                         });
                     } else {
-                        toast.error("Ошибка обновления данных", {
+                        toast.error("Ошибка обновления", {
                             isLoading: false,
                             autoClose: 1500,
                             pauseOnFocusLoss: false,
@@ -202,9 +202,9 @@ const EmployeeCard = () => {
                         });
                     }
                 })
-                .catch(() => {
+                .catch((error) => {
                     toast.dismiss(query);
-                    toast.error("Ошибка обновления данных", {
+                    toast.error(error.message || "Ошибка обновления данных", {
                         containerId: "employee",
                         isLoading: false,
                         autoClose: 1500,
