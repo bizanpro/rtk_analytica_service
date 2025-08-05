@@ -10,6 +10,7 @@ import ReferenceItem from "./ReferenceItem";
 import ReferenceItemExtended from "./ReferenceItemExtended";
 import ReferenceItemExtendedContacts from "./ReferenceItemExtendedContacts";
 import ReferenceItemNew from "./ReferenceItemNew";
+import ReferenceItemWorkingHours from "./ReferenceItemWorkingHours";
 
 import { IMaskInput } from "react-imask";
 import { ToastContainer, toast } from "react-toastify";
@@ -35,6 +36,8 @@ const SingleBook = () => {
     const [listLength, setListLength] = useState(0);
     const [popupState, setPopupState] = useState(false);
     const [positions, setPositions] = useState([]);
+    const [availableYears, setAvailableYears] = useState([]);
+    const [currentYear, setCurrentYear] = useState("");
 
     const [selectedCounterpartyName, setSelectedCounterpartyName] =
         useState("");
@@ -223,6 +226,7 @@ const SingleBook = () => {
         );
     };
 
+    // Закрытие попапа
     const closePopup = (evt) => {
         if (evt.currentTarget.classList.contains("popup")) {
             setPopupState(false);
@@ -545,11 +549,41 @@ const SingleBook = () => {
             });
     };
 
+    // Получение должностей
+    const getPositions = () => {
+        getData(`${import.meta.env.VITE_API_URL}positions`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status == 200) {
+                setPositions(response.data.data);
+            }
+        });
+    };
+
+    // Получение должностей
+    const getAvailableYears = () => {
+        getData(`${import.meta.env.VITE_API_URL}${bookId}/available-years`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status == 200) {
+                setAvailableYears(response.data.years);
+                setCurrentYear(
+                    response.data.years[response.data.years.length - 1] || ""
+                );
+            }
+        });
+    };
+
     // Получение списка записей
     const getBooks = () => {
         setIsLoading(true);
 
-        getData(URL, { Accept: "application/json" })
+        const url =
+            bookId == "working-hours" ? `${URL}/?year=${currentYear}` : URL;
+
+        getData(url, {
+            Accept: "application/json",
+        })
             .then((response) => {
                 if (response.status == 200) {
                     setBooksItems(response.data.data);
@@ -576,24 +610,25 @@ const SingleBook = () => {
             .finally(() => setIsLoading(false));
     };
 
-    // Получение должностей
-    const getPositions = () => {
-        getData(`${import.meta.env.VITE_API_URL}positions`, {
-            Accept: "application/json",
-        }).then((response) => {
-            if (response.status == 200) {
-                setPositions(response.data.data);
-            }
-        });
-    };
-
     useEffect(() => {
-        getBooks();
+        if (bookId !== "working-hours") {
+            getBooks();
+        }
 
         if (bookId === "management-report-types") {
             getPositions();
         }
+
+        if (bookId === "working-hours") {
+            getAvailableYears();
+        }
     }, []);
+
+    useEffect(() => {
+        if (bookId === "working-hours" && currentYear != "") {
+            getBooks();
+        }
+    }, [currentYear]);
 
     return (
         <main className="page">
@@ -605,7 +640,24 @@ const SingleBook = () => {
                         {TITLES[bookId]} ({listLength})
                     </h1>
 
-                    <div className="flex items-center gap-6">
+                    <div className="flex justify-between items-center gap-6 flex-grow">
+                        {bookId === "working-hours" && (
+                            <select
+                                className="p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                value={currentYear}
+                                onChange={(evt) =>
+                                    setCurrentYear(evt.target.value)
+                                }
+                            >
+                                {availableYears.length > 0 &&
+                                    availableYears.map((item) => (
+                                        <option key={item} value={item}>
+                                            {item}
+                                        </option>
+                                    ))}
+                            </select>
+                        )}
+
                         <nav className="switch">
                             <div>
                                 <input
@@ -718,6 +770,22 @@ const SingleBook = () => {
                                                 }
                                                 setPopupState={setPopupState}
                                                 setnewElem={setnewElem}
+                                            />
+                                        );
+                                    }
+
+                                    if (bookId === "working-hours") {
+                                        return (
+                                            <ReferenceItemWorkingHours
+                                                key={item.id}
+                                                data={item}
+                                                columns={columns}
+                                                mode={mode}
+                                                bookId={bookId}
+                                                handleInputChange={
+                                                    handleInputChange
+                                                }
+                                                editElement={editElement}
                                             />
                                         );
                                     }
