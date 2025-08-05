@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { format, parseISO } from "date-fns";
@@ -5,6 +6,7 @@ import { ru } from "date-fns/locale";
 
 const ReferenceItem = ({
     data,
+    booksItems,
     columns,
     mode = "read",
     bookId,
@@ -17,6 +19,22 @@ const ReferenceItem = ({
 
     const handleRowClick = () => {
         navigate(`/reference-books/${data.alias}`);
+    };
+
+    const [isError, setIsError] = useState(false);
+
+    const hasNameMatch = (input, currentId) => {
+        const result = booksItems.some(
+            (item) =>
+                item.id !== currentId &&
+                item.name.toLowerCase() === input.trim().toLowerCase()
+        );
+
+        if (result) {
+            setIsError(true);
+        } else {
+            editElement(data.id);
+        }
     };
 
     return (
@@ -135,15 +153,30 @@ const ReferenceItem = ({
                         >
                             {mode === "edit" &&
                             (key === "name" || key === "phone") ? (
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 relative">
                                     <input
                                         type="text"
                                         className="w-full"
                                         value={value?.toString() || "—"}
-                                        onChange={(e) =>
-                                            handleInputChange(e, key, data.id)
-                                        }
+                                        onChange={(e) => {
+                                            handleInputChange(e, key, data.id);
+
+                                            if (
+                                                key === "name" &&
+                                                bookId == "positions"
+                                            ) {
+                                                setIsError(false);
+                                            }
+                                        }}
                                     />
+
+                                    {key === "name" &&
+                                        bookId == "positions" &&
+                                        isError && (
+                                            <span className="text-red-400 text-sm absolute left-0 bottom-[-15px]">
+                                                Такая должность уже есть
+                                            </span>
+                                        )}
                                 </div>
                             ) : key === "full_name" &&
                               bookId != "report-types" ? (
@@ -277,7 +310,11 @@ const ReferenceItem = ({
                     <div className="flex items-center justify-end gap-3">
                         <button
                             onClick={() => {
-                                editElement(data.id);
+                                if (bookId == "positions") {
+                                    hasNameMatch(data.name, data.id);
+                                } else {
+                                    editElement(data.id);
+                                }
                             }}
                             className="delete-button save-icon"
                             title="Изменить элемент"

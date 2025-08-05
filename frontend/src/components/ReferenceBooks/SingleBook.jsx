@@ -667,6 +667,7 @@ const SingleBook = () => {
                                         }
                                         columns={columns}
                                         formFields={formFields}
+                                        booksItems={booksItems}
                                         bookId={bookId}
                                         positions={positions}
                                         addNewElement={addNewElement}
@@ -725,6 +726,7 @@ const SingleBook = () => {
                                         <ReferenceItem
                                             key={item.id}
                                             data={item}
+                                            booksItems={booksItems}
                                             columns={columns}
                                             mode={mode}
                                             bookId={bookId}
