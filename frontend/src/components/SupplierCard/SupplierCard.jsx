@@ -337,7 +337,7 @@ const SupplierCard = () => {
                             )}
                         </div>
 
-                        {/* <nav className="switch">
+                        <nav className="switch">
                             <div>
                                 <input
                                     type="radio"
@@ -363,7 +363,7 @@ const SupplierCard = () => {
                                     Редактирование
                                 </label>
                             </div>
-                        </nav> */}
+                        </nav>
                     </div>
 
                     <div className="grid grid-cols-3 justify-between mt-15 gap-10 flex-grow">
