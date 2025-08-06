@@ -22,13 +22,17 @@ const CUSTOMER_TEMPLATE = {
     email: "",
 };
 
+const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+};
+
 const EmptyExecutorBlock = ({
     removeBlock,
     banks,
     borderClass,
     type,
     sendExecutor,
-    contragentContacts,
     projectId,
 }) => {
     const PhoneMask = "+{7}(000) 000 00 00";
@@ -37,37 +41,13 @@ const EmptyExecutorBlock = ({
     const [isReadonly, setIsReadonly] = useState(
         type === "creditor" ? true : false
     );
-    const [creditorContacts, setCreditorContacts] = useState([]);
+    const [contactsList, setContactsList] = useState([]);
     const [allContacts, setAllContacts] = useState([]);
-
     const [newContact, setNewContact] = useState(
         type === "creditor" ? CREDITOR_TEMPLATE : CUSTOMER_TEMPLATE
     );
 
-    const targetArray =
-        type === "creditor" ? creditorContacts : contragentContacts;
-
     const [inputValue, setInputValue] = useState(newContact.full_name || "");
-
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
-    // Получение доступных для добавления контактных лиц кредитора
-    const getCreditorContacts = () => {
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }responsible-persons/creditor/?project_id=${projectId}&creditor_id=${
-                newContact.creditor_id
-            }`
-        ).then((response) => {
-            if (response.status == 200) {
-                setCreditorContacts(response.data.data);
-            }
-        });
-    };
 
     const handleNewExecutor = (e, name) => {
         setNewContact({
@@ -90,9 +70,37 @@ const EmptyExecutorBlock = ({
         sendExecutor(type, newContact);
     };
 
+    // Получение доступных для добавления контактных лиц кредитора
+    const getCreditorContacts = () => {
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }responsible-persons/creditor/?project_id=${projectId}&creditor_id=${
+                newContact.creditor_id
+            }`
+        ).then((response) => {
+            if (response.status == 200) {
+                setContactsList(response.data.data);
+            }
+        });
+    };
+
+    // Получение доступных для добавления контактных лиц заказчика
+    const getContragentsContacts = () => {
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }responsible-persons/contragent/?project_id=${projectId}`
+        ).then((response) => {
+            if (response.status == 200) {
+                setContactsList(response.data.data);
+            }
+        });
+    };
+
     useEffect(() => {
         setAllContacts(
-            targetArray?.map((person) => ({
+            contactsList?.map((person) => ({
                 value: person.full_name,
                 label: person.full_name,
                 email: person.email,
@@ -100,12 +108,16 @@ const EmptyExecutorBlock = ({
                 position: person.position,
             }))
         );
-    }, [creditorContacts]);
+    }, [contactsList]);
 
     useEffect(() => {
         if (type === "creditor" && newContact.creditor_id != "") {
             getCreditorContacts();
             setIsReadonly(false);
+            setNewContact(CREDITOR_TEMPLATE);
+            setIsReadonly(true);
+        } else if (type === "customer") {
+            getContragentsContacts();
         }
     }, [newContact.creditor_id]);
 
@@ -117,7 +129,11 @@ const EmptyExecutorBlock = ({
                 <div
                     className={`grid grid-cols-[60%_40%] border-b transition-all ${borderClass}`}
                 >
-                    <div className={`border-r transition-all ${borderClass}`}>
+                    <div
+                        className={`border-r transition-all ${borderClass} ${
+                            isReadonly ? "bg-gray-100" : ""
+                        }`}
+                    >
                         <CreatableSelect
                             isClearable
                             options={allContacts}
@@ -174,7 +190,11 @@ const EmptyExecutorBlock = ({
                             </p>
                         )}
                     </div>
-                    <div className="py-2 px-3">
+                    <div
+                        className={`py-2 px-3 ${
+                            isReadonly ? "bg-gray-100" : ""
+                        }`}
+                    >
                         <IMaskInput
                             mask={PhoneMask}
                             className="w-full h-full"
@@ -197,7 +217,9 @@ const EmptyExecutorBlock = ({
                 </div>
                 <div className="grid grid-cols-[60%_40%]">
                     <div
-                        className={`py-2 px-3 border-r transition-all ${borderClass}`}
+                        className={`py-2 px-3 border-r transition-all ${borderClass} ${
+                            isReadonly ? "bg-gray-100" : ""
+                        }`}
                     >
                         <input
                             className="w-full h-full"
@@ -213,7 +235,11 @@ const EmptyExecutorBlock = ({
                             </p>
                         )}
                     </div>
-                    <div className="py-2 px-3">
+                    <div
+                        className={`py-2 px-3 ${
+                            isReadonly ? "bg-gray-100" : ""
+                        }`}
+                    >
                         <input
                             className="w-full h-full"
                             type="email"

@@ -69,8 +69,6 @@ const ProjectCard = () => {
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [firstInit, setFirstInit] = useState(true);
 
-    const [contragentContacts, setContragentContacts] = useState([]);
-
     let query;
 
     const statRef = useRef(null);
@@ -184,19 +182,6 @@ const ProjectCard = () => {
         });
     };
 
-    // Получение доступных для добавления контактных лиц заказчика
-    const getContragentsContacts = () => {
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }responsible-persons/contragent/?project_id=${projectId}`
-        ).then((response) => {
-            if (response.status == 200) {
-                setContragentContacts(response.data.data);
-            }
-        });
-    };
-
     // Получение проекта
     const getProject = async (id) => {
         setIsDataLoaded(false);
@@ -230,7 +215,6 @@ const ProjectCard = () => {
                 getReports(),
                 getTeam(),
                 getServices(),
-                getContragentsContacts(),
             ];
 
             if (!firstInit) {
@@ -988,11 +972,9 @@ const ProjectCard = () => {
                                         <EmptyExecutorBlock
                                             borderClass={"border-gray-300"}
                                             type={"customer"}
+                                            projectId={projectId}
                                             removeBlock={() =>
                                                 setAddCustomer(false)
-                                            }
-                                            contragentContacts={
-                                                contragentContacts
                                             }
                                             sendExecutor={sendExecutor}
                                         />
@@ -1101,9 +1083,6 @@ const ProjectCard = () => {
                                             type={"creditor"}
                                             removeBlock={() =>
                                                 setAddLender(false)
-                                            }
-                                            contragentContacts={
-                                                contragentContacts
                                             }
                                             sendExecutor={sendExecutor}
                                         />
