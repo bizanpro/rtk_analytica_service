@@ -45,12 +45,6 @@ const SupplierCard = () => {
     const [contracts, setContracts] = useState([]);
     const [responsiblePersons, setResponsiblePersons] = useState([]);
     const [addRespPerson, setAddRespPerson] = useState(false);
-    // const [newRespPerson, setNewRespPerson] = useState({
-    //     full_name: "",
-    //     phone: "",
-    //     position: "",
-    //     email: "",
-    // });
 
     let query;
 
@@ -206,14 +200,6 @@ const SupplierCard = () => {
         );
     };
 
-    // Обработчик ввода данных блока нового ключевого лица
-    // const handleNewExecutor = (type, e, name) => {
-    //     setNewRespPerson({
-    //         ...newRespPerson,
-    //         [name]: name === "phone" ? e : e.target.value,
-    //     });
-    // };
-
     // Добавление ключевого лица
     const sendExecutor = (data) => {
         query = toast.loading("Выполняется отправка", {
@@ -241,13 +227,6 @@ const SupplierCard = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-
-                    // setNewRespPerson({
-                    //     full_name: "",
-                    //     phone: "",
-                    //     position: "",
-                    //     email: "",
-                    // });
                 }
             })
             .catch((error) => {
