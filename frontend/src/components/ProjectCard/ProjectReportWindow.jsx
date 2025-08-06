@@ -345,7 +345,7 @@ const ProjectReportWindow = ({
                     setErrorMessage("");
                     setReportData((prev) => ({
                         ...prev,
-                        report_status_id: 4,
+                        report_status_id: 3,
                     }));
                 }
             }
@@ -359,12 +359,12 @@ const ProjectReportWindow = ({
                 if (today > startDate) {
                     setReportData((prev) => ({
                         ...prev,
-                        report_status_id: 1,
+                        report_status_id: 2,
                     }));
                 } else if (today < startDate) {
                     setReportData((prev) => ({
                         ...prev,
-                        report_status_id: 2,
+                        report_status_id: 1,
                     }));
                 }
             }
