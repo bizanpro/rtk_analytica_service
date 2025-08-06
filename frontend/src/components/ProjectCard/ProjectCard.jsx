@@ -70,7 +70,6 @@ const ProjectCard = () => {
     const [firstInit, setFirstInit] = useState(true);
 
     const [contragentContacts, setContragentContacts] = useState([]);
-    const [creditorContacts, setCreditorContacts] = useState([]);
 
     let query;
 
@@ -185,19 +184,6 @@ const ProjectCard = () => {
         });
     };
 
-    // Получение доступных для добавления контактных лиц кредитора
-    const getCreditorContacts = () => {
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }responsible-persons/creditor/?project_id=${projectId}&creditor_id=${""}`
-        ).then((response) => {
-            if (response.status == 200) {
-                setCreditorContacts(response.data.data);
-            }
-        });
-    };
-
     // Получение доступных для добавления контактных лиц заказчика
     const getContragentsContacts = () => {
         getData(
@@ -244,7 +230,6 @@ const ProjectCard = () => {
                 getReports(),
                 getTeam(),
                 getServices(),
-                getCreditorContacts(),
                 getContragentsContacts(),
             ];
 
@@ -392,7 +377,6 @@ const ProjectCard = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-                    getCreditorContacts();
                     getContragentsContacts();
                 }
                 return response;
@@ -1007,7 +991,6 @@ const ProjectCard = () => {
                                             removeBlock={() =>
                                                 setAddCustomer(false)
                                             }
-                                            creditorContacts={creditorContacts}
                                             contragentContacts={
                                                 contragentContacts
                                             }
@@ -1113,12 +1096,12 @@ const ProjectCard = () => {
                                     {addLender && (
                                         <EmptyExecutorBlock
                                             borderClass={"border-gray-300"}
+                                            projectId={projectId}
                                             banks={banks}
                                             type={"creditor"}
                                             removeBlock={() =>
                                                 setAddLender(false)
                                             }
-                                            creditorContacts={creditorContacts}
                                             contragentContacts={
                                                 contragentContacts
                                             }

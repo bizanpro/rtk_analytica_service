@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import getData from "../../utils/getData";
 
 import CreatableSelect from "react-select/creatable";
 import { IMaskInput } from "react-imask";
@@ -10,7 +12,7 @@ const CREDITOR_TEMPLATE = {
     phone: "",
     position: "",
     email: "",
-    creditor_id: 1,
+    creditor_id: "",
 };
 
 const CUSTOMER_TEMPLATE = {
@@ -27,16 +29,23 @@ const EmptyExecutorBlock = ({
     type,
     sendExecutor,
     contragentContacts,
-    creditorContacts,
+    projectId,
 }) => {
     const PhoneMask = "+{7}(000) 000 00 00";
 
     const [errors, setErrors] = useState({});
-    const [isReadonly, setIsReadonly] = useState(false);
+    const [isReadonly, setIsReadonly] = useState(
+        type === "creditor" ? true : false
+    );
+    const [creditorContacts, setCreditorContacts] = useState([]);
+    const [allContacts, setAllContacts] = useState([]);
 
     const [newContact, setNewContact] = useState(
         type === "creditor" ? CREDITOR_TEMPLATE : CUSTOMER_TEMPLATE
     );
+
+    const targetArray =
+        type === "creditor" ? creditorContacts : contragentContacts;
 
     const [inputValue, setInputValue] = useState(newContact.full_name || "");
 
@@ -45,22 +54,20 @@ const EmptyExecutorBlock = ({
         return emailRegex.test(email);
     };
 
-    const allContacts =
-        type === "creditor"
-            ? creditorContacts?.map((person) => ({
-                  value: person.full_name,
-                  label: person.full_name,
-                  email: person.email,
-                  phone: person.phone,
-                  position: person.position,
-              }))
-            : contragentContacts?.map((person) => ({
-                  value: person.full_name,
-                  label: person.full_name,
-                  email: person.email,
-                  phone: person.phone,
-                  position: person.position,
-              }));
+    // Получение доступных для добавления контактных лиц кредитора
+    const getCreditorContacts = () => {
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }responsible-persons/creditor/?project_id=${projectId}&creditor_id=${
+                newContact.creditor_id
+            }`
+        ).then((response) => {
+            if (response.status == 200) {
+                setCreditorContacts(response.data.data);
+            }
+        });
+    };
 
     const handleNewExecutor = (e, name) => {
         setNewContact({
@@ -82,6 +89,25 @@ const EmptyExecutorBlock = ({
         if (Object.values(newErrors).some((err) => err)) return;
         sendExecutor(type, newContact);
     };
+
+    useEffect(() => {
+        setAllContacts(
+            targetArray?.map((person) => ({
+                value: person.full_name,
+                label: person.full_name,
+                email: person.email,
+                phone: person.phone,
+                position: person.position,
+            }))
+        );
+    }, [creditorContacts]);
+
+    useEffect(() => {
+        if (type === "creditor" && newContact.creditor_id != "") {
+            getCreditorContacts();
+            setIsReadonly(false);
+        }
+    }, [newContact.creditor_id]);
 
     return (
         <div className="flex items-center justify-between gap-6 w-full">
