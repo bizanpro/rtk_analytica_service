@@ -38,9 +38,7 @@ const EmptyExecutorBlock = ({
     const PhoneMask = "+{7}(000) 000 00 00";
 
     const [errors, setErrors] = useState({});
-    const [isReadonly, setIsReadonly] = useState(
-        type === "creditor" ? true : false
-    );
+    const [isReadonly, setIsReadonly] = useState(false);
     const [contactsList, setContactsList] = useState([]);
     const [allContacts, setAllContacts] = useState([]);
     const [newContact, setNewContact] = useState(
@@ -113,9 +111,6 @@ const EmptyExecutorBlock = ({
     useEffect(() => {
         if (type === "creditor" && newContact.creditor_id != "") {
             getCreditorContacts();
-            setIsReadonly(false);
-            setNewContact(CREDITOR_TEMPLATE);
-            setIsReadonly(true);
         } else if (type === "customer") {
             getContragentsContacts();
         }
