@@ -13,7 +13,7 @@ import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
 import SupplierStatisticBlock from "./SupplierStatisticBlock";
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
-import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
+import SupplierEmptyExecutorBlock from "./SupplierEmptyExecutorBlock";
 import SupplierManagementReportsTab from "./SupplierManagementReportsTab";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -45,12 +45,12 @@ const SupplierCard = () => {
     const [contracts, setContracts] = useState([]);
     const [responsiblePersons, setResponsiblePersons] = useState([]);
     const [addRespPerson, setAddRespPerson] = useState(false);
-    const [newRespPerson, setNewRespPerson] = useState({
-        full_name: "",
-        phone: "",
-        position: "",
-        email: "",
-    });
+    // const [newRespPerson, setNewRespPerson] = useState({
+    //     full_name: "",
+    //     phone: "",
+    //     position: "",
+    //     email: "",
+    // });
 
     let query;
 
@@ -173,9 +173,9 @@ const SupplierCard = () => {
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка обновления данных", {
+                toast.error(error.message || "Ошибка обновления данных", {
                     containerId: "supplier",
                     isLoading: false,
                     autoClose: 1500,
@@ -207,34 +207,29 @@ const SupplierCard = () => {
     };
 
     // Обработчик ввода данных блока нового ключевого лица
-    const handleNewExecutor = (type, e, name) => {
-        setNewRespPerson({
-            ...newRespPerson,
-            [name]: name === "phone" ? e : e.target.value,
-        });
-    };
+    // const handleNewExecutor = (type, e, name) => {
+    //     setNewRespPerson({
+    //         ...newRespPerson,
+    //         [name]: name === "phone" ? e : e.target.value,
+    //     });
+    // };
 
     // Добавление ключевого лица
-    const sendExecutor = () => {
+    const sendExecutor = (data) => {
         query = toast.loading("Выполняется отправка", {
             containerId: "supplier",
             position: "top-center",
         });
 
-        postData("POST", `${URL}/${supplierId}/contacts`, newRespPerson).then(
-            (response) => {
+        postData("POST", `${URL}/${supplierId}/contacts`, data)
+            .then((response) => {
                 if (response?.ok) {
                     setResponsiblePersons((prevPerson) => [
                         ...prevPerson,
                         response,
                     ]);
 
-                    setNewRespPerson({
-                        full_name: "",
-                        phone: "",
-                        position: "",
-                        email: "",
-                    });
+                    setAddRespPerson(false);
 
                     toast.update(query, {
                         render: response.message,
@@ -246,9 +241,26 @@ const SupplierCard = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
+
+                    // setNewRespPerson({
+                    //     full_name: "",
+                    //     phone: "",
+                    //     position: "",
+                    //     email: "",
+                    // });
                 }
-            }
-        );
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка добавления исполнителя", {
+                    containerId: "supplier",
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
     };
 
     // Удаление ключевого лица
@@ -288,6 +300,12 @@ const SupplierCard = () => {
             setSelectedManagerReports(managerReports);
         }
     );
+
+    useEffect(() => {
+        if (mode === "read") {
+            setAddRespPerson(false);
+        }
+    }, [mode]);
 
     return (
         <main className="page">
@@ -445,17 +463,10 @@ const SupplierCard = () => {
                                     <div className="border-2 border-gray-300 py-5 px-3 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
                                         <ul className="grid gap-5">
                                             {addRespPerson && (
-                                                <EmptyExecutorBlock
-                                                    borderClass={
-                                                        "border-gray-300"
-                                                    }
-                                                    type={"customer"}
-                                                    data={newRespPerson}
+                                                <SupplierEmptyExecutorBlock
+                                                    supplierId={supplierId}
                                                     removeBlock={() =>
                                                         setAddRespPerson(false)
-                                                    }
-                                                    handleNewExecutor={
-                                                        handleNewExecutor
                                                     }
                                                     sendExecutor={sendExecutor}
                                                 />
