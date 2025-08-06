@@ -72,9 +72,6 @@ const ProjectCard = () => {
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [firstInit, setFirstInit] = useState(true);
 
-    const [contragentContacts, setContragentContacts] = useState([]);
-    const [creditorContacts, setCreditorContacts] = useState([]);
-
     let query;
 
     const statRef = useRef(null);
@@ -189,32 +186,6 @@ const ProjectCard = () => {
         });
     };
 
-    // Получение доступных для добавления контактных лиц кредитора
-    const getCreditorContacts = () => {
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }responsible-persons/creditor/?project_id=${projectId}`
-        ).then((response) => {
-            if (response.status == 200) {
-                setCreditorContacts(response.data.data);
-            }
-        });
-    };
-
-    // Получение доступных для добавления контактных лиц заказчика
-    const getContragentsContacts = () => {
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }responsible-persons/contragent/?project_id=${projectId}`
-        ).then((response) => {
-            if (response.status == 200) {
-                setContragentContacts(response.data.data);
-            }
-        });
-    };
-
     // Получение проекта
     const getProject = async (id) => {
         setIsDataLoaded(false);
@@ -248,8 +219,6 @@ const ProjectCard = () => {
                 getReports(),
                 getTeam(),
                 getServices(),
-                getCreditorContacts(),
-                getContragentsContacts(),
             ];
 
             if (!firstInit) {
@@ -455,7 +424,6 @@ const ProjectCard = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-                    getCreditorContacts();
                     getContragentsContacts();
                 }
                 return response;
@@ -1030,129 +998,150 @@ const ProjectCard = () => {
                                     </span>
                                 </button>
 
-                                {addCustomer && (
-                                    <EmptyExecutorBlock
-                                        borderClass={"border-gray-300"}
-                                        type={"customer"}
-                                        removeBlock={() =>
-                                            setAddCustomer(false)
-                                        }
-                                        creditorContacts={creditorContacts}
-                                        contragentContacts={contragentContacts}
-                                        sendExecutor={sendExecutor}
-                                    />
-                                )}
-                            </section>
-
-                            <section className="project-card__project-executors">
-                                <h2 className="card__subtitle">Кредиторы</h2>
-
-                                {matchedBanks.length > 0 && (
-                                    <ul className="card__tabs project-card__banks-tabs">
-                                        <li className="card__tabs-item radio-field_tab">
-                                            <input
-                                                type="radio"
-                                                name="active_bank"
-                                                id="bank_all"
-                                                value=""
-                                                defaultChecked
-                                                onChange={(evt) => {
-                                                    handleFilterLenders(evt);
-                                                }}
-                                            />
-                                            <label htmlFor="bank_all">
-                                                Все банки
-                                            </label>
-                                        </li>
-
-                                        {matchedBanks.map((bank) => (
-                                            <li
-                                                key={bank.id}
-                                                className="card__tabs-item radio-field_tab"
-                                            >
-                                                <input
-                                                    id={`bank_${bank.id}`}
-                                                    type="radio"
-                                                    name="active_bank"
-                                                    value={bank.id}
-                                                    onChange={(evt) => {
-                                                        handleFilterLenders(
-                                                            evt
-                                                        );
-                                                    }}
-                                                />
-                                                <label
-                                                    htmlFor={`bank_${bank.id}`}
-                                                >
-                                                    {bank.name}
-                                                </label>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-
-                                <ul className="project-card__executors-list">
-                                    {filteredLenders.length > 0 &&
-                                    banks.length > 0 ? (
-                                        filteredLenders.map((lender) => (
-                                            <ExecutorBlock
-                                                key={lender.id}
-                                                contanct={lender}
-                                                mode={mode}
-                                                banks={banks}
-                                                type={"creditor"}
-                                                deleteBlock={deleteCreditor}
-                                            />
-                                        ))
-                                    ) : (
-                                        <li>
-                                            <p>Нет данных</p>
-                                        </li>
+                                    {addCustomer && (
+                                        <EmptyExecutorBlock
+                                            borderClass={"border-gray-300"}
+                                            type={"customer"}
+                                            projectId={projectId}
+                                            removeBlock={() =>
+                                                setAddCustomer(false)
+                                            }
+                                            sendExecutor={sendExecutor}
+                                        />
                                     )}
-                                </ul>
 
-                                <button
-                                    type="button"
-                                    className="button-add"
-                                    onClick={() => {
-                                        if (!addLender) {
-                                            setAddLender(true);
-                                        }
-                                    }}
-                                    title="Добавить Кредитора"
-                                >
-                                    Добавить
-                                    <span>
-                                        <svg
-                                            width="10"
-                                            height="9"
-                                            viewBox="0 0 10 9"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
-                                                fill="currentColor"
-                                            />
-                                        </svg>
-                                    </span>
-                                </button>
+                                    <ul
+                                        className={`flex flex-col gap-4 items-start overflow-y-auto h-[205px] ${
+                                            addCustomer ? "" : "mt-[55px]"
+                                        }`}
+                                    >
+                                        {customers.length > 0 ? (
+                                            customers.map((customer) => (
+                                                <ExecutorBlock
+                                                    key={customer.id}
+                                                    contanct={customer}
+                                                    mode={mode}
+                                                    type={"customer"}
+                                                    deleteBlock={deleteCustomer}
+                                                />
+                                            ))
+                                        ) : (
+                                            <li>
+                                                <p>Нет данных</p>
+                                            </li>
+                                        )}
+                                    </ul>
+                                </div>
 
-                                {addLender && (
-                                    <EmptyExecutorBlock
-                                        borderClass={"border-gray-300"}
-                                        banks={banks}
-                                        type={"creditor"}
-                                        removeBlock={() => setAddLender(false)}
-                                        creditorContacts={creditorContacts}
-                                        contragentContacts={contragentContacts}
-                                        sendExecutor={sendExecutor}
-                                    />
-                                )}
-                            </section>
-                        </section>
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-gray-400">
+                                            Кредиторы
+                                        </span>
+                                        {mode == "edit" && (
+                                            <button
+                                                type="button"
+                                                className="add-button"
+                                                onClick={() => {
+                                                    if (!addLender) {
+                                                        setAddLender(true);
+                                                    }
+                                                }}
+                                                title="Добавить Кредитора"
+                                            >
+                                                <span></span>
+                                            </button>
+                                        )}
+                                    </div>
 
-                        <section className="card__aside-content project-card__aside-content">
+                                    <ul className="flex gap-3 flex-wrap mb-2">
+                                        {matchedBanks.length > 0 && (
+                                            <>
+                                                <li className="radio-field_tab">
+                                                    <input
+                                                        type="radio"
+                                                        name="active_bank"
+                                                        id="bank_all"
+                                                        value=""
+                                                        defaultChecked
+                                                        onChange={(evt) => {
+                                                            handleFilterLenders(
+                                                                evt
+                                                            );
+                                                        }}
+                                                    />
+                                                    <label
+                                                        htmlFor="bank_all"
+                                                        className="text-gray-700 py-1 px-2 text-center rounded-md"
+                                                    >
+                                                        Все банки
+                                                    </label>
+                                                </li>
+                                                {matchedBanks.map((bank) => (
+                                                    <li
+                                                        key={bank.id}
+                                                        className="radio-field_tab"
+                                                    >
+                                                        <input
+                                                            id={`bank_${bank.id}`}
+                                                            type="radio"
+                                                            name="active_bank"
+                                                            value={bank.id}
+                                                            onChange={(evt) => {
+                                                                handleFilterLenders(
+                                                                    evt
+                                                                );
+                                                            }}
+                                                        />
+                                                        <label
+                                                            htmlFor={`bank_${bank.id}`}
+                                                            className="text-gray-700 py-1 px-2 text-center rounded-md"
+                                                        >
+                                                            {bank.name}
+                                                        </label>
+                                                    </li>
+                                                ))}{" "}
+                                            </>
+                                        )}
+                                    </ul>
+
+                                    {addLender && (
+                                        <EmptyExecutorBlock
+                                            borderClass={"border-gray-300"}
+                                            projectId={projectId}
+                                            banks={banks}
+                                            type={"creditor"}
+                                            removeBlock={() =>
+                                                setAddLender(false)
+                                            }
+                                            sendExecutor={sendExecutor}
+                                        />
+                                    )}
+
+                                    <ul className="mt-[10px] flex flex-col gap-4 items-start overflow-y-auto h-[270px]">
+                                        {filteredLenders.length > 0 &&
+                                        banks.length > 0 ? (
+                                            filteredLenders.map((lender) => (
+                                                <ExecutorBlock
+                                                    key={lender.id}
+                                                    contanct={lender}
+                                                    mode={mode}
+                                                    banks={banks}
+                                                    type={"creditor"}
+                                                    deleteBlock={deleteCreditor}
+                                                />
+                                            ))
+                                        ) : (
+                                            <li>
+                                                <p>Нет данных</p>
+                                            </li>
+                                        )}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col">
                             <ProjectStatisticsBlock
                                 ref={statRef}
                                 projectId={projectId}

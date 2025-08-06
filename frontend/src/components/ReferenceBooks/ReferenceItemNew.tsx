@@ -1,3 +1,9 @@
+import { useState } from "react";
+
+interface BooksItems {
+    name: string;
+}
+
 interface Positions {
     name: string;
     id: number;
@@ -6,6 +12,7 @@ interface Positions {
 interface FormFields {
     [key: string]: string;
 }
+
 interface Columns {
     label: string;
     key: string;
@@ -14,6 +21,7 @@ interface Columns {
 interface Props {
     columns: Columns[];
     formFields: FormFields;
+    booksItems: BooksItems[];
     bookId: string;
     positions: Positions[];
     handleNewElementInputChange: (
@@ -26,11 +34,26 @@ interface Props {
 const ReferenceItemNew = ({
     columns,
     formFields,
+    booksItems,
     bookId,
     positions,
     handleNewElementInputChange,
     addNewElement,
 }: Props) => {
+    const [isError, setIsError] = useState(false);
+
+    const hasNameMatch = (input) => {
+        const result = booksItems.some(
+            (item) => item.name.toLowerCase() === input.trim().toLowerCase()
+        );
+
+        if (result) {
+            setIsError(true);
+        } else {
+            addNewElement();
+        }
+    };
+
     return (
         <tr className="border-gray-300 text-base border-b text-left">
             {columns.map(({ key }) => (
@@ -38,17 +61,35 @@ const ReferenceItemNew = ({
                     {key === "name" ||
                     key === "counterparty_name" ||
                     key === "full_name" ? (
-                        <div key={key} className="flex items-center gap-2">
+                        <div
+                            key={key}
+                            className="flex items-center gap-2 relative"
+                        >
                             <input
                                 type="text"
                                 className="w-full"
                                 placeholder="Новый элемент"
                                 name={key}
                                 value={formFields[key] || ""}
-                                onChange={(e) =>
-                                    handleNewElementInputChange(e, key)
-                                }
+                                onChange={(e) => {
+                                    handleNewElementInputChange(e, key);
+
+                                    if (
+                                        key === "name" &&
+                                        bookId == "positions"
+                                    ) {
+                                        setIsError(false);
+                                    }
+                                }}
                             />
+
+                            {key === "name" &&
+                                bookId == "positions" &&
+                                isError && (
+                                    <span className="text-red-400 text-sm absolute left-0 bottom-[-15px]">
+                                        Такая должность уже есть
+                                    </span>
+                                )}
                         </div>
                     ) : key === "type" || key === "position_id" ? (
                         <select
@@ -135,7 +176,13 @@ const ReferenceItemNew = ({
                         style={{
                             opacity: formFields.name?.length > 1 ? 1 : 0,
                         }}
-                        onClick={addNewElement}
+                        onClick={() => {
+                            if (bookId == "positions") {
+                                hasNameMatch(formFields.name);
+                            } else {
+                                addNewElement();
+                            }
+                        }}
                     ></button>
                 </div>
             </td>

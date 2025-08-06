@@ -30,7 +30,7 @@ const SaleStageDetails = ({ stageMetrics, metrics, setMetrics, mode }) => {
                                     className="grid grid-cols-[50px_1fr] items-center gap-4"
                                     key={item.report_type_id}
                                 >
-                                    <span>{item.report_type_short_name}:</span>
+                                    <span>{item?.report_type_name}:</span>
 
                                     <div className="border-2 border-gray-300 py-1 px-2">
                                         <input

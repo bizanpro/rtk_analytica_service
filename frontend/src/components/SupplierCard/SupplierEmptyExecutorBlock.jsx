@@ -5,15 +5,7 @@ import getData from "../../utils/getData";
 import CreatableSelect from "react-select/creatable";
 import { IMaskInput } from "react-imask";
 
-import "./ExecutorBlock.scss";
-
-const CREDITOR_TEMPLATE = {
-    full_name: "",
-    phone: "",
-    position: "",
-    email: "",
-    creditor_id: "",
-};
+import "../ExecutorBlock/ExecutorBlock.scss";
 
 const CUSTOMER_TEMPLATE = {
     full_name: "",
@@ -27,13 +19,10 @@ const validateEmail = (email) => {
     return emailRegex.test(email);
 };
 
-const EmptyExecutorBlock = ({
+const SupplierEmptyExecutorBlock = ({
     removeBlock,
-    banks,
-    borderClass,
-    type,
     sendExecutor,
-    projectId,
+    supplierId,
 }) => {
     const PhoneMask = "+{7}(000) 000 00 00";
 
@@ -41,9 +30,7 @@ const EmptyExecutorBlock = ({
     const [isReadonly, setIsReadonly] = useState(false);
     const [contactsList, setContactsList] = useState([]);
     const [allContacts, setAllContacts] = useState([]);
-    const [newContact, setNewContact] = useState(
-        type === "creditor" ? CREDITOR_TEMPLATE : CUSTOMER_TEMPLATE
-    );
+    const [newContact, setNewContact] = useState(CUSTOMER_TEMPLATE);
 
     const [inputValue, setInputValue] = useState(newContact.full_name || "");
 
@@ -60,27 +47,11 @@ const EmptyExecutorBlock = ({
             phone: !newContact.phone,
             position: !newContact.position,
             email: !newContact.email || !validateEmail(newContact.email),
-            creditor_id: type === "creditor" ? !newContact.creditor_id : false,
         };
 
         setErrors(newErrors);
         if (Object.values(newErrors).some((err) => err)) return;
-        sendExecutor(type, newContact);
-    };
-
-    // Получение доступных для добавления контактных лиц кредитора
-    const getCreditorContacts = () => {
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }responsible-persons/creditor/?project_id=${projectId}&creditor_id=${
-                newContact.creditor_id
-            }`
-        ).then((response) => {
-            if (response.status == 200) {
-                setContactsList(response.data.data);
-            }
-        });
+        sendExecutor(newContact);
     };
 
     // Получение доступных для добавления контактных лиц заказчика
@@ -88,7 +59,7 @@ const EmptyExecutorBlock = ({
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }responsible-persons/contragent/?project_id=${projectId}`
+            }responsible-persons/contragent/?supplier_id=${supplierId}`
         ).then((response) => {
             if (response.status == 200) {
                 setContactsList(response.data.data);
@@ -109,23 +80,19 @@ const EmptyExecutorBlock = ({
     }, [contactsList]);
 
     useEffect(() => {
-        if (type === "creditor" && newContact.creditor_id != "") {
-            getCreditorContacts();
-        } else if (type === "customer") {
-            getContragentsContacts();
-        }
-    }, [newContact.creditor_id]);
+        console.log(newContact);
+    }, [newContact]);
+
+    useEffect(() => {
+        getContragentsContacts();
+    }, []);
 
     return (
         <div className="flex items-center justify-between gap-6 w-full">
-            <div
-                className={`executor-block flex-grow border transition-all ${borderClass}`}
-            >
-                <div
-                    className={`grid grid-cols-[60%_40%] border-b transition-all ${borderClass}`}
-                >
+            <div className="executor-block flex-grow border transition-all border-gray-300">
+                <div className="grid grid-cols-[60%_40%] border-b transition-all border-gray-300">
                     <div
-                        className={`border-r transition-all ${borderClass} ${
+                        className={`border-r transition-all border-gray-300 ${
                             isReadonly ? "bg-gray-100" : ""
                         }`}
                     >
@@ -212,7 +179,7 @@ const EmptyExecutorBlock = ({
                 </div>
                 <div className="grid grid-cols-[60%_40%]">
                     <div
-                        className={`py-2 px-3 border-r transition-all ${borderClass} ${
+                        className={`py-2 px-3 border-r transition-all border-gray-300 ${
                             isReadonly ? "bg-gray-100" : ""
                         }`}
                     >
@@ -250,34 +217,6 @@ const EmptyExecutorBlock = ({
                         )}
                     </div>
                 </div>
-
-                {type === "creditor" && (
-                    <div
-                        className={`py-2 px-3 border-t transition-all ${borderClass}`}
-                    >
-                        <select
-                            className="w-full h-full"
-                            onChange={(e) =>
-                                setNewContact({
-                                    ...newContact,
-                                    creditor_id: e.target.value,
-                                })
-                            }
-                        >
-                            <option value="">Выберите банк</option>
-                            {banks?.map((bank) => (
-                                <option value={bank.id} key={bank.id}>
-                                    {bank.name}
-                                </option>
-                            ))}
-                        </select>
-                        {errors.creditor_id && (
-                            <p className="text-red-500 text-sm">
-                                Выберите банк
-                            </p>
-                        )}
-                    </div>
-                )}
             </div>
 
             <div className="flex gap-[10px] items-center">
@@ -296,4 +235,4 @@ const EmptyExecutorBlock = ({
     );
 };
 
-export default EmptyExecutorBlock;
+export default SupplierEmptyExecutorBlock;

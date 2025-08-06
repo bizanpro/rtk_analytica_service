@@ -13,7 +13,7 @@ import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
 import SupplierStatisticBlock from "./SupplierStatisticBlock";
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
-import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
+import SupplierEmptyExecutorBlock from "./SupplierEmptyExecutorBlock";
 import SupplierManagementReportsTab from "./SupplierManagementReportsTab";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -29,7 +29,9 @@ const SupplierCard = () => {
     const [activeReportTab, setActiveReportTab] = useState("projectReports");
 
     const [reports, setReports] = useState([]); // Отчёты проектов
+    const [selectedReports, setSelectedReports] = useState([]); // Очёты выбранного проекта
     const [managerReports, setManagerReports] = useState([]); // Отчёты руководителя проектов
+    const [selectedManagerReports, setSelectedManagerReports] = useState([]); // Отчёты руководителя выбранного проекта
     const [projects, setProjects] = useState([]); // Проекты
 
     const [projectData, setProjectData] = useState({
@@ -43,12 +45,6 @@ const SupplierCard = () => {
     const [contracts, setContracts] = useState([]);
     const [responsiblePersons, setResponsiblePersons] = useState([]);
     const [addRespPerson, setAddRespPerson] = useState(false);
-    const [newRespPerson, setNewRespPerson] = useState({
-        full_name: "",
-        phone: "",
-        position: "",
-        email: "",
-    });
 
     let query;
 
@@ -61,30 +57,24 @@ const SupplierCard = () => {
     const getReports = (id) => {
         setReportWindowsState(false);
 
-        let targetProject = projects.find((project) => project.id === id);
+        const targetReports = reports.filter(
+            (report) => report.project_id === id
+        );
 
         const targetManagerReport = supplierData.manager_reports?.filter(
             (report) => report.project_id === id
         );
 
-        targetProject = targetProject?.reports.map((report) => ({
-            ...report,
-            projectName: targetProject.name,
-            industries: targetProject.industries.map(
-                (industry) => industry.name
-            ),
-        }));
-
-        if (targetProject?.length > 0) {
-            setReports(targetProject);
+        if (targetReports?.length > 0) {
+            setSelectedReports(targetReports);
         } else {
-            setReports([]);
+            setSelectedReports([]);
         }
 
         if (targetManagerReport.length > 0) {
-            setManagerReports(targetManagerReport);
+            setSelectedManagerReports(targetManagerReport);
         } else {
-            setManagerReports([]);
+            setSelectedManagerReports([]);
         }
     };
 
@@ -99,6 +89,30 @@ const SupplierCard = () => {
         });
     };
 
+    // Получаем список отчетов
+    const getProjectsReports = () => {
+        getData(`${URL}/${supplierId}/reports`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status == 200) {
+                setReports(response.data);
+                setSelectedReports(response.data);
+            }
+        });
+    };
+
+    // Получаем список отчетов руководителя
+    const getProjectsManagerReports = () => {
+        getData(`${URL}/${supplierId}/manager-reports`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status == 200) {
+                setManagerReports(response.data);
+                setSelectedManagerReports(response.data);
+            }
+        });
+    };
+
     // Получаем подрядчика и его проекты
     const fetchData = () => {
         getData(`${URL}/${supplierId}`, {
@@ -107,18 +121,6 @@ const SupplierCard = () => {
             .then((response) => {
                 setSupplierData(response.data);
                 setProjects(response.data.projects);
-                setReports(
-                    response.data.projects?.flatMap((project) =>
-                        project.reports.map((report) => ({
-                            ...report,
-                            projectName: project.name,
-                            industries: project.industries.map(
-                                (industry) => industry.name
-                            ),
-                        }))
-                    )
-                );
-                setManagerReports(response.data.manager_reports);
                 setResponsiblePersons(response.data.contacts);
             })
             .catch((error) => {
@@ -165,9 +167,9 @@ const SupplierCard = () => {
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
-                toast.error("Ошибка обновления данных", {
+                toast.error(error.message || "Ошибка обновления данных", {
                     containerId: "supplier",
                     isLoading: false,
                     autoClose: 1500,
@@ -198,35 +200,22 @@ const SupplierCard = () => {
         );
     };
 
-    // Обработчик ввода данных блока нового ключевого лица
-    const handleNewExecutor = (type, e, name) => {
-        setNewRespPerson({
-            ...newRespPerson,
-            [name]: name === "phone" ? e : e.target.value,
-        });
-    };
-
     // Добавление ключевого лица
-    const sendExecutor = () => {
+    const sendExecutor = (data) => {
         query = toast.loading("Выполняется отправка", {
             containerId: "supplier",
             position: "top-center",
         });
 
-        postData("POST", `${URL}/${supplierId}/contacts`, newRespPerson).then(
-            (response) => {
+        postData("POST", `${URL}/${supplierId}/contacts`, data)
+            .then((response) => {
                 if (response?.ok) {
                     setResponsiblePersons((prevPerson) => [
                         ...prevPerson,
                         response,
                     ]);
 
-                    setNewRespPerson({
-                        full_name: "",
-                        phone: "",
-                        position: "",
-                        email: "",
-                    });
+                    setAddRespPerson(false);
 
                     toast.update(query, {
                         render: response.message,
@@ -239,8 +228,18 @@ const SupplierCard = () => {
                         position: "top-center",
                     });
                 }
-            }
-        );
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка добавления исполнителя", {
+                    containerId: "supplier",
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
     };
 
     // Удаление ключевого лица
@@ -259,6 +258,8 @@ const SupplierCard = () => {
     useEffect(() => {
         if (supplierId) {
             fetchData();
+            getProjectsReports();
+            getProjectsManagerReports();
             getContracts();
         }
     }, []);
@@ -274,20 +275,16 @@ const SupplierCard = () => {
         [block1Ref, block2Ref, block3Ref, block4Ref, block5Ref, block6Ref],
         () => {
             setProjectData({});
-            setReports(
-                projects.flatMap((project) =>
-                    project.reports.map((report) => ({
-                        ...report,
-                        projectName: project.name,
-                        industries: project.industries.map(
-                            (industry) => industry.name
-                        ),
-                    }))
-                )
-            );
-            setManagerReports(supplierData.manager_reports);
+            setReports(reports);
+            setSelectedManagerReports(managerReports);
         }
     );
+
+    useEffect(() => {
+        if (mode === "read") {
+            setAddRespPerson(false);
+        }
+    }, [mode]);
 
     return (
         <main className="page">
@@ -445,17 +442,10 @@ const SupplierCard = () => {
                                     <div className="border-2 border-gray-300 py-5 px-3 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
                                         <ul className="grid gap-5">
                                             {addRespPerson && (
-                                                <EmptyExecutorBlock
-                                                    borderClass={
-                                                        "border-gray-300"
-                                                    }
-                                                    type={"customer"}
-                                                    data={newRespPerson}
+                                                <SupplierEmptyExecutorBlock
+                                                    supplierId={supplierId}
                                                     removeBlock={() =>
                                                         setAddRespPerson(false)
-                                                    }
-                                                    handleNewExecutor={
-                                                        handleNewExecutor
                                                     }
                                                     sendExecutor={sendExecutor}
                                                 />
@@ -612,8 +602,8 @@ const SupplierCard = () => {
                                                     </span>
                                                 </li>
 
-                                                {reports.length > 0 &&
-                                                    reports.map(
+                                                {selectedReports.length > 0 &&
+                                                    selectedReports.map(
                                                         (report, index) => (
                                                             <CardReportsListItem
                                                                 key={
@@ -647,7 +637,9 @@ const SupplierCard = () => {
                                     {activeReportTab ===
                                         "managementReports" && (
                                         <SupplierManagementReportsTab
-                                            managerReports={managerReports}
+                                            managerReports={
+                                                selectedManagerReports
+                                            }
                                         />
                                     )}
                                 </div>

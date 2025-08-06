@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
@@ -9,13 +9,14 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import formatToUtcDateOnly from "../../utils/formatToUtcDateOnly";
 
+import { ru } from "date-fns/locale";
+import { format } from "date-fns";
+
 import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
 import EmployeePersonalWorkloadItem from "./EmployeePersonalWorkloadItem";
 import EmployeeWorkloadSummary from "./EmployeeWorkloadSummary";
 
 import "react-toastify/dist/ReactToastify.css";
-
-import months from "../../data/months.json";
 
 const customStyles = {
     option: (base, { data, isFocused, isSelected }) => ({
@@ -41,17 +42,26 @@ const EmployeeCard = () => {
     const [availableYears, setAvailableYears] = useState([]);
     const [selectedPersonalYear, setSelectedPersonalYear] = useState(2024);
     const [selectedPersonalMonth, setSelectedPersonalMonth] = useState({});
-    const [selectedSummaryYear, setSelectedSummaryYear] = useState("");
-    const [selectedSummaryMonth, setSelectedSummaryMonth] = useState("1");
     const [selectedTypes, setSelecterTypes] = useState([]);
     const [reportTypes, setReportTypes] = useState([]);
     const [positions, setPositions] = useState([]);
     const [workloads, setWorkloads] = useState([]);
     const [availablePersonalMonths, setAvailablePersonalMonths] = useState([]);
+    const [dateRange, setDateRange] = useState([null, null]);
+    const [startDate, endDate] = dateRange;
 
     const PhoneMask = "+{7} (000) 000 00 00";
 
     let query;
+
+    // Свод по трудозатратам, массив доступных дат периода
+    const allowedDates = useMemo(() => {
+        return datesData.flatMap((yearData) =>
+            yearData.months.map(
+                (month) => new Date(yearData.year, month.number - 1, 1)
+            )
+        );
+    }, [datesData]);
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -118,11 +128,6 @@ const EmployeeCard = () => {
                         response.data.length - 1
                     ]
                 );
-                setSelectedSummaryYear(
-                    response.data.map((item) => item.year)[
-                        response.data.length - 1
-                    ]
-                );
             }
         });
     };
@@ -149,8 +154,8 @@ const EmployeeCard = () => {
     // Получение свода по трудозатратам
     const getWorkloadSummary = () => {
         const payload = {
-            year: selectedSummaryYear,
-            month: selectedSummaryMonth,
+            dateFrom: format(dateRange[0], "MM-yyyy"),
+            dateTo: format(dateRange[1], "MM-yyyy"),
             reports_ids: selectedTypes.join(","),
         };
 
@@ -192,7 +197,7 @@ const EmployeeCard = () => {
                             position: "top-center",
                         });
                     } else {
-                        toast.error("Ошибка обновления данных", {
+                        toast.error("Ошибка обновления", {
                             isLoading: false,
                             autoClose: 1500,
                             pauseOnFocusLoss: false,
@@ -202,9 +207,9 @@ const EmployeeCard = () => {
                         });
                     }
                 })
-                .catch(() => {
+                .catch((error) => {
                     toast.dismiss(query);
-                    toast.error("Ошибка обновления данных", {
+                    toast.error(error.message || "Ошибка обновления данных", {
                         containerId: "employee",
                         isLoading: false,
                         autoClose: 1500,
@@ -297,7 +302,6 @@ const EmployeeCard = () => {
                     year: +selectedPersonalYear,
                     month: +selectedPersonalMonth.value,
                     other_workload_percentage: personalWorkload.other_workload,
-                    // vacation_workload: vacationWorkload,
                 };
 
                 postData(
@@ -354,10 +358,10 @@ const EmployeeCard = () => {
     }, [selectedPersonalYear, selectedPersonalMonth]);
 
     useEffect(() => {
-        if (selectedSummaryYear && selectedSummaryMonth) {
+        if (dateRange[0] && dateRange[1]) {
             getWorkloadSummary();
         }
-    }, [selectedSummaryYear, selectedSummaryMonth, selectedTypes]);
+    }, [dateRange, selectedTypes]);
 
     useEffect(() => {
         if (datesData.length > 0) {
@@ -637,86 +641,54 @@ const EmployeeCard = () => {
                                         <div className="grid grid-cols-2 items-center gap-3">
                                             <div className="flex flex-col">
                                                 <span className="block mb-2 text-gray-400">
-                                                    Год
+                                                    Период
                                                 </span>
-                                                <select
-                                                    className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
-                                                    onChange={(e) =>
-                                                        setSelectedSummaryYear(
-                                                            e.target.value
-                                                        )
+
+                                                <DatePicker
+                                                    className="border-2 border-gray-300 p-1 w-full h-[32px]"
+                                                    selectsRange
+                                                    startDate={startDate}
+                                                    endDate={endDate}
+                                                    onChange={(update) =>
+                                                        setDateRange(update)
                                                     }
-                                                    value={selectedSummaryYear}
-                                                >
-                                                    {availableYears.length >
-                                                        0 &&
-                                                        availableYears.map(
-                                                            (item) => (
-                                                                <option
-                                                                    value={item}
-                                                                    key={item}
-                                                                >
-                                                                    {item}
-                                                                </option>
-                                                            )
-                                                        )}
-                                                </select>
+                                                    dateFormat="MM-yyyy"
+                                                    placeholderText="мм.гггг - мм.гггг"
+                                                    showMonthYearPicker
+                                                    includeDates={allowedDates}
+                                                    locale={ru}
+                                                />
                                             </div>
 
                                             <div className="flex flex-col">
                                                 <span className="block mb-2 text-gray-400">
-                                                    Месяц
+                                                    Типы отчётов
                                                 </span>
-                                                <select
-                                                    className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
-                                                    onChange={(e) =>
-                                                        setSelectedSummaryMonth(
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                >
-                                                    {months.map(
-                                                        (month, index) => (
-                                                            <option
-                                                                value={
-                                                                    index + 1
-                                                                }
-                                                                key={index}
-                                                            >
-                                                                {month}
-                                                            </option>
-                                                        )
+                                                <Select
+                                                    closeMenuOnSelect={false}
+                                                    isMulti
+                                                    name="colors"
+                                                    options={reportTypes.map(
+                                                        (type) => ({
+                                                            value: type.id,
+                                                            label: type.name,
+                                                        })
                                                     )}
-                                                </select>
+                                                    className="basic-multi-select min-w-[170px] min-h-[32px]"
+                                                    classNamePrefix="select"
+                                                    placeholder="Выбрать тип отчёта"
+                                                    onChange={(
+                                                        selectedOptions
+                                                    ) => {
+                                                        setSelecterTypes(
+                                                            selectedOptions.map(
+                                                                (option) =>
+                                                                    option.value
+                                                            )
+                                                        );
+                                                    }}
+                                                />
                                             </div>
-                                        </div>
-
-                                        <div className="flex flex-col">
-                                            <span className="block mb-2 text-gray-400">
-                                                Типы отчётов
-                                            </span>
-                                            <Select
-                                                closeMenuOnSelect={false}
-                                                isMulti
-                                                name="colors"
-                                                options={reportTypes.map(
-                                                    (type) => ({
-                                                        value: type.id,
-                                                        label: type.name,
-                                                    })
-                                                )}
-                                                className="basic-multi-select min-w-[170px] min-h-[32px]"
-                                                classNamePrefix="select"
-                                                placeholder="Выбрать тип отчёта"
-                                                onChange={(selectedOptions) => {
-                                                    setSelecterTypes(
-                                                        selectedOptions.map(
-                                                            (option) =>
-                                                                option.value
-                                                        )
-                                                    );
-                                                }}
-                                            />
                                         </div>
                                     </div>
 
@@ -766,7 +738,7 @@ const EmployeeCard = () => {
                                                 Год
                                             </span>
                                             <select
-                                                className="border-2 h-[32px] p-1 border border-gray-300 min-w-[170px] cursor-pointer"
+                                                className="border-2 h-[32px] p-1 border-gray-300 min-w-[170px] cursor-pointer"
                                                 onChange={(e) =>
                                                     setSelectedPersonalYear(
                                                         e.target.value
@@ -797,7 +769,6 @@ const EmployeeCard = () => {
                                                     availablePersonalMonths
                                                 }
                                                 styles={customStyles}
-                                                // className="border-2 h-[32px] p-1 border-gray-300 min-w-[170px]"
                                                 placeholder="Выберите месяц"
                                                 value={selectedPersonalMonth}
                                                 onChange={(e) =>

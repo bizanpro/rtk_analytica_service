@@ -10,6 +10,7 @@ import ReferenceItem from "./ReferenceItem";
 import ReferenceItemExtended from "./ReferenceItemExtended";
 import ReferenceItemExtendedContacts from "./ReferenceItemExtendedContacts";
 import ReferenceItemNew from "./ReferenceItemNew";
+import ReferenceItemWorkingHours from "./ReferenceItemWorkingHours";
 
 import { IMaskInput } from "react-imask";
 import { ToastContainer, toast } from "react-toastify";
@@ -35,9 +36,8 @@ const SingleBook = () => {
     const [listLength, setListLength] = useState(0);
     const [popupState, setPopupState] = useState(false);
     const [positions, setPositions] = useState([]);
-
-    const [selectedCounterpartyName, setSelectedCounterpartyName] =
-        useState("");
+    const [availableYears, setAvailableYears] = useState([]);
+    const [currentYear, setCurrentYear] = useState("");
 
     const [newElem, setnewElem] = useState({
         contragent_id: "",
@@ -48,16 +48,6 @@ const SingleBook = () => {
     });
 
     const PhoneMask = "+{7} (000) 000 00 00";
-
-    const filteredProjects = useMemo(() => {
-        const result = booksItems?.filter((book) => {
-            return selectedCounterpartyName &&
-                selectedCounterpartyName !== "default"
-                ? book.role === selectedCounterpartyName
-                : true;
-        });
-        return result;
-    }, [booksItems, selectedCounterpartyName]);
 
     let query;
 
@@ -206,6 +196,8 @@ const SingleBook = () => {
 
         if (name === "phone") {
             value = e;
+        } else if (name === "hours") {
+            value = +e.target.value;
         } else if (
             name === "is_regular" ||
             name === "show_cost" ||
@@ -223,6 +215,7 @@ const SingleBook = () => {
         );
     };
 
+    // Закрытие попапа
     const closePopup = (evt) => {
         if (evt.currentTarget.classList.contains("popup")) {
             setPopupState(false);
@@ -377,6 +370,50 @@ const SingleBook = () => {
             .catch((error) => {
                 toast.dismiss(query);
                 toast.error(error.message || "Ошибка обновления записи", {
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                    containerId: "singleBook",
+                });
+            });
+    };
+
+    const saveAllList = () => {
+        query = toast.loading("Сохранение", {
+            containerId: "singleBook",
+            position: "top-center",
+        });
+
+        postData("PATCH", URL, { year: currentYear, hours: booksItems })
+            .then((response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: response.message || "Успешно сохранено",
+                        type: "success",
+                        containerId: "singleBook",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                } else {
+                    toast.dismiss(query);
+                    toast.error("Ошибка сохранения", {
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                        containerId: "singleBook",
+                    });
+                }
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка сохранения", {
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -545,11 +582,41 @@ const SingleBook = () => {
             });
     };
 
+    // Получение должностей
+    const getPositions = () => {
+        getData(`${import.meta.env.VITE_API_URL}positions`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status == 200) {
+                setPositions(response.data.data);
+            }
+        });
+    };
+
+    // Получение должностей
+    const getAvailableYears = () => {
+        getData(`${import.meta.env.VITE_API_URL}${bookId}/available-years`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status == 200) {
+                setAvailableYears(response.data.years);
+                setCurrentYear(
+                    response.data.years[response.data.years.length - 1] || ""
+                );
+            }
+        });
+    };
+
     // Получение списка записей
     const getBooks = () => {
         setIsLoading(true);
 
-        getData(URL, { Accept: "application/json" })
+        const url =
+            bookId == "working-hours" ? `${URL}/?year=${currentYear}` : URL;
+
+        getData(url, {
+            Accept: "application/json",
+        })
             .then((response) => {
                 if (response.status == 200) {
                     setBooksItems(response.data.data);
@@ -576,24 +643,25 @@ const SingleBook = () => {
             .finally(() => setIsLoading(false));
     };
 
-    // Получение должностей
-    const getPositions = () => {
-        getData(`${import.meta.env.VITE_API_URL}positions`, {
-            Accept: "application/json",
-        }).then((response) => {
-            if (response.status == 200) {
-                setPositions(response.data.data);
-            }
-        });
-    };
-
     useEffect(() => {
-        getBooks();
+        if (bookId !== "working-hours") {
+            getBooks();
+        }
 
         if (bookId === "management-report-types") {
             getPositions();
         }
+
+        if (bookId === "working-hours") {
+            getAvailableYears();
+        }
     }, []);
+
+    useEffect(() => {
+        if (bookId === "working-hours" && currentYear != "") {
+            getBooks();
+        }
+    }, [currentYear]);
 
     return (
         <main className="page">
@@ -605,34 +673,69 @@ const SingleBook = () => {
                         {TITLES[bookId]} ({listLength})
                     </h1>
 
-                    <div className="flex items-center gap-6">
-                        <nav className="switch">
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="read_mode"
-                                    onChange={() => {
-                                        setMode("read");
-                                    }}
-                                    checked={mode === "read" ? true : false}
-                                />
-                                <label htmlFor="read_mode">Чтение</label>
-                            </div>
+                    <div
+                        className={`flex ${
+                            bookId === "working-hours"
+                                ? "justify-between"
+                                : "justify-end"
+                        } items-center gap-6 flex-grow`}
+                    >
+                        {bookId === "working-hours" && (
+                            <select
+                                className="p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                value={currentYear}
+                                onChange={(evt) =>
+                                    setCurrentYear(evt.target.value)
+                                }
+                            >
+                                {availableYears.length > 0 &&
+                                    availableYears.map((item) => (
+                                        <option key={item} value={item}>
+                                            {item}
+                                        </option>
+                                    ))}
+                            </select>
+                        )}
 
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="edit_mode"
-                                    onChange={() => setMode("edit")}
-                                    checked={mode === "edit" ? true : false}
-                                />
-                                <label htmlFor="edit_mode">
-                                    Редактирование
-                                </label>
-                            </div>
-                        </nav>
+                        <div className="flex items-center gap-6">
+                            {mode === "edit" && bookId === "working-hours" && (
+                                <button
+                                    onClick={() => {
+                                        saveAllList();
+                                    }}
+                                    className="delete-button save-icon"
+                                    title="Сохранить рабочие часы"
+                                ></button>
+                            )}
+
+                            <nav className="switch">
+                                <div>
+                                    <input
+                                        type="radio"
+                                        name="mode"
+                                        id="read_mode"
+                                        onChange={() => {
+                                            setMode("read");
+                                        }}
+                                        checked={mode === "read" ? true : false}
+                                    />
+                                    <label htmlFor="read_mode">Чтение</label>
+                                </div>
+
+                                <div>
+                                    <input
+                                        type="radio"
+                                        name="mode"
+                                        id="edit_mode"
+                                        onChange={() => setMode("edit")}
+                                        checked={mode === "edit" ? true : false}
+                                    />
+                                    <label htmlFor="edit_mode">
+                                        Редактирование
+                                    </label>
+                                </div>
+                            </nav>
+                        </div>
                     </div>
                 </div>
 
@@ -667,6 +770,7 @@ const SingleBook = () => {
                                         }
                                         columns={columns}
                                         formFields={formFields}
+                                        booksItems={booksItems}
                                         bookId={bookId}
                                         positions={positions}
                                         addNewElement={addNewElement}
@@ -680,8 +784,8 @@ const SingleBook = () => {
                                     </td>
                                 </tr>
                             ) : (
-                                filteredProjects?.length > 0 &&
-                                filteredProjects.map((item) => {
+                                booksItems?.length > 0 &&
+                                booksItems.map((item) => {
                                     if (
                                         bookId === "creditor" ||
                                         bookId === "contragent"
@@ -721,10 +825,26 @@ const SingleBook = () => {
                                         );
                                     }
 
+                                    if (bookId === "working-hours") {
+                                        return (
+                                            <ReferenceItemWorkingHours
+                                                key={item.id}
+                                                data={item}
+                                                columns={columns}
+                                                mode={mode}
+                                                bookId={bookId}
+                                                handleInputChange={
+                                                    handleInputChange
+                                                }
+                                            />
+                                        );
+                                    }
+
                                     return (
                                         <ReferenceItem
                                             key={item.id}
                                             data={item}
+                                            booksItems={booksItems}
                                             columns={columns}
                                             mode={mode}
                                             bookId={bookId}
