@@ -310,58 +310,6 @@ const Reports = () => {
         }
     };
 
-    // Отправляем новый отчёт менеджмента
-    // const sendNewReport = (extendReportData) => {
-    //     query = toast.loading("Выполняется отправка", {
-    //         containerId: "report",
-    //         position: "top-center",
-    //     });
-
-    //     postData(
-    //         "POST",
-    //         `${import.meta.env.VITE_API_URL}management-reports`,
-    //         extendReportData
-    //     )
-    //         .then((response) => {
-    //             if (response?.ok) {
-    //                 toast.update(query, {
-    //                     render: "Данные сохранены",
-    //                     type: "success",
-    //                     containerId: "report",
-    //                     isLoading: false,
-    //                     autoClose: 1200,
-    //                     pauseOnFocusLoss: false,
-    //                     pauseOnHover: false,
-    //                     position: "top-center",
-    //                 });
-    //                 getFilteredManagementReports();
-    //                 getAvailableMonths();
-    //                 setManagementEditorState(false);
-    //             } else {
-    //                 toast.dismiss(query);
-    //                 toast.error("Ошибка сохранения данных", {
-    //                     containerId: "report",
-    //                     isLoading: false,
-    //                     autoClose: 1500,
-    //                     pauseOnFocusLoss: false,
-    //                     pauseOnHover: false,
-    //                     position: "top-center",
-    //                 });
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             toast.dismiss(query);
-    //             toast.error(error.message || "Ошибка при обновлении", {
-    //                 containerId: "report",
-    //                 isLoading: false,
-    //                 autoClose: 5000,
-    //                 pauseOnFocusLoss: false,
-    //                 pauseOnHover: false,
-    //                 position: "top-center",
-    //             });
-    //         });
-    // };
-
     // Обновляем  отчёт менеджмента
     const updateReport = (extendReportData) => {
         query = toast.loading("Обновление", {
@@ -819,7 +767,6 @@ const Reports = () => {
                                         setManagementReportData={
                                             setManagementReportData
                                         }
-                                        // sendNewReport={sendNewReport}
                                         updateReport={updateReport}
                                         closeManagementReportEditor={
                                             closeManagementReportEditor
