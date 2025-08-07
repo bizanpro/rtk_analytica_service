@@ -49,7 +49,7 @@ const ReportRateEditor = ({
                         </div>
 
                         <ul className="flex items-center gap-2">
-                            {reportRateData.misc.length > 0 &&
+                            {reportRateData.misc?.length > 0 &&
                                 reportRateData.misc?.map((item, index) => (
                                     <li
                                         className="border rounded-3xl border-gray-300 text-gray-300 py-1.5 px-4 w-fit text-sm"
@@ -61,7 +61,9 @@ const ReportRateEditor = ({
                         </ul>
                     </div>
 
-                    <div className="mt-2 whitespace-nowrap">{reportRateData.status}</div>
+                    <div className="mt-2 whitespace-nowrap">
+                        {reportRateData.status}
+                    </div>
                 </div>
 
                 <button
