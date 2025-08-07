@@ -9,6 +9,10 @@ const MultiSelectWithSearch = ({
     fieldName,
     close,
 }) => {
+    console.log(options);
+    console.log(selectedValues);
+    console.log(fieldName);
+
     const [searchTerm, setSearchTerm] = useState("");
     const [draftSelected, setDraftSelected] = useState(selectedValues);
 

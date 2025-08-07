@@ -26,7 +26,7 @@ import ManagementReportsTab from "../ManagementReportsTab/ManagementReportsTab";
 import Hint from "../Hint/Hint";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
-import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
+import MultiSelectField from "../MultiSelect/MultiSelectField";
 
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -425,7 +425,6 @@ const ProjectCard = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-                    getContragentsContacts();
                 }
                 return response;
             } catch (error) {
@@ -833,9 +832,17 @@ const ProjectCard = () => {
                                         />
                                     </div>
 
-                                    <div className="form-multiselect-field"></div>
+                                    <MultiSelectField
+                                        placeholder={"Выбрать из списка"}
+                                        target={"other_industries"}
+                                        fieldName={"industries"}
+                                        options={industries.map((industry) => ({
+                                            value: industry.id,
+                                            label: industry.name,
+                                        }))}
+                                    />
 
-                                    <Select
+                                    {/* <Select
                                         closeMenuOnSelect={false}
                                         isMulti
                                         name="colors"
@@ -877,7 +884,7 @@ const ProjectCard = () => {
                                                 },
                                             });
                                         }}
-                                    />
+                                    /> */}
                                 </div>
 
                                 <div className="project-card__description">

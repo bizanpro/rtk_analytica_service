@@ -464,6 +464,7 @@ body {
     border-top: var(--color-gray-30);
     padding: 10px 0 15px;
     box-shadow: 0 -8px 24px #00203308;
+    z-index: 20;
 
     @media (min-width: $media-lg) {
         padding: 10px 0 40px;
