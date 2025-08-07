@@ -59,7 +59,7 @@ const SupplierEmptyExecutorBlock = ({
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }responsible-persons/contragent/?supplier_id=${supplierId}`
+            }responsible-persons/supplier/?supplier_id=${supplierId}`
         ).then((response) => {
             if (response.status == 200) {
                 setContactsList(response.data.data);
