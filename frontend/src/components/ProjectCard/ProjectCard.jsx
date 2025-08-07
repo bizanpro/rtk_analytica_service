@@ -26,6 +26,7 @@ import ManagementReportsTab from "../ManagementReportsTab/ManagementReportsTab";
 import Hint from "../Hint/Hint";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
+import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
 
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -642,32 +643,32 @@ const ProjectCard = () => {
         <main className="page">
             <section className="card project-card">
                 {/* <nav className="switch">
-                                           <div>
-                                               <input
-                                                   type="radio"
-                                                   name="mode"
-                                                   id="read_mode"
-                                                   onChange={() => {
-                                                       setMode("read");
-                                                   }}
-                                                   checked={mode === "read" ? true : false}
-                                               />
-                                               <label htmlFor="read_mode">Чтение</label>
-                                           </div>
-       
-                                           <div>
-                                               <input
-                                                   type="radio"
-                                                   name="mode"
-                                                   id="edit_mode"
-                                                   onChange={() => setMode("edit")}
-                                                   checked={mode === "edit" ? true : false}
-                                               />
-                                               <label htmlFor="edit_mode">
-                                                   Редактирование
-                                               </label>
-                                           </div>
-                                       </nav> */}
+                    <div>
+                        <input
+                            type="radio"
+                            name="mode"
+                            id="read_mode"
+                            onChange={() => {
+                                setMode("read");
+                            }}
+                            checked={mode === "read" ? true : false}
+                        />
+                        <label htmlFor="read_mode">Чтение</label>
+                    </div>
+
+                    <div>
+                        <input
+                            type="radio"
+                            name="mode"
+                            id="edit_mode"
+                            onChange={() => setMode("edit")}
+                            checked={mode === "edit" ? true : false}
+                        />
+                        <label htmlFor="edit_mode">
+                            Редактирование
+                        </label>
+                    </div>
+                </nav> */}
 
                 <div className="container card__container project-card__container">
                     <ToastContainer containerId="projectCard" />
@@ -831,6 +832,8 @@ const ProjectCard = () => {
                                             message={"Дополнительная отрасль"}
                                         />
                                     </div>
+
+                                    <div className="form-multiselect-field"></div>
 
                                     <Select
                                         closeMenuOnSelect={false}
