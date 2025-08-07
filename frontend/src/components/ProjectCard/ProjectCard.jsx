@@ -73,6 +73,8 @@ const ProjectCard = () => {
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [firstInit, setFirstInit] = useState(true);
 
+    const [otherIndustries, setOtherIndustries] = useState({ others: [] });
+
     let query;
 
     const statRef = useRef(null);
@@ -633,6 +635,23 @@ const ProjectCard = () => {
     }, [searchParams]);
 
     useEffect(() => {
+        setFormFields({
+            ...projectData,
+            industries: {
+                ...projectData.industries,
+                others: otherIndustries.others,
+            },
+        });
+        setProjectData({
+            ...projectData,
+            industries: {
+                ...projectData.industries,
+                others: otherIndustries.others,
+            },
+        });
+    }, [otherIndustries]);
+
+    useEffect(() => {
         if (projectId) {
             getProject(projectId);
         }
@@ -835,7 +854,14 @@ const ProjectCard = () => {
                                     <MultiSelectField
                                         placeholder={"Выбрать из списка"}
                                         target={"other_industries"}
-                                        fieldName={"industries"}
+                                        fieldName={"others"}
+                                        selectedValues={otherIndustries.others}
+                                        onChange={(updated) =>
+                                            setOtherIndustries((prev) => ({
+                                                ...prev,
+                                                ...updated,
+                                            }))
+                                        }
                                         options={industries.map((industry) => ({
                                             value: industry.id,
                                             label: industry.name,

@@ -3,11 +3,18 @@ import { useState } from "react";
 import MultiSelectWithSearch from "./MultiSelectWithSearch";
 import OverlayTransparent from "../Overlay/OverlayTransparent";
 
-const MultiSelectField = ({ placeholder, target, options, fieldName }) => {
+const MultiSelectField = ({
+    placeholder,
+    target,
+    options,
+    fieldName,
+    selectedValues,
+    onChange,
+}) => {
     const [isActiveSelect, setIsActiveSelect] = useState("");
 
     return (
-        <>
+        <div className="form-multiselect">
             {isActiveSelect === target && (
                 <OverlayTransparent
                     state={true}
@@ -16,27 +23,22 @@ const MultiSelectField = ({ placeholder, target, options, fieldName }) => {
             )}
 
             <div
-                className="form-multiselect-field"
+                className="form-multiselect__field"
                 onClick={() => setIsActiveSelect(target)}
             >
                 {placeholder}
-
-                {isActiveSelect === target && (
-                    <MultiSelectWithSearch
-                        options={options}
-                        // selectedValues={filters[filter]}
-                        // onChange={(updated) =>
-                        //     setFilters((prev) => ({
-                        //         ...prev,
-                        //         ...updated,
-                        //     }))
-                        // }
-                        fieldName={fieldName}
-                        // close={setOpenFilter}
-                    />
-                )}
             </div>
-        </>
+
+            {isActiveSelect === target && (
+                <MultiSelectWithSearch
+                    options={options}
+                    selectedValues={selectedValues}
+                    onChange={onChange}
+                    fieldName={fieldName}
+                    close={setIsActiveSelect}
+                />
+            )}
+        </div>
     );
 };
 
