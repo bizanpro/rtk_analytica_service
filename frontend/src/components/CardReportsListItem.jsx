@@ -12,7 +12,7 @@ const CardReportsListItem = ({
 }) => {
     return (
         <li
-            className="grid items-center grid-cols-[21%_28%_20%_28%] gap-2 cursor-pointer"
+            className="grid items-center grid-cols-[21%_27%_24%_26%] gap-3 cursor-pointer"
             onClick={() => {
                 openReportEditor(id);
             }}
@@ -25,7 +25,7 @@ const CardReportsListItem = ({
             </div>
 
             <div className="flex flex-col">
-                <div className="text-lg">{report_period_code}</div>
+                <div className="text-lg whitespace-nowrap">{report_period_code}</div>
                 <span className="text-sm">{report_period}</span>
             </div>
 
