@@ -322,6 +322,15 @@ const SingleBook = () => {
         delete data?.projects_count;
         delete data?.updated_at;
 
+        if (bookId === "management-report-types") {
+            if (data.position_id) {
+                data.position_id = +data?.position_id;
+            }
+
+            delete data?.count;
+            delete data?.position;
+        }
+
         if (bookId !== "working-hours") {
             if (
                 !data.name ||
