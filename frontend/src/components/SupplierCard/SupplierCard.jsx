@@ -244,15 +244,19 @@ const SupplierCard = () => {
 
     // Удаление ключевого лица
     const deleteRespPerson = (id) => {
-        postData("DELETE", `${URL}/${supplierId}/contacts/${id}`, {}).then(
-            (response) => {
-                if (response?.ok) {
-                    setResponsiblePersons(
-                        responsiblePersons.filter((item) => item.id !== id)
-                    );
-                }
+        postData(
+            "DELETE",
+            `${
+                import.meta.env.VITE_API_URL
+            }responsible-persons/supplier/contact/${id}`,
+            {}
+        ).then((response) => {
+            if (response?.ok) {
+                setResponsiblePersons(
+                    responsiblePersons.filter((item) => item.id !== id)
+                );
             }
-        );
+        });
     };
 
     useEffect(() => {

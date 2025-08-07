@@ -176,10 +176,11 @@ const SaleCard = () => {
                     fetchServices();
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 toast.dismiss(query);
                 toast.error(
-                    "Ошибка добавления. Возможно, такая услуга уже добавлена",
+                    error.message ||
+                        "Ошибка добавления. Возможно, такая услуга уже добавлена",
                     {
                         containerId: "projectCard",
                         isLoading: false,

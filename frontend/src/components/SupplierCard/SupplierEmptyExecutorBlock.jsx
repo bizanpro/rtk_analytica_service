@@ -80,10 +80,6 @@ const SupplierEmptyExecutorBlock = ({
     }, [contactsList]);
 
     useEffect(() => {
-        console.log(newContact);
-    }, [newContact]);
-
-    useEffect(() => {
         getContragentsContacts();
     }, []);
 
