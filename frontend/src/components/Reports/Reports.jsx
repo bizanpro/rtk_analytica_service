@@ -427,7 +427,9 @@ const Reports = () => {
 
         postData(
             "PATCH",
-            `${import.meta.env.VITE_API_URL}management-reports/${report.id}`,
+            `${
+                import.meta.env.VITE_API_URL
+            }management-reports/project-manager/${report.id}`,
             report
         )
             .then((response) => {
@@ -490,6 +492,18 @@ const Reports = () => {
         setReportData({});
         setManagementReportData({});
     }, [activeTab]);
+
+    useEffect(() => {
+        if (rateEditorState === true) {
+            setManagementEditorState(false);
+        }
+    }, [rateEditorState]);
+
+    useEffect(() => {
+        if (managementEditorState === true) {
+            setRateEditorState(false);
+        }
+    }, [managementEditorState]);
 
     useEffect(() => {
         getUpdatedProjectsFilters();
