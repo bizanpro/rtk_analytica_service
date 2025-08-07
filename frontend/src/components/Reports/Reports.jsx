@@ -311,11 +311,13 @@ const Reports = () => {
     };
 
     // Обновляем  отчёт менеджмента
-    const updateReport = (extendReportData) => {
+    const updateReport = (extendReportData, action) => {
         query = toast.loading("Обновление", {
             containerId: "report",
             position: "top-center",
         });
+
+        extendReportData.action = action;
 
         postData(
             "PATCH",
