@@ -12,7 +12,7 @@ const CardReportsListItem = ({
 }) => {
     return (
         <li
-            className="grid items-center grid-cols-[1fr_1fr_23%_34%] gap-5 cursor-pointer"
+            className="grid items-center grid-cols-[21%_28%_20%_28%] gap-2 cursor-pointer"
             onClick={() => {
                 openReportEditor(id);
             }}
