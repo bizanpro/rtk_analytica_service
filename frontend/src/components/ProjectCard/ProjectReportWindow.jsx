@@ -33,7 +33,7 @@ const ProjectReportWindow = ({
     mode,
 }) => {
     const [reportData, setReportData] = useState({
-        report_status_id: 1,
+        report_status_id: "",
         report_type_id: "",
         budget_in_billions: "",
         service_cost_in_rubles: "",
@@ -367,6 +367,11 @@ const ProjectReportWindow = ({
                         report_status_id: 1,
                     }));
                 }
+            } else {
+                setReportData((prev) => ({
+                    ...prev,
+                    report_status_id: "",
+                }));
             }
         }
     };
@@ -637,6 +642,7 @@ const ProjectReportWindow = ({
                             }
                             disabled
                         >
+                            <option value=""></option>
                             {reportStatuses.map((status) => (
                                 <option value={status.id} key={status.id}>
                                     {status.name}

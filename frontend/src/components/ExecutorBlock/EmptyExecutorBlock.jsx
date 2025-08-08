@@ -109,7 +109,7 @@ const EmptyExecutorBlock = ({
     }, [contactsList]);
 
     useEffect(() => {
-        if (type === "creditor" && newContact.creditor_id != "") {
+        if (type === "creditor") {
             getCreditorContacts();
         } else if (type === "customer") {
             getContragentsContacts();

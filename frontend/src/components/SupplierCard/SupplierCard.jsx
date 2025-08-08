@@ -595,7 +595,7 @@ const SupplierCard = () => {
                                     {activeReportTab === "projectReports" &&
                                         (!reportWindowsState ? (
                                             <ul className="grid gap-3">
-                                                <li className="grid items-center grid-cols-[1fr_1fr_23%_34%] gap-4 mb-2 text-gray-400">
+                                                <li className="grid items-center grid-cols-[21%_21%_26%_28%] gap-4 mb-2 text-gray-400">
                                                     <span>Проект</span>
                                                     <span>Отчёт</span>
                                                     <span className="text-center">
