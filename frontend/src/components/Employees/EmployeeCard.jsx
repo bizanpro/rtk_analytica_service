@@ -118,7 +118,7 @@ const EmployeeCard = () => {
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }available-years/?physical_person_id=${employeeId}`
+            }personal-available-years/?physical_person_id=${employeeId}`
         ).then((response) => {
             if (response.status == 200) {
                 setDatesData(response.data);
@@ -367,7 +367,7 @@ const EmployeeCard = () => {
         if (datesData.length > 0) {
             setAvailablePersonalMonths(
                 datesData
-                    .find((item) => item.year === selectedPersonalYear)
+                    .find((item) => item.year === +selectedPersonalYear)
                     .months.map((month) => ({
                         value: month.number,
                         label: month.name,

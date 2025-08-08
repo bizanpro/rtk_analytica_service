@@ -12,7 +12,7 @@ const CustomerProjectItem = ({
 }) => {
     return (
         <li
-            className={`p-2 grid items-center grid-cols-[1fr_25%_1fr] gap-3 cursor-pointer border-2 transition-all ${
+            className={`p-2 grid items-center grid-cols-[30%_27%_1fr] gap-3 cursor-pointer border-2 transition-all ${
                 projectData.id === id ? "border-gray-300" : "border-transparent"
             }`}
             onClick={() => {
@@ -27,10 +27,10 @@ const CustomerProjectItem = ({
             <div className="flex items-end gap-2">
                 {project_budget && (
                     <>
-                        <strong className="text-4xl font-normal max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong className="text-2xl font-normal whitespace-nowrap">
                             {project_budget}
                         </strong>
-                        <span className="text-1xl leading-6">
+                        <span className="text-base leading-5">
                             млрд <br /> руб.
                         </span>
                     </>
