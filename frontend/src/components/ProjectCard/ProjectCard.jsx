@@ -24,7 +24,6 @@ import Loader from "../Loader";
 import AutoResizeTextarea from "../AutoResizeTextarea";
 import ManagementReportsTab from "../ManagementReportsTab/ManagementReportsTab";
 import Hint from "../Hint/Hint";
-import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 import MultiSelectField from "../MultiSelect/MultiSelectField";
 
@@ -61,7 +60,7 @@ const ProjectCard = () => {
     const [filteredLenders, setFilteredLenders] = useState([]);
     const [customers, setCustomers] = useState([]);
 
-    const [addLender, setAddLender] = useState(false);
+    const [addCreditor, setAddCreditor] = useState(false);
     const [addCustomer, setAddCustomer] = useState(false);
 
     const [reports, setReports] = useState([]);
@@ -263,7 +262,7 @@ const ProjectCard = () => {
                 .then((response) => {
                     if (response?.ok) {
                         getProject(projectId);
-                        setAddLender(false);
+                        setAddCreditor(false);
 
                         toast.update(query, {
                             render:
@@ -619,8 +618,6 @@ const ProjectCard = () => {
     }, [projectData.contragent_id]);
 
     useEffect(() => {
-        setAddLender(false);
-        setAddCustomer(false);
         setReportWindowsState(false);
 
         setReportId(null);
@@ -1037,7 +1034,6 @@ const ProjectCard = () => {
 
                                 {addCustomer && (
                                     <EmptyExecutorBlock
-                                        borderClass={"border-gray-300"}
                                         type={"customer"}
                                         projectId={projectId}
                                         removeBlock={() =>
@@ -1119,8 +1115,8 @@ const ProjectCard = () => {
                                     type="button"
                                     className="button-add"
                                     onClick={() => {
-                                        if (!addLender) {
-                                            setAddLender(true);
+                                        if (!addCreditor) {
+                                            setAddCreditor(true);
                                         }
                                     }}
                                     title="Добавить Кредитора"
@@ -1142,13 +1138,14 @@ const ProjectCard = () => {
                                     </span>
                                 </button>
 
-                                {addLender && (
+                                {addCreditor && (
                                     <EmptyExecutorBlock
-                                        borderClass={"border-gray-300"}
                                         projectId={projectId}
                                         banks={banks}
                                         type={"creditor"}
-                                        removeBlock={() => setAddLender(false)}
+                                        removeBlock={() =>
+                                            setAddCreditor(false)
+                                        }
                                         sendExecutor={sendExecutor}
                                     />
                                 )}

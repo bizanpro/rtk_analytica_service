@@ -4,6 +4,7 @@ import getData from "../../utils/getData";
 
 import CreatableSelect from "react-select/creatable";
 import { IMaskInput } from "react-imask";
+import Popup from "../Popup/Popup";
 
 import "./ExecutorBlock.scss";
 
@@ -30,7 +31,6 @@ const validateEmail = (email) => {
 const EmptyExecutorBlock = ({
     removeBlock,
     banks,
-    borderClass,
     type,
     sendExecutor,
     projectId,
@@ -117,144 +117,10 @@ const EmptyExecutorBlock = ({
     }, [newContact.creditor_id]);
 
     return (
-        <div className="flex items-center justify-between gap-6 w-full">
-            <div
-                className={`executor-block flex-grow border transition-all ${borderClass}`}
-            >
-                <div
-                    className={`grid grid-cols-[60%_40%] border-b transition-all ${borderClass}`}
-                >
-                    <div
-                        className={`border-r transition-all ${borderClass} ${
-                            isReadonly ? "bg-gray-100" : ""
-                        }`}
-                    >
-                        <CreatableSelect
-                            isClearable
-                            options={allContacts}
-                            className="w-full executor-block__name-field"
-                            placeholder="Введите ФИО"
-                            noOptionsMessage={() => "Совпадений нет"}
-                            isValidNewOption={() => false}
-                            inputValue={inputValue}
-                            onInputChange={(newVal, { action }) => {
-                                if (action === "input-change") {
-                                    setInputValue(newVal);
-                                    setNewContact((prev) => ({
-                                        ...prev,
-                                        full_name: newVal,
-                                    }));
-
-                                    setIsReadonly(false);
-                                }
-                            }}
-                            value={
-                                newContact.full_name
-                                    ? {
-                                          label: newContact.full_name,
-                                          value: newContact.full_name,
-                                      }
-                                    : null
-                            }
-                            onChange={(selectedOption) => {
-                                if (selectedOption) {
-                                    setNewContact({
-                                        ...newContact,
-                                        full_name: selectedOption.value,
-                                        phone: selectedOption.phone || "",
-                                        email: selectedOption.email || "",
-                                        position: selectedOption.position || "",
-                                    });
-
-                                    setInputValue("");
-                                    setIsReadonly(true);
-                                } else {
-                                    setNewContact((prev) => ({
-                                        ...prev,
-                                        full_name: "",
-                                    }));
-                                    setInputValue("");
-                                    setIsReadonly(false);
-                                }
-                            }}
-                        />
-
-                        {errors.full_name && (
-                            <p className="text-red-500 text-sm">
-                                Заполните ФИО
-                            </p>
-                        )}
-                    </div>
-                    <div
-                        className={`py-2 px-3 ${
-                            isReadonly ? "bg-gray-100" : ""
-                        }`}
-                    >
-                        <IMaskInput
-                            mask={PhoneMask}
-                            className="w-full h-full"
-                            name="phone"
-                            type="tel"
-                            inputMode="tel"
-                            onAccept={(value) =>
-                                handleNewExecutor(value || "", "phone")
-                            }
-                            value={newContact.phone || ""}
-                            placeholder="+7 999 999 99 99"
-                            disabled={isReadonly}
-                        />
-                        {errors.phone && (
-                            <p className="text-red-500 text-sm">
-                                Заполните телефон
-                            </p>
-                        )}
-                    </div>
-                </div>
-                <div className="grid grid-cols-[60%_40%]">
-                    <div
-                        className={`py-2 px-3 border-r transition-all ${borderClass} ${
-                            isReadonly ? "bg-gray-100" : ""
-                        }`}
-                    >
-                        <input
-                            className="w-full h-full"
-                            type="text"
-                            placeholder="Должность"
-                            value={newContact.position}
-                            onChange={(e) => handleNewExecutor(e, "position")}
-                            disabled={isReadonly}
-                        />
-                        {errors.position && (
-                            <p className="text-red-500 text-sm">
-                                Заполните должность
-                            </p>
-                        )}
-                    </div>
-                    <div
-                        className={`py-2 px-3 ${
-                            isReadonly ? "bg-gray-100" : ""
-                        }`}
-                    >
-                        <input
-                            className="w-full h-full"
-                            type="email"
-                            placeholder="mail@mail.ru"
-                            value={newContact.email}
-                            onChange={(e) => handleNewExecutor(e, "email")}
-                            disabled={isReadonly}
-                        />
-                        {errors.email && (
-                            <p className="text-red-500 text-sm">
-                                Некорректный email
-                            </p>
-                        )}
-                    </div>
-                </div>
-
+        <Popup onClick={removeBlock} title="Добавить ключевое лицо">
+            <div className="action-form__body">
                 {type === "creditor" && (
-                    <div
-                        className={`py-2 px-3 border-t transition-all ${borderClass}`}
-                    >
+                    <div className={`py-2 px-3 border-t transition-all`}>
                         <select
                             className="w-full h-full"
                             onChange={(e) =>
@@ -278,21 +144,178 @@ const EmptyExecutorBlock = ({
                         )}
                     </div>
                 )}
+                
+                <div className="relative">
+                    <input
+                        type="text"
+                        className="form-field w-full"
+                        placeholder="ФИО*"
+                        value={newContact.full_name}
+                        onChange={(evt) =>
+                            setNewContact((prev) => ({
+                                ...prev,
+                                full_name: evt.target.value,
+                            }))
+                        }
+                    />
+
+                    {errors.full_name && (
+                        <p className="text-red-500 text-sm">Заполните ФИО</p>
+                    )}
+                </div>
+
+                <div className="relative">
+                    <input
+                        className="form-field w-full"
+                        type="text"
+                        placeholder="Должность"
+                        value={newContact.position}
+                        onChange={(e) => handleNewExecutor(e, "position")}
+                        disabled={isReadonly}
+                    />
+                    {errors.position && (
+                        <p className="text-red-500 text-sm">
+                            Заполните должность
+                        </p>
+                    )}
+                </div>
+
+                <div className="relative">
+                    <input
+                        className="form-field w-full"
+                        type="email"
+                        placeholder="E-mail"
+                        value={newContact.email}
+                        onChange={(e) => handleNewExecutor(e, "email")}
+                        disabled={isReadonly}
+                    />
+                    {errors.email && (
+                        <p className="text-red-500 text-sm">
+                            Некорректный email
+                        </p>
+                    )}
+                </div>
+
+                <div className="relative">
+                    <IMaskInput
+                        mask={PhoneMask}
+                        className="form-field w-full"
+                        name="phone"
+                        type="tel"
+                        inputMode="tel"
+                        onAccept={(value) =>
+                            handleNewExecutor(value || "", "phone")
+                        }
+                        value={newContact.phone || ""}
+                        placeholder="Телефон"
+                        disabled={isReadonly}
+                    />
+                    {errors.phone && (
+                        <p className="text-red-500 text-sm">
+                            Заполните телефон
+                        </p>
+                    )}
+                </div>
+
+                <div className="executor__block">
+                    <div
+                        className={`executor-block flex-grow border transition-all`}
+                    >
+                        <div
+                            className={`grid grid-cols-[60%_40%] border-b transition-all`}
+                        >
+                            <div
+                                className={`border-r transition-all ${
+                                    isReadonly ? "bg-gray-100" : ""
+                                }`}
+                            >
+                                <CreatableSelect
+                                    isClearable
+                                    options={allContacts}
+                                    className="w-full executor-block__name-field"
+                                    placeholder="Введите ФИО"
+                                    noOptionsMessage={() => "Совпадений нет"}
+                                    isValidNewOption={() => false}
+                                    inputValue={inputValue}
+                                    onInputChange={(newVal, { action }) => {
+                                        if (action === "input-change") {
+                                            setInputValue(newVal);
+                                            setNewContact((prev) => ({
+                                                ...prev,
+                                                full_name: newVal,
+                                            }));
+
+                                            setIsReadonly(false);
+                                        }
+                                    }}
+                                    value={
+                                        newContact.full_name
+                                            ? {
+                                                  label: newContact.full_name,
+                                                  value: newContact.full_name,
+                                              }
+                                            : null
+                                    }
+                                    onChange={(selectedOption) => {
+                                        if (selectedOption) {
+                                            setNewContact({
+                                                ...newContact,
+                                                full_name: selectedOption.value,
+                                                phone:
+                                                    selectedOption.phone || "",
+                                                email:
+                                                    selectedOption.email || "",
+                                                position:
+                                                    selectedOption.position ||
+                                                    "",
+                                            });
+
+                                            setInputValue("");
+                                            setIsReadonly(true);
+                                        } else {
+                                            setNewContact((prev) => ({
+                                                ...prev,
+                                                full_name: "",
+                                            }));
+                                            setInputValue("");
+                                            setIsReadonly(false);
+                                        }
+                                    }}
+                                />
+
+                                {errors.full_name && (
+                                    <p className="text-red-500 text-sm">
+                                        Заполните ФИО
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div className="flex gap-[10px] items-center">
-                <button title="Сохранить исполнителя" onClick={handleSave}>
-                    <span className="save-icon"></span>
-                </button>
-                <button
-                    className="delete-button"
-                    title="Удалить исполнителя"
-                    onClick={removeBlock}
-                >
-                    <span className="delete-icon"></span>
-                </button>
+            <div className="action-form__footer">
+                <div className="max-w-[280px]">
+                    <button
+                        type="button"
+                        onClick={removeBlock}
+                        className="cancel-button flex-[1_0_auto]"
+                    >
+                        Отменить
+                    </button>
+
+                    <button
+                        type="button"
+                        className="action-button flex-[1_0_auto]"
+                        onClick={handleSave}
+                        // disabled={newProjectName.length < 2}
+                        title="Добавить исполнителя"
+                    >
+                        Добавить
+                    </button>
+                </div>
             </div>
-        </div>
+        </Popup>
     );
 };
 
