@@ -508,9 +508,9 @@ const SupplierCard = () => {
                                         Проекты ({projects.length})
                                     </span>
                                 </div>
-                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[310px] overflow-x-hidden overflow-y-auto">
                                     <ul className="grid gap-3" ref={block5Ref}>
-                                        <li className="grid items-center grid-cols-[1fr_20%_1fr] gap-3 mb-2 text-gray-400">
+                                        <li className="grid items-center grid-cols-[30%_26%_1fr] gap-3 mb-2 text-gray-400">
                                             <span>Проект</span>
                                             <span>Бюджет</span>
                                             <span>Период реализации</span>
