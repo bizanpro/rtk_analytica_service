@@ -39,9 +39,9 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                                                       >
                                                           <div className="flex items-center gap-3 w-full">
                                                               <div
-                                                                  className="text-lg"
+                                                                  className="text-lg whitespace-nowrap"
                                                                   style={{
-                                                                      flex: "0 0 90px",
+                                                                      flex: "1 0 90px",
                                                                   }}
                                                               >
                                                                   {
@@ -50,7 +50,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                                                               </div>
 
                                                               <div
-                                                                  className={`rounded px-8 py-1 text-center flex-grow
+                                                                  className={`whitespace-nowrap rounded px-8 py-1 text-center flex-grow
                                                                         ${
                                                                             item
                                                                                 .status
