@@ -11,7 +11,7 @@ const ProjectReportItem = ({
 }) => {
     return (
         <li
-            className="grid items-center grid-cols-[33%_25%_33%_1fr] gap-3 cursor-pointer"
+            className="grid items-center grid-cols-[33%_25%_33%_1fr] gap-4 cursor-pointer"
             onClick={() => {
                 openReportEditor(id);
             }}

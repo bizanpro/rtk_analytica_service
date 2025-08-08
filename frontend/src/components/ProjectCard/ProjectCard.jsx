@@ -1193,7 +1193,7 @@ const ProjectCard = () => {
                                             <ul className="grid gap-3">
                                                 {!isDataLoaded && <Loader />}
 
-                                                <li className="grid items-center grid-cols-[33%_20%_33%_1fr] gap-3 mb-2 text-gray-400">
+                                                <li className="grid items-center grid-cols-[33%_25%_32%] gap-3 mb-2 text-gray-400">
                                                     <span>Отчет</span>
                                                     <span>Статус</span>
                                                     <span>
