@@ -47,6 +47,42 @@
             font-size: 14px;
             line-height: 140%;
             cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+
+        &__list {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        &__item {
+            width: fit-content;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 8px 5px 10px;
+            border-radius: 8px;
+            background: var(--color-gray-20);
+            border: 1px solid var(--color-gray-30);
+
+            button {
+                flex: 0 0 14px;
+                height: 14px;
+            }
+
+            svg {
+                pointer-events: none;
+            }
+
+            span {
+                font-weight: 500;
+                font-size: 12px;
+                line-height: 100%;
+            }
         }
 
         .multi-select {
