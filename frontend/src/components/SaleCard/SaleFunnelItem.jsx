@@ -5,7 +5,7 @@ const SaleFunnelItem = ({
     getStageDetails,
     activeStage,
     setActiveStage,
-    requestNextStage,
+    handleNextStage,
     handleActiveStageDate,
     mode,
 }) => {
@@ -29,7 +29,7 @@ const SaleFunnelItem = ({
         >
             <div className="flex items-center gap-3">
                 <div
-                    className={`w-[10px] h-[10px] rounded-[50%] transition ${
+                    className={`w-[10px] h-[10px] flex-[0_0_10px] rounded-[50%] transition ${
                         activeStage === stage.id ? "bg-gray-400" : ""
                     }`}
                 ></div>
@@ -43,14 +43,19 @@ const SaleFunnelItem = ({
             </div>
 
             <div>
-                <DatePicker
-                    className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                    startDate={stage.updated_at || new Date()}
-                    selected={stage.updated_at || new Date()}
-                    onChange={(date) => handleActiveStageDate(date, stage.id)}
-                    dateFormat="dd.MM.yyyy"
-                    disabled={mode === "read"}
-                />
+                {stage.name?.toLowerCase() !== "подготовка кп" &&
+                    stage.name?.toLowerCase() !== "заключение договора" && (
+                        <DatePicker
+                            className="border-2 border-gray-300 p-1 w-full h-[32px]"
+                            startDate={stage.updated_at || new Date()}
+                            selected={stage.updated_at || new Date()}
+                            onChange={(date) =>
+                                handleActiveStageDate(date, stage.id)
+                            }
+                            dateFormat="dd.MM.yyyy"
+                            disabled={mode === "read"}
+                        />
+                    )}
             </div>
 
             {stage.hasOwnProperty("next_possible_stages") &&
@@ -64,8 +69,9 @@ const SaleFunnelItem = ({
                         onClick={(evt) => {
                             evt.stopPropagation();
                             if (confirm("Вы уверены?")) {
-                                requestNextStage(
-                                    stage.next_possible_stages[2].id
+                                handleNextStage(
+                                    stage.next_possible_stages[2].id,
+                                    stage.name
                                 );
                             }
                         }}
@@ -76,7 +82,8 @@ const SaleFunnelItem = ({
                         title="Отложить проект"
                         onClick={(evt) => {
                             evt.stopPropagation();
-                            requestNextStage(stage.next_possible_stages[1].id);
+                            handleNextStage(stage.next_possible_stages[1].id),
+                                stage.name;
                         }}
                     ></button>
                     <button
@@ -85,7 +92,10 @@ const SaleFunnelItem = ({
                         title="Принять"
                         onClick={(evt) => {
                             evt.stopPropagation();
-                            requestNextStage(stage.next_possible_stages[0].id);
+                            handleNextStage(
+                                stage.next_possible_stages[0].id,
+                                stage.name
+                            );
                         }}
                     ></button>
                 </nav>

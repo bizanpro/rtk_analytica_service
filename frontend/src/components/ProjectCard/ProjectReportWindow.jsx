@@ -79,11 +79,18 @@ const ProjectReportWindow = ({
             }
         }
 
-        if (
-            !reportData.budget_in_billions ||
-            reportData.budget_in_billions <= 0
-        ) {
-            newErrors.budget_in_billions = "Бюджет должен быть больше 0";
+        if (isValidDate(reportData.approval_date)) {
+            if (
+                !reportData.budget_in_billions ||
+                reportData.budget_in_billions <= 0
+            ) {
+                newErrors.budget_in_billions = "Бюджет должен быть больше 0";
+            }
+
+            if (!isValidDateRange(reportData.implementation_period)) {
+                newErrors.implementation_period =
+                    "Укажите полный период реализации";
+            }
         }
 
         if (!reportData.contract_id) {
@@ -96,11 +103,6 @@ const ProjectReportWindow = ({
 
         if (!isValidDateRange(reportData.report_period)) {
             newErrors.report_period = "Укажите полный отчетный период";
-        }
-
-        if (!isValidDateRange(reportData.implementation_period)) {
-            newErrors.implementation_period =
-                "Укажите полный период реализации";
         }
 
         if (!isFirstDateValid(reportData.execution_period)) {
