@@ -43,14 +43,19 @@ const SaleFunnelItem = ({
             </div>
 
             <div>
-                <DatePicker
-                    className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                    startDate={stage.updated_at || new Date()}
-                    selected={stage.updated_at || new Date()}
-                    onChange={(date) => handleActiveStageDate(date, stage.id)}
-                    dateFormat="dd.MM.yyyy"
-                    disabled={mode === "read"}
-                />
+                {stage.name?.toLowerCase() !== "подготовка кп" &&
+                    stage.name?.toLowerCase() !== "заключение договора" && (
+                        <DatePicker
+                            className="border-2 border-gray-300 p-1 w-full h-[32px]"
+                            startDate={stage.updated_at || new Date()}
+                            selected={stage.updated_at || new Date()}
+                            onChange={(date) =>
+                                handleActiveStageDate(date, stage.id)
+                            }
+                            dateFormat="dd.MM.yyyy"
+                            disabled={mode === "read"}
+                        />
+                    )}
             </div>
 
             {stage.hasOwnProperty("next_possible_stages") &&

@@ -107,7 +107,7 @@ const SaleStageDetails = ({ stageMetrics, metrics, setMetrics, mode }) => {
 
                 <textarea
                     className={`${
-                        stageMetrics.name?.toLowerCase() === "получен запрос" &&
+                        stageMetrics.name?.toLowerCase() === "получен запрос" ||
                         stageMetrics.name?.toLowerCase() === "подготовка кп"
                             ? "p-3"
                             : "border-2 border-gray-300 p-5"
