@@ -2,7 +2,7 @@ import SaleFunnelItem from "./SaleFunnelItem";
 
 const SaleFunnelStages = ({
     saleStages,
-    requestNextStage,
+    handleNextStage,
     getStageDetails,
     activeStage,
     setActiveStage,
@@ -18,7 +18,7 @@ const SaleFunnelStages = ({
                 getStageDetails={getStageDetails}
                 activeStage={activeStage}
                 setActiveStage={setActiveStage}
-                requestNextStage={requestNextStage}
+                handleNextStage={handleNextStage}
                 handleActiveStageDate={handleActiveStageDate}
                 mode={mode}
             />

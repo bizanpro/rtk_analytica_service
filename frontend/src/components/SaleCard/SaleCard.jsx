@@ -279,7 +279,6 @@ const SaleCard = () => {
 
     // Получаем этапы в воронке продаж
     const getStages = () => {
-        setActiveStage("");
         setSaleStages([]);
 
         getData(
@@ -295,7 +294,9 @@ const SaleCard = () => {
 
     // Получаем детализацию выбранного этапа
     const getStageDetails = (stageId) => {
-        const stageData = saleStages.stages.find((item) => item.id === stageId);
+        const stageData = saleStages.stages?.find(
+            (item) => item.id === stageId
+        );
 
         if (stageData) {
             setStageMetrics(stageData);
@@ -323,7 +324,7 @@ const SaleCard = () => {
     };
 
     // Обновляем детализацию этапа продажи
-    const updateStageDetails = () => {
+    const updateStageDetails = (nextStage = false) => {
         const activeStageData = saleStages.stages.find(
             (item) => item.id === stageMetrics.stage_id
         );
@@ -354,17 +355,21 @@ const SaleCard = () => {
         )
             .then((response) => {
                 if (response?.ok) {
-                    toast.success(response.message, {
-                        type: "success",
-                        containerId: "projectCard",
-                        isLoading: false,
-                        autoClose: 1200,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: false,
-                        position: "top-center",
-                    });
-
                     getStages();
+
+                    if (nextStage) {
+                        requestNextStage(nextStage);
+                    } else {
+                        toast.success(response.message, {
+                            type: "success",
+                            containerId: "projectCard",
+                            isLoading: false,
+                            autoClose: 1200,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: false,
+                            position: "top-center",
+                        });
+                    }
                 } else {
                     toast.error(response.data.error || "Ошибка запроса", {
                         containerId: "projectCard",
@@ -421,6 +426,35 @@ const SaleCard = () => {
                     position: "top-center",
                 });
             });
+    };
+
+    // Валидируем поля стоимости предложения перед запросом следующего этапа
+    const handleNextStage = (stage_id, name) => {
+        if (
+            name.toLowerCase() !== "получен запрос" &&
+            name.toLowerCase() !== "подготовка кп"
+        ) {
+            if (
+                metrics.metrics?.length > 0 &&
+                metrics.metrics?.every(
+                    (item) =>
+                        item.current_value !== null && item.current_value !== ""
+                )
+            ) {
+                updateStageDetails(stage_id);
+            } else {
+                toast.error("Заполните все поля стоимости предложения", {
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 2000,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            }
+        } else {
+            updateStageDetails(stage_id);
+        }
     };
 
     // Получение проекта
@@ -548,6 +582,10 @@ const SaleCard = () => {
                 saleStages.stages[saleStages.stages?.length - 1].id
             );
             setIsFirstInit(false);
+        }
+
+        if (activeStage !== "") {
+            getStageDetails(activeStage);
         }
     }, [saleStages]);
 
@@ -1138,9 +1176,6 @@ const SaleCard = () => {
                                                                     deleteService={
                                                                         deleteService
                                                                     }
-                                                                    // getStages={
-                                                                    //     getStages
-                                                                    // }
                                                                     mode={mode}
                                                                 />
                                                             )
@@ -1183,8 +1218,8 @@ const SaleCard = () => {
                                                 {addWorkScore != "" && (
                                                     <SaleFunnelStages
                                                         saleStages={saleStages}
-                                                        requestNextStage={
-                                                            requestNextStage
+                                                        handleNextStage={
+                                                            handleNextStage
                                                         }
                                                         getStageDetails={
                                                             getStageDetails

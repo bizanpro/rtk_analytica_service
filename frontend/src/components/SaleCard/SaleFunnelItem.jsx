@@ -5,7 +5,7 @@ const SaleFunnelItem = ({
     getStageDetails,
     activeStage,
     setActiveStage,
-    requestNextStage,
+    handleNextStage,
     handleActiveStageDate,
     mode,
 }) => {
@@ -29,7 +29,7 @@ const SaleFunnelItem = ({
         >
             <div className="flex items-center gap-3">
                 <div
-                    className={`w-[10px] h-[10px] rounded-[50%] transition ${
+                    className={`w-[10px] h-[10px] flex-[0_0_10px] rounded-[50%] transition ${
                         activeStage === stage.id ? "bg-gray-400" : ""
                     }`}
                 ></div>
@@ -64,8 +64,9 @@ const SaleFunnelItem = ({
                         onClick={(evt) => {
                             evt.stopPropagation();
                             if (confirm("Вы уверены?")) {
-                                requestNextStage(
-                                    stage.next_possible_stages[2].id
+                                handleNextStage(
+                                    stage.next_possible_stages[2].id,
+                                    stage.name
                                 );
                             }
                         }}
@@ -76,7 +77,8 @@ const SaleFunnelItem = ({
                         title="Отложить проект"
                         onClick={(evt) => {
                             evt.stopPropagation();
-                            requestNextStage(stage.next_possible_stages[1].id);
+                            handleNextStage(stage.next_possible_stages[1].id),
+                                stage.name;
                         }}
                     ></button>
                     <button
@@ -85,7 +87,10 @@ const SaleFunnelItem = ({
                         title="Принять"
                         onClick={(evt) => {
                             evt.stopPropagation();
-                            requestNextStage(stage.next_possible_stages[0].id);
+                            handleNextStage(
+                                stage.next_possible_stages[0].id,
+                                stage.name
+                            );
                         }}
                     ></button>
                 </nav>
