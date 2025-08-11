@@ -69,33 +69,36 @@ const SaleStageDetails = ({ stageMetrics, metrics, setMetrics, mode }) => {
                                 ))}
                         </div>
 
-                        <div
-                            className="flex flex-col gap-2"
-                            style={{ flex: "0 0 60px" }}
-                        >
-                            <span className="flex items-center gap-2 text-gray-400">
-                                Изменение
-                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                    ?
+                        {stageMetrics.name?.toLowerCase() !==
+                            "отправлено кп" && (
+                            <div
+                                className="flex flex-col gap-2"
+                                style={{ flex: "0 0 60px" }}
+                            >
+                                <span className="flex items-center gap-2 text-gray-400">
+                                    Изменение
+                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                        ?
+                                    </span>
                                 </span>
-                            </span>
 
-                            {metrics.metrics?.length > 0 &&
-                                metrics.metrics?.map((item) => (
-                                    <div
-                                        className={`flex items-center border-2 border-gray-300 py-1 px-2 h-[30px] ${
-                                            item.change_percent
-                                                ? pepcentColorHandler(
-                                                      item.change_percent
-                                                  )
-                                                : ""
-                                        }`}
-                                        key={item.report_type_id}
-                                    >
-                                        {item.change_percent || 0}%
-                                    </div>
-                                ))}
-                        </div>
+                                {metrics.metrics?.length > 0 &&
+                                    metrics.metrics?.map((item) => (
+                                        <div
+                                            className={`flex items-center border-2 border-gray-300 py-1 px-2 h-[30px] ${
+                                                item.change_percent
+                                                    ? pepcentColorHandler(
+                                                          item.change_percent
+                                                      )
+                                                    : ""
+                                            }`}
+                                            key={item.report_type_id}
+                                        >
+                                            {item.change_percent || 0}%
+                                        </div>
+                                    ))}
+                            </div>
+                        )}
                     </div>
                 )}
 

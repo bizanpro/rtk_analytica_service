@@ -329,9 +329,9 @@ const SaleCard = () => {
             (item) => item.id === stageMetrics.stage_id
         );
 
-        const dateStr = activeStageData.updated_at.replace(" ", "T");
-        const newDate = new Date(dateStr).toLocaleDateString("ru-RU");
-
+        const newDate = new Date(activeStageData.updated_at).toLocaleDateString(
+            "ru-RU"
+        );
         const [day, month, year] = newDate.split(".");
         const formattedDate = `${year}-${month}-${day}`;
 
