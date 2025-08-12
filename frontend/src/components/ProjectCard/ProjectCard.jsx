@@ -27,6 +27,7 @@ import Hint from "../Hint/Hint";
 import CreatableSelect from "react-select/creatable";
 import MultiSelectField from "../MultiSelect/MultiSelectField";
 import BottomSheet from "../BottomSheet/BottomSheet";
+import BottomNav from "../BottomNav/BottomNav";
 
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -1268,54 +1269,35 @@ const ProjectCard = () => {
                 </button>
             </div>
 
-            {mode === "edit" && (
-                <nav className="bottom-nav">
-                    <div className="container bottom-nav__container">
-                        <button
-                            type="button"
-                            className="action-button"
-                            title="Обновить данные проекта"
-                            onClick={() => updateProject(projectId)}
-                            disabled={projectData?.name?.length < 2}
+            <BottomNav update={() => updateProject(projectId)}>
+                <button
+                    type="button"
+                    className="button-add"
+                    onClick={() => setReportWindowsState(true)}
+                    disabled={projectData.contragent_id ? false : true}
+                    title={
+                        projectData.contragent_id
+                            ? "Создать отчёт"
+                            : "Необходимо назначить заказчика"
+                    }
+                >
+                    Отчёт
+                    <span>
+                        <svg
+                            width="13"
+                            height="12"
+                            viewBox="0 0 13 12"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
                         >
-                            Сохранить
-                        </button>
-
-                        {mode == "edit" &&
-                            activeReportTab == "projectReports" && (
-                                <button
-                                    type="button"
-                                    className="button-add"
-                                    onClick={() => setReportWindowsState(true)}
-                                    disabled={
-                                        projectData.contragent_id ? false : true
-                                    }
-                                    title={
-                                        projectData.contragent_id
-                                            ? "Создать отчёт"
-                                            : "Необходимо назначить заказчика"
-                                    }
-                                >
-                                    Отчёт
-                                    <span>
-                                        <svg
-                                            width="13"
-                                            height="12"
-                                            viewBox="0 0 13 12"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                d="M7.5 5H12.5V7H7.5V12H5.5V7H0.5V5H5.5V0H7.5V5Z"
-                                                fill="currentColor"
-                                            />
-                                        </svg>
-                                    </span>
-                                </button>
-                            )}
-                    </div>
-                </nav>
-            )}
+                            <path
+                                d="M7.5 5H12.5V7H7.5V12H5.5V7H0.5V5H5.5V0H7.5V5Z"
+                                fill="currentColor"
+                            />
+                        </svg>
+                    </span>
+                </button>
+            </BottomNav>
         </main>
     );
 };
