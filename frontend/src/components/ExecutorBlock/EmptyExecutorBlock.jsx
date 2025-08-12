@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 
 import getData from "../../utils/getData";
 
-import CreatableSelect from "react-select/creatable";
 import { IMaskInput } from "react-imask";
 import Popup from "../Popup/Popup";
+import SelectList from "../MultiSelect/SelectList";
 
 import "./ExecutorBlock.scss";
 
@@ -38,14 +38,15 @@ const EmptyExecutorBlock = ({
     const PhoneMask = "+{7}(000) 000 00 00";
 
     const [errors, setErrors] = useState({});
-    const [isReadonly, setIsReadonly] = useState(false);
+    const [isReadonly, setIsReadonly] = useState(
+        type === "creditor" ? true : false
+    );
     const [contactsList, setContactsList] = useState([]);
     const [allContacts, setAllContacts] = useState([]);
     const [newContact, setNewContact] = useState(
         type === "creditor" ? CREDITOR_TEMPLATE : CUSTOMER_TEMPLATE
     );
-
-    const [inputValue, setInputValue] = useState(newContact.full_name || "");
+    const [activeTab, setActiveTab] = useState("create");
 
     const handleNewExecutor = (e, name) => {
         setNewContact({
@@ -111,6 +112,9 @@ const EmptyExecutorBlock = ({
     useEffect(() => {
         if (type === "creditor") {
             getCreditorContacts();
+            if (newContact.creditor_id !== "") {
+                setIsReadonly(false);
+            }
         } else if (type === "customer") {
             getContragentsContacts();
         }
@@ -118,11 +122,12 @@ const EmptyExecutorBlock = ({
 
     return (
         <Popup onClick={removeBlock} title="Добавить ключевое лицо">
-            <div className="action-form__body">
-                {type === "creditor" && (
-                    <div className={`py-2 px-3 border-t transition-all`}>
+            <div className="action-form__body executor-block">
+                {type === "creditor" && activeTab === "create" && (
+                    <div className="mt-[10px]">
+                        <div className="form-label">Банк</div>
                         <select
-                            className="w-full h-full"
+                            className="w-full form-select"
                             onChange={(e) =>
                                 setNewContact({
                                     ...newContact,
@@ -144,154 +149,147 @@ const EmptyExecutorBlock = ({
                         )}
                     </div>
                 )}
-                
-                <div className="relative">
-                    <input
-                        type="text"
-                        className="form-field w-full"
-                        placeholder="ФИО*"
-                        value={newContact.full_name}
-                        onChange={(evt) =>
-                            setNewContact((prev) => ({
-                                ...prev,
-                                full_name: evt.target.value,
-                            }))
-                        }
-                    />
 
-                    {errors.full_name && (
-                        <p className="text-red-500 text-sm">Заполните ФИО</p>
+                <div className="executor-block__header">
+                    {type === "creditor" && activeTab === "create" && (
+                        <strong>Контактное лицо</strong>
                     )}
+
+                    <ul className="card__tabs executor-block__tabs">
+                        <li className="card__tabs-item radio-field_tab">
+                            <input
+                                id="create_executor"
+                                type="radio"
+                                name="create_executor"
+                                checked={activeTab === "create"}
+                                onChange={() => setActiveTab("create")}
+                            />
+                            <label htmlFor="create_executor">Создать</label>
+                        </li>
+                        <li className="card__tabs-item radio-field_tab">
+                            <input
+                                id="select_executor"
+                                type="radio"
+                                name="select_executor"
+                                checked={activeTab === "select"}
+                                onChange={() => setActiveTab("select")}
+                            />
+                            <label htmlFor="select_executor">
+                                Выбрать из списка
+                            </label>
+                        </li>
+                    </ul>
                 </div>
 
-                <div className="relative">
-                    <input
-                        className="form-field w-full"
-                        type="text"
-                        placeholder="Должность"
-                        value={newContact.position}
-                        onChange={(e) => handleNewExecutor(e, "position")}
-                        disabled={isReadonly}
-                    />
-                    {errors.position && (
-                        <p className="text-red-500 text-sm">
-                            Заполните должность
-                        </p>
-                    )}
-                </div>
+                {activeTab === "create" ? (
+                    <div className="executor-block__form">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                className="form-field w-full"
+                                placeholder="ФИО*"
+                                value={newContact.full_name}
+                                onChange={(evt) =>
+                                    setNewContact((prev) => ({
+                                        ...prev,
+                                        full_name: evt.target.value,
+                                    }))
+                                }
+                                disabled={isReadonly}
+                            />
 
-                <div className="relative">
-                    <input
-                        className="form-field w-full"
-                        type="email"
-                        placeholder="E-mail"
-                        value={newContact.email}
-                        onChange={(e) => handleNewExecutor(e, "email")}
-                        disabled={isReadonly}
-                    />
-                    {errors.email && (
-                        <p className="text-red-500 text-sm">
-                            Некорректный email
-                        </p>
-                    )}
-                </div>
+                            {errors.full_name && (
+                                <p className="text-red-500 text-sm">
+                                    Заполните ФИО
+                                </p>
+                            )}
+                        </div>
 
-                <div className="relative">
-                    <IMaskInput
-                        mask={PhoneMask}
-                        className="form-field w-full"
-                        name="phone"
-                        type="tel"
-                        inputMode="tel"
-                        onAccept={(value) =>
-                            handleNewExecutor(value || "", "phone")
-                        }
-                        value={newContact.phone || ""}
-                        placeholder="Телефон"
-                        disabled={isReadonly}
-                    />
-                    {errors.phone && (
-                        <p className="text-red-500 text-sm">
-                            Заполните телефон
-                        </p>
-                    )}
-                </div>
+                        <div className="relative">
+                            <input
+                                className="form-field w-full"
+                                type="text"
+                                placeholder="Должность"
+                                value={newContact.position}
+                                onChange={(e) =>
+                                    handleNewExecutor(e, "position")
+                                }
+                                disabled={isReadonly}
+                            />
+                            {errors.position && (
+                                <p className="text-red-500 text-sm">
+                                    Заполните должность
+                                </p>
+                            )}
+                        </div>
 
-                <div className="executor__block">
-                    <div
-                        className={`executor-block flex-grow border transition-all`}
-                    >
-                        <div
-                            className={`grid grid-cols-[60%_40%] border-b transition-all`}
-                        >
-                            <div
-                                className={`border-r transition-all ${
-                                    isReadonly ? "bg-gray-100" : ""
-                                }`}
-                            >
-                                <CreatableSelect
-                                    isClearable
-                                    options={allContacts}
-                                    className="w-full executor-block__name-field"
-                                    placeholder="Введите ФИО"
-                                    noOptionsMessage={() => "Совпадений нет"}
-                                    isValidNewOption={() => false}
-                                    inputValue={inputValue}
-                                    onInputChange={(newVal, { action }) => {
-                                        if (action === "input-change") {
-                                            setInputValue(newVal);
-                                            setNewContact((prev) => ({
-                                                ...prev,
-                                                full_name: newVal,
-                                            }));
+                        <div className="relative">
+                            <input
+                                className="form-field w-full"
+                                type="email"
+                                placeholder="E-mail"
+                                value={newContact.email}
+                                onChange={(e) => handleNewExecutor(e, "email")}
+                                disabled={isReadonly}
+                            />
+                            {errors.email && (
+                                <p className="text-red-500 text-sm">
+                                    Некорректный email
+                                </p>
+                            )}
+                        </div>
 
-                                            setIsReadonly(false);
-                                        }
-                                    }}
-                                    value={
-                                        newContact.full_name
-                                            ? {
-                                                  label: newContact.full_name,
-                                                  value: newContact.full_name,
-                                              }
-                                            : null
-                                    }
-                                    onChange={(selectedOption) => {
-                                        if (selectedOption) {
-                                            setNewContact({
-                                                ...newContact,
-                                                full_name: selectedOption.value,
-                                                phone:
-                                                    selectedOption.phone || "",
-                                                email:
-                                                    selectedOption.email || "",
-                                                position:
-                                                    selectedOption.position ||
-                                                    "",
-                                            });
-
-                                            setInputValue("");
-                                            setIsReadonly(true);
-                                        } else {
-                                            setNewContact((prev) => ({
-                                                ...prev,
-                                                full_name: "",
-                                            }));
-                                            setInputValue("");
-                                            setIsReadonly(false);
-                                        }
-                                    }}
-                                />
-
-                                {errors.full_name && (
-                                    <p className="text-red-500 text-sm">
-                                        Заполните ФИО
-                                    </p>
-                                )}
-                            </div>
+                        <div className="relative">
+                            <IMaskInput
+                                mask={PhoneMask}
+                                className="form-field w-full"
+                                name="phone"
+                                type="tel"
+                                inputMode="tel"
+                                onAccept={(value) =>
+                                    handleNewExecutor(value || "", "phone")
+                                }
+                                value={newContact.phone || ""}
+                                placeholder="Телефон"
+                                disabled={isReadonly}
+                            />
+                            {errors.phone && (
+                                <p className="text-red-500 text-sm">
+                                    Заполните телефон
+                                </p>
+                            )}
                         </div>
                     </div>
-                </div>
+                ) : (
+                    <SelectList
+                        options={allContacts}
+                        selectedContact={newContact}
+                        onChange={(selected) => {
+                            if (selected) {
+                                setNewContact({
+                                    ...newContact,
+                                    full_name: selected.value,
+                                    phone: selected.phone || "",
+                                    email: selected.email || "",
+                                    position: selected.position || "",
+                                });
+
+                                setIsReadonly(true);
+                                setActiveTab("create");
+                            } else {
+                                setNewContact({
+                                    ...newContact,
+                                    full_name: "",
+                                    phone: "",
+                                    email: "",
+                                    position: "",
+                                });
+                                setIsReadonly(false);
+                                setActiveTab("create");
+                            }
+                        }}
+                    />
+                )}
             </div>
 
             <div className="action-form__footer">

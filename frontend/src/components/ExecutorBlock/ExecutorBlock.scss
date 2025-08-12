@@ -1,6 +1,26 @@
 .executor-block {
+    padding-top: 0;
+    
     input {
         width: 100%;
+    }
+
+    &__header {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        strong {
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 120%;
+        }
+    }
+
+    &__form {
+        display: grid;
+        gap: 10px;
     }
 }
 
@@ -8,9 +28,3 @@
     border: none;
     border-radius: 0;
 }
-
-// .executor-block__name-field > div[class*="-menu"] {
-//     background-color: aqua;
-//     max-height: 200px;
-//     overflow-y: auto;
-// }
