@@ -47,6 +47,7 @@ const EmptyExecutorBlock = ({
         type === "creditor" ? CREDITOR_TEMPLATE : CUSTOMER_TEMPLATE
     );
     const [activeTab, setActiveTab] = useState("create");
+    const [isFilled, setIsFilled] = useState(false);
 
     const handleNewExecutor = (e, name) => {
         setNewContact({
@@ -120,8 +121,20 @@ const EmptyExecutorBlock = ({
         }
     }, [newContact.creditor_id]);
 
+    useEffect(() => {
+        setIsFilled(
+            Object.values(newContact).every(
+                (value) => value && value.trim() !== ""
+            )
+        );
+    }, [newContact]);
+
     return (
-        <Popup onClick={removeBlock} title="Добавить ключевое лицо">
+        <Popup
+            className={`executor-block-wrapper_${type}`}
+            onClick={removeBlock}
+            title="Добавить ключевое лицо"
+        >
             <div className="action-form__body executor-block">
                 {type === "creditor" && activeTab === "create" && (
                     <div className="mt-[10px]">
@@ -306,7 +319,7 @@ const EmptyExecutorBlock = ({
                         type="button"
                         className="action-button flex-[1_0_auto]"
                         onClick={handleSave}
-                        // disabled={newProjectName.length < 2}
+                        disabled={!isFilled}
                         title="Добавить исполнителя"
                     >
                         Добавить

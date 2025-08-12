@@ -1,6 +1,8 @@
+@use "../../styles/media-breakpoints" as *;
+
 .executor-block {
     padding-top: 0;
-    
+
     input {
         width: 100%;
     }
@@ -16,15 +18,31 @@
             font-size: 16px;
             line-height: 120%;
         }
+
+        @media (min-width: $media-lg) {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+    }
+
+    &__tabs {
+        @media (min-width: $media-lg) {
+            margin-bottom: 0 !important;
+        }
     }
 
     &__form {
         display: grid;
         gap: 10px;
     }
-}
 
-.executor-block__name-field > div {
-    border: none;
-    border-radius: 0;
+    &-wrapper_creditor {
+        max-width: 500px;
+    }
+
+    &-wrapper_customer {
+        max-width: 400px;
+    }
 }
