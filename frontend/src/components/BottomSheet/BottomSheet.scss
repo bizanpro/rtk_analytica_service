@@ -1,0 +1,88 @@
+@use "../../styles/media-breakpoints" as *;
+
+.bottom-sheet {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 999;
+    background: var(--bg-color);
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--trans);
+
+    &.active {
+        visibility: visible;
+        opacity: 1;
+        pointer-events: all;
+
+        .bottom-sheet__wrapper {
+            transform: translate3d(0, -100%, 0);
+        }
+    }
+
+    &__wrapper {
+        position: fixed;
+        width: 100%;
+        height: calc(100vh - 67px);
+        bottom: -100%;
+        left: 0;
+        right: 0;
+        background: var(--color-white);
+        border-radius: 10px 10px 0 0;
+        transform: translate3d(0, 0, 0);
+        transition: transform var(--trans);
+        will-change: transfrom;
+        display: flex;
+        flex-direction: column;
+
+        @media (min-width: $media-lg) {
+            width: 100%;
+        }
+    }
+
+    &__body {
+        position: relative;
+        flex-grow: 1;
+        padding: 20px;
+    }
+
+    &__close-btn {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        top: 20px;
+        right: 20px;
+        z-index: 2;
+
+        span {
+            display: block;
+            width: 24px;
+            height: 24px;
+            position: relative;
+
+            &::after,
+            &::before {
+                content: "";
+                position: absolute;
+                background: var(--color-gray-60);
+                width: 18px;
+                height: 2px;
+                top: 50%;
+                left: 50%;
+            }
+
+            &::after {
+                transform: translate(-50%, -50%) rotate(45deg);
+            }
+
+            &::before {
+                transform: translate(-50%, -50%) rotate(130deg);
+            }
+        }
+    }
+}

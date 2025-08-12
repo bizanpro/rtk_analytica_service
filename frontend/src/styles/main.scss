@@ -466,6 +466,20 @@ body {
     box-shadow: 0 -8px 24px #00203308;
     z-index: 20;
 
+    &__container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+
+        .button-add {
+            padding: 6px 26.5px;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 150%;
+        }
+    }
+
     @media (min-width: $media-lg) {
         padding: 10px 0 40px;
     }

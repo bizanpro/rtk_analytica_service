@@ -26,6 +26,7 @@ import ManagementReportsTab from "../ManagementReportsTab/ManagementReportsTab";
 import Hint from "../Hint/Hint";
 import CreatableSelect from "react-select/creatable";
 import MultiSelectField from "../MultiSelect/MultiSelectField";
+import BottomSheet from "../BottomSheet/BottomSheet";
 
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -36,8 +37,10 @@ import "react-toastify/dist/ReactToastify.css";
 import "../../styles/card.scss";
 
 const ProjectCard = () => {
+    let query;
+
     const URL = `${import.meta.env.VITE_API_URL}projects`;
-    const location = useLocation();
+    // const location = useLocation();
     const { projectId } = useParams();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -47,36 +50,34 @@ const ProjectCard = () => {
 
     // const [mode, setMode] = useState(location.state?.mode || "read");
     const [mode, setMode] = useState("edit");
-    const [activeReportTab, setActiveReportTab] = useState("projectReports");
+    const [activeReportTab, setActiveReportTab] = useState("projectReports"); // Активная вкладка отчетов
+    const [activeWindow, setActiveWindow] = useState(""); // Активное окно на мобилке (Отчеты или ОСВ)
 
-    const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
-
-    const [industries, setIndustries] = useState([]);
-    const [contragents, setContragents] = useState([]);
-    const [banks, setBanks] = useState([]);
-    const [contracts, setContracts] = useState([]);
-
-    const [lenders, setLenders] = useState([]);
-    const [filteredLenders, setFilteredLenders] = useState([]);
-    const [customers, setCustomers] = useState([]);
-
-    const [addCreditor, setAddCreditor] = useState(false);
-    const [addCustomer, setAddCustomer] = useState(false);
-
-    const [reports, setReports] = useState([]);
-
-    const [teamData, setTeamData] = useState([]);
-    const [services, setServices] = useState([]);
-    const [reportId, setReportId] = useState(null);
+    const statRef = useRef(null);
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [firstInit, setFirstInit] = useState(true);
 
-    const [otherIndustries, setOtherIndustries] = useState({ others: [] });
+    const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
 
-    let query;
+    const [industries, setIndustries] = useState([]); // Отрасль
+    const [otherIndustries, setOtherIndustries] = useState({ others: [] }); // Дополнительная отрасль
+    const [contragents, setContragents] = useState([]); // Заказчик
+    const [banks, setBanks] = useState([]); // Банки
+    const [contracts, setContracts] = useState([]); // Договора
 
-    const statRef = useRef(null);
+    const [creditors, setCreditors] = useState([]); // Кредиторы
+    const [filteredCreditors, setFilteredCreditors] = useState([]);
+    const [customers, setCustomers] = useState([]); // Заказчики
+
+    const [addCreditor, setAddCreditor] = useState(false); // Добавить кредитора
+    const [addCustomer, setAddCustomer] = useState(false); // Добавить заказчика
+
+    const [reports, setReports] = useState([]); // Отчеты
+    const [reportId, setReportId] = useState(null);
+
+    const [teamData, setTeamData] = useState([]); // Команда проекта
+    const [services, setServices] = useState([]); // Услуги
 
     // Обновляем блок ОСВ
     const handleUpdate = () => {
@@ -91,11 +92,11 @@ const ProjectCard = () => {
     );
 
     // Фильтр кредиторов
-    const handleFilterLenders = (evt) => {
+    const handleFilterCreditors = (evt) => {
         evt.target.value === ""
-            ? setFilteredLenders(lenders)
-            : setFilteredLenders(
-                  lenders.filter(
+            ? setFilteredCreditors(creditors)
+            : setFilteredCreditors(
+                  creditors.filter(
                       (lender) => +lender.creditor_id === +evt.target.value
                   )
               );
@@ -199,13 +200,13 @@ const ProjectCard = () => {
             setProjectData(response.data);
 
             // Получаем кредиторов
-            setLenders(
+            setCreditors(
                 response.data?.creditor_responsible_persons?.flatMap(
                     (item) => item
                 ) || []
             );
 
-            setFilteredLenders(
+            setFilteredCreditors(
                 response.data?.creditor_responsible_persons?.flatMap(
                     (item) => item
                 ) || []
@@ -459,27 +460,6 @@ const ProjectCard = () => {
         }
     };
 
-    // Удаление отчёта
-    const deleteReport = (id) => {
-        postData("DELETE", `${import.meta.env.VITE_API_URL}reports/${id}`, {})
-            .then((response) => {
-                if (response?.ok) {
-                    getProject(projectId);
-                }
-            })
-            .catch((error) => {
-                toast.dismiss(query);
-                toast.error(error.message || "Ошибка удаления отчёта", {
-                    containerId: "projectCard",
-                    isLoading: false,
-                    autoClose: 3500,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-            });
-    };
-
     // Отправка отчёта
     const sendReport = (data) => {
         if (data.budget_in_billions) {
@@ -600,6 +580,27 @@ const ProjectCard = () => {
             });
     };
 
+    // Удаление отчёта
+    const deleteReport = (id) => {
+        postData("DELETE", `${import.meta.env.VITE_API_URL}reports/${id}`, {})
+            .then((response) => {
+                if (response?.ok) {
+                    getProject(projectId);
+                }
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка удаления отчёта", {
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 3500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
+    };
+
     useEffect(() => {
         if (projectData.creditors) {
             setFormFields((prev) => ({
@@ -657,34 +658,6 @@ const ProjectCard = () => {
     return (
         <main className="page">
             <section className="card project-card">
-                {/* <nav className="switch">
-                    <div>
-                        <input
-                            type="radio"
-                            name="mode"
-                            id="read_mode"
-                            onChange={() => {
-                                setMode("read");
-                            }}
-                            checked={mode === "read" ? true : false}
-                        />
-                        <label htmlFor="read_mode">Чтение</label>
-                    </div>
-
-                    <div>
-                        <input
-                            type="radio"
-                            name="mode"
-                            id="edit_mode"
-                            onChange={() => setMode("edit")}
-                            checked={mode === "edit" ? true : false}
-                        />
-                        <label htmlFor="edit_mode">
-                            Редактирование
-                        </label>
-                    </div>
-                </nav> */}
-
                 <div className="container card__container project-card__container">
                     <ToastContainer containerId="projectCard" />
 
@@ -864,50 +837,6 @@ const ProjectCard = () => {
                                             label: industry.name,
                                         }))}
                                     />
-
-                                    {/* <Select
-                                        closeMenuOnSelect={false}
-                                        isMulti
-                                        name="colors"
-                                        options={industries.map((industry) => ({
-                                            value: industry.id,
-                                            label: industry.name,
-                                        }))}
-                                        value={industries
-                                            .filter((industry) =>
-                                                projectData?.industries?.others?.includes(
-                                                    industry.id
-                                                )
-                                            )
-                                            .map((industry) => ({
-                                                value: industry.id,
-                                                label: industry.name,
-                                            }))}
-                                        className="basic-multi-select form-select"
-                                        classNamePrefix="select"
-                                        placeholder="Выбрать отрасль"
-                                        isDisabled={mode == "read"}
-                                        onChange={(selectedOptions) => {
-                                            setFormFields({
-                                                ...formFields,
-                                                industries: {
-                                                    ...formFields.industries,
-                                                    others: selectedOptions.map(
-                                                        (option) => option.value
-                                                    ),
-                                                },
-                                            });
-                                            setProjectData({
-                                                ...projectData,
-                                                industries: {
-                                                    ...projectData.industries,
-                                                    others: selectedOptions.map(
-                                                        (option) => option.value
-                                                    ),
-                                                },
-                                            });
-                                        }}
-                                    /> */}
                                 </div>
 
                                 <div className="project-card__description">
@@ -1057,7 +986,7 @@ const ProjectCard = () => {
                                                 value=""
                                                 defaultChecked
                                                 onChange={(evt) => {
-                                                    handleFilterLenders(evt);
+                                                    handleFilterCreditors(evt);
                                                 }}
                                             />
                                             <label htmlFor="bank_all">
@@ -1076,7 +1005,7 @@ const ProjectCard = () => {
                                                     name="active_bank"
                                                     value={bank.id}
                                                     onChange={(evt) => {
-                                                        handleFilterLenders(
+                                                        handleFilterCreditors(
                                                             evt
                                                         );
                                                     }}
@@ -1092,9 +1021,9 @@ const ProjectCard = () => {
                                 )}
 
                                 <ul className="project-card__executors-list">
-                                    {filteredLenders.length > 0 &&
+                                    {filteredCreditors.length > 0 &&
                                     banks.length > 0 ? (
-                                        filteredLenders.map((lender) => (
+                                        filteredCreditors.map((lender) => (
                                             <ExecutorBlock
                                                 key={lender.id}
                                                 contanct={lender}
@@ -1153,25 +1082,30 @@ const ProjectCard = () => {
                         </section>
 
                         <section className="card__aside-content project-card__aside-content">
-                            <ProjectStatisticsBlock
-                                ref={statRef}
-                                projectId={projectId}
-                            />
+                            <BottomSheet
+                                onClick={() => setActiveWindow("")}
+                                className={`${
+                                    activeWindow === "statistic" ? "active" : ""
+                                }`}
+                            >
+                                <ProjectStatisticsBlock
+                                    ref={statRef}
+                                    projectId={projectId}
+                                />
+                            </BottomSheet>
 
-                            <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        История проекта
-                                    </span>
-
-                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                        ?
-                                    </span>
+                            <BottomSheet
+                                onClick={() => setActiveWindow("")}
+                                className={`${
+                                    activeWindow === "reports" ? "active" : ""
+                                }`}
+                            >
+                                <div className="reports">
                                     {mode == "edit" &&
                                         activeReportTab == "projectReports" && (
                                             <button
                                                 type="button"
-                                                className="add-button"
+                                                className=""
                                                 onClick={() =>
                                                     setReportWindowsState(true)
                                                 }
@@ -1182,112 +1116,157 @@ const ProjectCard = () => {
                                                 }
                                                 title={
                                                     projectData.contragent_id
-                                                        ? "Открыть конструктор отчёта"
+                                                        ? "Создать отчёт"
                                                         : "Необходимо назначить заказчика"
                                                 }
                                             >
-                                                <span></span>
+                                                Добавить отчёт
                                             </button>
                                         )}
-                                </div>
 
-                                <div className="relative border-2 border-gray-300 py-3 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                    <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
-                                        <button
-                                            type="button"
-                                            className={`py-2 transition-all border-b-2 ${
-                                                activeReportTab ==
-                                                "projectReports"
-                                                    ? "border-gray-500"
-                                                    : "border-transparent"
-                                            }`}
-                                            onClick={() =>
-                                                setActiveReportTab(
+                                    <div className="relative border-2 border-gray-300 py-3 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                        <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
+                                            <button
+                                                type="button"
+                                                className={`py-2 transition-all border-b-2 ${
+                                                    activeReportTab ==
                                                     "projectReports"
-                                                )
-                                            }
-                                            title="Перейти на вкладку Отчёты проекта"
-                                        >
-                                            Отчёты проекта
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`py-2 transition-all border-b-2 ${
-                                                activeReportTab ==
-                                                "managementReports"
-                                                    ? "border-gray-500"
-                                                    : "border-transparent"
-                                            }`}
-                                            onClick={() =>
-                                                setActiveReportTab(
-                                                    "managementReports"
-                                                )
-                                            }
-                                            title="Перейти на вкладку Отчёты руководителя проекта"
-                                        >
-                                            Отчёты руководителя проекта
-                                        </button>
-                                    </nav>
-
-                                    {activeReportTab === "projectReports" &&
-                                        (!reportWindowsState ? (
-                                            <ul className="grid gap-3">
-                                                {!isDataLoaded && <Loader />}
-
-                                                <li className="grid items-center grid-cols-[33%_26%_32%] gap-3 mb-2 text-gray-400">
-                                                    <span>Отчет</span>
-                                                    <span>Статус</span>
-                                                    <span>
-                                                        Период выполнения
-                                                    </span>
-                                                </li>
-
-                                                {reports.length > 0 &&
-                                                    reports.map(
-                                                        (report, index) => (
-                                                            <ProjectReportItem
-                                                                key={
-                                                                    report.id ||
-                                                                    index
-                                                                }
-                                                                {...report}
-                                                                deleteReport={
-                                                                    deleteReport
-                                                                }
-                                                                openReportEditor={
-                                                                    openReportEditor
-                                                                }
-                                                                mode={mode}
-                                                            />
-                                                        )
-                                                    )}
-                                            </ul>
-                                        ) : (
-                                            <ProjectReportWindow
-                                                reportWindowsState={
-                                                    setReportWindowsState
+                                                        ? "border-gray-500"
+                                                        : "border-transparent"
+                                                }`}
+                                                onClick={() =>
+                                                    setActiveReportTab(
+                                                        "projectReports"
+                                                    )
                                                 }
-                                                sendReport={sendReport}
-                                                contracts={contracts}
-                                                updateReport={updateReport}
-                                                reportId={reportId}
-                                                setReportId={setReportId}
-                                                mode={mode}
-                                            />
-                                        ))}
+                                                title="Перейти на вкладку Отчёты проекта"
+                                            >
+                                                Отчёты проекта
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={`py-2 transition-all border-b-2 ${
+                                                    activeReportTab ==
+                                                    "managementReports"
+                                                        ? "border-gray-500"
+                                                        : "border-transparent"
+                                                }`}
+                                                onClick={() =>
+                                                    setActiveReportTab(
+                                                        "managementReports"
+                                                    )
+                                                }
+                                                title="Перейти на вкладку Отчёты руководителя проекта"
+                                            >
+                                                Отчёты руководителя проекта
+                                            </button>
+                                        </nav>
 
-                                    {activeReportTab ===
-                                        "managementReports" && (
-                                        <ManagementReportsTab
-                                            projectId={projectId}
-                                        />
-                                    )}
+                                        {activeReportTab === "projectReports" &&
+                                            (!reportWindowsState ? (
+                                                <ul className="grid gap-3">
+                                                    {!isDataLoaded && (
+                                                        <Loader />
+                                                    )}
+
+                                                    <li className="grid items-center grid-cols-[33%_26%_32%] gap-3 mb-2 text-gray-400">
+                                                        <span>Отчет</span>
+                                                        <span>Статус</span>
+                                                        <span>
+                                                            Период выполнения
+                                                        </span>
+                                                    </li>
+
+                                                    {reports.length > 0 &&
+                                                        reports.map(
+                                                            (report, index) => (
+                                                                <ProjectReportItem
+                                                                    key={
+                                                                        report.id ||
+                                                                        index
+                                                                    }
+                                                                    {...report}
+                                                                    deleteReport={
+                                                                        deleteReport
+                                                                    }
+                                                                    openReportEditor={
+                                                                        openReportEditor
+                                                                    }
+                                                                    mode={mode}
+                                                                />
+                                                            )
+                                                        )}
+                                                </ul>
+                                            ) : (
+                                                <ProjectReportWindow
+                                                    reportWindowsState={
+                                                        setReportWindowsState
+                                                    }
+                                                    sendReport={sendReport}
+                                                    contracts={contracts}
+                                                    updateReport={updateReport}
+                                                    reportId={reportId}
+                                                    setReportId={setReportId}
+                                                    mode={mode}
+                                                />
+                                            ))}
+
+                                        {activeReportTab ===
+                                            "managementReports" && (
+                                            <ManagementReportsTab
+                                                projectId={projectId}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
+                            </BottomSheet>
                         </section>
                     </div>
                 </div>
             </section>
+
+            <div className="card__bottom-actions">
+                <button
+                    type="button"
+                    title="Открыть отчёты"
+                    onClick={() => setActiveWindow("reports")}
+                >
+                    <svg
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M8.83116 9.62235H21.1633M8.83116 14.6909H21.1633M8.83116 19.4801H17.4517M6.06055 26.2405H24.0007C24.553 26.2405 25.0007 25.7928 25.0007 25.2405V4.75928C25.0007 4.20699 24.553 3.75928 24.0007 3.75928H6.06055C5.50826 3.75928 5.06055 4.20699 5.06055 4.75928V25.2405C5.06055 25.7928 5.50826 26.2405 6.06055 26.2405Z"
+                            stroke="#F38B00"
+                            strokeWidth="2"
+                        />
+                    </svg>
+                </button>
+
+                <button
+                    type="button"
+                    title="Открыть ОСВ"
+                    onClick={() => setActiveWindow("statistic")}
+                >
+                    <svg
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M10 21.25H6.25V18.75H10V16.25H6.25V13.75H10V3.75H18.75C20.4076 3.75 21.9973 4.40848 23.1694 5.58058C24.3415 6.75269 25 8.3424 25 10C25 11.6576 24.3415 13.2473 23.1694 14.4194C21.9973 15.5915 20.4076 16.25 18.75 16.25H12.5V18.75H21.25V21.25H12.5V26.25H10V21.25ZM18.75 13.75C19.7446 13.75 20.6984 13.3549 21.4016 12.6517C22.1049 11.9484 22.5 10.9946 22.5 10C22.5 9.00544 22.1049 8.05161 21.4017 7.34835C20.6984 6.64509 19.7446 6.25 18.75 6.25L12.5 6.25V13.75H18.75Z"
+                            fill="#F38B00"
+                        />
+                    </svg>
+                </button>
+            </div>
 
             {mode === "edit" && (
                 <nav className="bottom-nav">
@@ -1301,6 +1280,39 @@ const ProjectCard = () => {
                         >
                             Сохранить
                         </button>
+
+                        {mode == "edit" &&
+                            activeReportTab == "projectReports" && (
+                                <button
+                                    type="button"
+                                    className="button-add"
+                                    onClick={() => setReportWindowsState(true)}
+                                    disabled={
+                                        projectData.contragent_id ? false : true
+                                    }
+                                    title={
+                                        projectData.contragent_id
+                                            ? "Создать отчёт"
+                                            : "Необходимо назначить заказчика"
+                                    }
+                                >
+                                    Отчёт
+                                    <span>
+                                        <svg
+                                            width="13"
+                                            height="12"
+                                            viewBox="0 0 13 12"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M7.5 5H12.5V7H7.5V12H5.5V7H0.5V5H5.5V0H7.5V5Z"
+                                                fill="currentColor"
+                                            />
+                                        </svg>
+                                    </span>
+                                </button>
+                            )}
                     </div>
                 </nav>
             )}
