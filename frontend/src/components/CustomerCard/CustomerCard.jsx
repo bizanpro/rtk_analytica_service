@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 import handleStatus from "../../utils/handleStatus";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 import { ToastContainer, toast } from "react-toastify";
 
@@ -24,7 +26,10 @@ const CustomerCard = () => {
     const [mode, setMode] = useState("read");
     const [activeReportTab, setActiveReportTab] = useState("projectReports");
 
-    const [reports, setReports] = useState([]); // История проекта
+    const [reports, setReports] = useState([]); // Отчёты проектов
+    const [selectedReports, setSelectedReports] = useState([]); // Очёты выбранного проекта
+    const [managerReports, setManagerReports] = useState([]); // Отчёты руководителя проектов
+    const [selectedManagerReports, setSelectedManagerReports] = useState([]); // Отчёты руководителя выбранного проекта
     const [projects, setProjects] = useState([]); // Проекты
 
     const [projectData, setProjectData] = useState({
@@ -45,7 +50,7 @@ const CustomerCard = () => {
         setEmployeeData((prev) => ({ ...prev, [name]: e.target.value }));
     };
 
-    // Получаем данные заказчика и его проекты
+    // Получение данных заказчика и его проекты
     const fetchData = () => {
         getData(`${URL}/${contragentId}`, {
             Accept: "application/json",
@@ -69,25 +74,63 @@ const CustomerCard = () => {
             });
     };
 
-    // Получаем ключевые лица
+    // Получение ключевых лиц
     const getResponsiblePesons = () => {
-        getData(`${URL}/${contragentId}/responsible-persons`, {
+        getData(`${URL}/${contragentId}/contacts`, {
             Accept: "application/json",
         }).then((response) => {
             if (response.status == 200) {
-                setResponsiblePersons(response.data);
+                setResponsiblePersons(response.data.data?.contacts);
             }
         });
     };
 
-    // Получаем отчеты по выбранному проекту
+    // Получение списка отчетов
+    const getContragentReports = () => {
+        getData(`${URL}/${contragentId}/reports`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status == 200) {
+                setReports(response.data);
+                setSelectedReports(response.data);
+            }
+        });
+    };
+
+    // Получение списка отчетов руководителя
+    const getProjectsManagerReports = () => {
+        getData(`${URL}/${contragentId}/manager-reports`, {
+            Accept: "application/json",
+        }).then((response) => {
+            if (response.status == 200) {
+                setManagerReports(response.data);
+                setSelectedManagerReports(response.data);
+            }
+        });
+    };
+
+    // Получение отчетов по выбранному проекту
     const getReports = (id) => {
         setReportWindowsState(false);
 
-        const targetProject = projects.find((project) => project.id === id);
+        const targetReports = reports.filter(
+            (report) => report.project_id === id
+        );
 
-        if (targetProject && targetProject.reports?.length > 0) {
-            setReports(targetProject.reports);
+        const targetManagerReport = customerData.manager_reports?.filter(
+            (report) => report.project_id === id
+        );
+
+        if (targetReports?.length > 0) {
+            setSelectedReports(targetReports);
+        } else {
+            setSelectedReports([]);
+        }
+
+        if (targetManagerReport?.length > 0) {
+            setSelectedManagerReports(targetManagerReport);
+        } else {
+            setSelectedManagerReports([]);
         }
     };
 
@@ -174,8 +217,19 @@ const CustomerCard = () => {
             fetchData();
             getResponsiblePesons();
             getContracts();
+            getContragentReports();
+            getProjectsManagerReports();
         }
     }, []);
+
+    const block1Ref = useRef(null);
+    const block2Ref = useRef(null);
+
+    useOutsideClick([block1Ref, block2Ref], () => {
+        setProjectData({});
+        setSelectedReports(reports);
+        setSelectedManagerReports(managerReports);
+    });
 
     return (
         <main className="page">
@@ -357,7 +411,7 @@ const CustomerCard = () => {
                                     </span>
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-2 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                    <ul className="grid gap-5">
+                                    <ul className="grid gap-5" ref={block1Ref}>
                                         <li className="grid items-center grid-cols-[1fr_20%_1fr] gap-3 text-gray-400 px-2">
                                             <span>Проект</span>
                                             <span>Бюджет</span>
@@ -393,7 +447,10 @@ const CustomerCard = () => {
                                     </span>
                                 </div>
 
-                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
+                                <div
+                                    className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto"
+                                    ref={block2Ref}
+                                >
                                     <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
                                         <button
                                             type="button"
@@ -442,23 +499,28 @@ const CustomerCard = () => {
                                                 <span>Период выполнения</span>
                                             </li>
 
-                                            {reports.length > 0 &&
-                                                reports.map((report, index) => (
-                                                    <CardReportsListItem
-                                                        key={report.id || index}
-                                                        {...report}
-                                                        projectData={
-                                                            projectData
-                                                        }
-                                                        openReportEditor={
-                                                            openReportEditor
-                                                        }
-                                                        openSubReportEditor={
-                                                            openSubReportEditor
-                                                        }
-                                                        mode={"read"}
-                                                    />
-                                                ))}
+                                            {selectedReports.length > 0 &&
+                                                selectedReports.map(
+                                                    (report, index) => (
+                                                        <CardReportsListItem
+                                                            key={
+                                                                report.id ||
+                                                                index
+                                                            }
+                                                            {...report}
+                                                            projectData={
+                                                                projectData
+                                                            }
+                                                            openReportEditor={
+                                                                openReportEditor
+                                                            }
+                                                            openSubReportEditor={
+                                                                openSubReportEditor
+                                                            }
+                                                            mode={"read"}
+                                                        />
+                                                    )
+                                                )}
                                         </ul>
                                     ) : (
                                         <ProjectReportWindow
@@ -471,6 +533,7 @@ const CustomerCard = () => {
                                             mode={"read"}
                                         />
                                     )}
+                                    
                                 </div>
                             </div>
                         </div>
