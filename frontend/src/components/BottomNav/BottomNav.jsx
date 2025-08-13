@@ -1,10 +1,12 @@
+import "./BottomNav.scss";
+
 const BottomNav = ({ children, update }) => {
     return (
         <nav className="bottom-nav">
             <div className="container bottom-nav__container">
                 <button
                     type="button"
-                    className=""
+                    className="cancel-button"
                     title=""
                     // onClick={() => updateProject(cardId)}
                 >

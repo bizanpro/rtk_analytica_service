@@ -26,6 +26,7 @@
     }
 
     &__wrapper {
+        overflow: hidden;
         position: fixed;
         width: 100%;
         height: calc(100vh - 67px);

@@ -1102,81 +1102,70 @@ const ProjectCard = () => {
                                 }`}
                             >
                                 <div className="reports">
-                                    {mode == "edit" &&
-                                        activeReportTab == "projectReports" && (
-                                            <button
-                                                type="button"
-                                                className=""
-                                                onClick={() =>
-                                                    setReportWindowsState(true)
-                                                }
-                                                disabled={
-                                                    projectData.contragent_id
-                                                        ? false
-                                                        : true
-                                                }
-                                                title={
-                                                    projectData.contragent_id
-                                                        ? "Создать отчёт"
-                                                        : "Необходимо назначить заказчика"
-                                                }
-                                            >
-                                                Добавить отчёт
-                                            </button>
-                                        )}
-
-                                    <div className="relative border-2 border-gray-300 py-3 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                        <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
-                                            <button
-                                                type="button"
-                                                className={`py-2 transition-all border-b-2 ${
-                                                    activeReportTab ==
-                                                    "projectReports"
-                                                        ? "border-gray-500"
-                                                        : "border-transparent"
-                                                }`}
+                                    <div className="reports__body">
+                                        <nav className="card__tabs reports__tabs">
+                                            <div
+                                                className="card__tabs-item radio-field_tab"
                                                 onClick={() =>
                                                     setActiveReportTab(
                                                         "projectReports"
                                                     )
                                                 }
-                                                title="Перейти на вкладку Отчёты проекта"
+                                                aria-label="Открыть вкладку Отчёты проекта"
                                             >
-                                                Отчёты проекта
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={`py-2 transition-all border-b-2 ${
-                                                    activeReportTab ==
-                                                    "managementReports"
-                                                        ? "border-gray-500"
-                                                        : "border-transparent"
-                                                }`}
+                                                <input
+                                                    id="projectReports"
+                                                    type="radio"
+                                                    checked={
+                                                        activeReportTab ==
+                                                        "projectReports"
+                                                    }
+                                                    name="active_reports"
+                                                    onChange={() =>
+                                                        setActiveReportTab(
+                                                            "projectReports"
+                                                        )
+                                                    }
+                                                />
+                                                <label htmlFor="projectReports">
+                                                    Отчёты проекта
+                                                </label>
+                                            </div>
+                                            <div
+                                                className="card__tabs-item radio-field_tab"
                                                 onClick={() =>
                                                     setActiveReportTab(
-                                                        "managementReports"
+                                                        "projectReports"
                                                     )
                                                 }
-                                                title="Перейти на вкладку Отчёты руководителя проекта"
+                                                aria-label="Открыть вкладку Отчёты руководителя проекта"
                                             >
-                                                Отчёты руководителя проекта
-                                            </button>
+                                                <input
+                                                    id="managementReports"
+                                                    type="radio"
+                                                    checked={
+                                                        activeReportTab ==
+                                                        "managementReports"
+                                                    }
+                                                    name="active_reports"
+                                                    onChange={() =>
+                                                        setActiveReportTab(
+                                                            "managementReports"
+                                                        )
+                                                    }
+                                                />
+                                                <label htmlFor="managementReports">
+                                                    Отчёты руководителя проекта
+                                                </label>
+                                            </div>
                                         </nav>
 
                                         {activeReportTab === "projectReports" &&
                                             (!reportWindowsState ? (
-                                                <ul className="grid gap-3">
+                                                <ul className="reports__list">
                                                     {!isDataLoaded && (
                                                         <Loader />
                                                     )}
-
-                                                    <li className="grid items-center grid-cols-[33%_26%_32%] gap-3 mb-2 text-gray-400">
-                                                        <span>Отчет</span>
-                                                        <span>Статус</span>
-                                                        <span>
-                                                            Период выполнения
-                                                        </span>
-                                                    </li>
 
                                                     {reports.length > 0 &&
                                                         reports.map(
@@ -1218,6 +1207,34 @@ const ProjectCard = () => {
                                                 projectId={projectId}
                                             />
                                         )}
+                                    </div>
+
+                                    <div className="reports_footer">
+                                        {mode == "edit" &&
+                                            activeReportTab ==
+                                                "projectReports" && (
+                                                <button
+                                                    type="button"
+                                                    className="reports__add-btn"
+                                                    onClick={() =>
+                                                        setReportWindowsState(
+                                                            true
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        projectData.contragent_id
+                                                            ? false
+                                                            : true
+                                                    }
+                                                    title={
+                                                        projectData.contragent_id
+                                                            ? "Создать отчёт"
+                                                            : "Необходимо назначить заказчика"
+                                                    }
+                                                >
+                                                    Создать отчёт
+                                                </button>
+                                            )}
                                     </div>
                                 </div>
                             </BottomSheet>
