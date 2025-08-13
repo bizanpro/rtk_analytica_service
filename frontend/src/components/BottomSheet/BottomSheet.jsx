@@ -42,6 +42,8 @@ const BottomSheet = ({ children, onClick, className }) => {
                 className="bottom-sheet__wrapper"
                 onClick={(e) => e.stopPropagation()}
             >
+                <div className="bottom-sheet__icon"></div>
+
                 <div className="bottom-sheet__body">
                     <button
                         type="button"

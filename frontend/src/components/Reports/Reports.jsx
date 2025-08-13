@@ -6,7 +6,7 @@ import ReportItem from "./ReportItem";
 import ManagementItem from "./ManagementItem";
 import ManagementReportEditor from "./ManagementReportEditor";
 import ReportRateEditor from "./ReportRateEditor";
-import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
+import ReportWindow from "../ReportWindow/ReportWindow";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -730,7 +730,7 @@ const Reports = () => {
                             className="bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%] p-3"
                             style={{ minHeight: "calc(100vh - 10%)" }}
                         >
-                            <ProjectReportWindow
+                            <ReportWindow
                                 reportWindowsState={setReportWindowsState}
                                 contracts={contracts}
                                 reportId={reportId}

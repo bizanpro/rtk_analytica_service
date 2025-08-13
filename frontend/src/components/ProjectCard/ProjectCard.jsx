@@ -14,7 +14,7 @@ import { useBodyScrollLock } from "../../hooks/useBodyScrollLock.js";
 
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
-import ProjectReportWindow from "./ProjectReportWindow";
+import ReportWindow from "../ReportWindow/ReportWindow.jsx";
 import ProjectReportItem from "./ProjectReportItem";
 import ProjectStatisticsBlock from "./ProjectStatisticsBlock";
 import ProjectTeam from "./ProjectTeam";
@@ -680,14 +680,13 @@ const ProjectCard = () => {
 
                                 <span
                                     className={`status
-                                                   ${
-                                                       projectData?.status ===
-                                                       "active"
-                                                           ? "active"
-                                                           : projectData?.status ===
-                                                             "completed"
-                                                   }
-                                               `}
+                                    ${
+                                        projectData?.status === "active"
+                                            ? "active"
+                                            : projectData?.status ===
+                                              "completed"
+                                    }
+                                `}
                                 >
                                     {handleStatus(projectData?.status)}
                                 </span>
@@ -1191,7 +1190,7 @@ const ProjectCard = () => {
                                                         )}
                                                 </ul>
                                             ) : (
-                                                <ProjectReportWindow
+                                                <ReportWindow
                                                     reportWindowsState={
                                                         setReportWindowsState
                                                     }

@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 import CustomerProjectItem from "./CustomerProjectItem";
 import FilledExecutorBlock from "../ExecutorBlock/FilledExecutorBlock";
-import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
+import ReportWindow from "../ReportWindow/ReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
 import CustomerStatisticBlock from "./CustomerStatisticBlock";
 
@@ -461,7 +461,7 @@ const CustomerCard = () => {
                                                 ))}
                                         </ul>
                                     ) : (
-                                        <ProjectReportWindow
+                                        <ReportWindow
                                             reportWindowsState={
                                                 setReportWindowsState
                                             }

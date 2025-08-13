@@ -25,7 +25,7 @@ const isValidDate = (str) => {
     return regex.test(str);
 };
 
-const ProjectReportWindow = ({
+const ReportWindow = ({
     sendReport,
     reportWindowsState,
     contracts,
@@ -788,4 +788,4 @@ const ProjectReportWindow = ({
     );
 };
 
-export default ProjectReportWindow;
+export default ReportWindow;

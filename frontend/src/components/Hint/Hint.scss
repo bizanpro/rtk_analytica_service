@@ -35,6 +35,7 @@
         background: var(--color-gray-90);
         transition: opacity var(--trans);
         max-width: 175px;
+        z-index: 2;
     }
 
     &:hover {

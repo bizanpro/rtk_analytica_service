@@ -9,7 +9,7 @@ import { useOutsideClick } from "../../hooks/useOutsideClick";
 import { ToastContainer, toast } from "react-toastify";
 
 import CustomerProjectItem from "../CustomerCard/CustomerProjectItem";
-import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
+import ReportWindow from "../ReportWindow/ReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
 import SupplierStatisticBlock from "./SupplierStatisticBlock";
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
@@ -616,7 +616,7 @@ const SupplierCard = () => {
                                                     )}
                                             </ul>
                                         ) : (
-                                            <ProjectReportWindow
+                                            <ReportWindow
                                                 reportWindowsState={
                                                     setReportWindowsState
                                                 }
