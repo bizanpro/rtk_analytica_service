@@ -17,13 +17,13 @@ const ProjectReportItem = ({
         status.toLowerCase() === "завершён" ||
         status.toLowerCase() === "утверждён"
     ) {
-        statusClass = "reports__list-item__status_completed";
+        statusClass = "reports__list-item__status_completed completed";
     } else if (
         status.toLowerCase() === "в процессе" ||
         status.toLowerCase() === "запланирован" ||
         status.toLowerCase() === "в работе"
     ) {
-        statusClass = "reports__list-item__status_active";
+        statusClass = "reports__list-item__status_active active";
     }
 
     return (
@@ -33,19 +33,17 @@ const ProjectReportItem = ({
                 openReportEditor(id);
             }}
         >
-            <div className="flex flex-col">
-                <div className="text-lg">{report_period_code}</div>
-                <span className="text-sm">{report_period}</span>
+            <div className="reports__list-item__col">
+                <div>{report_period_code}</div>
+                <span>{report_period}</span>
             </div>
 
-            <div className="flex gap-3 items-center">
-                <div className="flex flex-col flex-grow">
-                    <div className="text-lg">{days}</div>
-                    <span className="text-sm">{execution_period_code}</span>
-                </div>
+            <div className="reports__list-item__col">
+                <div>{days}</div>
+                <span>{execution_period_code}</span>
             </div>
 
-            <div className={`reports__list-item__status ${statusClass}`}>
+            <div className={`reports__list-item__status status ${statusClass}`}>
                 {status}
             </div>
 

@@ -10,6 +10,7 @@ import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 import handleStatus from "../../utils/handleStatus";
 import parseFormattedMoney from "../../utils/parseFormattedMoney";
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock.js";
 
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
@@ -655,6 +656,8 @@ const ProjectCard = () => {
             getProject(projectId);
         }
     }, []);
+
+    useBodyScrollLock(activeWindow);
 
     return (
         <main className="page">

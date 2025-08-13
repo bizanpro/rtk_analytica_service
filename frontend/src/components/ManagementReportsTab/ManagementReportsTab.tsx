@@ -88,14 +88,7 @@ const ManagementReportsTab = ({ projectId }: { projectId: number }) => {
     }, []);
 
     return !rateEditorState ? (
-        <ul className="grid gap-3">
-            <li className="grid items-center grid-cols-[20%_15%_20%_1fr] gap-3 mb-2 text-gray-400">
-                <span>Месяц</span>
-                <span>Оценка</span>
-                <span>Статус</span>
-                <span>Отвественный</span>
-            </li>
-
+        <ul className="reports__list">
             {list.length > 0 &&
                 list.map((item) => (
                     <ManagementReportListItem

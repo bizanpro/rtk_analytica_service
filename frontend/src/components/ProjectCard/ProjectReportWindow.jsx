@@ -10,6 +10,8 @@ import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
 import Loader from "../Loader";
 
+import "./ReportWindow.scss"
+
 const isValidDateRange = (str) => {
     const regex = /^(\d{2})\.(\d{2})\.(\d{4}) - (\d{2})\.(\d{2})\.(\d{4})$/;
     return regex.test(str);
@@ -433,7 +435,7 @@ const ProjectReportWindow = ({
     }, []);
 
     return (
-        <div className="grid gap-6 relative bg-white">
+        <div className="report-window grid gap-6 relative bg-white">
             {reportId ? isLoading && <Loader /> : !isDataLoaded && <Loader />}
 
             <div className="text-2xl w-full">

@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock.js";
+
 import User from "../User/User";
 import HeaderNav from "../HeaderNav/HeaderNav";
 import Overlay from "../Overlay/Overlay";
@@ -14,6 +16,8 @@ const Header = () => {
     const toggleMenu = () => {
         setIsActive((prev) => !prev);
     };
+
+    useBodyScrollLock(isActive);
 
     return (
         <header className="header">
