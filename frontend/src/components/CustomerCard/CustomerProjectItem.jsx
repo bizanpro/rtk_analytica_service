@@ -29,7 +29,7 @@ const CustomerProjectItem = ({
                 <span className="text-gray-400">{industry}</span>
             </div>
             <div className="flex items-end gap-2">
-                {project_budget && (
+                {project_budget ? (
                     <>
                         <strong className="text-2xl font-normal whitespace-nowrap">
                             {project_budget}
@@ -38,11 +38,13 @@ const CustomerProjectItem = ({
                             млрд <br /> руб.
                         </span>
                     </>
+                ) : (
+                    "—"
                 )}
             </div>
             <div className="grid grid-cols-[1fr_20px] items-start gap-2">
                 <div className="flex flex-col justify-between items-center gap-2">
-                    {implementation_period && (
+                    {implementation_period ? (
                         <>
                             <div className="relative h-[20px] w-full border border-gray-200 overflow-hidden text-center flex items-center justify-center">
                                 <div className="min-w-min whitespace-nowrap">
@@ -60,6 +62,8 @@ const CustomerProjectItem = ({
                                 {implementation_period_string}
                             </span>
                         </>
+                    ) : (
+                        "—"
                     )}
                 </div>
 
