@@ -324,6 +324,8 @@ const ReportWindow = ({
         }
     }, [reportData.report_type_id]);
 
+
+    // Выставление статуса отчета
     const validateApprovalDate = () => {
         if (isValidDate(reportData.approval_date)) {
             const today = new Date();
@@ -349,7 +351,7 @@ const ReportWindow = ({
                     setErrorMessage("");
                     setReportData((prev) => ({
                         ...prev,
-                        report_status_id: 3,
+                        report_status: "Завершен",
                     }));
                 }
             }
@@ -363,27 +365,79 @@ const ReportWindow = ({
                 if (today > startDate) {
                     setReportData((prev) => ({
                         ...prev,
-                        report_status_id: 2,
+                        report_status: "В работе",
                     }));
                 } else if (today < startDate) {
                     setReportData((prev) => ({
                         ...prev,
-                        report_status_id: 1,
+                        report_status: "Запланирован",
                     }));
                 }
             } else {
                 setReportData((prev) => ({
                     ...prev,
-                    report_status_id: "",
+                    report_status: "",
                 }));
             }
         }
+    };
+
+    // Обработка значения статуса отчета в селекте
+    const handleStatus = () => {
+        let statusId;
+
+        switch (reportData.report_status?.toLowerCase()) {
+            case "в работе":
+                statusId = reportStatuses?.find(
+                    (status) => status.name == "В работе"
+                ).id;
+                break;
+
+            case "в процессе":
+                statusId = reportStatuses?.find(
+                    (status) => status.name == "В работе"
+                ).id;
+                break;
+
+            case "завершен":
+                statusId = reportStatuses?.find(
+                    (status) => status.name == "Завершен"
+                ).id;
+                break;
+
+            case "завершён":
+                statusId = reportStatuses?.find(
+                    (status) => status.name == "Завершен"
+                ).id;
+
+                break;
+
+            case "запланирован":
+                statusId = reportStatuses?.find(
+                    (status) => status.name == "Запланирован"
+                ).id;
+
+                break;
+
+            default:
+                statusId = "";
+                break;
+        }
+
+        setReportData((prev) => ({
+            ...prev,
+            report_status_id: statusId,
+        }));
     };
 
     // Обновление статуса проекта в отчете
     useEffect(() => {
         validateApprovalDate();
     }, [reportData.execution_period, reportData.approval_date]);
+
+    useEffect(() => {
+        handleStatus();
+    }, [reportData.report_status, reportStatuses]);
 
     useEffect(() => {
         const fetchData = async () => {
