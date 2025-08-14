@@ -11,6 +11,7 @@ import postData from "../../utils/postData";
 import handleStatus from "../../utils/handleStatus";
 import parseFormattedMoney from "../../utils/parseFormattedMoney";
 import { useBodyScrollLock } from "../../hooks/useBodyScrollLock.js";
+import { useWindowWidth } from "../../hooks/useWindowWidth.js";
 
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
@@ -657,7 +658,15 @@ const ProjectCard = () => {
         }
     }, []);
 
-    useBodyScrollLock(activeWindow);
+    useBodyScrollLock(activeWindow); // Блокируем экран при открытии попапа
+
+    const width = useWindowWidth(); // Снимаем блокировку на десктопе
+
+    useEffect(() => {
+        if (width >= 1440) {
+            setActiveWindow("");
+        }
+    }, [width]);
 
     return (
         <main className="page">
@@ -1085,24 +1094,12 @@ const ProjectCard = () => {
                         </section>
 
                         <section className="card__aside-content project-card__aside-content">
-                            <BottomSheet
-                                onClick={() => setActiveWindow("")}
-                                className={`${
-                                    activeWindow === "statistic" ? "active" : ""
-                                }`}
-                            >
-                                <ProjectStatisticsBlock
-                                    ref={statRef}
-                                    projectId={projectId}
-                                />
-                            </BottomSheet>
+                            <ProjectStatisticsBlock
+                                ref={statRef}
+                                projectId={projectId}
+                            />
 
-                            <BottomSheet
-                                onClick={() => setActiveWindow("")}
-                                className={`${
-                                    activeWindow === "reports" ? "active" : ""
-                                }`}
-                            >
+                            {reports.length > 0 ? (
                                 <div className="reports">
                                     <div className="reports__body">
                                         <nav className="card__tabs reports__tabs">
@@ -1122,7 +1119,7 @@ const ProjectCard = () => {
                                                         activeReportTab ==
                                                         "projectReports"
                                                     }
-                                                    name="active_reports"
+                                                    name="active_reports_1"
                                                     onChange={() =>
                                                         setActiveReportTab(
                                                             "projectReports"
@@ -1149,7 +1146,7 @@ const ProjectCard = () => {
                                                         activeReportTab ==
                                                         "managementReports"
                                                     }
-                                                    name="active_reports"
+                                                    name="active_reports_1"
                                                     onChange={() =>
                                                         setActiveReportTab(
                                                             "managementReports"
@@ -1162,46 +1159,31 @@ const ProjectCard = () => {
                                             </div>
                                         </nav>
 
-                                        {activeReportTab === "projectReports" &&
-                                            (!reportWindowsState ? (
-                                                <ul className="reports__list">
-                                                    {!isDataLoaded && (
-                                                        <Loader />
-                                                    )}
+                                        {activeReportTab ===
+                                            "projectReports" && (
+                                            <ul className="reports__list">
+                                                {!isDataLoaded && <Loader />}
 
-                                                    {reports.length > 0 &&
-                                                        reports.map(
-                                                            (report, index) => (
-                                                                <ProjectReportItem
-                                                                    key={
-                                                                        report.id ||
-                                                                        index
-                                                                    }
-                                                                    {...report}
-                                                                    deleteReport={
-                                                                        deleteReport
-                                                                    }
-                                                                    openReportEditor={
-                                                                        openReportEditor
-                                                                    }
-                                                                    mode={mode}
-                                                                />
-                                                            )
-                                                        )}
-                                                </ul>
-                                            ) : (
-                                                <ReportWindow
-                                                    reportWindowsState={
-                                                        setReportWindowsState
-                                                    }
-                                                    sendReport={sendReport}
-                                                    contracts={contracts}
-                                                    updateReport={updateReport}
-                                                    reportId={reportId}
-                                                    setReportId={setReportId}
-                                                    mode={mode}
-                                                />
-                                            ))}
+                                                {reports.map(
+                                                    (report, index) => (
+                                                        <ProjectReportItem
+                                                            key={
+                                                                report.id ||
+                                                                index
+                                                            }
+                                                            {...report}
+                                                            deleteReport={
+                                                                deleteReport
+                                                            }
+                                                            openReportEditor={
+                                                                openReportEditor
+                                                            }
+                                                            mode={mode}
+                                                        />
+                                                    )
+                                                )}
+                                            </ul>
+                                        )}
 
                                         {activeReportTab ===
                                             "managementReports" && (
@@ -1211,7 +1193,7 @@ const ProjectCard = () => {
                                         )}
                                     </div>
 
-                                    <div className="reports_footer">
+                                    <div className="reports__footer">
                                         {mode == "edit" &&
                                             activeReportTab ==
                                                 "projectReports" && (
@@ -1239,10 +1221,152 @@ const ProjectCard = () => {
                                             )}
                                     </div>
                                 </div>
-                            </BottomSheet>
+                            ) : (
+                                mode == "edit" &&
+                                activeReportTab == "projectReports" && (
+                                    <button
+                                        type="button"
+                                        className="reports__add-btn"
+                                        onClick={() =>
+                                            setReportWindowsState(true)
+                                        }
+                                        disabled={
+                                            projectData.contragent_id
+                                                ? false
+                                                : true
+                                        }
+                                        title={
+                                            projectData.contragent_id
+                                                ? "Создать отчёт"
+                                                : "Необходимо назначить заказчика"
+                                        }
+                                    >
+                                        Создать отчёт
+                                    </button>
+                                )
+                            )}
                         </section>
                     </div>
                 </div>
+
+                {reportWindowsState && (
+                    <ReportWindow
+                        reportWindowsState={setReportWindowsState}
+                        sendReport={sendReport}
+                        contracts={contracts}
+                        updateReport={updateReport}
+                        reportId={reportId}
+                        setReportId={setReportId}
+                        mode={mode}
+                    />
+                )}
+
+                <BottomSheet
+                    onClick={() => setActiveWindow("")}
+                    className={`${
+                        activeWindow === "statistic" ? "active" : ""
+                    }`}
+                >
+                    <ProjectStatisticsBlock
+                        ref={statRef}
+                        projectId={projectId}
+                    />
+                </BottomSheet>
+
+                <BottomSheet
+                    onClick={() => setActiveWindow("")}
+                    className={`${activeWindow === "reports" ? "active" : ""}`}
+                >
+                    <div className="reports">
+                        <div className="reports__body">
+                            <nav className="card__tabs reports__tabs">
+                                <div
+                                    className="card__tabs-item radio-field_tab"
+                                    onClick={() =>
+                                        setActiveReportTab("projectReports")
+                                    }
+                                    aria-label="Открыть вкладку Отчёты проекта"
+                                >
+                                    <input
+                                        id="projectReports"
+                                        type="radio"
+                                        checked={
+                                            activeReportTab == "projectReports"
+                                        }
+                                        name="active_reports"
+                                        onChange={() =>
+                                            setActiveReportTab("projectReports")
+                                        }
+                                    />
+                                    <label htmlFor="projectReports">
+                                        Отчёты проекта
+                                    </label>
+                                </div>
+                                <div
+                                    className="card__tabs-item radio-field_tab"
+                                    onClick={() =>
+                                        setActiveReportTab("projectReports")
+                                    }
+                                    aria-label="Открыть вкладку Отчёты руководителя проекта"
+                                >
+                                    <input
+                                        id="managementReports"
+                                        type="radio"
+                                        checked={
+                                            activeReportTab ==
+                                            "managementReports"
+                                        }
+                                        name="active_reports"
+                                        onChange={() =>
+                                            setActiveReportTab(
+                                                "managementReports"
+                                            )
+                                        }
+                                    />
+                                    <label htmlFor="managementReports">
+                                        Отчёты руководителя проекта
+                                    </label>
+                                </div>
+                            </nav>
+
+                            {activeReportTab === "projectReports" &&
+                                (!reportWindowsState ? (
+                                    <ul className="reports__list">
+                                        {!isDataLoaded && <Loader />}
+
+                                        {reports.length > 0 &&
+                                            reports.map((report, index) => (
+                                                <ProjectReportItem
+                                                    key={report.id || index}
+                                                    {...report}
+                                                    deleteReport={deleteReport}
+                                                    openReportEditor={
+                                                        openReportEditor
+                                                    }
+                                                    mode={mode}
+                                                />
+                                            ))}
+                                    </ul>
+                                ) : (
+                                    <ReportWindow
+                                        reportWindowsState={
+                                            setReportWindowsState
+                                        }
+                                        sendReport={sendReport}
+                                        contracts={contracts}
+                                        updateReport={updateReport}
+                                        reportId={reportId}
+                                        setReportId={setReportId}
+                                        mode={mode}
+                                    />
+                                ))}
+
+                            {activeReportTab === "managementReports" && (
+                                <ManagementReportsTab projectId={projectId} />
+                            )}
+                        </div>
+                    </div>
+                </BottomSheet>
             </section>
 
             <div className="card__bottom-actions">

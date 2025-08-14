@@ -35,7 +35,7 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
     }, [period]);
 
     return (
-        <div className="statistics-block project__statistics-block">
+        <div className="statistics-block project-card__statistics-block">
             {!isDataLoaded && <Loader />}
 
             <nav className="card__tabs statistics-block__tabs">

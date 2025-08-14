@@ -9,6 +9,26 @@
         }
     }
 
+    &__aside-content {
+        display: none;
+        visibility: hidden;
+        pointer-events: none;
+
+        @media (min-width: $media-xxl) {
+            display: block;
+            visibility: visible;
+            pointer-events: all;
+        }
+    }
+
+    .bottom-sheet {
+        @media (min-width: $media-xxl) {
+            display: none;
+            visibility: hidden;
+            pointer-events: none;
+        }
+    }
+
     &__services-list {
         max-height: 175px;
         overflow-y: auto;
