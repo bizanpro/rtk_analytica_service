@@ -33,7 +33,7 @@ const CustomerCard = () => {
     const [selectedManagerReports, setSelectedManagerReports] = useState([]); // Отчёты руководителя выбранного проекта
     const [projects, setProjects] = useState([]); // Проекты
 
-    const [activeProject, setActiveProject] = useState(null);
+    const [activeProject, setActiveProject] = useState(null); // Выбранный проект
 
     const [responsiblePersons, setResponsiblePersons] = useState([]); // Ключевые лица Заказчика
     const [selectedResponsiblePersons, setSelectedResponsiblePersons] =

@@ -34,7 +34,7 @@ const SupplierCard = () => {
     const [selectedManagerReports, setSelectedManagerReports] = useState([]); // Отчёты руководителя выбранного проекта
     const [projects, setProjects] = useState([]); // Проекты
 
-    const [activeProject, setActiveProject] = useState(null);
+    const [activeProject, setActiveProject] = useState(null); // Выбранный проект
 
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
     const [reportId, setReportId] = useState(null);
