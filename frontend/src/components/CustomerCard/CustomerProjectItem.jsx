@@ -18,8 +18,10 @@ const CustomerProjectItem = ({
             }`}
             onClick={() => {
                 getProjectReports(id);
-                getProjectContact(id);
                 setActiveProject(id);
+                if (typeof getProjectContact === "function") {
+                    getProjectContact(id);
+                }
             }}
         >
             <div className="flex flex-col">

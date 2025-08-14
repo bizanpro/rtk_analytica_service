@@ -13,6 +13,7 @@ import FilledExecutorBlock from "../ExecutorBlock/FilledExecutorBlock";
 import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
 import CustomerStatisticBlock from "./CustomerStatisticBlock";
+import CustomerManagementReportsTab from "./CustomerManagementReportsTab";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -116,7 +117,7 @@ const CustomerCard = () => {
             (report) => report.project_id === id
         );
 
-        const targetManagerReport = customerData.manager_reports?.filter(
+        const targetManagerReport = managerReports?.filter(
             (report) => report.project_id === id
         );
 
@@ -505,46 +506,58 @@ const CustomerCard = () => {
                                         </button>
                                     </nav>
 
-                                    {!reportWindowsState ? (
-                                        <ul className="grid gap-3">
-                                            <li className="grid items-center grid-cols-[1fr_1fr_18%_34%] gap-3 mb-2 text-gray-400">
-                                                <span>Проект</span>
-                                                <span>Отчет</span>
-                                                <span className="block text-center">
-                                                    Статус
-                                                </span>
-                                                <span>Период выполнения</span>
-                                            </li>
+                                    {activeReportTab === "projectReports" &&
+                                        (!reportWindowsState ? (
+                                            <ul className="grid gap-3">
+                                                <li className="grid items-center grid-cols-[1fr_1fr_18%_34%] gap-3 mb-2 text-gray-400">
+                                                    <span>Проект</span>
+                                                    <span>Отчет</span>
+                                                    <span className="block text-center">
+                                                        Статус
+                                                    </span>
+                                                    <span>
+                                                        Период выполнения
+                                                    </span>
+                                                </li>
 
-                                            {selectedReports.length > 0 &&
-                                                selectedReports.map(
-                                                    (report, index) => (
-                                                        <CardReportsListItem
-                                                            key={
-                                                                report.id ||
-                                                                index
-                                                            }
-                                                            {...report}
-                                                            openReportEditor={
-                                                                openReportEditor
-                                                            }
-                                                            openSubReportEditor={
-                                                                openSubReportEditor
-                                                            }
-                                                            mode={"read"}
-                                                        />
-                                                    )
-                                                )}
-                                        </ul>
-                                    ) : (
-                                        <ProjectReportWindow
-                                            reportWindowsState={
-                                                setReportWindowsState
+                                                {selectedReports.length > 0 &&
+                                                    selectedReports.map(
+                                                        (report, index) => (
+                                                            <CardReportsListItem
+                                                                key={
+                                                                    report.id ||
+                                                                    index
+                                                                }
+                                                                {...report}
+                                                                openReportEditor={
+                                                                    openReportEditor
+                                                                }
+                                                                openSubReportEditor={
+                                                                    openSubReportEditor
+                                                                }
+                                                                mode={"read"}
+                                                            />
+                                                        )
+                                                    )}
+                                            </ul>
+                                        ) : (
+                                            <ProjectReportWindow
+                                                reportWindowsState={
+                                                    setReportWindowsState
+                                                }
+                                                contracts={contracts}
+                                                reportId={reportId}
+                                                setReportId={setReportId}
+                                                mode={"read"}
+                                            />
+                                        ))}
+
+                                    {activeReportTab ===
+                                        "managementReports" && (
+                                        <CustomerManagementReportsTab
+                                            managerReports={
+                                                selectedManagerReports
                                             }
-                                            contracts={contracts}
-                                            reportId={reportId}
-                                            setReportId={setReportId}
-                                            mode={"read"}
                                         />
                                     )}
                                 </div>

@@ -34,11 +34,7 @@ const SupplierCard = () => {
     const [selectedManagerReports, setSelectedManagerReports] = useState([]); // Отчёты руководителя выбранного проекта
     const [projects, setProjects] = useState([]); // Проекты
 
-    const [projectData, setProjectData] = useState({
-        id: "",
-        name: "",
-        industry: "",
-    }); // Данные проекта для отображения в колонке отчетов
+    const [activeProject, setActiveProject] = useState(null);
 
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
     const [reportId, setReportId] = useState(null);
@@ -54,7 +50,7 @@ const SupplierCard = () => {
     };
 
     // Получаем отчеты по выбранному проекту
-    const getReports = (id) => {
+    const getProjectReports = (id) => {
         setReportWindowsState(false);
 
         const targetReports = reports.filter(
@@ -272,7 +268,7 @@ const SupplierCard = () => {
     const block2Ref = useRef(null);
 
     useOutsideClick([block1Ref, block2Ref], () => {
-        setProjectData({});
+        setActiveProject(null);
         setSelectedReports(reports);
         setSelectedManagerReports(managerReports);
     });
@@ -456,9 +452,6 @@ const SupplierCard = () => {
                                                             deleteBlock={
                                                                 deleteRespPerson
                                                             }
-                                                            // handleChange={
-                                                            //     handleChange
-                                                            // }
                                                         />
                                                     )
                                                 )}
@@ -510,11 +503,15 @@ const SupplierCard = () => {
                                                 <CustomerProjectItem
                                                     key={project.id}
                                                     {...project}
-                                                    setProjectData={
-                                                        setProjectData
+                                                    setActiveProject={
+                                                        setActiveProject
                                                     }
-                                                    projectData={projectData}
-                                                    getReports={getReports}
+                                                    activeProject={
+                                                        activeProject
+                                                    }
+                                                    getProjectReports={
+                                                        getProjectReports
+                                                    }
                                                 />
                                             ))}
                                     </ul>
