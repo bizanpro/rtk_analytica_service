@@ -6,18 +6,20 @@ const CustomerProjectItem = ({
     implementation_period_string,
     industry,
     status,
-    getReports,
-    setProjectData,
-    projectData,
+    getProjectReports,
+    getProjectContact,
+    setActiveProject,
+    activeProject,
 }) => {
     return (
         <li
             className={`p-2 grid items-center grid-cols-[30%_27%_1fr] gap-3 cursor-pointer border-2 transition-all ${
-                projectData.id === id ? "border-gray-300" : "border-transparent"
+                activeProject === id ? "border-gray-300" : "border-transparent"
             }`}
             onClick={() => {
-                getReports(id);
-                setProjectData({ id, name, industry }); // вероятно, больше не нужно
+                getProjectReports(id);
+                getProjectContact(id);
+                setActiveProject(id);
             }}
         >
             <div className="flex flex-col">

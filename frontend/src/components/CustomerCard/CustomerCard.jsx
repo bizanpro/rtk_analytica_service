@@ -32,13 +32,11 @@ const CustomerCard = () => {
     const [selectedManagerReports, setSelectedManagerReports] = useState([]); // Отчёты руководителя выбранного проекта
     const [projects, setProjects] = useState([]); // Проекты
 
-    const [projectData, setProjectData] = useState({
-        id: "",
-        name: "",
-        industry: "",
-    }); // Данные проекта для отображения в колонке отчетов
+    const [activeProject, setActiveProject] = useState(null);
 
     const [responsiblePersons, setResponsiblePersons] = useState([]); // Ключевые лица Заказчика
+    const [selectedResponsiblePersons, setSelectedResponsiblePersons] =
+        useState([]); // Ключевые лица Заказчика выбранного проекта
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
     const [reportId, setReportId] = useState(null);
     const [contracts, setContracts] = useState([]);
@@ -80,7 +78,8 @@ const CustomerCard = () => {
             Accept: "application/json",
         }).then((response) => {
             if (response.status == 200) {
-                setResponsiblePersons(response.data.data?.contacts);
+                setResponsiblePersons(response.data.data);
+                setSelectedResponsiblePersons(response.data.data);
             }
         });
     };
@@ -110,7 +109,7 @@ const CustomerCard = () => {
     };
 
     // Получение отчетов по выбранному проекту
-    const getReports = (id) => {
+    const getProjectReports = (id) => {
         setReportWindowsState(false);
 
         const targetReports = reports.filter(
@@ -132,6 +131,13 @@ const CustomerCard = () => {
         } else {
             setSelectedManagerReports([]);
         }
+    };
+
+    // Получение ключевых лиц выбранного проекта
+    const getProjectContact = (id) => {
+        setSelectedResponsiblePersons(
+            responsiblePersons.projects?.find((item) => item.id === id)
+        );
     };
 
     // Получение договоров
@@ -226,9 +232,10 @@ const CustomerCard = () => {
     const block2Ref = useRef(null);
 
     useOutsideClick([block1Ref, block2Ref], () => {
-        setProjectData({});
+        setActiveProject(null);
         setSelectedReports(reports);
         setSelectedManagerReports(managerReports);
+        setSelectedResponsiblePersons(responsiblePersons);
     });
 
     return (
@@ -369,13 +376,16 @@ const CustomerCard = () => {
 
                                 <div className="border-2 border-gray-300 py-5 px-3 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
                                     <ul className="grid gap-5">
-                                        {responsiblePersons.length > 0 &&
-                                            responsiblePersons.map((person) => (
-                                                <FilledExecutorBlock
-                                                    key={person.id}
-                                                    contanct={person}
-                                                />
-                                            ))}
+                                        {selectedResponsiblePersons?.contacts
+                                            ?.length > 0 &&
+                                            selectedResponsiblePersons?.contacts?.map(
+                                                (person) => (
+                                                    <FilledExecutorBlock
+                                                        key={person.id}
+                                                        contanct={person}
+                                                    />
+                                                )
+                                            )}
                                     </ul>
                                 </div>
                             </div>
@@ -423,11 +433,18 @@ const CustomerCard = () => {
                                                 <CustomerProjectItem
                                                     key={project.id}
                                                     {...project}
-                                                    setProjectData={
-                                                        setProjectData
+                                                    setActiveProject={
+                                                        setActiveProject
                                                     }
-                                                    projectData={projectData}
-                                                    getReports={getReports}
+                                                    activeProject={
+                                                        activeProject
+                                                    }
+                                                    getProjectReports={
+                                                        getProjectReports
+                                                    }
+                                                    getProjectContact={
+                                                        getProjectContact
+                                                    }
                                                 />
                                             ))}
                                     </ul>
@@ -508,9 +525,6 @@ const CustomerCard = () => {
                                                                 index
                                                             }
                                                             {...report}
-                                                            projectData={
-                                                                projectData
-                                                            }
                                                             openReportEditor={
                                                                 openReportEditor
                                                             }
@@ -533,7 +547,6 @@ const CustomerCard = () => {
                                             mode={"read"}
                                         />
                                     )}
-                                    
                                 </div>
                             </div>
                         </div>
