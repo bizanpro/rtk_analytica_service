@@ -231,8 +231,9 @@ const CustomerCard = () => {
 
     const block1Ref = useRef(null);
     const block2Ref = useRef(null);
+    const block3Ref = useRef(null);
 
-    useOutsideClick([block1Ref, block2Ref], () => {
+    useOutsideClick([block1Ref, block2Ref, block3Ref], () => {
         setActiveProject(null);
         setSelectedReports(reports);
         setSelectedManagerReports(managerReports);
@@ -454,9 +455,12 @@ const CustomerCard = () => {
                         </div>
 
                         <div className="flex flex-col">
-                            <CustomerStatisticBlock
-                                contragentId={contragentId}
-                            />
+                            <div ref={block3Ref}>
+                                <CustomerStatisticBlock
+                                    contragentId={contragentId}
+                                    activeProject={activeProject}
+                                />
+                            </div>
 
                             <div className="flex flex-col gap-2 flex-grow">
                                 <div className="flex items-center gap-2">

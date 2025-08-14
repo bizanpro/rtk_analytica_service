@@ -4,19 +4,24 @@ import getData from "../../utils/getData";
 
 import Loader from "../Loader";
 
-const CustomerStatisticBlock = ({ contragentId }) => {
+const CustomerStatisticBlock = ({ contragentId, activeProject }) => {
     const [period, setPeriod] = useState("current_year");
     const [revenue, setRevenue] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
+    const URL =
+        activeProject != null
+            ? `${
+                  import.meta.env.VITE_API_URL
+              }projects/${activeProject}/revenue/?period=${period}`
+            : `${
+                  import.meta.env.VITE_API_URL
+              }contragents/${contragentId}/financial-metrics/?period=${period}`;
+
     const getRevenue = () => {
         setIsDataLoaded(false);
 
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }contragents/${contragentId}/customer-metrics/?period=${period}`
-        )
+        getData(URL)
             .then((response) => {
                 if (response.status == 200) {
                     setRevenue(response.data);
@@ -27,7 +32,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
 
     useEffect(() => {
         getRevenue();
-    }, [period]);
+    }, [period, activeProject]);
 
     return (
         <div className="border-2 border-gray-300 p-5 mb-5 relative">
@@ -86,7 +91,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                             revenue.revenue?.label
                         }
                     >
-                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong className="font-normal text-3xl max-w-[100px] whitespace-nowrap">
                             {(revenue.revenue?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -96,6 +101,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                         </small>
                     </div>
                 </div>
+
                 <div className="flex flex-col gap-2">
                     <div className="text-gray-400">Поступления</div>
                     <div
@@ -108,7 +114,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                             revenue.receipts?.label
                         }
                     >
-                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong className="font-normal text-3xl max-w-[100px] whitespace-nowrap">
                             {(revenue.receipts?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -118,6 +124,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                         </small>
                     </div>
                 </div>
+
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-gray-400">
                         ДЗ
@@ -135,7 +142,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                             revenue.debts?.label
                         }
                     >
-                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong className="font-normal text-3xl max-w-[100px] whitespace-nowrap">
                             {(revenue.debts?.value ?? 0).toLocaleString(
                                 "de-DE"
                             )}
@@ -146,6 +153,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                     </div>
                 </div>
             </div>
+
             <div className="grid items-stretch grid-cols-3 gap-3">
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center flex-grow gap-2 text-gray-400">
@@ -164,7 +172,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                             revenue.gross_profit?.label
                         }
                     >
-                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong className="font-normal text-3xl max-w-[100px] whitespace-nowrap">
                             {revenue.gross_profit?.value ?? 0}
                         </strong>
                         <small className="text-xl">
@@ -172,6 +180,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                         </small>
                     </div>
                 </div>
+
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-gray-400">
                         Подрячики
@@ -189,7 +198,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                             revenue.suppliers_expenses?.label
                         }
                     >
-                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong className="font-normal text-3xl max-w-[100px] whitespace-nowrap">
                             {(
                                 revenue.suppliers_expenses?.value ?? 0
                             ).toLocaleString("de-DE")}
@@ -199,6 +208,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                         </small>
                     </div>
                 </div>
+
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-gray-400">
                         Валовая рент.
@@ -216,7 +226,7 @@ const CustomerStatisticBlock = ({ contragentId }) => {
                             revenue.gross_margin?.label
                         }
                     >
-                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <strong className="font-normal text-3xl max-w-[100px] whitespace-nowrap">
                             {revenue.gross_margin?.value ?? 0}
                         </strong>
                         <small className="text-xl">

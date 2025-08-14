@@ -322,6 +322,8 @@ const ProjectReportWindow = ({
         }
     }, [reportData.report_type_id]);
 
+
+    // Выставление статуса отчета
     const validateApprovalDate = () => {
         if (isValidDate(reportData.approval_date)) {
             const today = new Date();
@@ -378,6 +380,7 @@ const ProjectReportWindow = ({
         }
     };
 
+    // Обработка значения статуса отчета в селекте
     const handleStatus = () => {
         let statusId;
 
