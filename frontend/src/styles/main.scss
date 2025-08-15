@@ -694,3 +694,14 @@ body {
         }
     }
 }
+
+.message {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 140%;
+    padding: 8px 0;
+
+    &-error {
+        color: var(--color-red-60);
+    }
+}

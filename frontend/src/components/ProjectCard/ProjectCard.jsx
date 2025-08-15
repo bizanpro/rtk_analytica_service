@@ -14,6 +14,7 @@ import { useBodyScrollLock } from "../../hooks/useBodyScrollLock.js";
 import { useWindowWidth } from "../../hooks/useWindowWidth.js";
 
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
+import EditExecutorBlock from "../ExecutorBlock/EditExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
 import ReportWindow from "../ReportWindow/ReportWindow.jsx";
 import ProjectReportItem from "./ProjectReportItem";
@@ -57,6 +58,7 @@ const ProjectCard = () => {
     const [mode, setMode] = useState("edit");
     const [activeReportTab, setActiveReportTab] = useState("projectReports"); // Активная вкладка отчетов
     const [activeWindow, setActiveWindow] = useState(""); // Активное окно на мобилке (Отчеты или ОСВ)
+    const [isEditExecutor, setIsEditExecutor] = useState("");
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [firstInit, setFirstInit] = useState(true);
@@ -75,6 +77,7 @@ const ProjectCard = () => {
 
     const [addCreditor, setAddCreditor] = useState(false); // Добавить кредитора
     const [addCustomer, setAddCustomer] = useState(false); // Добавить заказчика
+    const [executorEditData, setExecutorEditData] = useState({});
 
     const [reports, setReports] = useState([]); // Отчеты
     const [managementReports, setManagementReports] = useState([]); // Отчеты руководителя
@@ -247,7 +250,15 @@ const ProjectCard = () => {
         }
     };
 
-    // Отправляем кредитора и заказчика
+    const openExecutorPopup = (data, type) => {
+        setExecutorEditData(data);
+        setIsEditExecutor(type);
+    };
+
+    // Изменение контакта кредитора или заказчика
+    const editExecutor = () => {};
+
+    // Отправляем контакт кредитора или заказчика
     const sendExecutor = (type, data) => {
         query = toast.loading("Выполняется отправка", {
             containerId: "projectCard",
@@ -942,6 +953,7 @@ const ProjectCard = () => {
                                                 mode={mode}
                                                 type={"customer"}
                                                 deleteBlock={deleteCustomer}
+                                                editBlock={openExecutorPopup}
                                             />
                                         ))
                                     ) : (
@@ -1054,6 +1066,7 @@ const ProjectCard = () => {
                                                 banks={banks}
                                                 type={"creditor"}
                                                 deleteBlock={deleteCreditor}
+                                                editBlock={openExecutorPopup}
                                             />
                                         ))
                                     ) : (
@@ -1264,6 +1277,17 @@ const ProjectCard = () => {
                         </section>
                     </div>
                 </div>
+
+                {isEditExecutor != "" && (
+                    <EditExecutorBlock
+                        projectId={projectId}
+                        executorEditData={executorEditData}
+                        banks={banks}
+                        type={isEditExecutor}
+                        removeBlock={() => setIsEditExecutor("")}
+                        editExecutor={editExecutor}
+                    />
+                )}
 
                 {reportWindowsState && (
                     <ReportWindow

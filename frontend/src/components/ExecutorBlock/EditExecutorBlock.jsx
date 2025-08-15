@@ -8,31 +8,17 @@ import SelectList from "../MultiSelect/SelectList";
 
 import "./ExecutorBlock.scss";
 
-const CREDITOR_TEMPLATE = {
-    full_name: "",
-    phone: "",
-    position: "",
-    email: "",
-    creditor_id: "",
-};
-
-const CUSTOMER_TEMPLATE = {
-    full_name: "",
-    phone: "",
-    position: "",
-    email: "",
-};
-
 const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 };
 
-const EmptyExecutorBlock = ({
+const EditExecutorBlock = ({
     removeBlock,
     banks,
     type,
-    sendExecutor,
+    editExecutor,
+    executorEditData,
     projectId,
 }) => {
     const PhoneMask = "+{7}(000) 000 00 00";
@@ -43,9 +29,7 @@ const EmptyExecutorBlock = ({
     );
     const [contactsList, setContactsList] = useState([]);
     const [allContacts, setAllContacts] = useState([]);
-    const [newContact, setNewContact] = useState(
-        type === "creditor" ? CREDITOR_TEMPLATE : CUSTOMER_TEMPLATE
-    );
+    const [newContact, setNewContact] = useState(executorEditData || {});
     const [activeTab, setActiveTab] = useState("create");
     const [isFilled, setIsFilled] = useState(false);
 
@@ -67,7 +51,7 @@ const EmptyExecutorBlock = ({
 
         setErrors(newErrors);
         if (Object.values(newErrors).some((err) => err)) return;
-        sendExecutor(type, newContact);
+        editExecutor(type, newContact);
     };
 
     // Получение доступных для добавления контактных лиц кредитора
@@ -124,7 +108,10 @@ const EmptyExecutorBlock = ({
     useEffect(() => {
         setIsFilled(
             Object.values(newContact).every(
-                (value) => value && value.trim() !== ""
+                (value) =>
+                    value !== null &&
+                    value !== undefined &&
+                    String(value).trim() !== ""
             )
         );
     }, [newContact]);
@@ -133,7 +120,7 @@ const EmptyExecutorBlock = ({
         <Popup
             className={`executor-block-wrapper_${type}`}
             onClick={removeBlock}
-            title="Добавить ключевое лицо"
+            title={`${type === "creditor" ? "Редактировать кредитора" : "Редактировать заказчика"}`}
         >
             <div className="action-form__body executor-block">
                 {type === "creditor" && activeTab === "create" && (
@@ -143,6 +130,7 @@ const EmptyExecutorBlock = ({
                             className={`form-field w-full ${
                                 errors.creditor_id ? "form-field_error" : ""
                             }`}
+                            value={newContact.creditor_id}
                             onChange={(e) =>
                                 setNewContact({
                                     ...newContact,
@@ -330,9 +318,9 @@ const EmptyExecutorBlock = ({
                         className="action-button flex-[1_0_auto]"
                         onClick={handleSave}
                         disabled={!isFilled}
-                        title="Добавить исполнителя"
+                        title="Сохранить изменения"
                     >
-                        Добавить
+                        Сохранить
                     </button>
                 </div>
             </div>
@@ -340,4 +328,4 @@ const EmptyExecutorBlock = ({
     );
 };
 
-export default EmptyExecutorBlock;
+export default EditExecutorBlock;

@@ -26,9 +26,18 @@
         font-weight: 400;
         font-size: 14px;
         line-height: 140%;
+        transition: border var(--trans);
 
         ::placeholder {
             color: var(--color-gray-60);
+        }
+
+        &:focus {
+            border: 1px solid var(--color-blue-70);
+        }
+
+        &_error {
+            border: 1px solid var(--color-red-60);
         }
     }
 
@@ -229,6 +238,11 @@
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
+        transition: border var(--trans);
+
+        &:focus {
+            border: 1px solid var(--color-blue-70);
+        }
 
         &::placeholder {
             color: var(--color-gray-60);
@@ -245,6 +259,11 @@
         line-height: 140%;
         background: var(--color-gray-20);
         min-height: 80px;
+        transition: border var(--trans);
+
+        &:focus {
+            border: 1px solid var(--color-blue-70);
+        }
 
         &::placeholder {
             color: var(--color-gray-60);

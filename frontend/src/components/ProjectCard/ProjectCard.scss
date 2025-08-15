@@ -54,6 +54,7 @@
 
             @media (min-width: $media-md) {
                 grid-template-columns: 10% 1fr 1fr 1fr;
+                grid-template-rows: auto;
             }
 
             @media (min-width: $media-lg) {
