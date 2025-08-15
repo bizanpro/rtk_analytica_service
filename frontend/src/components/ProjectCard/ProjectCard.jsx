@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
     useParams,
     useLocation,
@@ -18,6 +18,7 @@ import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
 import ReportWindow from "../ReportWindow/ReportWindow.jsx";
 import ProjectReportItem from "./ProjectReportItem";
 import ProjectStatisticsBlock from "./ProjectStatisticsBlock";
+import ProjectStatisticsBlockMobile from "./ProjectStatisticsBlockMobile";
 import ProjectTeam from "./ProjectTeam";
 import ReportServices from "./ReportServices";
 import ProjectImplementationPeriod from "./ProjectImplementationPeriod";
@@ -25,6 +26,7 @@ import ProjectBudget from "./ProjectBudget";
 import Loader from "../Loader";
 import AutoResizeTextarea from "../AutoResizeTextarea";
 import ManagementReportsTab from "../ManagementReportsTab/ManagementReportsTab";
+import ManagementReportsTabMobile from "../ManagementReportsTab/ManagementReportsTabMobile";
 import Hint from "../Hint/Hint";
 import CreatableSelect from "react-select/creatable";
 import MultiSelectField from "../MultiSelect/MultiSelectField";
@@ -56,8 +58,6 @@ const ProjectCard = () => {
     const [activeReportTab, setActiveReportTab] = useState("projectReports"); // Активная вкладка отчетов
     const [activeWindow, setActiveWindow] = useState(""); // Активное окно на мобилке (Отчеты или ОСВ)
 
-    const statRef = useRef(null);
-
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [firstInit, setFirstInit] = useState(true);
 
@@ -77,15 +77,14 @@ const ProjectCard = () => {
     const [addCustomer, setAddCustomer] = useState(false); // Добавить заказчика
 
     const [reports, setReports] = useState([]); // Отчеты
+    const [managementReports, setManagementReports] = useState([]); // Отчеты руководителя
     const [reportId, setReportId] = useState(null);
 
     const [teamData, setTeamData] = useState([]); // Команда проекта
     const [services, setServices] = useState([]); // Услуги
 
-    // Обновляем блок ОСВ
-    const handleUpdate = () => {
-        statRef.current?.refreshRevenue();
-    };
+    const [revenue, setRevenue] = useState({}); // ОСВ
+    const [period, setPeriod] = useState("current_year"); // Период ОСВ
 
     // Закрепленные за карточкой банки для отображения вкладок
     const matchedBanks = banks.filter((bank) =>
@@ -228,7 +227,7 @@ const ProjectCard = () => {
             ];
 
             if (!firstInit) {
-                tasks.push(handleUpdate());
+                getRevenue();
             }
 
             await Promise.all(tasks);
@@ -604,6 +603,19 @@ const ProjectCard = () => {
             });
     };
 
+    // Получение ОСВ
+    const getRevenue = (period) => {
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }projects/${projectId}/revenue/?period=${period}`
+        ).then((response) => {
+            if (response.status == 200) {
+                setRevenue(response.data);
+            }
+        });
+    };
+
     useEffect(() => {
         if (projectData.creditors) {
             setFormFields((prev) => ({
@@ -659,7 +671,6 @@ const ProjectCard = () => {
     }, []);
 
     useBodyScrollLock(activeWindow); // Блокируем экран при открытии попапа
-
     const width = useWindowWidth(); // Снимаем блокировку на десктопе
 
     useEffect(() => {
@@ -1095,8 +1106,10 @@ const ProjectCard = () => {
 
                         <section className="card__aside-content project-card__aside-content">
                             <ProjectStatisticsBlock
-                                ref={statRef}
-                                projectId={projectId}
+                                revenue={revenue}
+                                getRevenue={getRevenue}
+                                period={period}
+                                setPeriod={setPeriod}
                             />
 
                             {reports.length > 0 ? (
@@ -1189,6 +1202,9 @@ const ProjectCard = () => {
                                             "managementReports" && (
                                             <ManagementReportsTab
                                                 projectId={projectId}
+                                                setManagementReports={
+                                                    setManagementReports
+                                                }
                                             />
                                         )}
                                     </div>
@@ -1267,9 +1283,11 @@ const ProjectCard = () => {
                         activeWindow === "statistic" ? "active" : ""
                     }`}
                 >
-                    <ProjectStatisticsBlock
-                        ref={statRef}
-                        projectId={projectId}
+                    <ProjectStatisticsBlockMobile
+                        revenue={revenue}
+                        getRevenue={getRevenue}
+                        period={period}
+                        setPeriod={setPeriod}
                     />
                 </BottomSheet>
 
@@ -1329,40 +1347,29 @@ const ProjectCard = () => {
                                 </div>
                             </nav>
 
-                            {activeReportTab === "projectReports" &&
-                                (!reportWindowsState ? (
-                                    <ul className="reports__list">
-                                        {!isDataLoaded && <Loader />}
+                            {activeReportTab === "projectReports" && (
+                                <ul className="reports__list">
+                                    {!isDataLoaded && <Loader />}
 
-                                        {reports.length > 0 &&
-                                            reports.map((report, index) => (
-                                                <ProjectReportItem
-                                                    key={report.id || index}
-                                                    {...report}
-                                                    deleteReport={deleteReport}
-                                                    openReportEditor={
-                                                        openReportEditor
-                                                    }
-                                                    mode={mode}
-                                                />
-                                            ))}
-                                    </ul>
-                                ) : (
-                                    <ReportWindow
-                                        reportWindowsState={
-                                            setReportWindowsState
-                                        }
-                                        sendReport={sendReport}
-                                        contracts={contracts}
-                                        updateReport={updateReport}
-                                        reportId={reportId}
-                                        setReportId={setReportId}
-                                        mode={mode}
-                                    />
-                                ))}
+                                    {reports.length > 0 &&
+                                        reports.map((report, index) => (
+                                            <ProjectReportItem
+                                                key={report.id || index}
+                                                {...report}
+                                                deleteReport={deleteReport}
+                                                openReportEditor={
+                                                    openReportEditor
+                                                }
+                                                mode={mode}
+                                            />
+                                        ))}
+                                </ul>
+                            )}
 
                             {activeReportTab === "managementReports" && (
-                                <ManagementReportsTab projectId={projectId} />
+                                <ManagementReportsTabMobile
+                                    managementReports={managementReports}
+                                />
                             )}
                         </div>
                     </div>

@@ -563,7 +563,7 @@ body {
             align-items: center;
             grid-template-columns: 1fr 1fr 100px;
             gap: 35px;
-            padding: 20px;
+            padding: 20px 0;
         }
 
         &:hover {
@@ -575,6 +575,7 @@ body {
         &__status {
             @media (min-width: $media-xxl) {
                 margin-left: auto;
+                margin-right: 20px;
                 font-weight: 500;
                 font-size: 12px;
                 line-height: 150%;
@@ -589,7 +590,7 @@ body {
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                right: -5px;
+                right: -3px;
             }
         }
 

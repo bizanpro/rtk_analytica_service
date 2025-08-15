@@ -1,22 +1,13 @@
-import { useState, useEffect } from "react";
-
-import getData from "../../utils/getData";
+import { useState } from "react";
 
 import ManagementReportListItem from "./ManagementReportListItem";
 import ReportRateEditor from "../Reports/ReportRateEditor";
 
-const URL = `${import.meta.env.VITE_API_URL}projects`;
-
-interface ManagementReportsTabProps {
-    projectId: number;
-    setManagementReports: React.Dispatch<React.SetStateAction<any[]>>;
-}
-
 const ManagementReportsTab = ({
-    projectId,
-    setManagementReports,
-}: ManagementReportsTabProps) => {
-    const [list, setList] = useState([]);
+    managementReports,
+}: {
+    managementReports: [];
+}) => {
     const [rateEditorState, setRateEditorState] = useState(false); // Редактор оценки отчёта
     const [reportData, setReportData] = useState({});
 
@@ -83,23 +74,10 @@ const ManagementReportsTab = ({
         //     });
     };
 
-    const getList = () => {
-        getData(`${URL}/${projectId}/manager-reports`).then((response) => {
-            if (response.status == 200) {
-                setList(response.data);
-                setManagementReports(response.data);
-            }
-        });
-    };
-
-    useEffect(() => {
-        getList();
-    }, []);
-
     return !rateEditorState ? (
         <ul className="reports__list">
-            {list.length > 0 &&
-                list.map((item) => (
+            {managementReports.length > 0 &&
+                managementReports.map((item) => (
                     <ManagementReportListItem
                         openEditor={openRateReportEditor}
                         reportData={item}
@@ -116,11 +94,3 @@ const ManagementReportsTab = ({
 };
 
 export default ManagementReportsTab;
-
-// interface RateSwitchProps {
-//     name: string;
-//     rateHandler: (name: string, value: string | number) => void;
-//     reportRateData: Record<string, number | undefined>;
-// }
-
-// const RateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {

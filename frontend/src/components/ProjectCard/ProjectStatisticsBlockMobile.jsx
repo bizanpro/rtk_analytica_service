@@ -1,22 +1,24 @@
-import { useEffect } from "react";
-
 import Hint from "../Hint/Hint";
 
-const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
-    useEffect(() => {
-        getRevenue(period);
-    }, [period]);
-
+const ProjectStatisticsBlockMobile = ({
+    revenue,
+    getRevenue,
+    period,
+    setPeriod,
+}) => {
     return (
         <div className="statistics-block project-card__statistics-block">
             <nav className="card__tabs statistics-block__tabs">
                 <div className="card__tabs-item radio-field_tab">
                     <input
                         type="radio"
-                        name="time_sort"
+                        name="time_sort_1"
                         id="this_year"
                         checked={period === "current_year"}
-                        onChange={() => setPeriod("current_year")}
+                        onChange={() => {
+                            getRevenue();
+                            setPeriod("current_year");
+                        }}
                     />
                     <label
                         className="bg-gray-200 py-1 px-2 text-center rounded-md"
@@ -28,10 +30,13 @@ const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
                 <div className="card__tabs-item radio-field_tab">
                     <input
                         type="radio"
-                        name="time_sort"
+                        name="time_sort_1"
                         id="all_time"
                         checked={period === "all"}
-                        onChange={() => setPeriod("all")}
+                        onChange={() => {
+                            getRevenue();
+                            setPeriod("all");
+                        }}
                     />
                     <label
                         className="bg-gray-200 py-1 px-2 text-center rounded-md"
@@ -227,4 +232,4 @@ const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
     );
 };
 
-export default ProjectStatisticsBlock;
+export default ProjectStatisticsBlockMobile;
