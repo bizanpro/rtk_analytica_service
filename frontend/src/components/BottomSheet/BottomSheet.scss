@@ -21,7 +21,7 @@
         pointer-events: all;
 
         .bottom-sheet__wrapper {
-            transform: translate3d(0, -100%, 0);
+            transform: translate3d(0, 0, 0);
         }
     }
 
@@ -29,12 +29,12 @@
         position: fixed;
         width: 100%;
         height: calc(100vh - 40px);
-        bottom: -100%;
+        bottom: 0;
         left: 0;
         right: 0;
         background: var(--color-white);
         border-radius: 10px 10px 0 0;
-        transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 100%, 0);
         transition: transform var(--trans);
         will-change: transfrom;
         display: flex;
