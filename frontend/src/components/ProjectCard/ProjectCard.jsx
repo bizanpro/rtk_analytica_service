@@ -256,7 +256,109 @@ const ProjectCard = () => {
     };
 
     // Изменение контакта кредитора или заказчика
-    const editExecutor = () => {};
+    const editExecutor = (type, data) => {
+        // query = toast.loading("Выполняется отправка", {
+        //     containerId: "projectCard",
+        //     position: "top-center",
+        // });
+
+        // data.project_id = projectId;
+
+        // if (type === "creditor") {
+        //     postData(
+        //         "POST",
+        //         `${import.meta.env.VITE_API_URL}responsible-persons/creditor`,
+        //         data
+        //     )
+        //         .then((response) => {
+        //             if (response?.ok) {
+        //                 getProject(projectId);
+        //                 setAddCreditor(false);
+
+        //                 toast.update(query, {
+        //                     render:
+        //                         response.message ||
+        //                         "Ошибка прикрепления исполнителя",
+        //                     type: "success",
+        //                     containerId: "projectCard",
+        //                     isLoading: false,
+        //                     autoClose: 1200,
+        //                     pauseOnFocusLoss: false,
+        //                     pauseOnHover: false,
+        //                     position: "top-center",
+        //                 });
+        //             }
+        //         })
+        //         .catch((error) => {
+        //             toast.dismiss(query);
+        //             toast.error(
+        //                 error.message || "Ошибка прикрепления исполнителя",
+        //                 {
+        //                     containerId: "projectCard",
+        //                     isLoading: false,
+        //                     autoClose: 3500,
+        //                     pauseOnFocusLoss: false,
+        //                     pauseOnHover: false,
+        //                     position: "top-center",
+        //                 }
+        //             );
+        //         });
+        // } else if (type === "customer") {
+        //     if (projectData?.contragent_id) {
+        //         data.contragent_id = projectData?.contragent_id;
+
+        //         postData(
+        //             "POST",
+        //             `${
+        //                 import.meta.env.VITE_API_URL
+        //             }responsible-persons/contragent`,
+        //             data
+        //         )
+        //             .then((response) => {
+        //                 if (response?.ok) {
+        //                     setAddCustomer(false);
+
+        //                     if (response?.responsible_person) {
+        //                         setCustomers((prevCustomer) => [
+        //                             ...prevCustomer,
+        //                             response.responsible_person
+        //                                 ?.contragent_contact,
+        //                         ]);
+        //                     }
+
+        //                     toast.update(query, {
+        //                         render:
+        //                             response.message ||
+        //                             "Ошибка прикрепления исполнителя",
+        //                         type: "success",
+        //                         containerId: "projectCard",
+        //                         isLoading: false,
+        //                         autoClose: 1200,
+        //                         pauseOnFocusLoss: false,
+        //                         pauseOnHover: false,
+        //                         position: "top-center",
+        //                     });
+        //                 }
+        //             })
+        //             .catch((error) => {
+        //                 toast.dismiss(query);
+        //                 toast.error(
+        //                     error.message || "Ошибка прикрепления исполнителя",
+        //                     {
+        //                         containerId: "projectCard",
+        //                         isLoading: false,
+        //                         autoClose: 3500,
+        //                         pauseOnFocusLoss: false,
+        //                         pauseOnHover: false,
+        //                         position: "top-center",
+        //                     }
+        //                 );
+        //             });
+        //     } else {
+        //         alert("Необходимо назначить заказчика");
+        //     }
+        // }
+    };
 
     // Отправляем контакт кредитора или заказчика
     const sendExecutor = (type, data) => {
