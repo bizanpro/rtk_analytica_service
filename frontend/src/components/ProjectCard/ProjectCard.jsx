@@ -361,7 +361,6 @@ const ProjectCard = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-                    getContragentsContacts();
                 }
                 return response;
             } catch (error) {

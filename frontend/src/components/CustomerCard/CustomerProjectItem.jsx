@@ -6,18 +6,22 @@ const CustomerProjectItem = ({
     implementation_period_string,
     industry,
     status,
-    getReports,
-    setProjectData,
-    projectData,
+    getProjectReports,
+    getProjectContact,
+    setActiveProject,
+    activeProject,
 }) => {
     return (
         <li
             className={`p-2 grid items-center grid-cols-[30%_27%_1fr] gap-3 cursor-pointer border-2 transition-all ${
-                projectData.id === id ? "border-gray-300" : "border-transparent"
+                activeProject === id ? "border-gray-300" : "border-transparent"
             }`}
             onClick={() => {
-                getReports(id);
-                setProjectData({ id, name, industry }); // вероятно, больше не нужно
+                getProjectReports(id);
+                setActiveProject(id);
+                if (typeof getProjectContact === "function") {
+                    getProjectContact(id);
+                }
             }}
         >
             <div className="flex flex-col">
@@ -25,7 +29,7 @@ const CustomerProjectItem = ({
                 <span className="text-gray-400">{industry}</span>
             </div>
             <div className="flex items-end gap-2">
-                {project_budget && (
+                {project_budget ? (
                     <>
                         <strong className="text-2xl font-normal whitespace-nowrap">
                             {project_budget}
@@ -34,11 +38,13 @@ const CustomerProjectItem = ({
                             млрд <br /> руб.
                         </span>
                     </>
+                ) : (
+                    "—"
                 )}
             </div>
             <div className="grid grid-cols-[1fr_20px] items-start gap-2">
                 <div className="flex flex-col justify-between items-center gap-2">
-                    {implementation_period && (
+                    {implementation_period ? (
                         <>
                             <div className="relative h-[20px] w-full border border-gray-200 overflow-hidden text-center flex items-center justify-center">
                                 <div className="min-w-min whitespace-nowrap">
@@ -56,6 +62,8 @@ const CustomerProjectItem = ({
                                 {implementation_period_string}
                             </span>
                         </>
+                    ) : (
+                        "—"
                     )}
                 </div>
 
