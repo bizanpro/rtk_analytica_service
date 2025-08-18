@@ -397,6 +397,17 @@ const EmployeeCard = () => {
         }
     }, [employeeData?.is_active]);
 
+    useEffect(() => {
+        if (!employeeData?.is_staff) {
+            setEmployeeData((prev) => ({
+                ...prev,
+                dismissal_date: null,
+                employment_date: null,
+                is_active: true,
+            }));
+        }
+    }, [employeeData?.is_staff]);
+
     return (
         <main className="page">
             <div className="pt-8 pb-15">
@@ -428,19 +439,28 @@ const EmployeeCard = () => {
                                         </option>
                                     </select>
 
-                                    <select
-                                        className="border-2 h-[32px] p-1 border border-gray-300 min-w-[120px] cursor-pointer"
-                                        value={String(employeeData.is_active)}
-                                        onChange={(e) =>
-                                            handleInputChange(e, "is_active")
-                                        }
-                                        disabled={mode == "read"}
-                                    >
-                                        <option value="true">работает</option>
-                                        <option value="false">
-                                            не работает
-                                        </option>
-                                    </select>
+                                    {employeeData.is_staff && (
+                                        <select
+                                            className="border-2 h-[32px] p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                            value={String(
+                                                employeeData.is_active
+                                            )}
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    e,
+                                                    "is_active"
+                                                )
+                                            }
+                                            disabled={mode == "read"}
+                                        >
+                                            <option value="true">
+                                                работает
+                                            </option>
+                                            <option value="false">
+                                                не работает
+                                            </option>
+                                        </select>
+                                    )}
                                 </div>
                             </div>
 
@@ -591,7 +611,10 @@ const EmployeeCard = () => {
                                                     )
                                                 }
                                                 dateFormat="dd.MM.yyyy"
-                                                disabled={mode === "read"}
+                                                disabled={
+                                                    mode === "read" ||
+                                                    !employeeData.is_staff
+                                                }
                                             />
                                         </div>
 
@@ -613,7 +636,8 @@ const EmployeeCard = () => {
                                                 dateFormat="dd.MM.yyyy"
                                                 disabled={
                                                     mode === "read" ||
-                                                    employeeData?.is_active
+                                                    employeeData?.is_active ||
+                                                    !employeeData.is_staff
                                                 }
                                             />
 
