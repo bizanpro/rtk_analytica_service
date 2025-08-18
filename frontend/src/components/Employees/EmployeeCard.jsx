@@ -72,12 +72,12 @@ const EmployeeCard = () => {
         const newErrors = {
             phone_number: !employeeData.phone_number,
             email: !employeeData.email || !validateEmail(employeeData.email),
+            dismissal_date:
+                !employeeData?.is_active && !employeeData.dismissal_date,
         };
 
         setErrors(newErrors);
-
         if (Object.values(newErrors).some((err) => err)) return;
-
         updateEmployee();
     };
 
@@ -388,6 +388,15 @@ const EmployeeCard = () => {
         getEmployee();
     }, []);
 
+    useEffect(() => {
+        if (employeeData?.is_active) {
+            setEmployeeData((prev) => ({
+                ...prev,
+                dismissal_date: null,
+            }));
+        }
+    }, [employeeData?.is_active]);
+
     return (
         <main className="page">
             <div className="pt-8 pb-15">
@@ -507,7 +516,7 @@ const EmployeeCard = () => {
                                     </select>
                                 </div>
 
-                                <div className="flex flex-col gap-2 justify-between">
+                                <div className="flex flex-col gap-4 justify-between">
                                     <div className="flex flex-col gap-2 justify-between">
                                         <span className="text-gray-400">
                                             Телефон
@@ -565,7 +574,7 @@ const EmployeeCard = () => {
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-2 items-center gap-3">
+                                    <div className="grid grid-cols-2 items-start gap-3">
                                         <div className="flex flex-col">
                                             <span className="block mb-2 text-gray-400">
                                                 Дата приема
@@ -602,8 +611,17 @@ const EmployeeCard = () => {
                                                     )
                                                 }
                                                 dateFormat="dd.MM.yyyy"
-                                                disabled={mode === "read"}
+                                                disabled={
+                                                    mode === "read" ||
+                                                    employeeData?.is_active
+                                                }
                                             />
+
+                                            {errors.dismissal_date && (
+                                                <p className="text-red-500 text-sm mt-2">
+                                                    Укажите дату увольнения
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
