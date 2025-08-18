@@ -6,7 +6,8 @@ import postData from "../../utils/postData";
 
 import ProjectItem from "./ProjectItem";
 import Popup from "../Popup/Popup";
-import Select from "../Select";
+import CustomSelect from "../Select";
+import Select from "react-select";
 
 const Projects = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
@@ -17,7 +18,7 @@ const Projects = () => {
     const [popupState, setPopupState] = useState(false);
     const [newProjectName, setNewProjectName] = useState("");
     const [selectedName, setSelectedName] = useState("default");
-    const [selectedSector, setSelectedSector] = useState("default");
+    const [selectedSector, setSelectedSector] = useState([]);
     const [selectedBank, setSelectedBank] = useState("default");
     const [selectedManager, setSelectedManager] = useState("default");
     const [isLoading, setIsLoading] = useState(true);
@@ -36,8 +37,11 @@ const Projects = () => {
     const filteredProjects = useMemo(() => {
         const result = list.filter((project) => {
             return (
-                (selectedSector && selectedSector !== "default"
-                    ? project.industry === selectedSector
+                (selectedSector.length > 0
+                    ? selectedSector.some(
+                          (sector) =>
+                              sector.value === project.industries.main.name
+                      )
                     : true) &&
                 (selectedBank && selectedBank !== "default"
                     ? Array.isArray(project.creditors)
@@ -69,8 +73,8 @@ const Projects = () => {
     // Заполняем селектор отраслей
     const sectorOptions = useMemo(() => {
         const allSectors = list
-            .map((item) => item.industry)
-            .filter((industry) => industry !== null);
+            .map((item) => item.industries.main?.name)
+            .filter((name) => name !== null && name !== undefined);
 
         return Array.from(new Set(allSectors));
     }, [list]);
@@ -87,7 +91,7 @@ const Projects = () => {
     const projectManagerOptions = useMemo(() => {
         const allPM = list
             .map((item) => item.manager)
-            .filter((manager) => manager !== null);
+            .filter((manager) => manager !== null && manager !== undefined);
         return Array.from(new Set(allPM));
     }, [list]);
 
@@ -142,7 +146,7 @@ const Projects = () => {
         <main className="page">
             <div className="container py-8">
                 <div className="flex justify-between items-center gap-6 mb-8">
-                    <h1 className="text-3xl font-medium">
+                    <h1 className="text-3xl font-medium flex-grow">
                         Реестр проектов{" "}
                         {filteredProjects.length > 0 &&
                             `(${filteredProjects.length})`}
@@ -150,7 +154,7 @@ const Projects = () => {
 
                     <div className="flex items-center gap-6">
                         {nameOptions.length > 0 && (
-                            <Select
+                            <CustomSelect
                                 className={
                                     "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
@@ -164,19 +168,24 @@ const Projects = () => {
 
                         {sectorOptions.length > 0 && (
                             <Select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                closeMenuOnSelect={false}
+                                isMulti
+                                name="colors"
+                                options={sectorOptions.map((industry) => ({
+                                    value: industry,
+                                    label: industry,
+                                }))}
+                                className="basic-multi-select min-h-[32px] w-full max-w-[250px]"
+                                classNamePrefix="select"
+                                placeholder="Отрасль"
+                                onChange={(selectedOptions) =>
+                                    setSelectedSector(selectedOptions)
                                 }
-                                title={"Отрасль"}
-                                items={sectorOptions}
-                                onChange={(evt) => {
-                                    setSelectedSector(evt.target.value);
-                                }}
                             />
                         )}
 
                         {bankOptions.length > 0 && (
-                            <Select
+                            <CustomSelect
                                 className={
                                     "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
                                 }
@@ -189,7 +198,7 @@ const Projects = () => {
                         )}
 
                         {projectManagerOptions.length > 0 && (
-                            <Select
+                            <CustomSelect
                                 className={
                                     "p-1 border border-gray-300 min-w-[200px] max-w-[200px]"
                                 }
@@ -204,14 +213,14 @@ const Projects = () => {
                         {mode === "edit" && (
                             <button
                                 type="button"
-                                className="p-1 px-4 text-gray-900 rounded-lg bg-gray-100 group text-lg"
+                                className="p-1 px-4 text-gray-900 rounded-lg bg-gray-100 group text-lg flex-shrink-0"
                                 onClick={openPopup}
                             >
                                 Создать проект
                             </button>
                         )}
 
-                        <nav className="switch">
+                        <nav className="switch flex-shrink-0">
                             <div>
                                 <input
                                     type="radio"

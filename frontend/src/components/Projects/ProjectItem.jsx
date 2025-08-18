@@ -129,7 +129,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                                 {value?.toString() || "—"}
                                 <br />
                                 <span className="text-gray-400 text-sm">
-                                    {props.industry}
+                                    {props.industries?.main?.name}
                                 </span>
                             </td>
                         );
