@@ -27,7 +27,6 @@ const Customers = () => {
         { label: "Наименование", key: "program_name" },
         { label: "Кол-во проектов, всего", key: "projects_total_count" },
         { label: "Кол-во активных проектов", key: "projects_active_count" },
-        { label: "Средняя оценка", key: "average_score" },
         { label: "Бюджет проектов, млрд руб.", key: "projects_total_budget" },
         { label: "Выручка, млн руб.", key: "revenue_total" },
         { label: "Получено оплат, млн руб.", key: "income_total" },

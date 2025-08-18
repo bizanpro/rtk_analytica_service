@@ -358,7 +358,7 @@ const SaleCard = () => {
                     getStages();
 
                     if (nextStage) {
-                        requestNextStage(nextStage);
+                        requestNextStage(nextStage, newDate);
                     } else {
                         toast.success(response.message, {
                             type: "success",
@@ -394,13 +394,13 @@ const SaleCard = () => {
     };
 
     // Запрос следующего этапа в воронке продаж
-    const requestNextStage = (stage_id) => {
+    const requestNextStage = (stage_id, stage_date) => {
         postData(
             "POST",
             `${
                 import.meta.env.VITE_API_URL
             }sales-funnel-projects/${saleId}/stages`,
-            { stage_id }
+            { stage_id, stage_date }
         )
             .then((response) => {
                 if (response?.ok) {
