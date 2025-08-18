@@ -47,8 +47,8 @@ const SaleFunnelItem = ({
                     stage.name?.toLowerCase() !== "заключение договора" && (
                         <DatePicker
                             className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                            startDate={stage.stage_date}
-                            selected={stage.stage_date}
+                            startDate={stage.updated_at}
+                            selected={stage.updated_at}
                             onChange={(date) =>
                                 handleActiveStageDate(date, stage.id)
                             }
@@ -58,9 +58,10 @@ const SaleFunnelItem = ({
                     )}
             </div>
 
-            {stage.hasOwnProperty("next_possible_stages") &&
-            stage.is_final == false &&
-            stage.next_possible_stages.length > 0 ? (
+            {/* stage.hasOwnProperty("next_possible_stages") &&
+            stage.next_possible_stages.length > 0 && */}
+
+            {stage.is_final == false ? (
                 <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 pr-8">
                     <button
                         type="button"
@@ -82,7 +83,8 @@ const SaleFunnelItem = ({
                         title="Отложить проект"
                         onClick={(evt) => {
                             evt.stopPropagation();
-                            handleNextStage(stage.next_possible_stages[1].id,
+                            handleNextStage(
+                                stage.next_possible_stages[1].id,
                                 stage.name
                             );
                         }}
