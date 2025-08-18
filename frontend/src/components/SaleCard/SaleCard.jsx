@@ -308,8 +308,6 @@ const SaleCard = () => {
     };
 
     const handleActiveStageDate = (date, stageId) => {
-        console.log(date);
-        
         setSaleStages((prev) => {
             const updatedStages = prev.stages.map((stage) => {
                 if (stage.id === stageId) {
