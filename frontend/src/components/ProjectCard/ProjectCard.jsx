@@ -1133,14 +1133,24 @@ const ProjectCard = () => {
                                             <button
                                                 type="button"
                                                 className="add-button"
-                                                onClick={() =>
-                                                    setReportWindowsState(true)
-                                                }
-                                                disabled={
-                                                    projectData.contragent_id
-                                                        ? false
-                                                        : true
-                                                }
+                                                onClick={() => {
+                                                    if (
+                                                        projectData.contragent_id
+                                                    ) {
+                                                        setReportWindowsState(
+                                                            true
+                                                        );
+                                                    } else {
+                                                        alert(
+                                                            "Необходимо назначить заказчика"
+                                                        );
+                                                    }
+                                                }}
+                                                // disabled={
+                                                //     projectData.contragent_id
+                                                //         ? false
+                                                //         : true
+                                                // }
                                                 title={
                                                     projectData.contragent_id
                                                         ? "Открыть конструктор отчёта"
