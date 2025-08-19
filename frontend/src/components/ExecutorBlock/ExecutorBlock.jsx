@@ -1,6 +1,6 @@
 import { IMaskInput } from "react-imask";
 
-const ExecutorBlock = ({ contanct, deleteBlock, editBlock, mode, type }) => {
+const ExecutorBlock = ({ contanct, deleteBlock, mode, type }) => {
     const { id, full_name, phone, position, email } = contanct;
     const PhoneMask = "+{7}(000) 000 00 00";
 
@@ -28,26 +28,6 @@ const ExecutorBlock = ({ contanct, deleteBlock, editBlock, mode, type }) => {
 
             {mode == "edit" && (
                 <div className="project-card__executors-item__actions">
-                    <button
-                        className="project-card__executors-item__edit"
-                        type="button"
-                        title="Изменить данные исполнителя"
-                        onClick={() => editBlock(contanct, type)}
-                    >
-                        <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 20 20"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M13.923 2.744l3.333 3.333a.833.833 0 010 1.179L8.09 16.423a.834.834 0 01-.426.228l-4.167.833a.833.833 0 01-.98-.98l.833-4.167a.834.834 0 01.228-.426l9.167-9.167a.833.833 0 011.178 0zM11.25 6.595l-6.315 6.316-.539 2.693 2.694-.538 6.315-6.316-2.155-2.155zm2.084-2.083l-.905.905 2.154 2.154.906-.904-2.155-2.155z"
-                                fill="currentColor"
-                            />
-                        </svg>
-                    </button>
-
                     <button
                         className="project-card__executors-item__delete"
                         type="button"

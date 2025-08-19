@@ -14,7 +14,6 @@ import { useBodyScrollLock } from "../../hooks/useBodyScrollLock.js";
 import { useWindowWidth } from "../../hooks/useWindowWidth.js";
 
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
-import EditExecutorBlock from "../ExecutorBlock/EditExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
 import ReportWindow from "../ReportWindow/ReportWindow.jsx";
 import ProjectReportItem from "./ProjectReportItem";
@@ -58,7 +57,6 @@ const ProjectCard = () => {
     const [mode, setMode] = useState("edit");
     const [activeReportTab, setActiveReportTab] = useState("projectReports"); // Активная вкладка отчетов
     const [activeWindow, setActiveWindow] = useState(""); // Активное окно на мобилке (Отчеты или ОСВ)
-    const [isEditExecutor, setIsEditExecutor] = useState("");
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [firstInit, setFirstInit] = useState(true);
@@ -248,116 +246,6 @@ const ProjectCard = () => {
                 });
             }
         }
-    };
-
-    const openExecutorPopup = (data, type) => {
-        setExecutorEditData(data);
-        setIsEditExecutor(type);
-    };
-
-    // Изменение контакта кредитора или заказчика
-    const editExecutor = (type, data) => {
-        // query = toast.loading("Выполняется отправка", {
-        //     containerId: "projectCard",
-        //     position: "top-center",
-        // });
-
-        // data.project_id = projectId;
-
-        // if (type === "creditor") {
-        //     postData(
-        //         "POST",
-        //         `${import.meta.env.VITE_API_URL}responsible-persons/creditor`,
-        //         data
-        //     )
-        //         .then((response) => {
-        //             if (response?.ok) {
-        //                 getProject(projectId);
-        //                 setAddCreditor(false);
-
-        //                 toast.update(query, {
-        //                     render:
-        //                         response.message ||
-        //                         "Ошибка прикрепления исполнителя",
-        //                     type: "success",
-        //                     containerId: "projectCard",
-        //                     isLoading: false,
-        //                     autoClose: 1200,
-        //                     pauseOnFocusLoss: false,
-        //                     pauseOnHover: false,
-        //                     position: "top-center",
-        //                 });
-        //             }
-        //         })
-        //         .catch((error) => {
-        //             toast.dismiss(query);
-        //             toast.error(
-        //                 error.message || "Ошибка прикрепления исполнителя",
-        //                 {
-        //                     containerId: "projectCard",
-        //                     isLoading: false,
-        //                     autoClose: 3500,
-        //                     pauseOnFocusLoss: false,
-        //                     pauseOnHover: false,
-        //                     position: "top-center",
-        //                 }
-        //             );
-        //         });
-        // } else if (type === "customer") {
-        //     if (projectData?.contragent_id) {
-        //         data.contragent_id = projectData?.contragent_id;
-
-        //         postData(
-        //             "POST",
-        //             `${
-        //                 import.meta.env.VITE_API_URL
-        //             }responsible-persons/contragent`,
-        //             data
-        //         )
-        //             .then((response) => {
-        //                 if (response?.ok) {
-        //                     setAddCustomer(false);
-
-        //                     if (response?.responsible_person) {
-        //                         setCustomers((prevCustomer) => [
-        //                             ...prevCustomer,
-        //                             response.responsible_person
-        //                                 ?.contragent_contact,
-        //                         ]);
-        //                     }
-
-        //                     toast.update(query, {
-        //                         render:
-        //                             response.message ||
-        //                             "Ошибка прикрепления исполнителя",
-        //                         type: "success",
-        //                         containerId: "projectCard",
-        //                         isLoading: false,
-        //                         autoClose: 1200,
-        //                         pauseOnFocusLoss: false,
-        //                         pauseOnHover: false,
-        //                         position: "top-center",
-        //                     });
-        //                 }
-        //             })
-        //             .catch((error) => {
-        //                 toast.dismiss(query);
-        //                 toast.error(
-        //                     error.message || "Ошибка прикрепления исполнителя",
-        //                     {
-        //                         containerId: "projectCard",
-        //                         isLoading: false,
-        //                         autoClose: 3500,
-        //                         pauseOnFocusLoss: false,
-        //                         pauseOnHover: false,
-        //                         position: "top-center",
-        //                     }
-        //                 );
-        //             });
-        //     } else {
-        //         alert("Необходимо назначить заказчика");
-        //     }
-        // }
     };
 
     // Отправляем контакт кредитора или заказчика
@@ -1055,7 +943,6 @@ const ProjectCard = () => {
                                                 mode={mode}
                                                 type={"customer"}
                                                 deleteBlock={deleteCustomer}
-                                                editBlock={openExecutorPopup}
                                             />
                                         ))
                                     ) : (
@@ -1168,7 +1055,6 @@ const ProjectCard = () => {
                                                 banks={banks}
                                                 type={"creditor"}
                                                 deleteBlock={deleteCreditor}
-                                                editBlock={openExecutorPopup}
                                             />
                                         ))
                                     ) : (
@@ -1379,17 +1265,6 @@ const ProjectCard = () => {
                         </section>
                     </div>
                 </div>
-
-                {isEditExecutor != "" && (
-                    <EditExecutorBlock
-                        projectId={projectId}
-                        executorEditData={executorEditData}
-                        banks={banks}
-                        type={isEditExecutor}
-                        removeBlock={() => setIsEditExecutor("")}
-                        editExecutor={editExecutor}
-                    />
-                )}
 
                 {reportWindowsState && (
                     <ReportWindow
