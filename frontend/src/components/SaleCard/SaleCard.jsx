@@ -432,6 +432,8 @@ const SaleCard = () => {
     const handleNextStage = (stage_id, name) => {
         if (
             name.toLowerCase() !== "получен запрос" &&
+            name.toLowerCase() !== "проект отложен" &&
+            name.toLowerCase() !== "получен отказ" &&
             name.toLowerCase() !== "подготовка кп"
         ) {
             if (
