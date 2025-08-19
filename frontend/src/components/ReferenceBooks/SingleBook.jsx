@@ -364,6 +364,16 @@ const SingleBook = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
+
+                    if (bookId === "roles") {
+                        setBooksItems(
+                            booksItems.map((item) => ({
+                                ...item,
+                                is_project_report_responsible:
+                                    item.id === id,
+                            }))
+                        );
+                    }
                 } else {
                     toast.dismiss(query);
                     toast.error("Ошибка обновления записи", {
