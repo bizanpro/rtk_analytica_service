@@ -30,6 +30,7 @@ const SingleBook = () => {
             : `${import.meta.env.VITE_API_URL}${bookId ? bookId : "books"}`;
 
     const [booksItems, setBooksItems] = useState([]);
+    const [refBooksItems, setRefBooksItems] = useState([]);
     const [mode, setMode] = useState("read");
     const [formFields, setFormFields] = useState({});
     const [isLoading, setIsLoading] = useState(true);
@@ -208,11 +209,20 @@ const SingleBook = () => {
             value = e.target.value;
         }
 
-        setBooksItems((prevBooksItems) =>
-            prevBooksItems.map((item) =>
-                item.id === id ? { ...item, [name]: value } : item
-            )
-        );
+        if (bookId === "roles" && name === "is_project_report_responsible") {
+            setBooksItems(
+                booksItems.map((item) => ({
+                    ...item,
+                    is_project_report_responsible: item.id === id,
+                }))
+            );
+        } else {
+            setBooksItems((prevBooksItems) =>
+                prevBooksItems.map((item) =>
+                    item.id === id ? { ...item, [name]: value } : item
+                )
+            );
+        }
     };
 
     // Закрытие попапа
@@ -367,12 +377,7 @@ const SingleBook = () => {
                     });
 
                     if (bookId === "roles") {
-                        setBooksItems(
-                            booksItems.map((item) => ({
-                                ...item,
-                                is_project_report_responsible: item.id === id,
-                            }))
-                        );
+                        getBooks();
                     }
                 } else {
                     toast.dismiss(query);
@@ -566,6 +571,9 @@ const SingleBook = () => {
                     setBooksItems((booksItems) =>
                         booksItems.filter((item) => item.id !== id)
                     );
+                    setRefBooksItems((booksItems) =>
+                        booksItems.filter((item) => item.id !== id)
+                    );
                     toast.update(query, {
                         render: "Запись удалена",
                         type: "success",
@@ -639,6 +647,7 @@ const SingleBook = () => {
             .then((response) => {
                 if (response.status == 200) {
                     setBooksItems(response.data.data);
+                    setRefBooksItems(response.data.data);
 
                     setListLength(
                         bookId !== "creditor" && bookId !== "contragent"
@@ -681,6 +690,12 @@ const SingleBook = () => {
             getBooks();
         }
     }, [currentYear]);
+
+    useEffect(() => {
+        if (mode == "read") {
+            setBooksItems(refBooksItems);
+        }
+    }, [mode]);
 
     return (
         <main className="page">
