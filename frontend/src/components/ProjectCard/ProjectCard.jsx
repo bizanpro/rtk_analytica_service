@@ -444,6 +444,7 @@ const ProjectCard = () => {
                         response.data,
                     ]);
                     setReportWindowsState(false);
+                    setReportId(null);
                     getProject(projectId);
                 } else {
                     toast.dismiss(query);
@@ -456,6 +457,7 @@ const ProjectCard = () => {
                         containerId: "projectCard",
                     });
                     setReportWindowsState(false);
+                    setReportId(null);
                 }
             })
             .catch((error) => {
@@ -510,6 +512,7 @@ const ProjectCard = () => {
                     });
                     setReportWindowsState(false);
                     getProject(projectId);
+                    setReportId(null);
                 } else {
                     setReportWindowsState(false);
                 }
