@@ -313,7 +313,7 @@ const SaleCard = () => {
                 if (stage.id === stageId) {
                     return {
                         ...stage,
-                        updated_at: date,
+                        stage_date: date,
                     };
                 }
                 return stage;
@@ -329,7 +329,7 @@ const SaleCard = () => {
             (item) => item.id === stageMetrics.stage_id
         );
 
-        const newDate = new Date(activeStageData.updated_at).toLocaleDateString(
+        const newDate = new Date(activeStageData.stage_date).toLocaleDateString(
             "ru-RU"
         );
         const [day, month, year] = newDate.split(".");
@@ -337,7 +337,7 @@ const SaleCard = () => {
 
         let stageMetricsData = stageMetrics;
         stageMetricsData = metrics;
-        stageMetricsData.updated_at = formattedDate;
+        stageMetricsData.stage_date = formattedDate;
 
         stageMetricsData.metrics = stageMetricsData.metrics.map((item) => ({
             ...item,

@@ -47,8 +47,8 @@ const SaleFunnelItem = ({
                     stage.name?.toLowerCase() !== "заключение договора" && (
                         <DatePicker
                             className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                            startDate={stage.updated_at}
-                            selected={stage.updated_at}
+                            startDate={stage.stage_date}
+                            selected={stage.stage_date}
                             onChange={(date) =>
                                 handleActiveStageDate(date, stage.id)
                             }
