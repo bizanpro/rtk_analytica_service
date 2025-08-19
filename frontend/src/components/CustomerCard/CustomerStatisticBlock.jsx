@@ -179,6 +179,25 @@ const CustomerStatisticBlock = ({ contragentId, activeProject }) => {
                             {revenue.gross_profit?.label}
                         </small>
                     </div>
+
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            (revenue.gross_margin?.value ?? 0).toLocaleString(
+                                "de-DE"
+                            ) +
+                            " " +
+                            revenue.gross_margin?.label
+                        }
+                    >
+                        <i className="text-xl">
+                            {(revenue.gross_margin?.value ?? 0).toLocaleString(
+                                "de-DE"
+                            )}
+                            {revenue.gross_margin?.label}
+                        </i>
+                        <i className="text-sm">рентабельность</i>
+                    </div>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -207,6 +226,21 @@ const CustomerStatisticBlock = ({ contragentId, activeProject }) => {
                             {revenue.suppliers_expenses?.label}
                         </small>
                     </div>
+
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            revenue.fot_percentage?.value +
+                            " " +
+                            revenue.fot_percentage?.label
+                        }
+                    >
+                        <i className="text-xl">
+                            {revenue.fot_percentage?.value}
+                            {revenue.fot_percentage?.label}
+                        </i>
+                        <i className="text-sm">от выручки</i>
+                    </div>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -233,6 +267,22 @@ const CustomerStatisticBlock = ({ contragentId, activeProject }) => {
                             {" "}
                             {revenue.gross_margin?.label}
                         </small>
+                    </div>
+
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            revenue.suppliers_fot_percentage?.value +
+                            " " +
+                            revenue.suppliers_fot_percentage?.label
+                        }
+                    >
+                        <i className="text-xl">
+                            {revenue.suppliers_fot_percentage?.value}
+
+                            {revenue.suppliers_fot_percentage?.label}
+                        </i>
+                        <i className="text-sm">от выручки</i>
                     </div>
                 </div>
             </div>
