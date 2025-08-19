@@ -252,13 +252,6 @@ const SingleBook = () => {
         postData("POST", URL, formFields)
             .then((response) => {
                 if (response?.ok) {
-                    setFormFields((prev) => ({
-                        ...prev,
-                        name: "",
-                        counterparty_name: "",
-                        full_name: "",
-                    }));
-                    setBooksItems((booksItems) => [...booksItems, response]);
                     toast.update(query, {
                         render: "Запись добавлена",
                         type: "success",
@@ -269,6 +262,14 @@ const SingleBook = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
+
+                    setFormFields((prev) => ({
+                        ...prev,
+                        name: "",
+                        counterparty_name: "",
+                        full_name: "",
+                    }));
+                    getBooks();
                 }
             })
             .catch((error) => {
@@ -369,8 +370,7 @@ const SingleBook = () => {
                         setBooksItems(
                             booksItems.map((item) => ({
                                 ...item,
-                                is_project_report_responsible:
-                                    item.id === id,
+                                is_project_report_responsible: item.id === id,
                             }))
                         );
                     }
