@@ -32,6 +32,7 @@ import CreatableSelect from "react-select/creatable";
 import MultiSelectField from "../MultiSelect/MultiSelectField";
 import BottomSheet from "../BottomSheet/BottomSheet";
 import BottomNav from "../BottomNav/BottomNav";
+import Popup from "../Popup/Popup.jsx";
 
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -75,7 +76,7 @@ const ProjectCard = () => {
 
     const [addCreditor, setAddCreditor] = useState(false); // Добавить кредитора
     const [addCustomer, setAddCustomer] = useState(false); // Добавить заказчика
-    const [executorEditData, setExecutorEditData] = useState({});
+    const [deleteExecutor, setDeleteExecutor] = useState({});
 
     const [reports, setReports] = useState([]); // Отчеты
     const [managementReports, setManagementReports] = useState([]); // Отчеты руководителя
@@ -353,21 +354,60 @@ const ProjectCard = () => {
         }
     };
 
-    // Удаление кредитора
-    const deleteCreditor = (id) => {
+    // Удаление контакта кредитора и заказчика
+    const deleteContact = () => {
+        query = toast.loading("Удаление", {
+            containerId: "projectCard",
+            position: "top-center",
+        });
+
         postData(
             "DELETE",
-            `${import.meta.env.VITE_API_URL}responsible-persons/creditor/${id}`,
+            `${import.meta.env.VITE_API_URL}responsible-persons/${
+                deleteExecutor.type == "creditor" ? "creditor" : "contragent"
+            }/${deleteExecutor.id}`,
             {}
         )
             .then((response) => {
                 if (response?.ok) {
-                    getProject(projectId);
+                    toast.update(query, {
+                        render: response.message,
+                        type: "success",
+                        containerId: "projectCard",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+
+                    if (deleteExecutor.type == "creditor") {
+                        setCreditors(
+                            creditors.filter(
+                                (item) => item.id !== deleteExecutor.id
+                            )
+                        );
+                        setFilteredCreditors(
+                            creditors.filter(
+                                (item) => item.id !== deleteExecutor.id
+                            )
+                        );
+
+                        setDeleteExecutor({});
+                    } else {
+                        setCustomers(
+                            customers.filter(
+                                (item) => item.id !== deleteExecutor.id
+                            )
+                        );
+
+                        setDeleteExecutor({});
+                    }
                 }
             })
             .catch((error) => {
                 toast.dismiss(query);
-                toast.error(error.message || "Ошибка удаления исполнителя", {
+                toast.error(error.message || "Ошибка удаления контакта", {
                     containerId: "projectCard",
                     isLoading: false,
                     autoClose: 3500,
@@ -378,31 +418,12 @@ const ProjectCard = () => {
             });
     };
 
-    // Удаление ответственного лица заказчика
-    const deleteCustomer = (id) => {
-        postData(
-            "DELETE",
-            `${
-                import.meta.env.VITE_API_URL
-            }responsible-persons/contragent/${id}`,
-            {}
-        )
-            .then((response) => {
-                if (response?.ok) {
-                    setCustomers(customers.filter((item) => item.id !== id));
-                }
-            })
-            .catch((error) => {
-                toast.dismiss(query);
-                toast.error(error.message || "Ошибка удаления исполнителя", {
-                    containerId: "projectCard",
-                    isLoading: false,
-                    autoClose: 3500,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-            });
+    const openExecutorDeletePopup = (id, type) => {
+        setDeleteExecutor({
+            id: id,
+            title: type == "creditor" ? "кредитора" : "ключевое лицо заказчика",
+            type: type,
+        });
     };
 
     // Обновление проекта
@@ -945,7 +966,9 @@ const ProjectCard = () => {
                                                 contanct={customer}
                                                 mode={mode}
                                                 type={"customer"}
-                                                deleteBlock={deleteCustomer}
+                                                deleteBlock={
+                                                    openExecutorDeletePopup
+                                                }
                                             />
                                         ))
                                     ) : (
@@ -1057,7 +1080,9 @@ const ProjectCard = () => {
                                                 mode={mode}
                                                 banks={banks}
                                                 type={"creditor"}
-                                                deleteBlock={deleteCreditor}
+                                                deleteBlock={
+                                                    openExecutorDeletePopup
+                                                }
                                             />
                                         ))
                                     ) : (
@@ -1379,6 +1404,37 @@ const ProjectCard = () => {
                     </div>
                 </BottomSheet>
             </section>
+
+            {Object.keys(deleteExecutor).length > 0 && (
+                <Popup
+                    onClick={() => setDeleteExecutor(null)}
+                    title={`Удалить ${deleteExecutor.title}`}
+                >
+                    <div className="action-form__body">
+                        <p>Данные будут безвозвратно утеряны.</p>
+                    </div>
+
+                    <div className="action-form__footer">
+                        <div className="max-w-[280px]">
+                            <button
+                                type="button"
+                                onClick={() => setDeleteExecutor({})}
+                                className="cancel-button flex-[1_0_auto]"
+                            >
+                                Отмена
+                            </button>
+
+                            <button
+                                type="button"
+                                className="action-button flex-[1_0_auto]"
+                                onClick={() => deleteContact()}
+                            >
+                                Удалить
+                            </button>
+                        </div>
+                    </div>
+                </Popup>
+            )}
 
             <div className="card__bottom-actions">
                 <button

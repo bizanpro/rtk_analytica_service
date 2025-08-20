@@ -32,7 +32,7 @@ const ExecutorBlock = ({ contanct, deleteBlock, mode, type }) => {
                         className="project-card__executors-item__delete"
                         type="button"
                         title="Удалить исполнителя"
-                        onClick={() => deleteBlock(id)}
+                        onClick={() => deleteBlock(id, type)}
                     >
                         <svg
                             width="20"
