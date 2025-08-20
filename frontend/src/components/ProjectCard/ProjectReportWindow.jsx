@@ -4,7 +4,7 @@ import getData from "../../utils/getData";
 import formatMoney from "../../utils/formatMoney";
 import parseDate from "../../utils/parseDate";
 
-import { IMaskInput } from "react-imask";
+// import { IMaskInput } from "react-imask";
 
 import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
