@@ -44,8 +44,7 @@ const ProjectCard = () => {
     const [formFields, setFormFields] = useState();
 
     const [mode, setMode] = useState(location.state?.mode || "read");
-    const [activeReportTab, setActiveReportTab] = useState("projectReports");
-
+    const [activeReportTab, setActiveReportTab] = useState("projectReports"); // Активная вкладка в истории проекта
     const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
 
     const [industries, setIndustries] = useState([]);
