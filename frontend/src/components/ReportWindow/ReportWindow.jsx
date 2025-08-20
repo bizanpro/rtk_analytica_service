@@ -4,10 +4,12 @@ import getData from "../../utils/getData";
 import formatMoney from "../../utils/formatMoney";
 import parseDate from "../../utils/parseDate";
 
-import { IMaskInput } from "react-imask";
+// import { IMaskInput } from "react-imask";
 
 import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
+import DateFields from "../DateField/DateFields";
+import DateField from "../DateField/DateField";
 import Loader from "../Loader";
 
 import "./ReportWindow.scss"
@@ -324,7 +326,6 @@ const ReportWindow = ({
         }
     }, [reportData.report_type_id]);
 
-
     // Выставление статуса отчета
     const validateApprovalDate = () => {
         if (isValidDate(reportData.approval_date)) {
@@ -497,7 +498,7 @@ const ReportWindow = ({
             </div>
 
             <div className="grid gap-3 grid-cols-2">
-                <div className="flex flex-col gap-2 justify-between">
+                <div className="flex flex-col gap-2 justify-start">
                     <span className="text-gray-400">Тип отчёта</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
@@ -524,19 +525,33 @@ const ReportWindow = ({
                         Отчетный период
                     </span>
 
-                    <IMaskInput
+                    {/* <IMaskInput
                         mask="00.00.0000 - 00.00.0000"
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
                         onAccept={(e) => handleInputChange(e, "report_period")}
                         value={reportData.report_period}
                         placeholder="дд.мм.гггг - дд.мм.гггг"
                         disabled={mode === "read"}
+                    /> */}
+
+                    <DateFields
+                        mode={mode}
+                        className={
+                            "flex items-center gap-1 border-2 border-gray-300 p-1 w-full h-[32px]"
+                        }
+                        value={reportData.report_period}
+                        onChange={(val) =>
+                            setReportData((prev) => ({
+                                ...prev,
+                                report_period: val,
+                            }))
+                        }
                     />
                 </div>
             </div>
 
             <div className="grid gap-3 grid-cols-2">
-                <div className="flex flex-col gap-2 justify-between">
+                <div className="flex flex-col gap-2 justify-start">
                     <span className="text-gray-400">
                         Бюджет проекта, млрд руб.
                     </span>
@@ -562,7 +577,7 @@ const ReportWindow = ({
                         Период реализации
                     </span>
 
-                    <IMaskInput
+                    {/* <IMaskInput
                         mask="00.00.0000 - 00.00.0000"
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
                         onAccept={(e) =>
@@ -571,12 +586,26 @@ const ReportWindow = ({
                         value={reportData.implementation_period}
                         placeholder="дд.мм.гггг - дд.мм.гггг"
                         disabled={mode === "read"}
+                    /> */}
+
+                    <DateFields
+                        mode={mode}
+                        className={
+                            "flex items-center gap-1 border-2 border-gray-300 p-1 w-full h-[32px]"
+                        }
+                        value={reportData.implementation_period}
+                        onChange={(val) =>
+                            setReportData((prev) => ({
+                                ...prev,
+                                implementation_period: val,
+                            }))
+                        }
                     />
                 </div>
             </div>
 
             <div className="grid gap-3 grid-cols-1">
-                <div className="flex flex-col gap-2 justify-between">
+                <div className="flex flex-col gap-2 justify-start">
                     <span className="text-gray-400">Договор</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
@@ -610,7 +639,7 @@ const ReportWindow = ({
                 }`}
             >
                 {reportData.show_cost === true && (
-                    <div className="flex flex-col gap-2 justify-between">
+                    <div className="flex flex-col gap-2 justify-start">
                         <span className="text-gray-400">
                             Стоимость услуг, руб.
                         </span>
@@ -639,7 +668,7 @@ const ReportWindow = ({
                         Период выполнения
                     </span>
 
-                    <IMaskInput
+                    {/* <IMaskInput
                         mask="00.00.0000 - 00.00.0000"
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
                         onAccept={(e) =>
@@ -648,12 +677,26 @@ const ReportWindow = ({
                         value={reportData.execution_period}
                         placeholder="дд.мм.гггг - дд.мм.гггг"
                         disabled={mode === "read"}
+                    /> */}
+
+                    <DateFields
+                        mode={mode}
+                        className={
+                            "flex items-center gap-1 border-2 border-gray-300 p-1 w-full h-[32px]"
+                        }
+                        value={reportData.execution_period}
+                        onChange={(val) =>
+                            setReportData((prev) => ({
+                                ...prev,
+                                execution_period: val,
+                            }))
+                        }
                     />
                 </div>
             </div>
 
             <div className="grid gap-3 grid-cols-1">
-                <div className="flex flex-col gap-2 justify-between">
+                <div className="flex flex-col gap-2 justify-start">
                     <span className="text-gray-400">Регулярность</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
@@ -689,7 +732,7 @@ const ReportWindow = ({
             </div>
 
             <div className="grid gap-3 grid-cols-2">
-                <div className="flex flex-col gap-2 justify-between">
+                <div className="flex flex-col gap-2 justify-start">
                     <span className="text-gray-400">Статус</span>
                     <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
@@ -715,7 +758,7 @@ const ReportWindow = ({
                         Дата утверждения
                     </span>
 
-                    <IMaskInput
+                    {/* <IMaskInput
                         mask="00.00.0000"
                         className="border-2 border-gray-300 p-1 w-full h-[32px]"
                         onAccept={(e) => handleInputChange(e, "approval_date")}
@@ -724,6 +767,20 @@ const ReportWindow = ({
                         disabled={
                             mode === "read" ||
                             !isFirstDateValid(reportData.execution_period)
+                        }
+                    /> */}
+
+                    <DateField
+                        mode={mode}
+                        className={
+                            "border-2 border-gray-300 p-1 w-full h-[32px]"
+                        }
+                        value={reportData.approval_date}
+                        onChange={(val) =>
+                            setReportData((prev) => ({
+                                ...prev,
+                                approval_date: val,
+                            }))
                         }
                     />
 
@@ -736,7 +793,7 @@ const ReportWindow = ({
             </div>
 
             <div className="grid gap-3 grid-cols-1">
-                <div className="flex flex-col gap-2 justify-between">
+                <div className="flex flex-col gap-2 justify-start">
                     <span className="text-gray-400 flex items-center gap-2">
                         Команда проекта
                         {mode === "edit" && (
@@ -767,7 +824,7 @@ const ReportWindow = ({
             ))}
 
             <div className="grid gap-3 grid-cols-1">
-                <div className="flex flex-col gap-2 justify-between">
+                <div className="flex flex-col gap-2 justify-start">
                     <span className="text-gray-400 flex items-center gap-2">
                         Подрядчики
                         {mode === "edit" && (
@@ -798,7 +855,7 @@ const ReportWindow = ({
                     />
                 ))}
 
-            <div className="mt-5 flex items-center gap-6 justify-between">
+            <div className="mt-5 flex items-center gap-6 justify-start">
                 {mode === "edit" ? (
                     <>
                         <button

@@ -140,7 +140,7 @@ const Indicators = () => {
                           ),
                 backgroundColor: "black",
                 borderRadius: 2,
-                categoryPercentage: 0.5,
+                categoryPercentage: 0.1,
             },
         ],
     };
@@ -249,7 +249,15 @@ const Indicators = () => {
         },
 
         scales: {
-            x: { beginAtZero: true },
+            x: { beginAtZero: true, position: "top" },
+            y: {
+                ticks: {
+                    autoSkip: false,
+                    maxRotation: 0,
+                },
+                barPercentage: 0.7,
+                categoryPercentage: 0.8,
+            },
         },
     };
 
@@ -360,9 +368,7 @@ const Indicators = () => {
         const queryString = buildQueryParams(selectedFilters);
 
         getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }completed-reports?${queryString}`
+            `${import.meta.env.VITE_API_URL}completed-reports?${queryString}`
         ).then((response) => {
             if (response?.status == 200) {
                 setCompletedReports(response.data);
@@ -663,6 +669,7 @@ const Indicators = () => {
 
             <div className="grid grid-cols-3 gap-7 justify-between items-start">
                 <section className="flex flex-col gap-4">
+                    {/* ФИНАНСОВЫЕ ПОКАЗАТЕЛИ */}
                     <div className="flex flex-col gap-8 border border-gray-300 p-2">
                         <div className="p-4">
                             <FinancialMetrics
@@ -708,10 +715,12 @@ const Indicators = () => {
                                 </select>
                             </div>
 
-                            <Bar
-                                data={financialListData}
-                                options={horizontalOptions}
-                            />
+                            <div className="h-[214px] overflow-x-hidden overflow-y-auto">
+                                <Bar
+                                    data={financialListData}
+                                    options={horizontalOptions}
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -827,6 +836,7 @@ const Indicators = () => {
                 </section>
 
                 <section className="flex flex-col gap-4">
+                    {/* ФИНАНСОВЫЕ ПОКАЗАТЕЛИ */}
                     <div className="flex flex-col gap-8 border border-gray-300 p-2">
                         <div className="p-4">
                             <GrossMetrics financialMetrics={financialMetrics} />
@@ -874,10 +884,12 @@ const Indicators = () => {
                                 </select>
                             </div>
 
-                            <Bar
-                                data={financialProfitListData}
-                                options={horizontalOptions}
-                            />
+                            <div className="h-[214px] overflow-x-hidden overflow-y-auto">
+                                <Bar
+                                    data={financialProfitListData}
+                                    options={horizontalOptions}
+                                />
+                            </div>
                         </div>
                     </div>
 

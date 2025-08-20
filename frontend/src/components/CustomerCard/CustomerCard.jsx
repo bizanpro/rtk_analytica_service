@@ -513,7 +513,7 @@ const CustomerCard = () => {
                                     {activeReportTab === "projectReports" &&
                                         (!reportWindowsState ? (
                                             <ul className="grid gap-3">
-                                                <li className="grid items-center grid-cols-[1fr_1fr_18%_34%] gap-3 mb-2 text-gray-400">
+                                                <li className="grid items-center grid-cols-[21%_25%_25%_26%] gap-3 mb-2 text-gray-400">
                                                     <span>Проект</span>
                                                     <span>Отчет</span>
                                                     <span className="block text-center">
@@ -540,6 +540,9 @@ const CustomerCard = () => {
                                                                     openSubReportEditor
                                                                 }
                                                                 mode={"read"}
+                                                                type={
+                                                                    "contragent"
+                                                                }
                                                             />
                                                         )
                                                     )}

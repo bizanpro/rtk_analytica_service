@@ -15,6 +15,8 @@ const SaleStageDetails = ({ stageMetrics, metrics, setMetrics, mode }) => {
     return (
         <div className="flex flex-col gap-4">
             {stageMetrics.name?.toLowerCase() !== "получен запрос" &&
+                stageMetrics.name?.toLowerCase() !== "получен отказ" &&
+                stageMetrics.name?.toLowerCase() !== "проект отложен" &&
                 stageMetrics.name?.toLowerCase() !== "подготовка кп" && (
                     <div className="flex items-center gap-4">
                         <div className="flex flex-col gap-2 flex-grow">
@@ -104,14 +106,18 @@ const SaleStageDetails = ({ stageMetrics, metrics, setMetrics, mode }) => {
 
             <div className="flex flex-col gap-2">
                 {stageMetrics.name?.toLowerCase() !== "получен запрос" &&
-                    stageMetrics.name?.toLowerCase() !== "подготовка кп" && (
+                    stageMetrics.name?.toLowerCase() !== "подготовка кп" &&
+                    stageMetrics.name?.toLowerCase() !== "проект отложен" &&
+                    stageMetrics.name?.toLowerCase() !== "получен отказ" && (
                         <span className="text-gray-400">Комментарий:</span>
                     )}
 
                 <textarea
                     className={`${
                         stageMetrics.name?.toLowerCase() === "получен запрос" ||
-                        stageMetrics.name?.toLowerCase() === "подготовка кп"
+                        stageMetrics.name?.toLowerCase() === "подготовка кп" ||
+                        stageMetrics.name?.toLowerCase() === "проект отложен" ||
+                        stageMetrics.name?.toLowerCase() === "получен отказ"
                             ? "p-3"
                             : "border-2 border-gray-300 p-5"
                     } min-h-[300px]`}

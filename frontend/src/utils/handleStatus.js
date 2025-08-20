@@ -3,6 +3,9 @@ const handleStatus = (status) => {
         case "active":
             return "Активный";
 
+        case "not_active":
+            return "Не активный";
+
         case "completed":
             return "Завершён";
 

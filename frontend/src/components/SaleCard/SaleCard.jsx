@@ -313,7 +313,7 @@ const SaleCard = () => {
                 if (stage.id === stageId) {
                     return {
                         ...stage,
-                        updated_at: date,
+                        stage_date: date,
                     };
                 }
                 return stage;
@@ -329,7 +329,7 @@ const SaleCard = () => {
             (item) => item.id === stageMetrics.stage_id
         );
 
-        const newDate = new Date(activeStageData.updated_at).toLocaleDateString(
+        const newDate = new Date(activeStageData.stage_date).toLocaleDateString(
             "ru-RU"
         );
         const [day, month, year] = newDate.split(".");
@@ -337,7 +337,7 @@ const SaleCard = () => {
 
         let stageMetricsData = stageMetrics;
         stageMetricsData = metrics;
-        stageMetricsData.updated_at = formattedDate;
+        stageMetricsData.stage_date = formattedDate;
 
         stageMetricsData.metrics = stageMetricsData.metrics.map((item) => ({
             ...item,
@@ -356,9 +356,8 @@ const SaleCard = () => {
             .then((response) => {
                 if (response?.ok) {
                     getStages();
-
                     if (nextStage) {
-                        requestNextStage(nextStage);
+                        requestNextStage(nextStage, newDate);
                     } else {
                         toast.success(response.message, {
                             type: "success",
@@ -393,14 +392,49 @@ const SaleCard = () => {
             });
     };
 
+    // Валидация полей стоимости этапа перед сохранением
+    const handleSaveDetails = () => {
+        const activeStageData = saleStages.stages.find(
+            (item) => item.id === stageMetrics.stage_id
+        );
+
+        if (
+            activeStageData.name.toLowerCase() !== "получен запрос" &&
+            activeStageData.name.toLowerCase() !== "проект отложен" &&
+            activeStageData.name.toLowerCase() !== "получен отказ" &&
+            activeStageData.name.toLowerCase() !== "подготовка кп"
+        ) {
+            if (
+                metrics.metrics?.length > 0 &&
+                metrics.metrics?.every(
+                    (item) =>
+                        item.current_value !== null && item.current_value !== ""
+                )
+            ) {
+                updateStageDetails();
+            } else {
+                toast.error("Заполните все поля стоимости предложения", {
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 2000,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            }
+        } else {
+            updateStageDetails();
+        }
+    };
+
     // Запрос следующего этапа в воронке продаж
-    const requestNextStage = (stage_id) => {
+    const requestNextStage = (stage_id, stage_date) => {
         postData(
             "POST",
             `${
                 import.meta.env.VITE_API_URL
             }sales-funnel-projects/${saleId}/stages`,
-            { stage_id }
+            { stage_id, stage_date }
         )
             .then((response) => {
                 if (response?.ok) {
@@ -432,6 +466,8 @@ const SaleCard = () => {
     const handleNextStage = (stage_id, name) => {
         if (
             name.toLowerCase() !== "получен запрос" &&
+            name.toLowerCase() !== "проект отложен" &&
+            name.toLowerCase() !== "получен отказ" &&
             name.toLowerCase() !== "подготовка кп"
         ) {
             if (
@@ -1254,7 +1290,7 @@ const SaleCard = () => {
                                                         className="save-icon w-[20px] h-[20px]"
                                                         title="Сохранить детализацию этапа продажи"
                                                         onClick={() =>
-                                                            updateStageDetails()
+                                                            handleSaveDetails()
                                                         }
                                                     ></button>
                                                 )}

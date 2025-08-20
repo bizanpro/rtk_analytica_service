@@ -47,8 +47,8 @@ const SaleFunnelItem = ({
                     stage.name?.toLowerCase() !== "заключение договора" && (
                         <DatePicker
                             className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                            startDate={stage.updated_at || new Date()}
-                            selected={stage.updated_at || new Date()}
+                            startDate={stage.stage_date}
+                            selected={stage.stage_date}
                             onChange={(date) =>
                                 handleActiveStageDate(date, stage.id)
                             }
@@ -58,13 +58,16 @@ const SaleFunnelItem = ({
                     )}
             </div>
 
-            {stage.hasOwnProperty("next_possible_stages") &&
-            stage.is_final == false &&
-            stage.next_possible_stages.length > 0 ? (
+            {/* stage.hasOwnProperty("next_possible_stages") &&
+            stage.next_possible_stages.length > 0 && */}
+
+            {stage.is_final == false ? (
                 <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 pr-8">
                     <button
                         type="button"
-                        className="w-[12px] h-[12px] rounded-[50%] opacity-[0.3] bg-red-400 hover:opacity-100 transition-opacity"
+                        className={`w-[12px] h-[12px] rounded-[50%] ${
+                            stage.type === "rejected" ? "" : "opacity-[0.3]"
+                        } bg-red-400 hover:opacity-100 transition-opacity`}
                         title="Отказ от участия"
                         onClick={(evt) => {
                             evt.stopPropagation();
@@ -78,17 +81,23 @@ const SaleFunnelItem = ({
                     ></button>
                     <button
                         type="button"
-                        className="w-[12px] h-[12px] rounded-[50%] opacity-[0.3] bg-yellow-400 hover:opacity-100 transition-opacity"
+                        className={`w-[12px] h-[12px] rounded-[50%] ${
+                            stage.type === "postponed" ? "" : "opacity-[0.3]"
+                        } bg-yellow-400 hover:opacity-100 transition-opacity`}
                         title="Отложить проект"
                         onClick={(evt) => {
                             evt.stopPropagation();
-                            handleNextStage(stage.next_possible_stages[1].id),
-                                stage.name;
+                            handleNextStage(
+                                stage.next_possible_stages[1].id,
+                                stage.name
+                            );
                         }}
                     ></button>
                     <button
                         type="button"
-                        className="w-[12px] h-[12px] rounded-[50%] opacity-[0.3] bg-green-400 hover:opacity-100 transition-opacity"
+                        className={`w-[12px] h-[12px] rounded-[50%] ${
+                            stage.type === "main" ? "" : "opacity-[0.3]"
+                        } bg-green-400 hover:opacity-100 transition-opacity`}
                         title="Принять"
                         onClick={(evt) => {
                             evt.stopPropagation();

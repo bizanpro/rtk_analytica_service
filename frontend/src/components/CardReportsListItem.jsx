@@ -9,6 +9,7 @@ const CardReportsListItem = ({
     openReportEditor,
     project_name,
     main_industry,
+    type,
 }) => {
     return (
         <li
@@ -19,13 +20,13 @@ const CardReportsListItem = ({
         >
             <div className="flex flex-col">
                 <div className="text-lg">{project_name}</div>
-                <span className="text-sm text-gray-400">
-                    {main_industry}
-                </span>
+                <span className="text-sm text-gray-400">{main_industry}</span>
             </div>
 
             <div className="flex flex-col">
-                <div className="text-lg whitespace-nowrap">{report_period_code}</div>
+                <div className="text-lg whitespace-nowrap">
+                    {report_period_code}
+                </div>
                 <span className="text-sm">{report_period}</span>
             </div>
 
@@ -33,7 +34,7 @@ const CardReportsListItem = ({
                 <div className="bg-gray-200 py-1 px-2 text-center rounded-md">
                     {status}
                 </div>
-                {role && (
+                {type != "contragent" && role && (
                     <div className="py-1 px-2 text-center border border-gray-200 rounded-md">
                         {role}
                     </div>

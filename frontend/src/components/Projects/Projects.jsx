@@ -48,8 +48,8 @@ const Projects = () => {
 
     const sectorOptions = useMemo(() => {
         const allSectors = list
-            .map((item) => item.industry)
-            .filter((industry) => industry !== null);
+            .map((item) => item.industries.main?.name)
+            .filter((name) => name !== null && name !== undefined);
 
         return Array.from(new Set(allSectors));
     }, [list]);
@@ -64,7 +64,7 @@ const Projects = () => {
     const projectManagerOptions = useMemo(() => {
         const allPM = list
             .map((item) => item.manager)
-            .filter((manager) => manager !== null);
+            .filter((manager) => manager !== null && manager !== undefined);
         return Array.from(new Set(allPM));
     }, [list]);
 
