@@ -8,7 +8,7 @@ const EmployeePersonalWorkloadItem = ({ props, mode, setWorkloads }) => {
             </div>
 
             <div className="flex flex-col justify-between gap-2">
-                <div className="text-lg">{props?.report_name}</div>
+                <div className="text-lg">{props?.report_period_code}</div>
                 <span className="text-xs">{props?.execution_period}</span>
             </div>
 
