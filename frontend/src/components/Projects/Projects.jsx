@@ -89,7 +89,7 @@ const Projects = () => {
         },
         {
             label: "Основная отрасль",
-            key: "industry",
+            key: "industries",
             filter: "selectedSectors",
             options: sectorOptions,
         },
@@ -170,7 +170,9 @@ const Projects = () => {
         return list.filter((project) => {
             return (
                 (filters.selectedSectors.length === 0 ||
-                    filters.selectedSectors.includes(project.industry)) &&
+                    filters.selectedSectors.includes(
+                        project.industries?.main?.name
+                    )) &&
                 (filters.selectedBanks.length === 0 ||
                     project.creditors?.some((c) =>
                         filters.selectedBanks.includes(c.name)

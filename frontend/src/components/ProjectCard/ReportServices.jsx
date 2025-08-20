@@ -16,7 +16,7 @@ const ReportServices = ({ services }) => {
                         </div>
 
                         <div className="project-card__services-list__item-period">
-                            {service.period}
+                            {service.regularity}
                         </div>
 
                         <div className="project-card__services-list__item-cost">

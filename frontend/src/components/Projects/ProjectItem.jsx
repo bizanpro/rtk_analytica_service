@@ -86,20 +86,36 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                         );
                     }
                 } else if (typeof value === "object" && value !== null) {
-                    key === "project_manager"
-                        ? Object.entries(value).map(([subKey, subValue]) => (
-                              <td className="w-[150px] text-blue" key={subKey}>
-                                  {subValue?.full_name?.toString() || "—"}
-                              </td>
-                          ))
-                        : Object.entries(value).map(([subKey, subValue]) => (
-                              <td
-                                  className="min-w-[180px] max-w-[200px]"
-                                  key={subKey}
-                              >
-                                  {subValue?.toString() || "—"}
-                              </td>
-                          ));
+                    if (key === "project_manager") {
+                        return Object.entries(value).map(
+                            ([subKey, subValue]) => (
+                                <td
+                                    className="w-[150px] text-blue"
+                                    key={subKey}
+                                >
+                                    {subValue?.full_name?.toString() || "—"}
+                                </td>
+                            )
+                        );
+                    } else if (key === "industries") {
+                        return (
+                            <td
+                                className="w-[150px] text-blue"
+                                key={value?.main?.id}
+                            >
+                                {value?.main?.name.toString() || "—"}
+                            </td>
+                        );
+                    }
+
+                    return Object.entries(value).map(([subKey, subValue]) => (
+                        <td
+                            className="min-w-[180px] max-w-[200px]"
+                            key={subKey}
+                        >
+                            {subValue?.toString() || "—"}
+                        </td>
+                    ));
                 } else {
                     if (key === "name") {
                         return (
@@ -188,7 +204,18 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                             e.stopPropagation();
                         }}
                     >
-                        <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.833 8v9.166h8.333V8h1.667v10c0 .46-.373.833-.833.833H5A.833.833 0 014.166 18V8h1.667zm3.333 0v7.5H7.5V8h1.666zM12.5 8v7.5h-1.667V8H12.5zm0-5.833c.358 0 .677.229.79.57l.643 1.929h2.733v1.667H3.333V4.666h2.733l.643-1.93a.833.833 0 01.79-.57h5zm-.601 1.666H8.1l-.278.833h4.354l-.277-.833z" fill="currentColor"/></svg>
+                        <svg
+                            width="20"
+                            height="21"
+                            viewBox="0 0 20 21"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M5.833 8v9.166h8.333V8h1.667v10c0 .46-.373.833-.833.833H5A.833.833 0 014.166 18V8h1.667zm3.333 0v7.5H7.5V8h1.666zM12.5 8v7.5h-1.667V8H12.5zm0-5.833c.358 0 .677.229.79.57l.643 1.929h2.733v1.667H3.333V4.666h2.733l.643-1.93a.833.833 0 01.79-.57h5zm-.601 1.666H8.1l-.278.833h4.354l-.277-.833z"
+                                fill="currentColor"
+                            />
+                        </svg>
                     </button>
                 )}
             </td>
