@@ -35,8 +35,8 @@ const SaleCard = () => {
     const [addCustomer, setAddCustomer] = useState(false);
     const [addServices, setAddServices] = useState(false);
     const [addBanks, setAddBanks] = useState(false);
-    const [addWorkScore, setAddWorkScore] = useState("");
-    const [activeStage, setActiveStage] = useState("");
+
+    const [activeStage, setActiveStage] = useState(null);
 
     const [industries, setIndustries] = useState([]);
     const [contragents, setContragents] = useState([]);
@@ -117,7 +117,6 @@ const SaleCard = () => {
                 setServices(response.data);
 
                 if (response.data.length > 0) {
-                    setAddWorkScore(response.data[0].id);
                     getStages();
                 }
             }
@@ -219,7 +218,6 @@ const SaleCard = () => {
                     position: "top-center",
                 });
                 fetchServices();
-                setAddWorkScore("");
             }
         });
     };
@@ -357,7 +355,7 @@ const SaleCard = () => {
                 if (response?.ok) {
                     getStages();
                     fetchServices();
-                    
+
                     if (nextStage) {
                         requestNextStage(nextStage, newDate);
                     } else {
@@ -557,7 +555,7 @@ const SaleCard = () => {
             setProjectData(response);
             setFormFields(response);
             fetchServices();
-            
+
             return response;
         } catch (error) {
             toast.dismiss(query);
@@ -624,7 +622,7 @@ const SaleCard = () => {
             setIsFirstInit(false);
         }
 
-        if (activeStage !== "") {
+        if (activeStage) {
             getStageDetails(activeStage);
         }
     }, [saleStages]);
@@ -1207,12 +1205,6 @@ const SaleCard = () => {
                                                                     service={
                                                                         service
                                                                     }
-                                                                    setAddWorkScore={
-                                                                        setAddWorkScore
-                                                                    }
-                                                                    addWorkScore={
-                                                                        addWorkScore
-                                                                    }
                                                                     deleteService={
                                                                         deleteService
                                                                     }
@@ -1255,7 +1247,7 @@ const SaleCard = () => {
                                                     </span>
                                                 </li>
 
-                                                {addWorkScore != "" && (
+                                                {saleStages.length > 0 && (
                                                     <SaleFunnelStages
                                                         saleStages={saleStages}
                                                         handleNextStage={
@@ -1287,21 +1279,20 @@ const SaleCard = () => {
                                             <span className="text-gray-400">
                                                 Детализация этапа продажи
                                             </span>
-                                            {mode === "edit" &&
-                                                activeStage != "" && (
-                                                    <button
-                                                        type="button"
-                                                        className="save-icon w-[20px] h-[20px]"
-                                                        title="Сохранить детализацию этапа продажи"
-                                                        onClick={() =>
-                                                            handleSaveDetails()
-                                                        }
-                                                    ></button>
-                                                )}
+                                            {mode === "edit" && activeStage && (
+                                                <button
+                                                    type="button"
+                                                    className="save-icon w-[20px] h-[20px]"
+                                                    title="Сохранить детализацию этапа продажи"
+                                                    onClick={() =>
+                                                        handleSaveDetails()
+                                                    }
+                                                ></button>
+                                            )}
                                         </div>
 
                                         <div className="border-2 border-gray-300 py-5 px-4 h-full">
-                                            {activeStage != "" &&
+                                            {activeStage &&
                                                 services.length > 0 && (
                                                     <SaleStageDetails
                                                         stageMetrics={
