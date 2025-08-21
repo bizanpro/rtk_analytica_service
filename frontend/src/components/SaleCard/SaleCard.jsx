@@ -554,6 +554,8 @@ const SaleCard = () => {
 
             setProjectData(response);
             setFormFields(response);
+            fetchServices();
+            
             return response;
         } catch (error) {
             toast.dismiss(query);
