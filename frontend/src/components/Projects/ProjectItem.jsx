@@ -30,7 +30,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                 if (Array.isArray(value) && value !== null) {
                     if (value?.length > 0) {
                         return (
-                            <td className="w-[150px]" key={key}>
+                            <td className="w-[130px] max-w-[130px]" key={key}>
                                 <table className="w-full">
                                     <tbody>
                                         {key === "latest_reports" ? (
@@ -80,7 +80,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                         );
                     } else {
                         return (
-                            <td className="w-[150px]" key={key}>
+                            <td className="w-[130px] max-w-[130px]" key={key}>
                                 —
                             </td>
                         );
