@@ -31,7 +31,7 @@ import Hint from "../Hint/Hint";
 import CreatableSelect from "react-select/creatable";
 import MultiSelectField from "../MultiSelect/MultiSelectField";
 import BottomSheet from "../BottomSheet/BottomSheet";
-import BottomNav from "../BottomNav/BottomNav";
+import BottomNavCard from "../BottomNav/BottomNavCard";
 import Popup from "../Popup/Popup.jsx";
 
 import "./ProjectCard.scss";
@@ -56,6 +56,7 @@ const ProjectCard = () => {
 
     // const [mode, setMode] = useState(location.state?.mode || "read");
     const [mode, setMode] = useState("edit");
+    const [isAvailableToSave, setIsAvailableToSave] = useState(false);
     const [activeReportTab, setActiveReportTab] = useState("projectReports"); // Активная вкладка отчетов
     const [activeWindow, setActiveWindow] = useState(""); // Активное окно на мобилке (Отчеты или ОСВ)
 
@@ -480,6 +481,7 @@ const ProjectCard = () => {
     const openReportEditor = (id) => {
         setReportId(id);
         if (id) {
+            setActiveWindow("");
             setReportWindowsState(true);
         }
     };
@@ -703,6 +705,14 @@ const ProjectCard = () => {
             setActiveWindow("");
         }
     }, [width]);
+
+    useEffect(() => {
+        if (firstInit) return;
+        if (!isDataLoaded) return;
+        console.log(formFields);
+        
+        setIsAvailableToSave(true);
+    }, [formFields, firstInit, isDataLoaded]);
 
     return (
         <main className="page">
@@ -1294,7 +1304,15 @@ const ProjectCard = () => {
                     </div>
                 </div>
 
-                {reportWindowsState && (
+                <BottomSheet
+                    onClick={() => {
+                        setReportWindowsState(false);
+                        setReportId(null);
+                    }}
+                    className={`bottom-sheet_desk ${
+                        reportWindowsState ? "active" : ""
+                    }`}
+                >
                     <ReportWindow
                         reportWindowsState={setReportWindowsState}
                         sendReport={sendReport}
@@ -1304,7 +1322,7 @@ const ProjectCard = () => {
                         setReportId={setReportId}
                         mode={mode}
                     />
-                )}
+                </BottomSheet>
 
                 <BottomSheet
                     onClick={() => setActiveWindow("")}
@@ -1440,7 +1458,10 @@ const ProjectCard = () => {
                 <button
                     type="button"
                     title="Открыть отчёты"
-                    onClick={() => setActiveWindow("reports")}
+                    onClick={() => {
+                        setReportWindowsState(false);
+                        setActiveWindow("reports");
+                    }}
                 >
                     <svg
                         width="30"
@@ -1460,7 +1481,10 @@ const ProjectCard = () => {
                 <button
                     type="button"
                     title="Открыть ОСВ"
-                    onClick={() => setActiveWindow("statistic")}
+                    onClick={() => {
+                        setReportWindowsState(false);
+                        setActiveWindow("statistic");
+                    }}
                 >
                     <svg
                         width="30"
@@ -1479,11 +1503,17 @@ const ProjectCard = () => {
                 </button>
             </div>
 
-            <BottomNav update={() => updateProject(projectId)}>
+            <BottomNavCard
+                update={() => updateProject(projectId)}
+                isAvailableToSave={isAvailableToSave}
+            >
                 <button
                     type="button"
                     className="button-add"
-                    onClick={() => setReportWindowsState(true)}
+                    onClick={() => {
+                        setActiveWindow("");
+                        setReportWindowsState(true);
+                    }}
                     disabled={projectData.contragent_id ? false : true}
                     title={
                         projectData.contragent_id
@@ -1507,7 +1537,7 @@ const ProjectCard = () => {
                         </svg>
                     </span>
                 </button>
-            </BottomNav>
+            </BottomNavCard>
         </main>
     );
 };

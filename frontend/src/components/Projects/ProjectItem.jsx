@@ -99,11 +99,10 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                         );
                     } else if (key === "industries") {
                         return (
-                            <td
-                                className="w-[150px]"
-                                key={value?.main?.id}
-                            >
-                                {value?.main?.name.toString() || "—"}
+                            <td className="max-w-[150px]" key={value?.main?.id}>
+                                <div className="max-w-[150px]">
+                                    {value?.main?.name.toString() || "—"}
+                                </div>
                             </td>
                         );
                     }
