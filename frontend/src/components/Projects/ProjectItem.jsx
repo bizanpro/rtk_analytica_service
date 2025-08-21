@@ -100,7 +100,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                     } else if (key === "industries") {
                         return (
                             <td
-                                className="w-[150px] text-blue"
+                                className="w-[150px]"
                                 key={value?.main?.id}
                             >
                                 {value?.main?.name.toString() || "—"}
@@ -110,7 +110,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
 
                     return Object.entries(value).map(([subKey, subValue]) => (
                         <td
-                            className="min-w-[180px] max-w-[200px]"
+                            className="min-w-[150px] max-w-[180px]"
                             key={subKey}
                         >
                             {subValue?.toString() || "—"}
@@ -120,13 +120,13 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                     if (key === "name") {
                         return (
                             <td className="w-[150px] text-blue" key={key}>
-                                {value?.toString() || "—"}
+                                <div>{value?.toString() || "—"}</div>
                             </td>
                         );
                     } else if (key === "project_manager") {
                         return (
                             <td className="w-[150px] text-blue" key={key}>
-                                {value?.toString() || "—"}
+                                <div>{value?.toString() || "—"}</div>
                             </td>
                         );
                     } else if (key === "status") {
@@ -188,7 +188,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                     } else {
                         return (
                             <td className="w-[150px]" key={key}>
-                                {value?.toString() || "—"}
+                                <div>{value?.toString() || "—"}</div>
                             </td>
                         );
                     }
