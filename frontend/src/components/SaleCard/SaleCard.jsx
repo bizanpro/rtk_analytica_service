@@ -1247,7 +1247,8 @@ const SaleCard = () => {
                                                     </span>
                                                 </li>
 
-                                                {saleStages.length > 0 && (
+                                                {saleStages.stages?.length >
+                                                    0 && (
                                                     <SaleFunnelStages
                                                         saleStages={saleStages}
                                                         handleNextStage={
