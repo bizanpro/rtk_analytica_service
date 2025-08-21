@@ -356,6 +356,8 @@ const SaleCard = () => {
             .then((response) => {
                 if (response?.ok) {
                     getStages();
+                    fetchServices();
+                    
                     if (nextStage) {
                         requestNextStage(nextStage, newDate);
                     } else {
