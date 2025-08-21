@@ -4,6 +4,8 @@ const SaleFunnelItem = ({
     stage,
     getStageDetails,
     activeStage,
+    prevStage,
+    isLast,
     setActiveStage,
     handleNextStage,
     handleActiveStageDate,
@@ -53,7 +55,8 @@ const SaleFunnelItem = ({
                                 handleActiveStageDate(date, stage.id)
                             }
                             dateFormat="dd.MM.yyyy"
-                            disabled={mode === "read"}
+                            minDate={prevStage}
+                            disabled={mode === "read" || !isLast}
                         />
                     )}
             </div>
