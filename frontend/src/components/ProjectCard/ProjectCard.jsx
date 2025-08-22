@@ -661,12 +661,6 @@ const ProjectCard = () => {
     }, [projectData.contragent_id]);
 
     useEffect(() => {
-        setReportWindowsState(false);
-
-        setReportId(null);
-    }, [mode]);
-
-    useEffect(() => {
         const report = searchParams.get("report");
 
         if (report !== null && report !== "undefined") {
@@ -698,6 +692,7 @@ const ProjectCard = () => {
     }, []);
 
     useBodyScrollLock(activeWindow); // Блокируем экран при открытии попапа
+    useBodyScrollLock(reportWindowsState); // Блокируем экран при открытии редактора отчета
     const width = useWindowWidth(); // Снимаем блокировку на десктопе
 
     useEffect(() => {
@@ -705,6 +700,11 @@ const ProjectCard = () => {
             setActiveWindow("");
         }
     }, [width]);
+
+    // useEffect(() => {
+    //     setReportWindowsState(false);
+    //     setReportId(null);
+    // }, [mode]);
 
     // useEffect(() => {
     //     if (firstInit) return;
@@ -1310,10 +1310,10 @@ const ProjectCard = () => {
                         setReportId(null);
                     }}
                     className={`bottom-sheet_desk ${
-                        !reportWindowsState ? "active" : ""
+                        reportWindowsState ? "active" : ""
                     }`}
                 >
-                    {/* {reportWindowsState && ( */}
+                    {reportWindowsState && (
                         <ReportWindow
                             reportWindowsState={setReportWindowsState}
                             sendReport={sendReport}
@@ -1323,7 +1323,7 @@ const ProjectCard = () => {
                             setReportId={setReportId}
                             mode={mode}
                         />
-                    {/* )} */}
+                    )}
                 </BottomSheet>
 
                 <BottomSheet

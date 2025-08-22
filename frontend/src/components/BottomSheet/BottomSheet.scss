@@ -15,6 +15,39 @@
     pointer-events: none;
     transition: opacity var(--trans);
 
+    &:not(.bottom-sheet_desk) {
+        @media (min-width: $media-xxl) {
+            display: none;
+            visibility: hidden;
+            pointer-events: none;
+        }
+    }
+
+    &_desk {
+        @media (min-width: $media-xxl) {
+        }
+
+        .bottom-sheet__wrapper {
+            @media (min-width: $media-xxl) {
+                width: 520px;
+                height: 100vh;
+                bottom: 0;
+                left: auto;
+                right: 0;
+                top: 0;
+                border-radius: 0;
+                transform: translate3d(100%, 0, 0);
+            }
+        }
+
+        .bottom-sheet__close-btn,
+        .bottom-sheet__icon {
+            @media (min-width: $media-xxl) {
+                display: none;
+            }
+        }
+    }
+
     &.active {
         visibility: visible;
         opacity: 1;
@@ -36,7 +69,7 @@
         background: var(--color-white);
         border-radius: 10px 10px 0 0;
         transform: translate3d(0, 100%, 0);
-        transition: transform var(--trans);
+        transition: all var(--trans);
         will-change: transfrom;
         display: flex;
         flex-direction: column;
