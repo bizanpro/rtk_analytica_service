@@ -62,11 +62,11 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     onAccept={(val) => handleChange("date_from", val)}
                     onComplete={() => dateToRef.current?.focus()}
                     placeholder="дд.мм.гггг"
-                    className="h-full min-w-[5ch] max-w-[9ch]"
+                    className="h-full min-w-[5ch] max-w-[8.5ch]"
                     disabled={mode === "read"}
                 />
 
-                <span className="self-center text-gray-400 mr-[4px]">-</span>
+                <span className="self-center text-gray-400 mr-[3.5px]">-</span>
 
                 <IMaskInput
                     inputRef={dateToRef}
@@ -82,7 +82,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     value={period.date_to}
                     onAccept={(val) => handleChange("date_to", val)}
                     placeholder="дд.мм.гггг"
-                    className="h-full min-w-[5ch] max-w-[9ch]"
+                    className="h-full min-w-[5ch] max-w-[8.5ch]"
                     disabled={mode === "read"}
                 />
             </div>
