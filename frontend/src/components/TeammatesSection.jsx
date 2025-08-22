@@ -20,98 +20,96 @@ const TeammatesSection = ({
     }
 
     return (
-        <div className="grid items-center gap-3 grid-cols-2">
-            <div className="flex flex-col gap-2 justify-between">
-                <div
-                    className={`border-2 border-gray-300 flex items-center ${
-                        mode == "read" ? "h-[32px] p-1" : ""
-                    }`}
-                >
-                    {mode === "read" ? (
-                        <span
-                            className="whitespace-nowrap w-full truncate"
-                            title={name}
-                        >
-                            {name}
-                        </span>
-                    ) : (
-                        <CreatableSelect
-                            isClearable
-                            options={
-                                physicalPersons.length > 0 &&
-                                physicalPersons.map((item) => ({
-                                    value: item.id,
-                                    label: item.name,
-                                }))
-                            }
-                            className="w-full executor-block__name-field"
-                            placeholder="Выбрать исполнителя"
-                            noOptionsMessage={() => "Совпадений нет"}
-                            isValidNewOption={() => false}
-                            defaultValue={
-                                (physicalPersons.length > 0 &&
-                                    physicalPersons
-                                        .map((item) => ({
-                                            value: item.id,
-                                            label: item.name,
-                                        }))
-                                        .find(
-                                            (option) =>
-                                                option.value ===
-                                                person?.physical_person_id
-                                        )) ||
-                                null
-                            }
-                            onChange={(selectedOption) => {
-                                handleTeammateChange(
-                                    index,
-                                    "physical_person_id",
-                                    selectedOption.value
-                                );
-                            }}
-                            isDisabled={mode == "read"}
-                        />
-                    )}
-                </div>
-            </div>
-            <div className="flex items-center gap-3">
-                <div className="flex flex-col gap-2 justify-between flex-grow">
-                    <div
-                        className={`border-2 border-gray-300 p-1 ${
-                            mode == "read" ? "h-[32px]" : "h-[42px]"
-                        }`}
-                    >
-                        <select
-                            className="w-full h-full"
-                            value={person?.role_id}
-                            onChange={(e) =>
-                                handleTeammateChange(
-                                    index,
-                                    "role_id",
-                                    Number(e.target.value)
-                                )
-                            }
-                            disabled={mode === "read" ? true : false}
-                        >
-                            <option value="0">Выберите роль</option>
-                            {roles.map((role) => (
-                                <option value={role.id} key={role.id}>
-                                    {role.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
+        <li className="person-block">
+            <div className="person-block__header">
+                <div className="person-block__title">Участник {index + 1}</div>
 
                 {mode === "edit" && (
                     <button
-                        className="delete-icon w-[30px] h-[32px]"
-                        title="Удалить исполнителя"
+                        className="delete-button"
+                        title="Удалить участника"
                         onClick={() => removeTeammate(index)}
-                    ></button>
+                    >
+                        <svg
+                            width="20"
+                            height="21"
+                            viewBox="0 0 20 21"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M5.833 8v9.166h8.333V8h1.667v10c0 .46-.373.833-.833.833H5A.833.833 0 014.166 18V8h1.667zm3.333 0v7.5H7.5V8h1.666zM12.5 8v7.5h-1.667V8H12.5zm0-5.833c.358 0 .677.229.79.57l.643 1.929h2.733v1.667H3.333V4.666h2.733l.643-1.93a.833.833 0 01.79-.57h5zm-.601 1.666H8.1l-.278.833h4.354l-.277-.833z"
+                                fill="currentColor"
+                            ></path>
+                        </svg>
+                    </button>
                 )}
             </div>
-        </div>
+
+            <div className="person-block__body">
+                {mode === "read" ? (
+                    <div className="form-field" title={name}>
+                        {name}
+                    </div>
+                ) : (
+                    <CreatableSelect
+                        options={
+                            physicalPersons.length > 0 &&
+                            physicalPersons.map((item) => ({
+                                value: item.id,
+                                label: item.name,
+                            }))
+                        }
+                        className="form-select-extend"
+                        placeholder="Выбрать исполнителя"
+                        noOptionsMessage={() => "Совпадений нет"}
+                        isValidNewOption={() => false}
+                        defaultValue={
+                            (physicalPersons.length > 0 &&
+                                physicalPersons
+                                    .map((item) => ({
+                                        value: item.id,
+                                        label: item.name,
+                                    }))
+                                    .find(
+                                        (option) =>
+                                            option.value ===
+                                            person?.physical_person_id
+                                    )) ||
+                            null
+                        }
+                        onChange={(selectedOption) => {
+                            handleTeammateChange(
+                                index,
+                                "physical_person_id",
+                                selectedOption.value
+                            );
+                        }}
+                        isDisabled={mode == "read"}
+                    />
+                )}
+
+                <select
+                    className="form-select"
+                    value={person?.role_id}
+                    onChange={(e) =>
+                        handleTeammateChange(
+                            index,
+                            "role_id",
+                            Number(e.target.value)
+                        )
+                    }
+                    disabled={mode === "read" ? true : false}
+                >
+                    <option value="0">Выберите роль</option>
+                    {roles.map((role) => (
+                        <option value={role.id} key={role.id}>
+                            {role.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+        </li>
     );
 };
 

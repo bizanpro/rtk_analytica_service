@@ -728,18 +728,24 @@ const ReportWindow = ({
                             Команда проекта
                         </b>
 
-                        {teammates.map((person, index) => (
-                            <TeammatesSection
-                                key={index}
-                                index={index}
-                                person={person}
-                                handleTeammateChange={handleTeammateChange}
-                                physicalPersons={physicalPersons}
-                                roles={roles}
-                                removeTeammate={removeTeammate}
-                                mode={mode}
-                            />
-                        ))}
+                        {teammates.length > 0 && (
+                            <ul className="person__list">
+                                {teammates.map((person, index) => (
+                                    <TeammatesSection
+                                        key={index}
+                                        index={index}
+                                        person={person}
+                                        handleTeammateChange={
+                                            handleTeammateChange
+                                        }
+                                        physicalPersons={physicalPersons}
+                                        roles={roles}
+                                        removeTeammate={removeTeammate}
+                                        mode={mode}
+                                    />
+                                ))}
+                            </ul>
+                        )}
 
                         {mode === "edit" && (
                             <button
@@ -770,21 +776,24 @@ const ReportWindow = ({
                     <div className="report-window__block">
                         <b className="report-window__subtitle">Подрядчики</b>
 
-                        {contractors.length > 0 &&
-                            contractors.map((person, index) => (
-                                <ContractorsSection
-                                    key={index}
-                                    index={index}
-                                    person={person}
-                                    handleContractorChange={
-                                        handleContractorChange
-                                    }
-                                    suppliers={suppliers}
-                                    roles={roles}
-                                    removeContractor={removeContractor}
-                                    mode={mode}
-                                />
-                            ))}
+                        {contractors.length > 0 && (
+                            <ul className="person__list">
+                                {contractors.map((person, index) => (
+                                    <ContractorsSection
+                                        key={index}
+                                        index={index}
+                                        person={person}
+                                        handleContractorChange={
+                                            handleContractorChange
+                                        }
+                                        suppliers={suppliers}
+                                        roles={roles}
+                                        removeContractor={removeContractor}
+                                        mode={mode}
+                                    />
+                                ))}
+                            </ul>
+                        )}
 
                         {mode === "edit" && (
                             <button

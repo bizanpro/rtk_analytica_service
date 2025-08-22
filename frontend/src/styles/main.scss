@@ -705,3 +705,31 @@ body {
         color: var(--color-red-60);
     }
 }
+
+.person__list {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.person-block {
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    &__title {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 150%;
+        color: var(--color-gray-70);
+    }
+
+    &__body {
+        display: grid;
+        gap: 10px;
+    }
+}

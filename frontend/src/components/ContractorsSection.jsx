@@ -57,132 +57,112 @@ const ContractorsSection = ({
     }, [person?.contragent_id, isMounted]);
 
     return (
-        <div className="flex items-center gap-3">
-            <div className="flex flex-col gap-1 flex-grow">
-                <div className="grid gap-3 grid-cols-2">
-                    <div className="flex flex-col gap-2 justify-between">
-                        <div
-                            className={`border-2 border-gray-300 flex items-center ${
-                                mode == "read" ? "h-[32px] p-1" : ""
-                            }`}
-                        >
-                            {mode === "read" ? (
-                                <span
-                                    className="whitespace-nowrap w-full truncate"
-                                    title={name}
-                                >
-                                    {name}
-                                </span>
-                            ) : (
-                                <CreatableSelect
-                                    isClearable
-                                    options={
-                                        suppliers.length > 0 &&
-                                        suppliers.map((item) => ({
-                                            value: item.id,
-                                            label: item.program_name,
-                                        }))
-                                    }
-                                    className="w-full executor-block__name-field"
-                                    placeholder="Выбрать исполнителя"
-                                    noOptionsMessage={() => "Совпадений нет"}
-                                    isValidNewOption={() => false}
-                                    defaultValue={
-                                        (suppliers.length > 0 &&
-                                            suppliers
-                                                .map((item) => ({
-                                                    value: item.id,
-                                                    label: item.program_name,
-                                                }))
-                                                .find(
-                                                    (option) =>
-                                                        option.value ===
-                                                        person?.contragent_id
-                                                )) ||
-                                        null
-                                    }
-                                    onChange={(selectedOption) => {
-                                        handleContragentChange(
-                                            selectedOption.value
-                                        );
-                                    }}
-                                    isDisabled={mode == "read"}
-                                />
-                            )}
-                        </div>
-                    </div>
-                    <div className="flex flex-col gap-2 justify-between">
-                        <div
-                            className={`border-2 border-gray-300 p-1 ${
-                                mode == "read" ? "h-[32px]" : "h-[42px]"
-                            }`}
-                        >
-                            <select
-                                className="w-full h-full"
-                                value={person?.role_id}
-                                onChange={(e) =>
-                                    handleContractorChange(
-                                        index,
-                                        "role_id",
-                                        Number(e.target.value)
-                                    )
-                                }
-                                disabled={mode === "read" ? true : false}
-                            >
-                                <option value="0">Выберите роль</option>
-                                {roles?.map((role) => (
-                                    <option value={role.id} key={role.id}>
-                                        {role.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                </div>
+        <li className="person-block">
+            <div className="person-block__header">
+                <div className="person-block__title">Подрядчик {index + 1}</div>
 
-                <div className="grid gap-3 grid-cols-1">
-                    <div className="flex flex-col gap-2 justify-between">
-                        <span className="text-gray-400"></span>
-                        <div
-                            className={`border-2 border-gray-300 p-1 ${
-                                mode == "read" ? "h-[32px]" : "h-[42px]"
-                            }`}
+                {mode === "edit" && (
+                    <button
+                        className="delete-button"
+                        title="Удалить подрядчика"
+                        onClick={() => removeContractor(index)}
+                    >
+                        <svg
+                            width="20"
+                            height="21"
+                            viewBox="0 0 20 21"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
                         >
-                            <select
-                                className="w-full h-full"
-                                value={person?.contract_id}
-                                onChange={(e) =>
-                                    handleContractorChange(
-                                        index,
-                                        "contract_id",
-                                        Number(e.target.value)
-                                    )
-                                }
-                                disabled={mode === "read" ? true : false}
-                            >
-                                <option value="0">Выберите договор</option>
-                                {localContracts?.map((contract) => (
-                                    <option
-                                        value={contract.id}
-                                        key={contract.id}
-                                    >
-                                        {contract.contract_name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                            <path
+                                d="M5.833 8v9.166h8.333V8h1.667v10c0 .46-.373.833-.833.833H5A.833.833 0 014.166 18V8h1.667zm3.333 0v7.5H7.5V8h1.666zM12.5 8v7.5h-1.667V8H12.5zm0-5.833c.358 0 .677.229.79.57l.643 1.929h2.733v1.667H3.333V4.666h2.733l.643-1.93a.833.833 0 01.79-.57h5zm-.601 1.666H8.1l-.278.833h4.354l-.277-.833z"
+                                fill="currentColor"
+                            ></path>
+                        </svg>
+                    </button>
+                )}
             </div>
 
-            {mode === "edit" && (
-                <button
-                    className="delete-icon w-[30px] h-[32px]"
-                    title="Удалить исполнителя"
-                    onClick={() => removeContractor(index)}
-                ></button>
-            )}
-        </div>
+            <div className="person-block__body">
+                {mode === "read" ? (
+                    <div className="form-field" title={name}>
+                        {name}
+                    </div>
+                ) : (
+                    <CreatableSelect
+                        options={
+                            suppliers.length > 0 &&
+                            suppliers.map((item) => ({
+                                value: item.id,
+                                label: item.program_name,
+                            }))
+                        }
+                        className="form-select-extend"
+                        placeholder="Выбрать исполнителя"
+                        noOptionsMessage={() => "Совпадений нет"}
+                        isValidNewOption={() => false}
+                        defaultValue={
+                            (suppliers.length > 0 &&
+                                suppliers
+                                    .map((item) => ({
+                                        value: item.id,
+                                        label: item.program_name,
+                                    }))
+                                    .find(
+                                        (option) =>
+                                            option.value ===
+                                            person?.contragent_id
+                                    )) ||
+                            null
+                        }
+                        onChange={(selectedOption) => {
+                            handleContragentChange(selectedOption.value);
+                        }}
+                        isDisabled={mode == "read"}
+                    />
+                )}
+
+                <select
+                    className="form-select"
+                    value={person?.role_id}
+                    onChange={(e) =>
+                        handleContractorChange(
+                            index,
+                            "role_id",
+                            Number(e.target.value)
+                        )
+                    }
+                    disabled={mode === "read" ? true : false}
+                >
+                    <option value="0">Выберите роль</option>
+                    {roles?.map((role) => (
+                        <option value={role.id} key={role.id}>
+                            {role.name}
+                        </option>
+                    ))}
+                </select>
+
+                <select
+                    className="form-select"
+                    value={person?.contract_id}
+                    onChange={(e) =>
+                        handleContractorChange(
+                            index,
+                            "contract_id",
+                            Number(e.target.value)
+                        )
+                    }
+                    disabled={mode === "read" ? true : false}
+                >
+                    <option value="0">Выберите договор</option>
+                    {localContracts?.map((contract) => (
+                        <option value={contract.id} key={contract.id}>
+                            {contract.contract_name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+        </li>
     );
 };
 
