@@ -218,6 +218,11 @@ const SaleCard = () => {
                     position: "top-center",
                 });
                 fetchServices();
+                getStages();
+
+                if (services.length == 0) {
+                    setStageMetrics({});
+                }
             }
         });
     };
@@ -277,8 +282,6 @@ const SaleCard = () => {
 
     // Получаем этапы в воронке продаж
     const getStages = () => {
-        setSaleStages([]);
-
         getData(
             `${
                 import.meta.env.VITE_API_URL
@@ -327,15 +330,23 @@ const SaleCard = () => {
             (item) => item.id === stageMetrics.stage_id
         );
 
-        const newDate = new Date(activeStageData.stage_date).toLocaleDateString(
-            "ru-RU"
-        );
-        const [day, month, year] = newDate.split(".");
-        const formattedDate = `${year}-${month}-${day}`;
-
         let stageMetricsData = stageMetrics;
         stageMetricsData = metrics;
-        stageMetricsData.stage_date = formattedDate;
+
+        let newDate = "";
+
+        if (activeStageData.stage_date) {
+            newDate = new Date(activeStageData.stage_date).toLocaleDateString(
+                "ru-RU"
+            );
+
+            const [day, month, year] = newDate.split(".");
+            const formattedDate = `${year}-${month}-${day}`;
+
+            stageMetricsData.stage_date = formattedDate;
+        } else {
+            stageMetricsData.stage_date = "";
+        }
 
         stageMetricsData.metrics = stageMetricsData.metrics.map((item) => ({
             ...item,
@@ -352,7 +363,7 @@ const SaleCard = () => {
             stageMetricsData
         )
             .then((response) => {
-                if (response?.ok) {
+                if (response.ok) {
                     getStages();
                     fetchServices();
 
@@ -610,6 +621,9 @@ const SaleCard = () => {
                 ...prev,
                 report_type_id: services.map((item) => item.id),
             }));
+        } else {
+            setStageMetrics({}); // Сбрасываем состояние при удалении всех услуг для перезагрузки экрана детализации
+            setIsFirstInit(true);
         }
     }, [services]);
 
@@ -1248,27 +1262,30 @@ const SaleCard = () => {
                                                 </li>
 
                                                 {saleStages.stages?.length >
-                                                    0 && (
-                                                    <SaleFunnelStages
-                                                        saleStages={saleStages}
-                                                        handleNextStage={
-                                                            handleNextStage
-                                                        }
-                                                        getStageDetails={
-                                                            getStageDetails
-                                                        }
-                                                        activeStage={
-                                                            activeStage
-                                                        }
-                                                        setActiveStage={
-                                                            setActiveStage
-                                                        }
-                                                        handleActiveStageDate={
-                                                            handleActiveStageDate
-                                                        }
-                                                        mode={mode}
-                                                    />
-                                                )}
+                                                    0 &&
+                                                    services.length > 0 && (
+                                                        <SaleFunnelStages
+                                                            saleStages={
+                                                                saleStages
+                                                            }
+                                                            handleNextStage={
+                                                                handleNextStage
+                                                            }
+                                                            getStageDetails={
+                                                                getStageDetails
+                                                            }
+                                                            activeStage={
+                                                                activeStage
+                                                            }
+                                                            setActiveStage={
+                                                                setActiveStage
+                                                            }
+                                                            handleActiveStageDate={
+                                                                handleActiveStageDate
+                                                            }
+                                                            mode={mode}
+                                                        />
+                                                    )}
                                             </ul>
                                         </div>
                                     </div>
