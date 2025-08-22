@@ -53,10 +53,16 @@
         line-height: 120%;
     }
 
-    .bottom-nav .container {
-        display: grid;
-        align-items: center;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+    .bottom-nav {
+        @media (min-width: $media-xxl) {
+            padding: 10px 0 30px;
+        }
+
+        .container {
+            display: grid;
+            align-items: center;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
     }
 }
