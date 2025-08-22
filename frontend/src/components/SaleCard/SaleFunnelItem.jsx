@@ -50,7 +50,7 @@ const SaleFunnelItem = ({
                         <DatePicker
                             className="border-2 border-gray-300 p-1 w-full h-[32px]"
                             startDate={stage.stage_date}
-                            selected={stage.stage_date}
+                            selected={stage.stage_date || ""}
                             onChange={(date) =>
                                 handleActiveStageDate(date, stage.id)
                             }
