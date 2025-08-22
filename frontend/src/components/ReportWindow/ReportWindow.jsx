@@ -4,15 +4,13 @@ import getData from "../../utils/getData";
 import formatMoney from "../../utils/formatMoney";
 import parseDate from "../../utils/parseDate";
 
-// import { IMaskInput } from "react-imask";
-
 import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
 import DateFields from "../DateField/DateFields";
 import DateField from "../DateField/DateField";
 import Loader from "../Loader";
 
-import "./ReportWindow.scss"
+import "./ReportWindow.scss";
 
 const isValidDateRange = (str) => {
     const regex = /^(\d{2})\.(\d{2})\.(\d{4}) - (\d{2})\.(\d{2})\.(\d{4})$/;
@@ -490,19 +488,21 @@ const ReportWindow = ({
     }, []);
 
     return (
-        <div className="report-window grid gap-6 relative bg-white">
+        <div className="report-window">
             {reportId ? isLoading && <Loader /> : !isDataLoaded && <Loader />}
 
-            <div className="text-2xl w-full">
-                {reportData.report_period_code}
-            </div>
+            <div className="report-window__wrapper">
+                <div className="report-window__header">
+                    <div className="report-window__name">
+                        {reportData.report_period_code || "Создать отчёт"}
+                    </div>
+                </div>
+                <div className="report-window__body">
+                    <div className="report-window__field">
+                        <label className="form-label">Тип отчёта</label>
 
-            <div className="grid gap-3 grid-cols-2">
-                <div className="flex flex-col gap-2 justify-start">
-                    <span className="text-gray-400">Тип отчёта</span>
-                    <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
-                            className="w-full h-full"
+                            className="form-select"
                             onChange={(e) =>
                                 handleInputChange(e, "report_type_id")
                             }
@@ -518,98 +518,68 @@ const ReportWindow = ({
                                 ))}
                         </select>
                     </div>
-                </div>
 
-                <div className="flex flex-col">
-                    <span className="block mb-2 text-gray-400">
-                        Отчетный период
-                    </span>
+                    <div className="report-window__field">
+                        <label className="form-label">Отчетный период</label>
 
-                    {/* <IMaskInput
-                        mask="00.00.0000 - 00.00.0000"
-                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        onAccept={(e) => handleInputChange(e, "report_period")}
-                        value={reportData.report_period}
-                        placeholder="дд.мм.гггг - дд.мм.гггг"
-                        disabled={mode === "read"}
-                    /> */}
-
-                    <DateFields
-                        mode={mode}
-                        className={
-                            "flex items-center gap-1 border-2 border-gray-300 p-1 w-full h-[32px]"
-                        }
-                        value={reportData.report_period}
-                        onChange={(val) =>
-                            setReportData((prev) => ({
-                                ...prev,
-                                report_period: val,
-                            }))
-                        }
-                    />
-                </div>
-            </div>
-
-            <div className="grid gap-3 grid-cols-2">
-                <div className="flex flex-col gap-2 justify-start">
-                    <span className="text-gray-400">
-                        Бюджет проекта, млрд руб.
-                    </span>
-                    <div className="border-2 border-gray-300 p-1 h-[32px]">
-                        <input
-                            type="text"
-                            className="w-full"
-                            placeholder="0.0"
-                            value={reportData.budget_in_billions?.replace(
-                                ".",
-                                ","
-                            )}
-                            onChange={(e) =>
-                                handleInputChange(e, "budget_in_billions")
+                        <DateFields
+                            mode={mode}
+                            className={"form-field"}
+                            value={reportData.report_period}
+                            onChange={(val) =>
+                                setReportData((prev) => ({
+                                    ...prev,
+                                    report_period: val,
+                                }))
                             }
-                            disabled={mode === "read"}
                         />
                     </div>
-                </div>
 
-                <div className="flex flex-col">
-                    <span className="block mb-2 text-gray-400">
-                        Период реализации
-                    </span>
+                    <div className="report-window__fields">
+                        <div>
+                            <label className="form-label">
+                                Бюджет проекта, млрд руб.
+                            </label>
 
-                    {/* <IMaskInput
-                        mask="00.00.0000 - 00.00.0000"
-                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        onAccept={(e) =>
-                            handleInputChange(e, "implementation_period")
-                        }
-                        value={reportData.implementation_period}
-                        placeholder="дд.мм.гггг - дд.мм.гггг"
-                        disabled={mode === "read"}
-                    /> */}
+                            <input
+                                type="text"
+                                className="form-field"
+                                placeholder="0.0"
+                                value={reportData.budget_in_billions?.replace(
+                                    ".",
+                                    ","
+                                )}
+                                onChange={(e) =>
+                                    handleInputChange(e, "budget_in_billions")
+                                }
+                                disabled={mode === "read"}
+                            />
+                        </div>
 
-                    <DateFields
-                        mode={mode}
-                        className={
-                            "flex items-center gap-1 border-2 border-gray-300 p-1 w-full h-[32px]"
-                        }
-                        value={reportData.implementation_period}
-                        onChange={(val) =>
-                            setReportData((prev) => ({
-                                ...prev,
-                                implementation_period: val,
-                            }))
-                        }
-                    />
-                </div>
-            </div>
+                        <div>
+                            <label className="form-label">
+                                Период реализации
+                            </label>
 
-            <div className="grid gap-3 grid-cols-1">
-                <div className="flex flex-col gap-2 justify-start">
-                    <span className="text-gray-400">Договор</span>
-                    <div className="border-2 border-gray-300 p-1 h-[32px]">
+                            <DateFields
+                                mode={mode}
+                                className="form-field"
+                                value={reportData.implementation_period}
+                                onChange={(val) =>
+                                    setReportData((prev) => ({
+                                        ...prev,
+                                        implementation_period: val,
+                                    }))
+                                }
+                            />
+                        </div>
+                    </div>
+
+                    <div className="report-window__field">
+                        <label className="form-label">Договор</label>
+
                         <select
-                            className="w-full h-full"
+                            className="form-select"
                             onChange={(e) =>
                                 handleInputChange(e, "contract_id")
                             }
@@ -628,79 +598,56 @@ const ReportWindow = ({
                                 ))}
                         </select>
                     </div>
-                </div>
-            </div>
 
-            <div
-                className={`grid gap-3 ${
-                    reportData.show_cost === true
-                        ? "grid-cols-2"
-                        : " grid-cols-1"
-                }`}
-            >
-                {reportData.show_cost === true && (
-                    <div className="flex flex-col gap-2 justify-start">
-                        <span className="text-gray-400">
-                            Стоимость услуг, руб.
-                        </span>
-                        <div className="border-2 border-gray-300 p-1 h-[32px]">
-                            <input
-                                type="text"
-                                className="w-full"
-                                placeholder="0.0"
-                                value={formatMoney(
-                                    reportData.service_cost_in_rubles
-                                )}
-                                onChange={(e) =>
-                                    handleInputChange(
-                                        e,
-                                        "service_cost_in_rubles"
-                                    )
+                    <div className="report-window__fields">
+                        {reportData.show_cost === true && (
+                            <div>
+                                <label className="form-label">
+                                    Стоимость услуг, руб.
+                                </label>
+
+                                <input
+                                    type="text"
+                                    className="form-field"
+                                    placeholder="0.0"
+                                    value={formatMoney(
+                                        reportData.service_cost_in_rubles
+                                    )}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            e,
+                                            "service_cost_in_rubles"
+                                        )
+                                    }
+                                    disabled={mode === "read"}
+                                />
+                            </div>
+                        )}
+
+                        <div>
+                            <label className="form-label">
+                                Период выполнения
+                            </label>
+
+                            <DateFields
+                                mode={mode}
+                                className={"form-field"}
+                                value={reportData.execution_period}
+                                onChange={(val) =>
+                                    setReportData((prev) => ({
+                                        ...prev,
+                                        execution_period: val,
+                                    }))
                                 }
-                                disabled={mode === "read"}
                             />
                         </div>
                     </div>
-                )}
 
-                <div className="flex flex-col">
-                    <span className="block mb-2 text-gray-400">
-                        Период выполнения
-                    </span>
+                    <div className="report-window__field">
+                        <label className="form-label">Регулярность</label>
 
-                    {/* <IMaskInput
-                        mask="00.00.0000 - 00.00.0000"
-                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        onAccept={(e) =>
-                            handleInputChange(e, "execution_period")
-                        }
-                        value={reportData.execution_period}
-                        placeholder="дд.мм.гггг - дд.мм.гггг"
-                        disabled={mode === "read"}
-                    /> */}
-
-                    <DateFields
-                        mode={mode}
-                        className={
-                            "flex items-center gap-1 border-2 border-gray-300 p-1 w-full h-[32px]"
-                        }
-                        value={reportData.execution_period}
-                        onChange={(val) =>
-                            setReportData((prev) => ({
-                                ...prev,
-                                execution_period: val,
-                            }))
-                        }
-                    />
-                </div>
-            </div>
-
-            <div className="grid gap-3 grid-cols-1">
-                <div className="flex flex-col gap-2 justify-start">
-                    <span className="text-gray-400">Регулярность</span>
-                    <div className="border-2 border-gray-300 p-1 h-[32px]">
                         <select
-                            className="w-full h-full"
+                            className="form-select"
                             onChange={(e) => handleInputChange(e, "regularity")}
                             value={reportData.regularity || ""}
                             disabled={
@@ -728,67 +675,52 @@ const ReportWindow = ({
                                 })}
                         </select>
                     </div>
-                </div>
-            </div>
 
-            <div className="grid gap-3 grid-cols-2">
-                <div className="flex flex-col gap-2 justify-start">
-                    <span className="text-gray-400">Статус</span>
-                    <div className="border-2 border-gray-300 p-1 h-[32px]">
-                        <select
-                            className="w-full h-full"
-                            value={reportData?.report_status_id}
-                            onChange={(e) =>
-                                handleInputChange(e, "report_status_id")
-                            }
-                            disabled
-                        >
-                            <option value=""></option>
-                            {reportStatuses.map((status) => (
-                                <option value={status.id} key={status.id}>
-                                    {status.name}
-                                </option>
-                            ))}
-                        </select>
+                    <div className="report-window__fields">
+                        <div>
+                            <label className="form-label">Статус</label>
+
+                            <select
+                                className="form-select"
+                                value={reportData?.report_status_id}
+                                onChange={(e) =>
+                                    handleInputChange(e, "report_status_id")
+                                }
+                                disabled
+                            >
+                                <option value=""></option>
+                                {reportStatuses.map((status) => (
+                                    <option value={status.id} key={status.id}>
+                                        {status.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="form-label">
+                                Дата утверждения
+                            </label>
+
+                            <DateField
+                                mode={mode}
+                                className={"form-field"}
+                                value={reportData.approval_date}
+                                onChange={(val) =>
+                                    setReportData((prev) => ({
+                                        ...prev,
+                                        approval_date: val,
+                                    }))
+                                }
+                            />
+
+                            {errorMessage !== "" && (
+                                <span className="text-red-400 absolute top-[100%] text-sm">
+                                    {errorMessage}
+                                </span>
+                            )}
+                        </div>
                     </div>
-                </div>
-
-                <div className="flex flex-col relative">
-                    <span className="block mb-2 text-gray-400">
-                        Дата утверждения
-                    </span>
-
-                    {/* <IMaskInput
-                        mask="00.00.0000"
-                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        onAccept={(e) => handleInputChange(e, "approval_date")}
-                        value={reportData.approval_date}
-                        placeholder="дд.мм.гггг"
-                        disabled={
-                            mode === "read" ||
-                            !isFirstDateValid(reportData.execution_period)
-                        }
-                    /> */}
-
-                    <DateField
-                        mode={mode}
-                        className={
-                            "border-2 border-gray-300 p-1 w-full h-[32px]"
-                        }
-                        value={reportData.approval_date}
-                        onChange={(val) =>
-                            setReportData((prev) => ({
-                                ...prev,
-                                approval_date: val,
-                            }))
-                        }
-                    />
-
-                    {errorMessage !== "" && (
-                        <span className="text-red-400 absolute top-[100%] text-sm">
-                            {errorMessage}
-                        </span>
-                    )}
                 </div>
             </div>
 

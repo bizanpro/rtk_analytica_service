@@ -56,7 +56,7 @@ const ProjectCard = () => {
 
     // const [mode, setMode] = useState(location.state?.mode || "read");
     const [mode, setMode] = useState("edit");
-    const [isAvailableToSave, setIsAvailableToSave] = useState(false);
+    const [isAvailableToSave, setIsAvailableToSave] = useState(true);
     const [activeReportTab, setActiveReportTab] = useState("projectReports"); // Активная вкладка отчетов
     const [activeWindow, setActiveWindow] = useState(""); // Активное окно на мобилке (Отчеты или ОСВ)
 
@@ -706,13 +706,13 @@ const ProjectCard = () => {
         }
     }, [width]);
 
-    useEffect(() => {
-        if (firstInit) return;
-        if (!isDataLoaded) return;
-        console.log(formFields);
-        
-        setIsAvailableToSave(true);
-    }, [formFields, firstInit, isDataLoaded]);
+    // useEffect(() => {
+    //     if (firstInit) return;
+    //     if (!isDataLoaded) return;
+    //     console.log(formFields);
+
+    //     setIsAvailableToSave(true);
+    // }, [formFields, firstInit, isDataLoaded]);
 
     return (
         <main className="page">
@@ -1310,18 +1310,20 @@ const ProjectCard = () => {
                         setReportId(null);
                     }}
                     className={`bottom-sheet_desk ${
-                        reportWindowsState ? "active" : ""
+                        !reportWindowsState ? "active" : ""
                     }`}
                 >
-                    <ReportWindow
-                        reportWindowsState={setReportWindowsState}
-                        sendReport={sendReport}
-                        contracts={contracts}
-                        updateReport={updateReport}
-                        reportId={reportId}
-                        setReportId={setReportId}
-                        mode={mode}
-                    />
+                    {/* {reportWindowsState && ( */}
+                        <ReportWindow
+                            reportWindowsState={setReportWindowsState}
+                            sendReport={sendReport}
+                            contracts={contracts}
+                            updateReport={updateReport}
+                            reportId={reportId}
+                            setReportId={setReportId}
+                            mode={mode}
+                        />
+                    {/* )} */}
                 </BottomSheet>
 
                 <BottomSheet
