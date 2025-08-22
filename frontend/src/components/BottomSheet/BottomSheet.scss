@@ -24,9 +24,6 @@
     }
 
     &_desk {
-        @media (min-width: $media-xxl) {
-        }
-
         .bottom-sheet__wrapper {
             @media (min-width: $media-xxl) {
                 width: 520px;

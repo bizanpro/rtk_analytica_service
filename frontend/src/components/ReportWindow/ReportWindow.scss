@@ -9,6 +9,10 @@
     &__header {
         padding: 0 20px 20px;
         border-bottom: 1px solid var(--color-gray-40);
+
+        @media (min-width: $media-xxl) {
+            padding: 0 30px 20px;
+        }
     }
 
     &__name {
@@ -21,6 +25,10 @@
         padding: 18px 20px 85px;
         display: grid;
         gap: 20px;
+
+        @media (min-width: $media-xxl) {
+            padding: 18px 30px 85px;
+        }
     }
 
     &__fields {
