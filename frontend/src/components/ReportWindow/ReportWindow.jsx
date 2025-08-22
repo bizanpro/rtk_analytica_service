@@ -497,6 +497,7 @@ const ReportWindow = ({
                         {reportData.report_period_code || "Создать отчёт"}
                     </div>
                 </div>
+
                 <div className="report-window__body">
                     <div className="report-window__field">
                         <label className="form-label">Тип отчёта</label>
@@ -704,7 +705,7 @@ const ReportWindow = ({
 
                             <DateField
                                 mode={mode}
-                                className={"form-field"}
+                                className="form-field"
                                 value={reportData.approval_date}
                                 onChange={(val) =>
                                     setReportData((prev) => ({
@@ -721,111 +722,138 @@ const ReportWindow = ({
                             )}
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div className="grid gap-3 grid-cols-1">
-                <div className="flex flex-col gap-2 justify-start">
-                    <span className="text-gray-400 flex items-center gap-2">
-                        Команда проекта
+                    <div className="report-window__block">
+                        <b className="report-window__subtitle">
+                            Команда проекта
+                        </b>
+
+                        {teammates.map((person, index) => (
+                            <TeammatesSection
+                                key={index}
+                                index={index}
+                                person={person}
+                                handleTeammateChange={handleTeammateChange}
+                                physicalPersons={physicalPersons}
+                                roles={roles}
+                                removeTeammate={removeTeammate}
+                                mode={mode}
+                            />
+                        ))}
+
                         {mode === "edit" && (
                             <button
                                 type="button"
-                                className="add-button"
+                                className="button-add"
+                                title="Добавить члена команды"
                                 onClick={() => addBlock("teammate")}
-                                title="Добавить сотрудника"
                             >
-                                <span></span>
+                                Добавить
+                                <span>
+                                    <svg
+                                        width="10"
+                                        height="9"
+                                        viewBox="0 0 10 9"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
+                                            fill="currentColor"
+                                        ></path>
+                                    </svg>
+                                </span>
                             </button>
                         )}
-                    </span>
-                </div>
-            </div>
+                    </div>
 
-            {teammates.map((person, index) => (
-                <TeammatesSection
-                    key={index}
-                    index={index}
-                    person={person}
-                    handleTeammateChange={handleTeammateChange}
-                    physicalPersons={physicalPersons}
-                    roles={roles}
-                    removeTeammate={removeTeammate}
-                    mode={mode}
-                />
-            ))}
+                    <div className="report-window__block">
+                        <b className="report-window__subtitle">Подрядчики</b>
 
-            <div className="grid gap-3 grid-cols-1">
-                <div className="flex flex-col gap-2 justify-start">
-                    <span className="text-gray-400 flex items-center gap-2">
-                        Подрядчики
+                        {contractors.length > 0 &&
+                            contractors.map((person, index) => (
+                                <ContractorsSection
+                                    key={index}
+                                    index={index}
+                                    person={person}
+                                    handleContractorChange={
+                                        handleContractorChange
+                                    }
+                                    suppliers={suppliers}
+                                    roles={roles}
+                                    removeContractor={removeContractor}
+                                    mode={mode}
+                                />
+                            ))}
+
                         {mode === "edit" && (
                             <button
                                 type="button"
-                                className="add-button"
-                                onClick={() => addBlock("contractor")}
+                                className="button-add"
                                 title="Добавить подрядчика"
+                                onClick={() => addBlock("contractor")}
                             >
-                                <span></span>
+                                Добавить
+                                <span>
+                                    <svg
+                                        width="10"
+                                        height="9"
+                                        viewBox="0 0 10 9"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
+                                            fill="currentColor"
+                                        ></path>
+                                    </svg>
+                                </span>
                             </button>
                         )}
-                    </span>
-                </div>
-            </div>
-
-            {contractors.length > 0 &&
-                contractors.map((person, index) => (
-                    <ContractorsSection
-                        key={index}
-                        index={index}
-                        person={person}
-                        handleContractorChange={handleContractorChange}
-                        suppliers={suppliers}
-                        roles={roles}
-                        removeContractor={removeContractor}
-                        mode={mode}
-                    />
-                ))}
-
-            <div className="mt-5 flex items-center gap-6 justify-start">
-                {mode === "edit" ? (
-                    <>
-                        <button
-                            type="button"
-                            className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                            onClick={() => handleSave()}
-                            title="Сохранить отчёт"
-                        >
-                            Сохранить
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setReportId(null);
-                                reportWindowsState(false);
-                            }}
-                            className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
-                            title="Отменить сохранение отчёта"
-                        >
-                            Отменить
-                        </button>
-                    </>
-                ) : (
-                    <div className="grid gap-2 flex-grow grid-cols-1">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setReportId(null);
-                                reportWindowsState(false);
-                            }}
-                            className="border rounded-lg py-3 px-5"
-                            title="Закрыть отчёт"
-                        >
-                            Закрыть
-                        </button>
                     </div>
-                )}
+                </div>
+
+                <div className="bottom-nav">
+                    <div className="container">
+                        {mode === "edit" ? (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setReportId(null);
+                                        reportWindowsState(false);
+                                    }}
+                                    className="cancel-button"
+                                    title="Отменить сохранение отчёта"
+                                >
+                                    Отменить
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="action-button"
+                                    onClick={() => handleSave()}
+                                    title="Сохранить отчёт"
+                                >
+                                    Сохранить
+                                </button>
+                            </>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setReportId(null);
+                                    reportWindowsState(false);
+                                }}
+                                style={{ "grid-column": "1 /-1" }}
+                                className="cancel-button"
+                                title="Закрыть отчёт"
+                            >
+                                Закрыть
+                            </button>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );
