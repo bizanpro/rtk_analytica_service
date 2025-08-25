@@ -15,7 +15,15 @@
         @media (min-width: 480px) {
             grid-template-columns: repeat(2, 1fr);
             align-items: center;
-            max-width: 320px;
+            max-width: 350px;
+        }
+    }
+
+    &-popup {
+        .action-form__body {
+            @media (min-width: $media-lg) {
+                padding: 18px 30px 64px;
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 import "./Popup.scss";
 
-const Popup = ({ title, children, onClick, className }) => {
+const Popup = ({ title, children, onClick, className = "" }) => {
     return (
         <div className="popup" onClick={onClick}>
             <div

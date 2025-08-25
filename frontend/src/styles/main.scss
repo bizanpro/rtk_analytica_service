@@ -435,6 +435,11 @@ body {
         @media (min-width: $media-lg) {
             padding: 18px 30px 20px;
         }
+
+        p {
+            font-size: 16px;
+            line-height: 150%;
+        }
     }
 
     &__footer {

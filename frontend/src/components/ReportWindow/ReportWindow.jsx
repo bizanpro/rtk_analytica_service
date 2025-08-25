@@ -1012,7 +1012,11 @@ const ReportWindow = ({
             </div>
         </div>
     ) : (
-        <Popup onClick={() => resetState()} title={"Сохранить отчёт?"}>
+        <Popup
+            className="report-window-popup"
+            onClick={() => resetState()}
+            title={"Сохранить отчёт?"}
+        >
             <div className="action-form__body">
                 <p>Иначе данные будут безвозвратно утеряны.</p>
             </div>
