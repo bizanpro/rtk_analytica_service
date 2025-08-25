@@ -9,6 +9,7 @@ import ContractorsSection from "../ContractorsSection";
 import DateFields from "../DateField/DateFields";
 import DateField from "../DateField/DateField";
 import Loader from "../Loader";
+import Popup from "../Popup/Popup";
 
 import "./ReportWindow.scss";
 
@@ -26,11 +27,12 @@ const isValidDate = (str) => {
 };
 
 const ReportWindow = ({
-    sendReport,
     reportWindowsState,
+    setReportWindowsState,
     contracts,
     reportId,
     updateReport,
+    sendReport,
     setReportId,
     mode,
 }) => {
@@ -60,6 +62,7 @@ const ReportWindow = ({
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [saveBeforeClose, setSaveBeforeClose] = useState(false);
 
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -171,15 +174,52 @@ const ReportWindow = ({
         const newErrors = validateFields();
 
         if (Object.keys(newErrors).length === 0) {
-            reportId
-                ? updateReport(reportData, reportId)
-                : sendReport(reportData);
+            if (reportId) {
+                updateReport(reportData, reportId);
+            } else {
+                sendReport(reportData);
+            }
+
+            resetState();
         } else {
             alert(
                 "Исправьте ошибки перед сохранением:\n" +
                     Object.values(newErrors).join("\n")
             );
         }
+    };
+
+    // Сброс состояния компонента
+    const resetState = () => {
+        setErrorMessage("");
+        setReportWindowsState(false);
+        setSaveBeforeClose(false);
+        setIsDataLoaded(false);
+        setIsLoading(true);
+        setReportId(null);
+
+        setTeammates([]);
+        setContractors([]);
+        setReportTypes([]);
+        setPhysicalPersons([]);
+        setRoles([]);
+        setSuppliers([]);
+        setReportStatuses([]);
+        setRegularityOptions([]);
+        setReportData({
+            report_status_id: "",
+            report_type_id: "",
+            budget_in_billions: "",
+            service_cost_in_rubles: "",
+            approval_date: "",
+            contract_id: "",
+            report_period: "",
+            implementation_period: "",
+            execution_period: "",
+            responsible_persons: [],
+            contragents: [],
+            show_cost: true,
+        });
     };
 
     // Обработка полей
@@ -293,37 +333,6 @@ const ReportWindow = ({
         });
     };
 
-    useEffect(() => {
-        if (isDataLoaded && reportId) {
-            getData(`${import.meta.env.VITE_API_URL}reports/${reportId}`).then(
-                (response) => {
-                    setReportData(response.data);
-                    setTeammates(response.data.responsible_persons);
-                    setContractors(response.data.contragents);
-                    setIsLoading(false);
-                }
-            );
-        }
-    }, [isDataLoaded, reportId]);
-
-    // События зависимости от выбранного типа отчета
-    useEffect(() => {
-        const selectedType = reportTypes.find(
-            (type) => type.id === +reportData.report_type_id
-        );
-
-        if (selectedType) {
-            setReportData((prev) => ({
-                ...prev,
-                show_cost: selectedType.show_cost,
-                is_regular: selectedType.is_regular,
-                ...(selectedType.is_regular === false && {
-                    regularity: "единоразовый",
-                }),
-            }));
-        }
-    }, [reportData.report_type_id]);
-
     // Выставление статуса отчета
     const validateApprovalDate = () => {
         if (isValidDate(reportData.approval_date)) {
@@ -389,32 +398,32 @@ const ReportWindow = ({
             case "в работе":
                 statusId = reportStatuses?.find(
                     (status) => status.name == "В работе"
-                ).id;
+                )?.id;
                 break;
 
             case "в процессе":
                 statusId = reportStatuses?.find(
                     (status) => status.name == "В работе"
-                ).id;
+                )?.id;
                 break;
 
             case "завершен":
                 statusId = reportStatuses?.find(
                     (status) => status.name == "Завершен"
-                ).id;
+                )?.id;
                 break;
 
             case "завершён":
                 statusId = reportStatuses?.find(
                     (status) => status.name == "Завершен"
-                ).id;
+                )?.id;
 
                 break;
 
             case "запланирован":
                 statusId = reportStatuses?.find(
                     (status) => status.name == "Запланирован"
-                ).id;
+                )?.id;
 
                 break;
 
@@ -429,6 +438,79 @@ const ReportWindow = ({
         }));
     };
 
+    // Получение данных отчета
+    const fetchReportData = () => {
+        getData(`${import.meta.env.VITE_API_URL}reports/${reportId}`).then(
+            (response) => {
+                setReportData(response.data);
+                setTeammates(response.data.responsible_persons);
+                setContractors(response.data.contragents);
+                setIsLoading(false);
+            }
+        );
+    };
+
+    // Получение полей редактора
+    const fetchEditorData = async () => {
+        const [
+            reportTypesRes,
+            physicalPersonsRes,
+            suppliersRes,
+            rolesRes,
+            reportStatusesRes,
+            regularityOptionsRes,
+        ] = await Promise.allSettled([
+            getData(
+                `${import.meta.env.VITE_API_URL}report-types?with-count=true`
+            ),
+            getData(`${import.meta.env.VITE_API_URL}physical-persons`),
+            getData(`${import.meta.env.VITE_API_URL}suppliers`),
+            getData(`${import.meta.env.VITE_API_URL}roles`),
+            getData(`${import.meta.env.VITE_API_URL}report-statuses`),
+            getData(
+                `${import.meta.env.VITE_API_URL}reports/regularity-options`
+            ),
+        ]);
+
+        if (reportTypesRes.status === "fulfilled")
+            setReportTypes(reportTypesRes.value.data.data); // Получение Типов отчета
+
+        if (physicalPersonsRes.status === "fulfilled") {
+            setPhysicalPersons(physicalPersonsRes.value.data); // Получение физ. лиц для команды проекта
+        }
+
+        if (suppliersRes.status === "fulfilled")
+            setSuppliers(suppliersRes.value.data.data); // Получение подрядчиков
+
+        if (rolesRes.status === "fulfilled") setRoles(rolesRes.value.data.data); // Получение ролей
+
+        if (reportStatusesRes.status === "fulfilled")
+            setReportStatuses(reportStatusesRes.value.data); // Получение статусов отчета
+
+        if (regularityOptionsRes.status === "fulfilled")
+            setRegularityOptions(regularityOptionsRes.value.data); // Получение статусов отчета
+
+        setIsDataLoaded(true);
+    };
+
+    // События зависимости от выбранного типа отчета
+    useEffect(() => {
+        const selectedType = reportTypes.find(
+            (type) => type.id === +reportData.report_type_id
+        );
+
+        if (selectedType) {
+            setReportData((prev) => ({
+                ...prev,
+                show_cost: selectedType.show_cost,
+                is_regular: selectedType.is_regular,
+                ...(selectedType.is_regular === false && {
+                    regularity: "единоразовый",
+                }),
+            }));
+        }
+    }, [reportData.report_type_id]);
+
     // Обновление статуса проекта в отчете
     useEffect(() => {
         validateApprovalDate();
@@ -439,432 +521,524 @@ const ReportWindow = ({
     }, [reportData.report_status, reportStatuses]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const [
-                reportTypesRes,
-                physicalPersonsRes,
-                suppliersRes,
-                rolesRes,
-                reportStatusesRes,
-                regularityOptionsRes,
-            ] = await Promise.allSettled([
-                getData(
-                    `${
-                        import.meta.env.VITE_API_URL
-                    }report-types?with-count=true`
-                ),
-                getData(`${import.meta.env.VITE_API_URL}physical-persons`),
-                getData(`${import.meta.env.VITE_API_URL}suppliers`),
-                getData(`${import.meta.env.VITE_API_URL}roles`),
-                getData(`${import.meta.env.VITE_API_URL}report-statuses`),
-                getData(
-                    `${import.meta.env.VITE_API_URL}reports/regularity-options`
-                ),
-            ]);
+        if (isDataLoaded && reportId && reportWindowsState) {
+            fetchReportData();
+        }
+    }, [isDataLoaded, reportId, reportWindowsState]);
 
-            if (reportTypesRes.status === "fulfilled")
-                setReportTypes(reportTypesRes.value.data.data); // Получение Типов отчета
+    useEffect(() => {
+        if (reportWindowsState) {
+            fetchEditorData();
+        }
+    }, [reportWindowsState]);
 
-            if (physicalPersonsRes.status === "fulfilled") {
-                setPhysicalPersons(physicalPersonsRes.value.data); // Получение физ. лиц для команды проекта
-            }
+    return !saveBeforeClose ? (
+        <div
+            className={`bottom-sheet bottom-sheet_desk ${
+                reportWindowsState ? "active" : ""
+            }`}
+            onClick={() => {
+                resetState();
+            }}
+        >
+            <div
+                className="bottom-sheet__wrapper"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="bottom-sheet__icon"></div>
 
-            if (suppliersRes.status === "fulfilled")
-                setSuppliers(suppliersRes.value.data.data); // Получение подрядчиков
+                <div className="bottom-sheet__body">
+                    {reportWindowsState && (
+                        <div className="report-window">
+                            {reportId
+                                ? isLoading && <Loader />
+                                : !isDataLoaded && <Loader />}
 
-            if (rolesRes.status === "fulfilled")
-                setRoles(rolesRes.value.data.data); // Получение ролей
+                            <div className="report-window__wrapper">
+                                <div className="report-window__header">
+                                    <div className="report-window__name">
+                                        {reportData.report_period_code ||
+                                            "Создать отчёт"}
+                                    </div>
+                                </div>
 
-            if (reportStatusesRes.status === "fulfilled")
-                setReportStatuses(reportStatusesRes.value.data); // Получение статусов отчета
+                                <div className="report-window__body">
+                                    <div className="report-window__field">
+                                        <label className="form-label">
+                                            Тип отчёта
+                                        </label>
 
-            if (regularityOptionsRes.status === "fulfilled")
-                setRegularityOptions(regularityOptionsRes.value.data); // Получение статусов отчета
+                                        <select
+                                            className="form-select"
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    e,
+                                                    "report_type_id"
+                                                )
+                                            }
+                                            value={reportData.report_type_id}
+                                            disabled={mode === "read"}
+                                        >
+                                            <option value="">
+                                                Выбрать тип
+                                            </option>
+                                            {reportTypes.length > 0 &&
+                                                reportTypes.map((type) => (
+                                                    <option
+                                                        key={type.id}
+                                                        value={type.id}
+                                                    >
+                                                        {type.name}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    </div>
 
-            setIsDataLoaded(true);
-        };
+                                    <div className="report-window__field">
+                                        <label className="form-label">
+                                            Отчетный период
+                                        </label>
 
-        fetchData();
-    }, []);
+                                        <DateFields
+                                            mode={mode}
+                                            className={"form-field"}
+                                            value={reportData.report_period}
+                                            onChange={(val) =>
+                                                setReportData((prev) => ({
+                                                    ...prev,
+                                                    report_period: val,
+                                                }))
+                                            }
+                                        />
+                                    </div>
 
-    return (
-        <div className="report-window">
-            {reportId ? isLoading && <Loader /> : !isDataLoaded && <Loader />}
+                                    <div className="report-window__fields">
+                                        <div>
+                                            <label className="form-label">
+                                                Бюджет проекта, млрд руб.
+                                            </label>
 
-            <div className="report-window__wrapper">
-                <div className="report-window__header">
-                    <div className="report-window__name">
-                        {reportData.report_period_code || "Создать отчёт"}
-                    </div>
-                </div>
+                                            <input
+                                                type="text"
+                                                className="form-field"
+                                                placeholder="0.0"
+                                                value={reportData.budget_in_billions?.replace(
+                                                    ".",
+                                                    ","
+                                                )}
+                                                onChange={(e) =>
+                                                    handleInputChange(
+                                                        e,
+                                                        "budget_in_billions"
+                                                    )
+                                                }
+                                                disabled={mode === "read"}
+                                            />
+                                        </div>
 
-                <div className="report-window__body">
-                    <div className="report-window__field">
-                        <label className="form-label">Тип отчёта</label>
+                                        <div>
+                                            <label className="form-label">
+                                                Период реализации
+                                            </label>
 
-                        <select
-                            className="form-select"
-                            onChange={(e) =>
-                                handleInputChange(e, "report_type_id")
-                            }
-                            value={reportData.report_type_id}
-                            disabled={mode === "read"}
-                        >
-                            <option value="">Выбрать тип</option>
-                            {reportTypes.length > 0 &&
-                                reportTypes.map((type) => (
-                                    <option key={type.id} value={type.id}>
-                                        {type.name}
-                                    </option>
-                                ))}
-                        </select>
-                    </div>
+                                            <DateFields
+                                                mode={mode}
+                                                className="form-field"
+                                                value={
+                                                    reportData.implementation_period
+                                                }
+                                                onChange={(val) =>
+                                                    setReportData((prev) => ({
+                                                        ...prev,
+                                                        implementation_period:
+                                                            val,
+                                                    }))
+                                                }
+                                            />
+                                        </div>
+                                    </div>
 
-                    <div className="report-window__field">
-                        <label className="form-label">Отчетный период</label>
+                                    <div className="report-window__field">
+                                        <label className="form-label">
+                                            Договор
+                                        </label>
 
-                        <DateFields
-                            mode={mode}
-                            className={"form-field"}
-                            value={reportData.report_period}
-                            onChange={(val) =>
-                                setReportData((prev) => ({
-                                    ...prev,
-                                    report_period: val,
-                                }))
-                            }
-                        />
-                    </div>
+                                        <select
+                                            className="form-select"
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    e,
+                                                    "contract_id"
+                                                )
+                                            }
+                                            value={reportData.contract_id || ""}
+                                            disabled={mode === "read"}
+                                        >
+                                            <option value="">
+                                                Выбрать договор
+                                            </option>
+                                            {contracts.length > 0 &&
+                                                contracts.map((contract) => (
+                                                    <option
+                                                        value={contract.id}
+                                                        key={contract.id}
+                                                    >
+                                                        {contract.contract_name}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    </div>
 
-                    <div className="report-window__fields">
-                        <div>
-                            <label className="form-label">
-                                Бюджет проекта, млрд руб.
-                            </label>
+                                    <div className="report-window__fields">
+                                        {reportData.show_cost === true && (
+                                            <div>
+                                                <label className="form-label">
+                                                    Стоимость услуг, руб.
+                                                </label>
 
-                            <input
-                                type="text"
-                                className="form-field"
-                                placeholder="0.0"
-                                value={reportData.budget_in_billions?.replace(
-                                    ".",
-                                    ","
-                                )}
-                                onChange={(e) =>
-                                    handleInputChange(e, "budget_in_billions")
-                                }
-                                disabled={mode === "read"}
-                            />
-                        </div>
+                                                <input
+                                                    type="text"
+                                                    className="form-field"
+                                                    placeholder="0.0"
+                                                    value={formatMoney(
+                                                        reportData.service_cost_in_rubles
+                                                    )}
+                                                    onChange={(e) =>
+                                                        handleInputChange(
+                                                            e,
+                                                            "service_cost_in_rubles"
+                                                        )
+                                                    }
+                                                    disabled={mode === "read"}
+                                                />
+                                            </div>
+                                        )}
 
-                        <div>
-                            <label className="form-label">
-                                Период реализации
-                            </label>
+                                        <div>
+                                            <label className="form-label">
+                                                Период выполнения
+                                            </label>
 
-                            <DateFields
-                                mode={mode}
-                                className="form-field"
-                                value={reportData.implementation_period}
-                                onChange={(val) =>
-                                    setReportData((prev) => ({
-                                        ...prev,
-                                        implementation_period: val,
-                                    }))
-                                }
-                            />
-                        </div>
-                    </div>
+                                            <DateFields
+                                                mode={mode}
+                                                className={"form-field"}
+                                                value={
+                                                    reportData.execution_period
+                                                }
+                                                onChange={(val) =>
+                                                    setReportData((prev) => ({
+                                                        ...prev,
+                                                        execution_period: val,
+                                                    }))
+                                                }
+                                            />
+                                        </div>
+                                    </div>
 
-                    <div className="report-window__field">
-                        <label className="form-label">Договор</label>
+                                    <div className="report-window__field">
+                                        <label className="form-label">
+                                            Регулярность
+                                        </label>
 
-                        <select
-                            className="form-select"
-                            onChange={(e) =>
-                                handleInputChange(e, "contract_id")
-                            }
-                            value={reportData.contract_id || ""}
-                            disabled={mode === "read"}
-                        >
-                            <option value="">Выбрать договор</option>
-                            {contracts.length > 0 &&
-                                contracts.map((contract) => (
-                                    <option
-                                        value={contract.id}
-                                        key={contract.id}
-                                    >
-                                        {contract.contract_name}
-                                    </option>
-                                ))}
-                        </select>
-                    </div>
+                                        <select
+                                            className="form-select"
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    e,
+                                                    "regularity"
+                                                )
+                                            }
+                                            value={reportData.regularity || ""}
+                                            disabled={
+                                                mode === "read" ||
+                                                reportData.is_regular === false
+                                            }
+                                        >
+                                            <option value="">
+                                                Выбрать из списка
+                                            </option>
+                                            {regularityOptions.length > 0 &&
+                                                regularityOptions.map(
+                                                    (item) => {
+                                                        const value =
+                                                            item.toLowerCase();
 
-                    <div className="report-window__fields">
-                        {reportData.show_cost === true && (
-                            <div>
-                                <label className="form-label">
-                                    Стоимость услуг, руб.
-                                </label>
+                                                        if (
+                                                            value ===
+                                                                "единоразовый" &&
+                                                            reportData.is_regular ===
+                                                                true
+                                                        ) {
+                                                            return null;
+                                                        }
 
-                                <input
-                                    type="text"
-                                    className="form-field"
-                                    placeholder="0.0"
-                                    value={formatMoney(
-                                        reportData.service_cost_in_rubles
-                                    )}
-                                    onChange={(e) =>
-                                        handleInputChange(
-                                            e,
-                                            "service_cost_in_rubles"
-                                        )
-                                    }
-                                    disabled={mode === "read"}
-                                />
+                                                        return (
+                                                            <option
+                                                                value={value}
+                                                                key={item}
+                                                            >
+                                                                {item}
+                                                            </option>
+                                                        );
+                                                    }
+                                                )}
+                                        </select>
+                                    </div>
+
+                                    <div className="report-window__fields">
+                                        <div>
+                                            <label className="form-label">
+                                                Статус
+                                            </label>
+
+                                            <select
+                                                className="form-select"
+                                                value={
+                                                    reportData?.report_status_id
+                                                }
+                                                onChange={(e) =>
+                                                    handleInputChange(
+                                                        e,
+                                                        "report_status_id"
+                                                    )
+                                                }
+                                                disabled
+                                            >
+                                                <option value=""></option>
+                                                {reportStatuses.map(
+                                                    (status) => (
+                                                        <option
+                                                            value={status.id}
+                                                            key={status.id}
+                                                        >
+                                                            {status.name}
+                                                        </option>
+                                                    )
+                                                )}
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label className="form-label">
+                                                Дата утверждения
+                                            </label>
+
+                                            <DateField
+                                                mode={mode}
+                                                className="form-field"
+                                                value={reportData.approval_date}
+                                                onChange={(val) =>
+                                                    setReportData((prev) => ({
+                                                        ...prev,
+                                                        approval_date: val,
+                                                    }))
+                                                }
+                                            />
+
+                                            {errorMessage !== "" && (
+                                                <span className="text-red-400 absolute top-[100%] text-sm">
+                                                    {errorMessage}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="report-window__block">
+                                        <b className="report-window__subtitle">
+                                            Команда проекта
+                                        </b>
+
+                                        {teammates.length > 0 && (
+                                            <ul className="person__list">
+                                                {teammates.map(
+                                                    (person, index) => (
+                                                        <TeammatesSection
+                                                            key={index}
+                                                            index={index}
+                                                            person={person}
+                                                            handleTeammateChange={
+                                                                handleTeammateChange
+                                                            }
+                                                            physicalPersons={
+                                                                physicalPersons
+                                                            }
+                                                            roles={roles}
+                                                            removeTeammate={
+                                                                removeTeammate
+                                                            }
+                                                            mode={mode}
+                                                        />
+                                                    )
+                                                )}
+                                            </ul>
+                                        )}
+
+                                        {mode === "edit" && (
+                                            <button
+                                                type="button"
+                                                className="button-add"
+                                                title="Добавить члена команды"
+                                                onClick={() =>
+                                                    addBlock("teammate")
+                                                }
+                                            >
+                                                Добавить
+                                                <span>
+                                                    <svg
+                                                        width="10"
+                                                        height="9"
+                                                        viewBox="0 0 10 9"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
+                                                            fill="currentColor"
+                                                        ></path>
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div className="report-window__block">
+                                        <b className="report-window__subtitle">
+                                            Подрядчики
+                                        </b>
+
+                                        {contractors.length > 0 && (
+                                            <ul className="person__list">
+                                                {contractors.map(
+                                                    (person, index) => (
+                                                        <ContractorsSection
+                                                            key={index}
+                                                            index={index}
+                                                            person={person}
+                                                            handleContractorChange={
+                                                                handleContractorChange
+                                                            }
+                                                            suppliers={
+                                                                suppliers
+                                                            }
+                                                            roles={roles}
+                                                            removeContractor={
+                                                                removeContractor
+                                                            }
+                                                            mode={mode}
+                                                        />
+                                                    )
+                                                )}
+                                            </ul>
+                                        )}
+
+                                        {mode === "edit" && (
+                                            <button
+                                                type="button"
+                                                className="button-add"
+                                                title="Добавить подрядчика"
+                                                onClick={() =>
+                                                    addBlock("contractor")
+                                                }
+                                            >
+                                                Добавить
+                                                <span>
+                                                    <svg
+                                                        width="10"
+                                                        height="9"
+                                                        viewBox="0 0 10 9"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
+                                                            fill="currentColor"
+                                                        ></path>
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="bottom-nav">
+                                    <div className="container">
+                                        {mode === "edit" ? (
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setReportId(null);
+                                                        setReportWindowsState(
+                                                            false
+                                                        );
+                                                        setSaveBeforeClose(
+                                                            true
+                                                        );
+                                                    }}
+                                                    className="cancel-button"
+                                                    title="Отменить сохранение отчёта"
+                                                >
+                                                    Отменить
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="action-button"
+                                                    onClick={() => handleSave()}
+                                                    title="Сохранить отчёт"
+                                                >
+                                                    Сохранить
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    resetState();
+                                                }}
+                                                style={{ gridColumn: "1 /-1" }}
+                                                className="cancel-button"
+                                                title="Закрыть отчёт"
+                                            >
+                                                Закрыть
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
-                        )}
-
-                        <div>
-                            <label className="form-label">
-                                Период выполнения
-                            </label>
-
-                            <DateFields
-                                mode={mode}
-                                className={"form-field"}
-                                value={reportData.execution_period}
-                                onChange={(val) =>
-                                    setReportData((prev) => ({
-                                        ...prev,
-                                        execution_period: val,
-                                    }))
-                                }
-                            />
                         </div>
-                    </div>
-
-                    <div className="report-window__field">
-                        <label className="form-label">Регулярность</label>
-
-                        <select
-                            className="form-select"
-                            onChange={(e) => handleInputChange(e, "regularity")}
-                            value={reportData.regularity || ""}
-                            disabled={
-                                mode === "read" ||
-                                reportData.is_regular === false
-                            }
-                        >
-                            <option value="">Выбрать из списка</option>
-                            {regularityOptions.length > 0 &&
-                                regularityOptions.map((item) => {
-                                    const value = item.toLowerCase();
-
-                                    if (
-                                        value === "единоразовый" &&
-                                        reportData.is_regular === true
-                                    ) {
-                                        return null;
-                                    }
-
-                                    return (
-                                        <option value={value} key={item}>
-                                            {item}
-                                        </option>
-                                    );
-                                })}
-                        </select>
-                    </div>
-
-                    <div className="report-window__fields">
-                        <div>
-                            <label className="form-label">Статус</label>
-
-                            <select
-                                className="form-select"
-                                value={reportData?.report_status_id}
-                                onChange={(e) =>
-                                    handleInputChange(e, "report_status_id")
-                                }
-                                disabled
-                            >
-                                <option value=""></option>
-                                {reportStatuses.map((status) => (
-                                    <option value={status.id} key={status.id}>
-                                        {status.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="form-label">
-                                Дата утверждения
-                            </label>
-
-                            <DateField
-                                mode={mode}
-                                className="form-field"
-                                value={reportData.approval_date}
-                                onChange={(val) =>
-                                    setReportData((prev) => ({
-                                        ...prev,
-                                        approval_date: val,
-                                    }))
-                                }
-                            />
-
-                            {errorMessage !== "" && (
-                                <span className="text-red-400 absolute top-[100%] text-sm">
-                                    {errorMessage}
-                                </span>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="report-window__block">
-                        <b className="report-window__subtitle">
-                            Команда проекта
-                        </b>
-
-                        {teammates.length > 0 && (
-                            <ul className="person__list">
-                                {teammates.map((person, index) => (
-                                    <TeammatesSection
-                                        key={index}
-                                        index={index}
-                                        person={person}
-                                        handleTeammateChange={
-                                            handleTeammateChange
-                                        }
-                                        physicalPersons={physicalPersons}
-                                        roles={roles}
-                                        removeTeammate={removeTeammate}
-                                        mode={mode}
-                                    />
-                                ))}
-                            </ul>
-                        )}
-
-                        {mode === "edit" && (
-                            <button
-                                type="button"
-                                className="button-add"
-                                title="Добавить члена команды"
-                                onClick={() => addBlock("teammate")}
-                            >
-                                Добавить
-                                <span>
-                                    <svg
-                                        width="10"
-                                        height="9"
-                                        viewBox="0 0 10 9"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
-                                            fill="currentColor"
-                                        ></path>
-                                    </svg>
-                                </span>
-                            </button>
-                        )}
-                    </div>
-
-                    <div className="report-window__block">
-                        <b className="report-window__subtitle">Подрядчики</b>
-
-                        {contractors.length > 0 && (
-                            <ul className="person__list">
-                                {contractors.map((person, index) => (
-                                    <ContractorsSection
-                                        key={index}
-                                        index={index}
-                                        person={person}
-                                        handleContractorChange={
-                                            handleContractorChange
-                                        }
-                                        suppliers={suppliers}
-                                        roles={roles}
-                                        removeContractor={removeContractor}
-                                        mode={mode}
-                                    />
-                                ))}
-                            </ul>
-                        )}
-
-                        {mode === "edit" && (
-                            <button
-                                type="button"
-                                className="button-add"
-                                title="Добавить подрядчика"
-                                onClick={() => addBlock("contractor")}
-                            >
-                                Добавить
-                                <span>
-                                    <svg
-                                        width="10"
-                                        height="9"
-                                        viewBox="0 0 10 9"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
-                                            fill="currentColor"
-                                        ></path>
-                                    </svg>
-                                </span>
-                            </button>
-                        )}
-                    </div>
-                </div>
-
-                <div className="bottom-nav">
-                    <div className="container">
-                        {mode === "edit" ? (
-                            <>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setReportId(null);
-                                        reportWindowsState(false);
-                                    }}
-                                    className="cancel-button"
-                                    title="Отменить сохранение отчёта"
-                                >
-                                    Отменить
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="action-button"
-                                    onClick={() => handleSave()}
-                                    title="Сохранить отчёт"
-                                >
-                                    Сохранить
-                                </button>
-                            </>
-                        ) : (
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setReportId(null);
-                                    reportWindowsState(false);
-                                }}
-                                style={{ "grid-column": "1 /-1" }}
-                                className="cancel-button"
-                                title="Закрыть отчёт"
-                            >
-                                Закрыть
-                            </button>
-                        )}
-                    </div>
+                    )}
                 </div>
             </div>
         </div>
+    ) : (
+        <Popup onClick={() => resetState()} title={"Сохранить отчёт?"}>
+            <div className="action-form__body">
+                <p>Иначе данные будут безвозвратно утеряны.</p>
+            </div>
+
+            <div className="action-form__footer">
+                <div className="max-w-[320px]">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            resetState();
+                        }}
+                        className="cancel-button flex-[1_0_auto]"
+                    >
+                        Не сохранять
+                    </button>
+
+                    <button
+                        type="button"
+                        className="action-button flex-[1_0_auto]"
+                        onClick={() => handleSave()}
+                    >
+                        Сохранить отчёт
+                    </button>
+                </div>
+            </div>
+        </Popup>
     );
 };
 

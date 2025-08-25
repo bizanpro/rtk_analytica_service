@@ -522,8 +522,6 @@ const ProjectCard = () => {
                         ...prevReports,
                         response.data,
                     ]);
-                    setReportWindowsState(false);
-                    setReportId(null);
                     getProject(projectId);
                 } else {
                     toast.dismiss(query);
@@ -535,9 +533,10 @@ const ProjectCard = () => {
                         position: "top-center",
                         containerId: "projectCard",
                     });
-                    setReportWindowsState(false);
-                    setReportId(null);
                 }
+
+                setReportWindowsState(false);
+                setReportId(null);
             })
             .catch((error) => {
                 toast.dismiss(query);
@@ -589,12 +588,12 @@ const ProjectCard = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-                    setReportWindowsState(false);
+
                     getProject(projectId);
-                    setReportId(null);
-                } else {
-                    setReportWindowsState(false);
                 }
+
+                setReportId(null);
+                setReportWindowsState(false);
             })
             .catch((error) => {
                 toast.dismiss(query);
@@ -880,7 +879,12 @@ const ProjectCard = () => {
                                     </div>
 
                                     <MultiSelectField
-                                        placeholder={"Выбрать из списка"}
+                                        mode={mode}
+                                        placeholder={`${
+                                            mode === "read"
+                                                ? "Нет данных"
+                                                : "Выбрать из списка"
+                                        }`}
                                         target={"other_industries"}
                                         fieldName={"others"}
                                         selectedValues={otherIndustries.others}
@@ -988,38 +992,40 @@ const ProjectCard = () => {
                                     )}
                                 </ul>
 
-                                <button
-                                    type="button"
-                                    className="button-add"
-                                    onClick={() => {
-                                        if (projectData?.contragent_id) {
-                                            if (!addCustomer) {
-                                                setAddCustomer(true);
+                                {mode === "edit" && (
+                                    <button
+                                        type="button"
+                                        className="button-add"
+                                        onClick={() => {
+                                            if (projectData?.contragent_id) {
+                                                if (!addCustomer) {
+                                                    setAddCustomer(true);
+                                                }
+                                            } else {
+                                                alert(
+                                                    "Необходимо назначить заказчика"
+                                                );
                                             }
-                                        } else {
-                                            alert(
-                                                "Необходимо назначить заказчика"
-                                            );
-                                        }
-                                    }}
-                                    title="Добавить ключевое лицо Заказчика"
-                                >
-                                    Добавить
-                                    <span>
-                                        <svg
-                                            width="10"
-                                            height="9"
-                                            viewBox="0 0 10 9"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
-                                                fill="currentColor"
-                                            />
-                                        </svg>
-                                    </span>
-                                </button>
+                                        }}
+                                        title="Добавить ключевое лицо Заказчика"
+                                    >
+                                        Добавить
+                                        <span>
+                                            <svg
+                                                width="10"
+                                                height="9"
+                                                viewBox="0 0 10 9"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <path
+                                                    d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
+                                                    fill="currentColor"
+                                                />
+                                            </svg>
+                                        </span>
+                                    </button>
+                                )}
 
                                 {addCustomer && (
                                     <EmptyExecutorBlock
@@ -1102,32 +1108,34 @@ const ProjectCard = () => {
                                     )}
                                 </ul>
 
-                                <button
-                                    type="button"
-                                    className="button-add"
-                                    onClick={() => {
-                                        if (!addCreditor) {
-                                            setAddCreditor(true);
-                                        }
-                                    }}
-                                    title="Добавить Кредитора"
-                                >
-                                    Добавить
-                                    <span>
-                                        <svg
-                                            width="10"
-                                            height="9"
-                                            viewBox="0 0 10 9"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
-                                                fill="currentColor"
-                                            />
-                                        </svg>
-                                    </span>
-                                </button>
+                                {mode === "edit" && (
+                                    <button
+                                        type="button"
+                                        className="button-add"
+                                        onClick={() => {
+                                            if (!addCreditor) {
+                                                setAddCreditor(true);
+                                            }
+                                        }}
+                                        title="Добавить Кредитора"
+                                    >
+                                        Добавить
+                                        <span>
+                                            <svg
+                                                width="10"
+                                                height="9"
+                                                viewBox="0 0 10 9"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <path
+                                                    d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
+                                                    fill="currentColor"
+                                                />
+                                            </svg>
+                                        </span>
+                                    </button>
+                                )}
 
                                 {addCreditor && (
                                     <EmptyExecutorBlock
@@ -1304,27 +1312,16 @@ const ProjectCard = () => {
                     </div>
                 </div>
 
-                <BottomSheet
-                    onClick={() => {
-                        setReportWindowsState(false);
-                        setReportId(null);
-                    }}
-                    className={`bottom-sheet_desk ${
-                        reportWindowsState ? "active" : ""
-                    }`}
-                >
-                    {reportWindowsState && (
-                        <ReportWindow
-                            reportWindowsState={setReportWindowsState}
-                            sendReport={sendReport}
-                            contracts={contracts}
-                            updateReport={updateReport}
-                            reportId={reportId}
-                            setReportId={setReportId}
-                            mode={mode}
-                        />
-                    )}
-                </BottomSheet>
+                <ReportWindow
+                    reportWindowsState={reportWindowsState}
+                    setReportWindowsState={setReportWindowsState}
+                    sendReport={sendReport}
+                    contracts={contracts}
+                    updateReport={updateReport}
+                    reportId={reportId}
+                    setReportId={setReportId}
+                    mode={mode}
+                />
 
                 <BottomSheet
                     onClick={() => setActiveWindow("")}
@@ -1505,41 +1502,43 @@ const ProjectCard = () => {
                 </button>
             </div>
 
-            <BottomNavCard
-                update={() => updateProject(projectId)}
-                isAvailableToSave={isAvailableToSave}
-            >
-                <button
-                    type="button"
-                    className="button-add"
-                    onClick={() => {
-                        setActiveWindow("");
-                        setReportWindowsState(true);
-                    }}
-                    disabled={projectData.contragent_id ? false : true}
-                    title={
-                        projectData.contragent_id
-                            ? "Создать отчёт"
-                            : "Необходимо назначить заказчика"
-                    }
+            {mode === "edit" && (
+                <BottomNavCard
+                    update={() => updateProject(projectId)}
+                    isAvailableToSave={isAvailableToSave}
                 >
-                    Отчёт
-                    <span>
-                        <svg
-                            width="13"
-                            height="12"
-                            viewBox="0 0 13 12"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M7.5 5H12.5V7H7.5V12H5.5V7H0.5V5H5.5V0H7.5V5Z"
-                                fill="currentColor"
-                            />
-                        </svg>
-                    </span>
-                </button>
-            </BottomNavCard>
+                    <button
+                        type="button"
+                        className="button-add"
+                        onClick={() => {
+                            setActiveWindow("");
+                            setReportWindowsState(true);
+                        }}
+                        disabled={projectData.contragent_id ? false : true}
+                        title={
+                            projectData.contragent_id
+                                ? "Создать отчёт"
+                                : "Необходимо назначить заказчика"
+                        }
+                    >
+                        Отчёт
+                        <span>
+                            <svg
+                                width="13"
+                                height="12"
+                                viewBox="0 0 13 12"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M7.5 5H12.5V7H7.5V12H5.5V7H0.5V5H5.5V0H7.5V5Z"
+                                    fill="currentColor"
+                                />
+                            </svg>
+                        </span>
+                    </button>
+                </BottomNavCard>
+            )}
         </main>
     );
 };

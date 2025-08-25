@@ -4,6 +4,7 @@ import MultiSelectWithSearch from "./MultiSelectWithSearch";
 import OverlayTransparent from "../Overlay/OverlayTransparent";
 
 const MultiSelectField = ({
+    mode,
     placeholder,
     target,
     options,
@@ -16,9 +17,6 @@ const MultiSelectField = ({
     const selectedItems = selectedValues.map((item) =>
         options.find((option) => option.value === item)
     );
-
-    // console.log(selectedValues);
-    // console.log(selectedItems);
 
     return (
         <div className="form-multiselect">
@@ -33,7 +31,11 @@ const MultiSelectField = ({
                 type="button"
                 title="Выбрать из списка"
                 className="form-multiselect__field"
-                onClick={() => setIsActiveSelect(target)}
+                onClick={() => {
+                    if (mode === "read") return;
+                    setIsActiveSelect(target);
+                }}
+                disabled={mode === "read"}
             >
                 {placeholder}
             </button>
@@ -54,31 +56,33 @@ const MultiSelectField = ({
                         <li className="form-multiselect__item" key={item.value}>
                             <span>{item.label}</span>
 
-                            <button
-                                type="button"
-                                title={`Удалить ${item.label} из списка`}
-                                onClick={() =>
-                                    onChange({
-                                        [fieldName]: selectedValues.filter(
-                                            (selectedValue) =>
-                                                selectedValue !== item.value
-                                        ),
-                                    })
-                                }
-                            >
-                                <svg
-                                    width="12"
-                                    height="12"
-                                    viewBox="0 0 12 12"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
+                            {mode === "edit" && (
+                                <button
+                                    type="button"
+                                    title={`Удалить ${item.label} из списка`}
+                                    onClick={() =>
+                                        onChange({
+                                            [fieldName]: selectedValues.filter(
+                                                (selectedValue) =>
+                                                    selectedValue !== item.value
+                                            ),
+                                        })
+                                    }
                                 >
-                                    <path
-                                        d="M7.06 6l2.652 2.652-1.06 1.06L6 7.061 3.348 9.712l-1.06-1.06L4.939 6 2.288 3.348l1.06-1.06L6 4.939l2.652-2.651 1.06 1.06L7.061 6z"
-                                        fill="#98A2B3"
-                                    />
-                                </svg>
-                            </button>
+                                    <svg
+                                        width="12"
+                                        height="12"
+                                        viewBox="0 0 12 12"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M7.06 6l2.652 2.652-1.06 1.06L6 7.061 3.348 9.712l-1.06-1.06L4.939 6 2.288 3.348l1.06-1.06L6 4.939l2.652-2.651 1.06 1.06L7.061 6z"
+                                            fill="#98A2B3"
+                                        />
+                                    </svg>
+                                </button>
+                            )}
                         </li>
                     ))}
                 </ul>
