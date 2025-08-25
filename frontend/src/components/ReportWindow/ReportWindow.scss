@@ -6,6 +6,19 @@
     overflow-x: hidden;
     position: relative;
 
+    &-alert__actions {
+        width: 100%;
+        display: grid !important;
+        gap: 10px !important;
+        justify-content: unset !important;
+
+        @media (min-width: 480px) {
+            grid-template-columns: repeat(2, 1fr);
+            align-items: center;
+            max-width: 320px;
+        }
+    }
+
     &__header {
         padding: 0 20px 20px;
         border-bottom: 1px solid var(--color-gray-40);

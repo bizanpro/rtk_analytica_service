@@ -1018,20 +1018,20 @@ const ReportWindow = ({
             </div>
 
             <div className="action-form__footer">
-                <div className="max-w-[320px]">
+                <div className="report-window-alert__actions">
                     <button
                         type="button"
                         onClick={() => {
                             resetState();
                         }}
-                        className="cancel-button flex-[1_0_auto]"
+                        className="cancel-button"
                     >
                         Не сохранять
                     </button>
 
                     <button
                         type="button"
-                        className="action-button flex-[1_0_auto]"
+                        className="action-button"
                         onClick={() => handleSave()}
                     >
                         Сохранить отчёт
