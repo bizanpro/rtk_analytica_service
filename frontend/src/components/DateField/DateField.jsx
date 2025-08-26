@@ -16,6 +16,7 @@ const DateField = ({ mode = "edit", value = "", onChange, className }) => {
             onAccept={(val) => onChange?.(val)}
             placeholder="дд.мм.гггг"
             className={className}
+            inputMode="numeric"
             disabled={mode === "read"}
         />
     );

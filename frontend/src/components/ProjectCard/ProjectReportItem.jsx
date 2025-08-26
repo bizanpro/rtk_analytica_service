@@ -12,16 +12,16 @@ const ProjectReportItem = ({
     let statusClass;
 
     if (
-        status.toLowerCase() === "завершен" ||
-        status.toLowerCase() === "утвержден" ||
-        status.toLowerCase() === "завершён" ||
-        status.toLowerCase() === "утверждён"
+        status?.toLowerCase() === "завершен" ||
+        status?.toLowerCase() === "утвержден" ||
+        status?.toLowerCase() === "завершён" ||
+        status?.toLowerCase() === "утверждён"
     ) {
         statusClass = "reports__list-item__status_completed completed";
     } else if (
-        status.toLowerCase() === "в процессе" ||
-        status.toLowerCase() === "запланирован" ||
-        status.toLowerCase() === "в работе"
+        status?.toLowerCase() === "в процессе" ||
+        status?.toLowerCase() === "запланирован" ||
+        status?.toLowerCase() === "в работе"
     ) {
         statusClass = "reports__list-item__status_active active";
     }

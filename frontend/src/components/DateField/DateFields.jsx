@@ -74,6 +74,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     }}
                     placeholder="дд.мм.гггг"
                     className="h-full min-w-[5ch] max-w-[8.5ch]"
+                    inputMode="numeric"
                     disabled={mode === "read"}
                 />
 
@@ -101,6 +102,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     }}
                     placeholder="дд.мм.гггг"
                     className="h-full min-w-[5ch] max-w-[9ch]"
+                    inputMode="numeric"
                     disabled={mode === "read"}
                 />
             </div>
