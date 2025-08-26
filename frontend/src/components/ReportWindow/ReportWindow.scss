@@ -27,6 +27,16 @@
         }
     }
 
+    &__wrapper {
+        .bottom-nav {
+            position: relative;
+
+            @media (min-width: $media-xxl) {
+                position: fixed;
+            }
+        }
+    }
+
     &__header {
         padding: 0 20px 20px;
         border-bottom: 1px solid var(--color-gray-40);
