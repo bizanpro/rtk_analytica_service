@@ -4,7 +4,9 @@ import { IMaskInput } from "react-imask";
 import IMask from "imask";
 
 const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
+    const dateFromRef = useRef(null);
     const dateToRef = useRef(null);
+
     const [errorMessage, setErrorMessage] = useState("");
 
     // Преобразуем входящую строку в объект
@@ -49,6 +51,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
         <div className="grid gap-1">
             <div className={`${className}`}>
                 <IMaskInput
+                    inputRef={dateFromRef}
                     mask={Date}
                     pattern="d.`m.`Y"
                     blocks={{
@@ -59,8 +62,16 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     lazy={true}
                     autofix={true}
                     value={period.date_from}
-                    onAccept={(val) => handleChange("date_from", val)}
-                    onComplete={() => dateToRef.current?.focus()}
+                    onAccept={(val, maskRef) => {
+                        if (maskRef.el.input?.matches(":focus")) {
+                            handleChange("date_from", val);
+                        }
+                    }}
+                    onComplete={(val, maskRef) => {
+                        if (maskRef.el.input?.matches(":focus")) {
+                            dateToRef.current?.focus();
+                        }
+                    }}
                     placeholder="дд.мм.гггг"
                     className="h-full min-w-[5ch] max-w-[8.5ch]"
                     disabled={mode === "read"}
@@ -80,13 +91,20 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     lazy={true}
                     autofix={true}
                     value={period.date_to}
-                    onAccept={(val) => handleChange("date_to", val)}
+                    onAccept={(val, maskRef) => {
+                        if (maskRef.el.input?.matches(":focus")) {
+                            handleChange("date_to", val);
+                            if (val == "") {
+                                dateFromRef.current?.focus();
+                            }
+                        }
+                    }}
                     placeholder="дд.мм.гггг"
                     className="h-full min-w-[5ch] max-w-[9ch]"
                     disabled={mode === "read"}
                 />
             </div>
-            
+
             {errorMessage !== "" && (
                 <span className="text-red-400 top-[100%] text-sm">
                     {errorMessage}
