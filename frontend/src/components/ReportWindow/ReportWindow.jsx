@@ -176,11 +176,11 @@ const ReportWindow = ({
         if (Object.keys(newErrors).length === 0) {
             if (reportId) {
                 updateReport(reportData, reportId);
+                resetState();
             } else {
                 sendReport(reportData);
+                resetState();
             }
-
-            resetState();
         } else {
             alert(
                 "Исправьте ошибки перед сохранением:\n" +
@@ -967,13 +967,26 @@ const ReportWindow = ({
                                                 <button
                                                     type="button"
                                                     onClick={() => {
-                                                        setReportId(null);
-                                                        setReportWindowsState(
-                                                            false
-                                                        );
-                                                        setSaveBeforeClose(
-                                                            true
-                                                        );
+                                                        const newErrors =
+                                                            validateFields();
+
+                                                        if (
+                                                            Object.keys(
+                                                                newErrors
+                                                            ).length === 0
+                                                        ) {
+                                                            setReportWindowsState(
+                                                                false
+                                                            );
+                                                            setSaveBeforeClose(
+                                                                true
+                                                            );
+                                                        } else {
+                                                            setReportId(null);
+                                                            setReportWindowsState(
+                                                                false
+                                                            );
+                                                        }
                                                     }}
                                                     className="cancel-button"
                                                     title="Отменить сохранение отчёта"
