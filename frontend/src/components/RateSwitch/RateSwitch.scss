@@ -1,0 +1,59 @@
+.rate-switch {
+    position: relative;
+    width: 60px;
+    height: 24px;
+    border-radius: 99px;
+    overflow: hidden;
+    transition: border var(--trans);
+    border: 2px solid var(--color-gray-40);
+    background: var(--color-white);
+    display: grid;
+    align-items: center;
+    grid-template-columns: repeat(3, 1fr);
+
+    &_red {
+        border: 2px solid var(--color-red-40);
+    }
+
+    &_orange {
+        border: 2px solid var(--color-orange-40);
+    }
+
+    &_green {
+        border: 2px solid var(--color-green-40);
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        background: var(--color-gray-40);
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: transform var(--trans), backgorund var(--trans);
+        z-index: 0;
+    }
+
+    button {
+        height: 100%;
+        z-index: 1;
+    }
+}
+
+.rate-switch_red::after {
+    transform: translate(calc(-145%), -50%);
+    background: var(--color-red-60);
+}
+
+.rate-switch_orange::after {
+    transform: translate(-50%, -50%);
+    background: var(--color-orange-60);
+}
+
+.rate-switch_green::after {
+    transform: translate(calc(45%), -50%);
+    background: var(--color-green-60);
+}

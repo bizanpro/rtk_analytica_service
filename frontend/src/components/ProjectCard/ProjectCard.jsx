@@ -16,6 +16,7 @@ import { useWindowWidth } from "../../hooks/useWindowWidth.js";
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
 import ReportWindow from "../ReportWindow/ReportWindow.jsx";
+import ProjectReportsList from "./ProjectReportsList.jsx";
 import ProjectReportItem from "./ProjectReportItem";
 import ProjectStatisticsBlock from "./ProjectStatisticsBlock";
 import ProjectStatisticsBlockMobile from "./ProjectStatisticsBlockMobile";
@@ -1221,28 +1222,15 @@ const ProjectCard = () => {
 
                                         {activeReportTab ===
                                             "projectReports" && (
-                                            <ul className="reports__list">
-                                                {!isDataLoaded && <Loader />}
-
-                                                {reports.map(
-                                                    (report, index) => (
-                                                        <ProjectReportItem
-                                                            key={
-                                                                report.id ||
-                                                                index
-                                                            }
-                                                            {...report}
-                                                            deleteReport={
-                                                                deleteReport
-                                                            }
-                                                            openReportEditor={
-                                                                openReportEditor
-                                                            }
-                                                            mode={mode}
-                                                        />
-                                                    )
-                                                )}
-                                            </ul>
+                                            <ProjectReportsList
+                                                reports={reports}
+                                                isDataLoaded={isDataLoaded}
+                                                deleteReport={deleteReport}
+                                                openReportEditor={
+                                                    openReportEditor
+                                                }
+                                                mode={mode}
+                                            />
                                         )}
 
                                         {activeReportTab ===
@@ -1256,9 +1244,9 @@ const ProjectCard = () => {
                                         )}
                                     </div>
 
-                                    <div className="reports__footer">
-                                        {mode == "edit" &&
-                                            activeReportTab ==
+                                    {mode == "edit" && (
+                                        <div className="reports__footer">
+                                            {activeReportTab ==
                                                 "projectReports" && (
                                                 <button
                                                     type="button"
@@ -1282,7 +1270,8 @@ const ProjectCard = () => {
                                                     Создать отчёт
                                                 </button>
                                             )}
-                                    </div>
+                                        </div>
+                                    )}
                                 </div>
                             ) : (
                                 mode == "edit" &&
@@ -1312,6 +1301,7 @@ const ProjectCard = () => {
                     </div>
                 </div>
 
+                {/* Редактор отчёта */}
                 <ReportWindow
                     reportWindowsState={reportWindowsState}
                     setReportWindowsState={setReportWindowsState}
@@ -1323,6 +1313,7 @@ const ProjectCard = () => {
                     mode={mode}
                 />
 
+                {/* Мобильный ОСВ */}
                 <BottomSheet
                     onClick={() => setActiveWindow("")}
                     className={`${
@@ -1337,6 +1328,7 @@ const ProjectCard = () => {
                     />
                 </BottomSheet>
 
+                {/* Мобильные отчёты */}
                 <BottomSheet
                     onClick={() => setActiveWindow("")}
                     className={`${activeWindow === "reports" ? "active" : ""}`}
@@ -1422,6 +1414,7 @@ const ProjectCard = () => {
                 </BottomSheet>
             </section>
 
+            {/* Удаление контакта */}
             {Object.keys(deleteExecutor).length > 0 && (
                 <Popup
                     onClick={() => setDeleteExecutor(null)}

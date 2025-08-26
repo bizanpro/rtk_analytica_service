@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import RateSwitch from "../RateSwitch";
+import RateSwitch from "../RateSwitch/RateSwitch";
 
 type Props = {
     closeEditor: () => void;

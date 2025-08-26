@@ -1,0 +1,6 @@
+.management-reports__item {
+    display: grid;
+    gap: 15px;
+    align-items: start;
+    grid-template-columns: 1fr 1fr 100px 60px;
+}

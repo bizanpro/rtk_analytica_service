@@ -83,6 +83,40 @@ const ManagementReportsTab = ({
                         reportData={item}
                     />
                 ))}
+
+            <li
+                className="management-reports__item"
+                // onClick={() => openEditor(reportData)}
+            >
+                <div className="management-reports__item__col">Март 2025</div>
+
+                <div className="management-reports__item__col">
+                    Прохоров Евгений Петрович
+                </div>
+
+                <div
+                    className={`reports__list-item__status status reports__list-item__status_completed completed`}
+                >
+                    Утверждён
+                </div>
+
+                <div className="management-reports__item__col">
+                    <nav className={`rate-switch rate-switch_green`}>
+                        <button
+                            type="button"
+                            className="rate-switch__button"
+                        ></button>
+                        <button
+                            type="button"
+                            className="rate-switch__button"
+                        ></button>
+                        <button
+                            type="button"
+                            className="rate-switch__button"
+                        ></button>
+                    </nav>
+                </div>
+            </li>
         </ul>
     ) : (
         <ReportRateEditor
