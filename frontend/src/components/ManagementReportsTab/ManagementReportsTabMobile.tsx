@@ -88,10 +88,12 @@ const ManagementReportsTab = ({
                 className="management-reports__item"
                 // onClick={() => openEditor(reportData)}
             >
-                <div className="management-reports__item__col">Март 2025</div>
+                <div className="management-reports__item__col">
+                    <p>Март 2025</p>
+                </div>
 
                 <div className="management-reports__item__col">
-                    Прохоров Евгений Петрович
+                    <p>Прохоров Евгений Петрович</p>
                 </div>
 
                 <div

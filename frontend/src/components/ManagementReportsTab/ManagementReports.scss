@@ -1,6 +1,32 @@
+@use "../../styles/media-breakpoints" as *;
+
 .management-reports__item {
     display: grid;
     gap: 15px;
     align-items: start;
-    grid-template-columns: 1fr 1fr 100px 60px;
+    grid-template-columns: 1fr 1fr 90px 60px;
+
+    @media (min-width: $media-md) {
+        gap: 20px;
+    }
+
+    @media (min-width: $media-xxl) {
+        padding: 20px 0;
+    }
+
+    .reports__list-item__status {
+        margin: 0;
+    }
+
+    &__col {
+        > p {
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 150%;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+        }
+    }
 }
