@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import CountUp from "react-countup";
 import Hint from "../Hint/Hint";
 
 const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
@@ -58,7 +59,19 @@ const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
                     >
                         {revenue.revenue?.value !== "0" ? (
                             <div>
-                                <strong>{revenue.revenue?.value}</strong>
+                                <strong>
+                                    <CountUp
+                                        end={parseFloat(
+                                            revenue.revenue?.value?.replace(
+                                                ",",
+                                                "."
+                                            ) || "0"
+                                        )}
+                                        duration={1}
+                                        separator=" "
+                                        decimals={2}
+                                    />
+                                </strong>
                                 <small>{revenue.revenue?.label}</small>
                             </div>
                         ) : (
@@ -82,7 +95,19 @@ const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
                     >
                         {revenue.receipts?.value !== "0" ? (
                             <div>
-                                <strong>{revenue.receipts?.value}</strong>
+                                <strong>
+                                    <CountUp
+                                        end={parseFloat(
+                                            revenue.receipts?.value?.replace(
+                                                ",",
+                                                "."
+                                            ) || "0"
+                                        )}
+                                        duration={1}
+                                        separator=" "
+                                        decimals={2}
+                                    />
+                                </strong>
                                 <small>{revenue.receipts?.label}</small>
                             </div>
                         ) : (
@@ -104,7 +129,19 @@ const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
                     >
                         {revenue.debts?.value !== "0" ? (
                             <div>
-                                <strong>{revenue.debts?.value}</strong>
+                                <strong>
+                                    <CountUp
+                                        end={parseFloat(
+                                            revenue.debts?.value?.replace(
+                                                ",",
+                                                "."
+                                            ) || "0"
+                                        )}
+                                        duration={1}
+                                        separator=" "
+                                        decimals={2}
+                                    />
+                                </strong>
                                 <small>{revenue.debts?.label}</small>
                             </div>
                         ) : (
@@ -130,14 +167,34 @@ const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
                             <>
                                 <div>
                                     <strong>
-                                        {revenue.gross_profit?.value}
+                                        <CountUp
+                                            end={parseFloat(
+                                                revenue.gross_profit?.value?.replace(
+                                                    ",",
+                                                    "."
+                                                ) || "0"
+                                            )}
+                                            duration={1}
+                                            separator=" "
+                                            decimals={2}
+                                        />
                                     </strong>
                                     <small>{revenue.gross_profit?.label}</small>
                                 </div>
 
                                 {revenue.gross_margin?.value !== "0" && (
                                     <i>
-                                        {revenue.gross_margin?.value}
+                                        <CountUp
+                                            end={parseFloat(
+                                                revenue.gross_margin?.value?.replace(
+                                                    ",",
+                                                    "."
+                                                ) || "0"
+                                            )}
+                                            duration={1}
+                                            separator=" "
+                                            decimals={2}
+                                        />
                                         {revenue.gross_margin?.label} рент-ть
                                     </i>
                                 )}
@@ -160,13 +217,35 @@ const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
                         {revenue.fot?.value !== "0" ? (
                             <>
                                 <div>
-                                    <strong>{revenue.fot?.value}</strong>
+                                    <strong>
+                                        <CountUp
+                                            end={parseFloat(
+                                                revenue.fot?.value?.replace(
+                                                    ",",
+                                                    "."
+                                                ) || "0"
+                                            )}
+                                            duration={1}
+                                            separator=" "
+                                            decimals={2}
+                                        />
+                                    </strong>
                                     <small>{revenue.fot?.label}</small>
                                 </div>
 
                                 {revenue.fot_percentage?.value !== "0" && (
                                     <i>
-                                        {revenue.fot_percentage?.value}
+                                        <CountUp
+                                            end={parseFloat(
+                                                revenue.fot_percentage?.value?.replace(
+                                                    ",",
+                                                    "."
+                                                ) || "0"
+                                            )}
+                                            duration={1}
+                                            separator=" "
+                                            decimals={2}
+                                        />
                                         {revenue.fot_percentage?.label} от
                                         выручки
                                     </i>
@@ -195,7 +274,17 @@ const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
                             <>
                                 <div>
                                     <strong>
-                                        {revenue.suppliers_expenses?.value}
+                                        <CountUp
+                                            end={parseFloat(
+                                                revenue.suppliers_expenses?.value?.replace(
+                                                    ",",
+                                                    "."
+                                                ) || "0"
+                                            )}
+                                            duration={1}
+                                            separator=" "
+                                            decimals={2}
+                                        />
                                     </strong>
                                     <small>
                                         {revenue.suppliers_expenses?.label}
@@ -205,10 +294,17 @@ const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
                                 {revenue.suppliers_fot_percentage?.value !==
                                     "0" && (
                                     <i>
-                                        {
-                                            revenue.suppliers_fot_percentage
-                                                ?.value
-                                        }
+                                        <CountUp
+                                            end={parseFloat(
+                                                revenue.suppliers_fot_percentage?.value?.replace(
+                                                    ",",
+                                                    "."
+                                                ) || "0"
+                                            )}
+                                            duration={1}
+                                            separator=" "
+                                            decimals={2}
+                                        />
                                         {
                                             revenue.suppliers_fot_percentage
                                                 ?.label

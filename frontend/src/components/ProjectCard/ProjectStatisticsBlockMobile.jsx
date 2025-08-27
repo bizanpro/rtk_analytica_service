@@ -1,4 +1,5 @@
 import Hint from "../Hint/Hint";
+import CountUp from "react-countup";
 
 const ProjectStatisticsBlockMobile = ({
     revenue,
@@ -53,17 +54,22 @@ const ProjectStatisticsBlockMobile = ({
                         Выручка
                         <Hint message={"Выручка"} />
                     </div>
-                    <div
-                        className="statistics-block__item-value"
-                        title={
-                            revenue.revenue?.value +
-                            " " +
-                            revenue.revenue?.label
-                        }
-                    >
+                    <div className="statistics-block__item-value">
                         {revenue.revenue?.value !== "0" ? (
                             <div>
-                                <strong>{revenue.revenue?.value}</strong>
+                                <strong>
+                                    <CountUp
+                                        end={parseFloat(
+                                            revenue.revenue?.value?.replace(
+                                                ",",
+                                                "."
+                                            ) || "0"
+                                        )}
+                                        duration={1}
+                                        separator=" "
+                                        decimals={2}
+                                    />
+                                </strong>
                                 <small>{revenue.revenue?.label}</small>
                             </div>
                         ) : (
@@ -77,17 +83,22 @@ const ProjectStatisticsBlockMobile = ({
                         Поступления
                         <Hint message={"Поступления"} />
                     </div>
-                    <div
-                        className="statistics-block__item-value"
-                        title={
-                            revenue.receipts?.value +
-                            " " +
-                            revenue.receipts?.label
-                        }
-                    >
+                    <div className="statistics-block__item-value">
                         {revenue.receipts?.value !== "0" ? (
                             <div>
-                                <strong>{revenue.receipts?.value}</strong>
+                                <strong>
+                                    <CountUp
+                                        end={parseFloat(
+                                            revenue.receipts?.value?.replace(
+                                                ",",
+                                                "."
+                                            ) || "0"
+                                        )}
+                                        duration={1}
+                                        separator=" "
+                                        decimals={2}
+                                    />
+                                </strong>
                                 <small>{revenue.receipts?.label}</small>
                             </div>
                         ) : (
@@ -101,15 +112,22 @@ const ProjectStatisticsBlockMobile = ({
                         ДЗ
                         <Hint message={"ДЗ"} />
                     </div>
-                    <div
-                        className="statistics-block__item-value"
-                        title={
-                            revenue.debts?.value + " " + revenue.debts?.label
-                        }
-                    >
+                    <div className="statistics-block__item-value">
                         {revenue.debts?.value !== "0" ? (
                             <div>
-                                <strong>{revenue.debts?.value}</strong>
+                                <strong>
+                                    <CountUp
+                                        end={parseFloat(
+                                            revenue.debts?.value?.replace(
+                                                ",",
+                                                "."
+                                            ) || "0"
+                                        )}
+                                        duration={1}
+                                        separator=" "
+                                        decimals={2}
+                                    />
+                                </strong>
                                 <small>{revenue.debts?.label}</small>
                             </div>
                         ) : (
@@ -123,26 +141,39 @@ const ProjectStatisticsBlockMobile = ({
                         Валовая прибыль
                         <Hint message={"Валовая прибыль"} />
                     </div>
-                    <div
-                        className="statistics-block__item-value"
-                        title={
-                            revenue.gross_profit?.value +
-                            " " +
-                            revenue.gross_profit?.label
-                        }
-                    >
+                    <div className="statistics-block__item-value">
                         {revenue.gross_profit?.value !== "0" ? (
                             <>
                                 <div>
                                     <strong>
-                                        {revenue.gross_profit?.value}
+                                        <CountUp
+                                            end={parseFloat(
+                                                revenue.gross_profit?.value?.replace(
+                                                    ",",
+                                                    "."
+                                                ) || "0"
+                                            )}
+                                            duration={1}
+                                            separator=" "
+                                            decimals={2}
+                                        />
                                     </strong>
                                     <small>{revenue.gross_profit?.label}</small>
                                 </div>
 
                                 {revenue.gross_margin?.value !== "0" && (
                                     <i>
-                                        {revenue.gross_margin?.value}
+                                        <CountUp
+                                            end={parseFloat(
+                                                revenue.gross_margin?.value?.replace(
+                                                    ",",
+                                                    "."
+                                                ) || "0"
+                                            )}
+                                            duration={1}
+                                            separator=" "
+                                            decimals={2}
+                                        />
                                         {revenue.gross_margin?.label} рент-ть
                                     </i>
                                 )}
@@ -158,20 +189,39 @@ const ProjectStatisticsBlockMobile = ({
                         ФОТ
                         <Hint message={"ФОТ"} />
                     </div>
-                    <div
-                        className="statistics-block__item-value"
-                        title={revenue.fot?.value + " " + revenue.fot?.label}
-                    >
+                    <div className="statistics-block__item-value">
                         {revenue.fot?.value !== "0" ? (
                             <>
                                 <div>
-                                    <strong>{revenue.fot?.value}</strong>
+                                    <strong>
+                                        <CountUp
+                                            end={parseFloat(
+                                                revenue.fot?.value?.replace(
+                                                    ",",
+                                                    "."
+                                                ) || "0"
+                                            )}
+                                            duration={1}
+                                            separator=" "
+                                            decimals={2}
+                                        />
+                                    </strong>
                                     <small>{revenue.fot?.label}</small>
                                 </div>
 
                                 {revenue.fot_percentage?.value !== "0" && (
                                     <i>
-                                        {revenue.fot_percentage?.value}
+                                        <CountUp
+                                            end={parseFloat(
+                                                revenue.fot_percentage?.value?.replace(
+                                                    ",",
+                                                    "."
+                                                ) || "0"
+                                            )}
+                                            duration={1}
+                                            separator=" "
+                                            decimals={2}
+                                        />
                                         {revenue.fot_percentage?.label} от
                                         выручки
                                     </i>
@@ -188,19 +238,22 @@ const ProjectStatisticsBlockMobile = ({
                         Подрячики
                         <Hint message={"Подрячики"} />
                     </div>
-                    <div
-                        className="statistics-block__item-value"
-                        title={
-                            revenue.suppliers_expenses?.value +
-                            " " +
-                            revenue.suppliers_expenses?.label
-                        }
-                    >
+                    <div className="statistics-block__item-value">
                         {revenue.suppliers_expenses?.value !== "0" ? (
                             <>
                                 <div>
                                     <strong>
-                                        {revenue.suppliers_expenses?.value}
+                                        <CountUp
+                                            end={parseFloat(
+                                                revenue.suppliers_expenses?.value?.replace(
+                                                    ",",
+                                                    "."
+                                                ) || "0"
+                                            )}
+                                            duration={1}
+                                            separator=" "
+                                            decimals={2}
+                                        />
                                     </strong>
                                     <small>
                                         {revenue.suppliers_expenses?.label}
@@ -210,10 +263,17 @@ const ProjectStatisticsBlockMobile = ({
                                 {revenue.suppliers_fot_percentage?.value !==
                                     "0" && (
                                     <i>
-                                        {
-                                            revenue.suppliers_fot_percentage
-                                                ?.value
-                                        }
+                                        <CountUp
+                                            end={parseFloat(
+                                                revenue.suppliers_fot_percentage?.value?.replace(
+                                                    ",",
+                                                    "."
+                                                ) || "0"
+                                            )}
+                                            duration={1}
+                                            separator=" "
+                                            decimals={2}
+                                        />
                                         {
                                             revenue.suppliers_fot_percentage
                                                 ?.label
