@@ -100,8 +100,17 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                     } else if (key === "industries") {
                         return (
                             <td className="w-[130px]" key={value?.main?.id}>
-                                <div className="w-[130px]">
-                                    {value?.main?.name.toString() || "—"}
+                                <div className="hidden-group">
+                                    <div className="visible-text">
+                                        <div>
+                                            {value?.main?.name.toString() ||
+                                                "—"}
+                                        </div>
+                                    </div>
+
+                                    <div className="hidden-text">
+                                        {value?.main?.name.toString() || "—"}
+                                    </div>
                                 </div>
                             </td>
                         );
@@ -116,13 +125,29 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                     if (key === "name") {
                         return (
                             <td className="w-[130px] text-blue" key={key}>
-                                <div>{value?.toString() || "—"}</div>
+                                <div className="hidden-group">
+                                    <div className="visible-text">
+                                        <div>{value?.toString() || "—"}</div>
+                                    </div>
+
+                                    <div className="hidden-text">
+                                        {value?.toString() || "—"}
+                                    </div>
+                                </div>
                             </td>
                         );
                     } else if (key === "project_manager") {
                         return (
                             <td className="w-[130px] text-blue" key={key}>
-                                <div>{value?.toString() || "—"}</div>
+                                <div className="hidden-group">
+                                    <div className="visible-text">
+                                        <div>{value?.toString() || "—"}</div>
+                                    </div>
+
+                                    <div className="hidden-text">
+                                        {value?.toString() || "—"}
+                                    </div>
+                                </div>
                             </td>
                         );
                     } else if (key === "status") {

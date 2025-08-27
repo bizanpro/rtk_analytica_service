@@ -120,8 +120,9 @@
             .hidden-text {
                 border-radius: 10px;
                 position: absolute;
-                left: -2px;
-                top: -2px;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
                 z-index: 2;
                 width: max-content;
                 max-width: 400px;
@@ -132,7 +133,7 @@
                 padding: 5px;
                 transition: opacity var(--trans);
                 background: var(--color-white);
-                box-shadow: 0 -8px 20px rgb(230 230 230);
+                box-shadow: 0 6px 20px rgb(230 230 230);
                 white-space: normal;
             }
         }
