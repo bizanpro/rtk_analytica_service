@@ -1,6 +1,6 @@
 const EmployeeWorkloadSummary = ({
-    hours,
-    industry_name,
+    total_hours,
+    industry_names,
     load_percentage,
     project_name,
 }) => {
@@ -14,13 +14,10 @@ const EmployeeWorkloadSummary = ({
                 <div className="flex items-center gap-4">
                     <div className="text-lg">{project_name}</div>
 
-                    <span className="text-gray-400">{industry_name}</span>
+                    <span className="text-gray-400">{industry_names}</span>
                 </div>
-                <div
-                    className="relative h-[20px] w-full overflow-hidden text-center flex items-center justify-start
-    px-1"
-                >
-                    <div className="min-w-min whitespace-nowrap">{hours}</div>
+                <div className="relative h-[20px] w-full overflow-hidden text-center flex items-center justify-start px-1">
+                    <div className="min-w-min whitespace-nowrap">{total_hours}</div>
 
                     <div
                         className="absolute top-0 left-0 bottom-0 h-full bg-gray-200 transition-all opacity-60 z-[-1]"
