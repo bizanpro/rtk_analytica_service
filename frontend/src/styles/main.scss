@@ -488,7 +488,6 @@ body {
     @media (min-width: $media-xxl) {
         min-height: auto;
         flex-grow: none;
-
         background: var(--color-white);
         border: 1px solid var(--color-gray-30);
         border-radius: 10px;
@@ -566,7 +565,7 @@ body {
 
         @media (min-width: $media-xxl) {
             align-items: center;
-            grid-template-columns: 1fr 1fr 100px;
+            grid-template-columns: 1fr 1fr 100px 20px;
             gap: 35px;
             padding: 20px 0;
         }
@@ -595,7 +594,7 @@ body {
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                right: -3px;
+                right: 0;
             }
         }
 

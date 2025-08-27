@@ -1386,22 +1386,13 @@ const ProjectCard = () => {
                             </nav>
 
                             {activeReportTab === "projectReports" && (
-                                <ul className="reports__list">
-                                    {!isDataLoaded && <Loader />}
-
-                                    {reports.length > 0 &&
-                                        reports.map((report, index) => (
-                                            <ProjectReportItem
-                                                key={report.id || index}
-                                                {...report}
-                                                deleteReport={deleteReport}
-                                                openReportEditor={
-                                                    openReportEditor
-                                                }
-                                                mode={mode}
-                                            />
-                                        ))}
-                                </ul>
+                                <ProjectReportsList
+                                    reports={reports}
+                                    isDataLoaded={isDataLoaded}
+                                    deleteReport={deleteReport}
+                                    openReportEditor={openReportEditor}
+                                    mode={mode}
+                                />
                             )}
 
                             {activeReportTab === "managementReports" && (
