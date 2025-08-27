@@ -190,6 +190,10 @@ const ProjectCard = () => {
                 Accept: "application/json",
             });
             setProjectData(response.data);
+            setFormFields((prev) => ({
+                ...prev,
+                industries: response.data?.industries,
+            }));
 
             // Получаем кредиторов
             setLenders(
@@ -553,20 +557,19 @@ const ProjectCard = () => {
     }, [projectData.contragent_id]);
 
     useEffect(() => {
-        setAddLender(false);
-        setAddCustomer(false);
-        setReportWindowsState(false);
-
-        setReportId(null);
-    }, [mode]);
-
-    useEffect(() => {
         const report = searchParams.get("report");
 
         if (report !== null && report !== "undefined") {
             openReportEditor(report);
         }
     }, [searchParams]);
+
+    useEffect(() => {
+        setAddLender(false);
+        setAddCustomer(false);
+        setReportWindowsState(false);
+        setReportId(null);
+    }, [mode]);
 
     return (
         <main className="page">
