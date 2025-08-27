@@ -90,7 +90,63 @@
             padding-right: 0;
         }
 
+        &:hover {
+            .delete-button {
+                @media (min-width: $media-xxl) {
+                    opacity: 1;
+                }
+            }
+        }
+
+        .hidden-group {
+            position: relative;
+
+            &:hover {
+                .hidden-text {
+                    visibility: visible;
+                    opacity: 1;
+                    max-height: fit-content;
+                }
+            }
+
+            .visible-text {
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                overflow: hidden;
+                max-width: 120px;
+            }
+
+            .hidden-text {
+                border-radius: 10px;
+                position: absolute;
+                left: -2px;
+                top: -2px;
+                z-index: 2;
+                width: max-content;
+                max-width: 400px;
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                visibility: hidden;
+                padding: 5px;
+                transition: opacity var(--trans);
+                background: var(--color-white);
+                box-shadow: 0 -8px 20px rgb(230 230 230);
+                white-space: normal;
+            }
+        }
+
+        .delete-button {
+            transition: opacity var(--trans);
+
+            @media (min-width: $media-xxl) {
+                opacity: 0;
+            }
+        }
+
         &-status {
+            white-space: nowrap;
             width: fit-content;
             border-radius: 99px;
             padding: 3px 8px;

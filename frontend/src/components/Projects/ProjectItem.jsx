@@ -90,7 +90,7 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                         return Object.entries(value).map(
                             ([subKey, subValue]) => (
                                 <td
-                                    className="w-[150px] text-blue"
+                                    className="w-[130px] text-blue"
                                     key={subKey}
                                 >
                                     {subValue?.full_name?.toString() || "—"}
@@ -99,8 +99,8 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                         );
                     } else if (key === "industries") {
                         return (
-                            <td className="max-w-[150px]" key={value?.main?.id}>
-                                <div className="max-w-[150px]">
+                            <td className="w-[130px]" key={value?.main?.id}>
+                                <div className="w-[130px]">
                                     {value?.main?.name.toString() || "—"}
                                 </div>
                             </td>
@@ -108,23 +108,20 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                     }
 
                     return Object.entries(value).map(([subKey, subValue]) => (
-                        <td
-                            className="min-w-[150px] max-w-[180px]"
-                            key={subKey}
-                        >
+                        <td className="w-[130px]" key={subKey}>
                             {subValue?.toString() || "—"}
                         </td>
                     ));
                 } else {
                     if (key === "name") {
                         return (
-                            <td className="w-[150px] text-blue" key={key}>
+                            <td className="w-[130px] text-blue" key={key}>
                                 <div>{value?.toString() || "—"}</div>
                             </td>
                         );
                     } else if (key === "project_manager") {
                         return (
-                            <td className="w-[150px] text-blue" key={key}>
+                            <td className="w-[130px] text-blue" key={key}>
                                 <div>{value?.toString() || "—"}</div>
                             </td>
                         );
@@ -186,8 +183,16 @@ const ProjectItem = ({ props, columns, mode, deleteProject }) => {
                         );
                     } else {
                         return (
-                            <td className="w-[150px]" key={key}>
-                                <div>{value?.toString() || "—"}</div>
+                            <td className="w-[130px]" key={key}>
+                                <div className="hidden-group">
+                                    <div className="visible-text">
+                                        <div>{value?.toString() || "—"}</div>
+                                    </div>
+
+                                    <div className="hidden-text">
+                                        {value?.toString() || "—"}
+                                    </div>
+                                </div>
                             </td>
                         );
                     }

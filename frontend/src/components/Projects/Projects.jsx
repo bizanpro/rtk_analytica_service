@@ -272,7 +272,7 @@ const Projects = () => {
                                     ({ label, key, filter, options }) => {
                                         return (
                                             <th
-                                                className={`min-w-[150px] ${
+                                                className={`min-w-[120px] ${
                                                     filter
                                                         ? "registry-table__thead-filter-item"
                                                         : ""
@@ -410,7 +410,7 @@ const Projects = () => {
                             </tr>
                         </thead>
 
-                        <tbody>
+                        <tbody className="registry-table__tbody">
                             {isLoading ? (
                                 <tr>
                                     <td className="text-base px-4 py-2">

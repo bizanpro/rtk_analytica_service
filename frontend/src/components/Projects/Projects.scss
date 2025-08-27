@@ -18,6 +18,7 @@
     &__table {
         flex-grow: 1;
         overflow-x: auto;
+        padding-bottom: 40px;
 
         @media (min-width: $media-xxl) {
             overflow-x: hidden;
