@@ -257,7 +257,7 @@ const Projects = () => {
                     </div>
                 </section>
 
-                <section className="projects__table overflow-x-auto w-full pb-5">
+                <section className="projects__table w-full">
                     {openFilter !== "" && (
                         <OverlayTransparent
                             state={true}

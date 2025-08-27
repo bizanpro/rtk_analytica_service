@@ -17,6 +17,10 @@
 
     &__table {
         flex-grow: 1;
+        overflow-x: auto;
+
+        @media (min-width: $media-xxl) {
+            overflow-x: hidden;
+        }
     }
-    
 }
