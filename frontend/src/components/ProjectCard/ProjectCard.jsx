@@ -17,14 +17,12 @@ import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock";
 import ReportWindow from "../ReportWindow/ReportWindow.jsx";
 import ProjectReportsList from "./ProjectReportsList.jsx";
-import ProjectReportItem from "./ProjectReportItem";
 import ProjectStatisticsBlock from "./ProjectStatisticsBlock";
 import ProjectStatisticsBlockMobile from "./ProjectStatisticsBlockMobile";
 import ProjectTeam from "./ProjectTeam";
 import ReportServices from "./ReportServices";
 import ProjectImplementationPeriod from "./ProjectImplementationPeriod";
 import ProjectBudget from "./ProjectBudget";
-import Loader from "../Loader";
 import AutoResizeTextarea from "../AutoResizeTextarea";
 import ManagementReportsTab from "../ManagementReportsTab/ManagementReportsTab";
 import ManagementReportsTabMobile from "../ManagementReportsTab/ManagementReportsTabMobile";
@@ -53,7 +51,7 @@ const ProjectCard = () => {
     const navigate = useNavigate();
 
     const [projectData, setProjectData] = useState({});
-    const [formFields, setFormFields] = useState();
+    const [projectDataCustom, setProjectDataCustom] = useState();
 
     // const [mode, setMode] = useState(location.state?.mode || "read");
     const [mode, setMode] = useState("edit");
@@ -110,7 +108,7 @@ const ProjectCard = () => {
 
     // Обработка ввода данных проекта
     const handleInputChange = useCallback((e, name) => {
-        setFormFields((prev) => ({ ...prev, [name]: e.target.value }));
+        setProjectDataCustom((prev) => ({ ...prev, [name]: e.target.value }));
         setProjectData((prev) => ({ ...prev, [name]: e.target.value }));
     }, []);
 
@@ -203,8 +201,8 @@ const ProjectCard = () => {
             const response = await getData(`${URL}/${id}`, {
                 Accept: "application/json",
             });
-            setProjectData(response.data);
 
+            setProjectData(response.data);
             setOtherIndustries({ others: response.data.industries.others });
 
             // Получаем кредиторов
@@ -442,7 +440,7 @@ const ProjectCard = () => {
                 const response = await postData(
                     "PATCH",
                     `${URL}/${id}`,
-                    formFields
+                    projectDataCustom
                 );
                 if (response?.ok && showMessage) {
                     toast.update(query, {
@@ -647,7 +645,7 @@ const ProjectCard = () => {
 
     useEffect(() => {
         if (projectData.creditors) {
-            setFormFields((prev) => ({
+            setProjectDataCustom((prev) => ({
                 ...prev,
                 creditors: projectData.creditors.map((bank) => bank.id),
             }));
@@ -671,8 +669,8 @@ const ProjectCard = () => {
     }, [searchParams]);
 
     useEffect(() => {
-        setFormFields({
-            ...formFields,
+        setProjectDataCustom({
+            ...projectDataCustom,
             industries: {
                 ...projectData.industries,
                 others: otherIndustries.others,
@@ -703,10 +701,6 @@ const ProjectCard = () => {
         }
     }, [width]);
 
-    // useEffect(() => {
-    //     setReportWindowsState(false);
-    //     setReportId(null);
-    // }, [mode]);
 
     // useEffect(() => {
     //     if (firstInit) return;
@@ -807,7 +801,7 @@ const ProjectCard = () => {
                                             const newValue =
                                                 selectedOption?.value || null;
 
-                                            setFormFields((prev) => ({
+                                            setProjectDataCustom((prev) => ({
                                                 ...prev,
                                                 contragent_id: newValue,
                                             }));
@@ -841,10 +835,10 @@ const ProjectCard = () => {
                                             projectData?.industries?.main || ""
                                         }
                                         onChange={(evt) => {
-                                            setFormFields({
-                                                ...formFields,
+                                            setProjectDataCustom({
+                                                ...projectDataCustom,
                                                 industries: {
-                                                    ...formFields.industries,
+                                                    ...projectDataCustom.industries,
                                                     main: +evt.target.value,
                                                 },
                                             });

@@ -14,13 +14,9 @@ const MultiSelectField = ({
 }) => {
     const [isActiveSelect, setIsActiveSelect] = useState("");
 
-    // console.log(selectedValues);
-
     const selectedItems = selectedValues.map((item) =>
         options.find((option) => option.value === item)
     );
-
-    // console.log(selectedItems);
 
     return (
         <div className="form-multiselect">
@@ -57,7 +53,10 @@ const MultiSelectField = ({
             {selectedItems.length > 0 && (
                 <ul className="form-multiselect__list">
                     {selectedItems.map((item) => (
-                        <li className="form-multiselect__item" key={item?.value}>
+                        <li
+                            className="form-multiselect__item"
+                            key={item?.value}
+                        >
                             <span>{item?.label}</span>
 
                             {mode === "edit" && (
@@ -68,7 +67,8 @@ const MultiSelectField = ({
                                         onChange({
                                             [fieldName]: selectedValues.filter(
                                                 (selectedValue) =>
-                                                    selectedValue !== item?.value
+                                                    selectedValue !==
+                                                    item?.value
                                             ),
                                         })
                                     }
