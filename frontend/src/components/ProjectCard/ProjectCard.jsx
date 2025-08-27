@@ -205,6 +205,8 @@ const ProjectCard = () => {
             });
             setProjectData(response.data);
 
+            setOtherIndustries({ others: response.data.industries.others });
+
             // Получаем кредиторов
             setCreditors(
                 response.data?.creditor_responsible_persons?.flatMap(
@@ -670,7 +672,7 @@ const ProjectCard = () => {
 
     useEffect(() => {
         setFormFields({
-            ...projectData,
+            ...formFields,
             industries: {
                 ...projectData.industries,
                 others: otherIndustries.others,
