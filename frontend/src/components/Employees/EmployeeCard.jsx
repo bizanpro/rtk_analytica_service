@@ -34,6 +34,8 @@ const EmployeeCard = () => {
     const [workload, setworkload] = useState({});
     const [personalWorkload, setPersonalWorkload] = useState();
     const [workloadSummary, setWorkloadSummary] = useState();
+    const [workloadSummaryMaxPercentage, setWorkloadSummaryMaxPercentage] =
+        useState(null);
 
     const [mode, setMode] = useState("read");
     const [errors, setErrors] = useState({});
@@ -167,6 +169,13 @@ const EmployeeCard = () => {
         ).then((response) => {
             if (response.status === 200) {
                 setWorkloadSummary(response.data.projects);
+                if (response.data.projects.length > 0) {
+                    const maxValue = Math.max(
+                        ...response.data.projects.map((item) => item.load_percentage)
+                    );
+
+                    setWorkloadSummaryMaxPercentage(maxValue);
+                }
             }
         });
     };
@@ -742,6 +751,7 @@ const EmployeeCard = () => {
                                             {workloadSummary?.length > 0 &&
                                                 workloadSummary?.map((item) => (
                                                     <EmployeeWorkloadSummary
+                                                        workloadSummaryMaxPercentage={workloadSummaryMaxPercentage}
                                                         key={item.uuid}
                                                         {...item}
                                                     />
