@@ -137,6 +137,19 @@ const ReferenceItemNew = ({
                             <option value="true">Да</option>
                             <option value="false">Нет</option>
                         </select>
+                    ) : key === "include_in_payroll" ? (
+                        <select
+                            className="w-full border border-gray-300 min-h-[30px]"
+                            name={key}
+                            defaultValue=""
+                            onChange={(e) =>
+                                handleNewElementInputChange(e, key)
+                            }
+                        >
+                            <option value="">Выбрать</option>
+                            <option value="true">Да</option>
+                            <option value="false">Нет</option>
+                        </select>
                     ) : key === "show_cost" ? (
                         <select
                             className="w-full border border-gray-300 min-h-[30px]"

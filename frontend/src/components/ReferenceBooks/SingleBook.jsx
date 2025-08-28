@@ -254,6 +254,14 @@ const SingleBook = () => {
             return;
         }
 
+        if (bookId === "departments") {
+            if (formFields.include_in_payroll !== "") {
+                formFields.include_in_payroll = JSON.parse(
+                    formFields?.include_in_payroll
+                );
+            }
+        }
+
         query = toast.loading("Обновление", {
             containerId: "singleBook",
             position: "top-center",
@@ -340,6 +348,12 @@ const SingleBook = () => {
 
             delete data?.count;
             delete data?.position;
+        }
+
+        if (bookId === "departments") {
+            if (data.include_in_payroll !== "") {
+                data.include_in_payroll = JSON.parse(data?.include_in_payroll);
+            }
         }
 
         if (bookId !== "working-hours") {
