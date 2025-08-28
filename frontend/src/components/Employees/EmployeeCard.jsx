@@ -31,6 +31,7 @@ const EmployeeCard = () => {
     const navigate = useNavigate();
 
     const [employeeData, setEmployeeData] = useState({});
+    const [departments, setDepartments] = useState([]);
     const [workload, setworkload] = useState({});
     const [personalWorkload, setPersonalWorkload] = useState();
     const [workloadSummary, setWorkloadSummary] = useState();
@@ -171,7 +172,9 @@ const EmployeeCard = () => {
                 setWorkloadSummary(response.data.projects);
                 if (response.data.projects.length > 0) {
                     const maxValue = Math.max(
-                        ...response.data.projects.map((item) => item.load_percentage)
+                        ...response.data.projects.map(
+                            (item) => item.load_percentage
+                        )
                     );
 
                     setWorkloadSummaryMaxPercentage(maxValue);
@@ -360,6 +363,17 @@ const EmployeeCard = () => {
         }
     };
 
+    // Получение списка подразделений
+    const getDepartments = () => {
+        getData(`${import.meta.env.VITE_API_URL}departments`).then(
+            (response) => {
+                if (response.status == 200) {
+                    setDepartments(response.data.data);
+                }
+            }
+        );
+    };
+
     useEffect(() => {
         if (selectedPersonalYear && selectedPersonalMonth) {
             personalWorkloadFilter();
@@ -394,6 +408,7 @@ const EmployeeCard = () => {
     }, [availablePersonalMonths]);
 
     useEffect(() => {
+        getDepartments();
         getEmployee();
     }, []);
 
@@ -434,8 +449,34 @@ const EmployeeCard = () => {
                                 </div>
 
                                 <div className="flex items-center gap-3">
+                                    {departments.length > 0 && (
+                                        <select
+                                            className="border-2 h-[32px] p-1 border-gray-300 min-w-[130px] cursor-pointer"
+                                            value={employeeData.department_id}
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    e,
+                                                    "department_id"
+                                                )
+                                            }
+                                            disabled={mode == "read"}
+                                        >
+                                            <option value="">
+                                                Подразделение
+                                            </option>
+                                            {departments.map((item) => (
+                                                <option
+                                                    value={item.id}
+                                                    key={item.id}
+                                                >
+                                                    {item.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    )}
+
                                     <select
-                                        className="border-2 h-[32px] p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                        className="border-2 h-[32px] p-1 border-gray-300 min-w-[120px] cursor-pointer"
                                         value={String(employeeData.is_staff)}
                                         onChange={(e) =>
                                             handleInputChange(e, "is_staff")
@@ -450,7 +491,7 @@ const EmployeeCard = () => {
 
                                     {employeeData.is_staff && (
                                         <select
-                                            className="border-2 h-[32px] p-1 border border-gray-300 min-w-[120px] cursor-pointer"
+                                            className="border-2 h-[32px] p-1 border-gray-300 min-w-[120px] cursor-pointer"
                                             value={String(
                                                 employeeData.is_active
                                             )}
@@ -751,7 +792,9 @@ const EmployeeCard = () => {
                                             {workloadSummary?.length > 0 &&
                                                 workloadSummary?.map((item) => (
                                                     <EmployeeWorkloadSummary
-                                                        workloadSummaryMaxPercentage={workloadSummaryMaxPercentage}
+                                                        workloadSummaryMaxPercentage={
+                                                            workloadSummaryMaxPercentage
+                                                        }
                                                         key={item.uuid}
                                                         {...item}
                                                     />
