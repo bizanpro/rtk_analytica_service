@@ -41,7 +41,9 @@ const ProjectCard = () => {
     const navigate = useNavigate();
 
     const [projectData, setProjectData] = useState({});
-    const [formFields, setFormFields] = useState();
+    const [formFields, setFormFields] = useState({
+        industries: { main: null, others: [] },
+    });
 
     const [mode, setMode] = useState(location.state?.mode || "read");
     const [activeReportTab, setActiveReportTab] = useState("projectReports"); // Активная вкладка в истории проекта
@@ -825,12 +827,18 @@ const ProjectCard = () => {
                                                     closeMenuOnSelect={false}
                                                     isMulti
                                                     name="colors"
-                                                    options={industries.map(
-                                                        (industry) => ({
+                                                    options={industries
+                                                        .filter(
+                                                            (industry) =>
+                                                                industry.id !==
+                                                                formFields
+                                                                    ?.industries
+                                                                    ?.main
+                                                        )
+                                                        .map((industry) => ({
                                                             value: industry.id,
                                                             label: industry.name,
-                                                        })
-                                                    )}
+                                                        }))}
                                                     value={industries
                                                         .filter((industry) =>
                                                             projectData?.industries?.others?.includes(
