@@ -5,10 +5,6 @@ const EmployeeWorkloadSummary = ({
     project_name,
     workloadSummaryMaxPercentage,
 }) => {
-    // console.log(workloadSummaryMaxPercentage);
-
-    // console.log((load_percentage / workloadSummaryMaxPercentage) * 100);
-
     return (
         <li className="flex items-center gap-3">
             <div className="flex items-center justify-center text-lg border border-gray-300 h-[50px] w-[50px] flex-[0_0_50px]">
@@ -29,7 +25,11 @@ const EmployeeWorkloadSummary = ({
                     <div
                         className="absolute top-0 left-0 bottom-0 h-full bg-gray-200 transition-all opacity-60 z-[-1]"
                         style={{
-                            width: `${(load_percentage / workloadSummaryMaxPercentage) * 100}%`,
+                            width: `${
+                                (load_percentage /
+                                    workloadSummaryMaxPercentage) *
+                                100
+                            }%`,
                         }}
                     ></div>
                 </div>

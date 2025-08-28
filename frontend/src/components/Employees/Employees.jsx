@@ -19,7 +19,7 @@ const Employees = () => {
         { label: "Телефон", key: "phone_number" },
         { label: "email", key: "email" },
         { label: "Тип", key: "is_staff" },
-        { label: "Статус", key: "is_active" },
+        { label: "Статус", key: "status" },
     ];
 
     const filteredEmployees = useMemo(() => {
@@ -29,7 +29,7 @@ const Employees = () => {
                     ? employee.is_staff === (selectedType === "true")
                     : true) &&
                 (selectedStatus !== "default"
-                    ? employee.is_active === (selectedStatus === "true")
+                    ? employee.status === (selectedStatus === "true")
                     : true) &&
                 (selectedName !== null ? employee.name === selectedName : true)
             );
@@ -108,8 +108,8 @@ const Employees = () => {
                             }}
                         >
                             <option value="default">Статус</option>
-                            <option value="true">работает</option>
-                            <option value="false">не работает</option>
+                            <option value="Работает">работает</option>
+                            <option value="Не работает">не работает</option>
                         </select>
                     </div>
                 </div>
