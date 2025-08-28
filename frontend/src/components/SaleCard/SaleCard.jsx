@@ -149,7 +149,8 @@ const SaleCard = () => {
     const sendService = () => {
         query = toast.loading("Обновление", {
             containerId: "projectCard",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData(
@@ -169,7 +170,11 @@ const SaleCard = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                     setAddServices(false);
                     fetchServices();
@@ -186,7 +191,11 @@ const SaleCard = () => {
                         autoClose: 3000,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     }
                 );
             });
@@ -196,7 +205,8 @@ const SaleCard = () => {
     const deleteService = (id) => {
         query = toast.loading("Обновление", {
             containerId: "projectCard",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData(
@@ -215,7 +225,11 @@ const SaleCard = () => {
                     autoClose: 1200,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
                 fetchServices();
                 getStages();
@@ -231,7 +245,8 @@ const SaleCard = () => {
     const updateContragent = async (showMessage = true, data) => {
         query = toast.loading("Обновление", {
             containerId: "projectCard",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         try {
@@ -245,7 +260,11 @@ const SaleCard = () => {
                     autoClose: 1200,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             }
 
@@ -260,9 +279,11 @@ const SaleCard = () => {
                 autoClose: 1500,
                 pauseOnFocusLoss: false,
                 pauseOnHover: false,
-                position: "top-center",
+                draggable: true,
+                position:
+                    window.innerWidth >= 1440 ? "bottom-right" : "top-right",
             });
-            console.error("Ошибка при обновлении проекта:", error);
+
             throw error;
         }
     };
@@ -377,7 +398,11 @@ const SaleCard = () => {
                             autoClose: 1200,
                             pauseOnFocusLoss: false,
                             pauseOnHover: false,
-                            position: "top-center",
+                            draggable: true,
+                            position:
+                                window.innerWidth >= 1440
+                                    ? "bottom-right"
+                                    : "top-right",
                         });
                     }
                 } else {
@@ -387,7 +412,11 @@ const SaleCard = () => {
                         autoClose: 2000,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 }
             })
@@ -398,7 +427,11 @@ const SaleCard = () => {
                     autoClose: 2000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             });
     };
@@ -430,7 +463,11 @@ const SaleCard = () => {
                     autoClose: 2000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             }
         } else {
@@ -456,7 +493,11 @@ const SaleCard = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                     getStages();
                 }
@@ -468,7 +509,11 @@ const SaleCard = () => {
                     autoClose: 2000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             });
     };
@@ -496,7 +541,11 @@ const SaleCard = () => {
                     autoClose: 2000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             }
         } else {
@@ -541,7 +590,8 @@ const SaleCard = () => {
     const updateProject = async (showMessage = true) => {
         query = toast.loading("Обновление", {
             containerId: "projectCard",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         try {
@@ -559,7 +609,11 @@ const SaleCard = () => {
                     autoClose: 1200,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             }
 
@@ -576,7 +630,9 @@ const SaleCard = () => {
                 autoClose: 1500,
                 pauseOnFocusLoss: false,
                 pauseOnHover: false,
-                position: "top-center",
+                draggable: true,
+                position:
+                    window.innerWidth >= 1440 ? "bottom-right" : "top-right",
             });
             console.error("Ошибка при обновлении проекта:", error);
             throw error;

@@ -158,7 +158,8 @@ const CustomerCard = () => {
     const updateData = (showMessage = true) => {
         query = toast.loading("Обновление", {
             containerId: "customer",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData("PATCH", `${URL}/${contragentId}`, formFields)
@@ -172,7 +173,11 @@ const CustomerCard = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 } else {
                     toast.dismiss(query);
@@ -182,7 +187,11 @@ const CustomerCard = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 }
             })
@@ -194,7 +203,11 @@ const CustomerCard = () => {
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             });
     };

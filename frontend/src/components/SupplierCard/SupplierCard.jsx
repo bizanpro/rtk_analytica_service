@@ -135,7 +135,8 @@ const SupplierCard = () => {
     const updateData = (showMessage = true) => {
         query = toast.loading("Обновление", {
             containerId: "supplier",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData("PATCH", `${URL}/${supplierId}`, formFields)
@@ -149,7 +150,11 @@ const SupplierCard = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 } else {
                     toast.dismiss(query);
@@ -159,7 +164,11 @@ const SupplierCard = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 }
             })
@@ -171,7 +180,11 @@ const SupplierCard = () => {
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             });
     };
@@ -200,7 +213,8 @@ const SupplierCard = () => {
     const sendExecutor = (data) => {
         query = toast.loading("Выполняется отправка", {
             containerId: "supplier",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData("POST", `${URL}/${supplierId}/contacts`, data)
@@ -221,7 +235,11 @@ const SupplierCard = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 }
             })
@@ -233,7 +251,11 @@ const SupplierCard = () => {
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             });
     };

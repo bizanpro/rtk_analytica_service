@@ -176,7 +176,9 @@ const EmployeeCard = () => {
         if (employeeData.position_id != null) {
             query = toast.loading("Обновление", {
                 containerId: "employee",
-                position: "top-center",
+                draggable: true,
+                position:
+                    window.innerWidth >= 1440 ? "bottom-right" : "top-right",
             });
 
             postData(
@@ -194,7 +196,11 @@ const EmployeeCard = () => {
                             autoClose: 1200,
                             pauseOnFocusLoss: false,
                             pauseOnHover: false,
-                            position: "top-center",
+                            draggable: true,
+                            position:
+                                window.innerWidth >= 1440
+                                    ? "bottom-right"
+                                    : "top-right",
                         });
                     } else {
                         toast.error("Ошибка обновления", {
@@ -202,7 +208,11 @@ const EmployeeCard = () => {
                             autoClose: 1500,
                             pauseOnFocusLoss: false,
                             pauseOnHover: false,
-                            position: "top-center",
+                            draggable: true,
+                            position:
+                                window.innerWidth >= 1440
+                                    ? "bottom-right"
+                                    : "top-right",
                             containerId: "employee",
                         });
                     }
@@ -215,7 +225,11 @@ const EmployeeCard = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 });
         } else {
@@ -225,7 +239,9 @@ const EmployeeCard = () => {
                 autoClose: 1500,
                 pauseOnFocusLoss: false,
                 pauseOnHover: false,
-                position: "top-center",
+                draggable: true,
+                position:
+                    window.innerWidth >= 1440 ? "bottom-right" : "top-right",
             });
         }
     };
@@ -294,7 +310,11 @@ const EmployeeCard = () => {
             if ("value" in selectedPersonalMonth) {
                 query = toast.loading("Обновление", {
                     containerId: "employee",
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
 
                 const data = {
@@ -323,7 +343,11 @@ const EmployeeCard = () => {
                                 autoClose: 1200,
                                 pauseOnFocusLoss: false,
                                 pauseOnHover: false,
-                                position: "top-center",
+                                draggable: true,
+                                position:
+                                    window.innerWidth >= 1440
+                                        ? "bottom-right"
+                                        : "top-right",
                             });
                         }
                     })
@@ -335,7 +359,11 @@ const EmployeeCard = () => {
                             autoClose: 4000,
                             pauseOnFocusLoss: false,
                             pauseOnHover: false,
-                            position: "top-center",
+                            draggable: true,
+                            position:
+                                window.innerWidth >= 1440
+                                    ? "bottom-right"
+                                    : "top-right",
                         });
                     });
             }
@@ -346,7 +374,9 @@ const EmployeeCard = () => {
                 autoClose: 4000,
                 pauseOnFocusLoss: false,
                 pauseOnHover: false,
-                position: "top-center",
+                draggable: true,
+                position:
+                    window.innerWidth >= 1440 ? "bottom-right" : "top-right",
             });
         }
     };

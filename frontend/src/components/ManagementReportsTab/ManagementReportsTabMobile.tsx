@@ -27,7 +27,11 @@ const ManagementReportsTab = ({
     const updateReportDetails = (report, action) => {
         // query = toast.loading("Обновление", {
         //     containerId: "report",
-        //     position: "top-center",
+        //     draggable: true,
+                    // position:
+                    //     window.innerWidth >= 1440
+                    //         ? "bottom-right"
+                    //         : "top-right",
         // });
         // report.action = action;
         // postData(
@@ -45,7 +49,11 @@ const ManagementReportsTab = ({
         //                 autoClose: 1200,
         //                 pauseOnFocusLoss: false,
         //                 pauseOnHover: false,
-        //                 position: "top-center",
+        //                draggable: true,
+                    // position:
+                    //     window.innerWidth >= 1440
+                    //         ? "bottom-right"
+                    //         : "top-right",
         //             });
         //             closeRateReportEditor();
         //             getFilteredManagementReports();
@@ -57,7 +65,11 @@ const ManagementReportsTab = ({
         //                 autoClose: 1500,
         //                 pauseOnFocusLoss: false,
         //                 pauseOnHover: false,
-        //                 position: "top-center",
+        //                draggable: true,
+                    // position:
+                    //     window.innerWidth >= 1440
+                    //         ? "bottom-right"
+                    //         : "top-right",
         //             });
         //         }
         //     })
@@ -69,7 +81,11 @@ const ManagementReportsTab = ({
         //             autoClose: 5000,
         //             pauseOnFocusLoss: false,
         //             pauseOnHover: false,
-        //             position: "top-center",
+        //             draggable: true,
+                    // position:
+                    //     window.innerWidth >= 1440
+                    //         ? "bottom-right"
+                    //         : "top-right",
         //         });
         //     });
     };

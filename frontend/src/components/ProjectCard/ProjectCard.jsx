@@ -255,7 +255,8 @@ const ProjectCard = () => {
     const sendExecutor = (type, data) => {
         query = toast.loading("Выполняется отправка", {
             containerId: "projectCard",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         data.project_id = projectId;
@@ -281,7 +282,11 @@ const ProjectCard = () => {
                             autoClose: 1200,
                             pauseOnFocusLoss: false,
                             pauseOnHover: false,
-                            position: "top-center",
+                            draggable: true,
+                            position:
+                                window.innerWidth >= 1440
+                                    ? "bottom-right"
+                                    : "top-right",
                         });
                     }
                 })
@@ -295,7 +300,11 @@ const ProjectCard = () => {
                             autoClose: 3500,
                             pauseOnFocusLoss: false,
                             pauseOnHover: false,
-                            position: "top-center",
+                            draggable: true,
+                            position:
+                                window.innerWidth >= 1440
+                                    ? "bottom-right"
+                                    : "top-right",
                         }
                     );
                 });
@@ -332,7 +341,11 @@ const ProjectCard = () => {
                                 autoClose: 1200,
                                 pauseOnFocusLoss: false,
                                 pauseOnHover: false,
-                                position: "top-center",
+                                draggable: true,
+                                position:
+                                    window.innerWidth >= 1440
+                                        ? "bottom-right"
+                                        : "top-right",
                             });
                         }
                     })
@@ -346,7 +359,11 @@ const ProjectCard = () => {
                                 autoClose: 3500,
                                 pauseOnFocusLoss: false,
                                 pauseOnHover: false,
-                                position: "top-center",
+                                draggable: true,
+                                position:
+                                    window.innerWidth >= 1440
+                                        ? "bottom-right"
+                                        : "top-right",
                             }
                         );
                     });
@@ -360,7 +377,8 @@ const ProjectCard = () => {
     const deleteContact = () => {
         query = toast.loading("Удаление", {
             containerId: "projectCard",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData(
@@ -380,7 +398,11 @@ const ProjectCard = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
 
                     if (deleteExecutor.type == "creditor") {
@@ -415,7 +437,11 @@ const ProjectCard = () => {
                     autoClose: 3500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             });
     };
@@ -433,7 +459,9 @@ const ProjectCard = () => {
         if (projectData?.contragent_id && projectData?.industries.main) {
             query = toast.loading("Обновление", {
                 containerId: "projectCard",
-                position: "top-center",
+                draggable: true,
+                position:
+                    window.innerWidth >= 1440 ? "bottom-right" : "top-right",
             });
 
             try {
@@ -451,7 +479,11 @@ const ProjectCard = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 }
                 return response;
@@ -463,7 +495,11 @@ const ProjectCard = () => {
                     autoClose: 3500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             }
         } else {
@@ -473,7 +509,9 @@ const ProjectCard = () => {
                 autoClose: 1500,
                 pauseOnFocusLoss: false,
                 pauseOnHover: false,
-                position: "top-center",
+                draggable: true,
+                position:
+                    window.innerWidth >= 1440 ? "bottom-right" : "top-right",
             });
         }
     };
@@ -503,7 +541,7 @@ const ProjectCard = () => {
 
         query = toast.loading("Выполняется отправка", {
             containerId: "projectCard",
-            position: "top-center",
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData("POST", `${import.meta.env.VITE_API_URL}reports`, data)
@@ -517,7 +555,11 @@ const ProjectCard = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                     setReports((prevReports) => [
                         ...prevReports,
@@ -531,7 +573,11 @@ const ProjectCard = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                         containerId: "projectCard",
                     });
                 }
@@ -547,7 +593,11 @@ const ProjectCard = () => {
                     autoClose: 5000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             });
     };
@@ -569,7 +619,8 @@ const ProjectCard = () => {
 
         query = toast.loading("Обновление", {
             containerId: "projectCard",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData(
@@ -587,7 +638,11 @@ const ProjectCard = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
 
                     getProject(projectId);
@@ -604,7 +659,11 @@ const ProjectCard = () => {
                     autoClose: 5000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             });
     };
@@ -625,7 +684,11 @@ const ProjectCard = () => {
                     autoClose: 3500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             });
     };
@@ -700,7 +763,6 @@ const ProjectCard = () => {
             setActiveWindow("");
         }
     }, [width]);
-
 
     // useEffect(() => {
     //     if (firstInit) return;

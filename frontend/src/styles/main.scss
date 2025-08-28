@@ -660,15 +660,17 @@ body {
             flex-grow: 1;
             border: 1px solid var(--color-gray-30);
             border-radius: 10px;
-            padding: 8px 16px;
+            padding: 8px 8px 8px 16px;
             display: flex;
             flex-direction: column;
             gap: 6px;
+            overflow: hidden;
 
             div {
                 display: flex;
                 align-items: center;
                 gap: 10px;
+                overflow: hidden;
 
                 small {
                     flex: 0 0 60px;
@@ -738,5 +740,53 @@ body {
     &__body {
         display: grid;
         gap: 10px;
+    }
+}
+
+.Toastify {
+    &__progress-bar {
+        opacity: 1 !important;
+
+        &--wrp {
+            border-bottom-left-radius: 0 !important;
+        }
+
+        &--error {
+            background: var(--color-red-60) !important;
+        }
+    }
+
+    &__spinner {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    &__toast {
+        padding: 12px 12px 12px 20px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        line-height: 120% !important;
+        color: var(--color-gray-100) !important;
+        border-radius: 8px !important;
+        min-height: 41px !important;
+        border-left: 8px solid transparent;
+
+        &--default {
+            border-left: 8px solid var(--color-gray-60);
+        }
+
+        &--success {
+            border-left: 8px solid var(--color-green-60);
+        }
+
+        &--error {
+            border-left: 8px solid var(--color-red-60);
+        }
+    }
+
+    &__toast-icon {
+        width: 16px !important;
+        height: 16px !important;
+        margin-right: 12px !important;
     }
 }

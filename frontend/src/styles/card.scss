@@ -29,7 +29,7 @@
         }
 
         @media (min-width: $media-xxl) {
-            grid-template-columns: 840px 1fr;
+            grid-template-columns: 840px 575px;
             gap: 40px;
         }
     }

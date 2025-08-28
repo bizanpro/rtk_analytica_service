@@ -314,7 +314,8 @@ const Reports = () => {
     const updateReport = (extendReportData, action) => {
         query = toast.loading("Обновление", {
             containerId: "report",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         extendReportData.action = action;
@@ -336,7 +337,11 @@ const Reports = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                     getFilteredManagementReports();
                     getAvailableMonths();
@@ -349,7 +354,11 @@ const Reports = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 }
             })
@@ -361,7 +370,11 @@ const Reports = () => {
                     autoClose: 5000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             });
     };
@@ -370,7 +383,8 @@ const Reports = () => {
     const updateReportDetails = (report, action) => {
         query = toast.loading("Обновление", {
             containerId: "report",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         report.action = action;
@@ -392,7 +406,11 @@ const Reports = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                     closeRateReportEditor();
                     getFilteredManagementReports();
@@ -404,7 +422,11 @@ const Reports = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 }
             })
@@ -416,7 +438,11 @@ const Reports = () => {
                     autoClose: 5000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             });
     };

@@ -82,7 +82,8 @@ const SingleBook = () => {
 
         query = toast.loading("Обновление", {
             containerId: "singleBook",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData(
@@ -99,7 +100,11 @@ const SingleBook = () => {
                     autoClose: 1200,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             } else {
                 toast.dismiss(query);
@@ -108,7 +113,11 @@ const SingleBook = () => {
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                     containerId: "singleBook",
                 });
             }
@@ -119,7 +128,8 @@ const SingleBook = () => {
     const deleteContactElem = (id, contactId) => {
         query = toast.loading("Удаление", {
             containerId: "singleBook",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData("DELETE", `${URL}/${id}/contacts/${contactId}`, {}).then(
@@ -133,7 +143,11 @@ const SingleBook = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
 
                     setBooksItems((booksItems) =>
@@ -156,7 +170,11 @@ const SingleBook = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                         containerId: "singleBook",
                     });
                 }
@@ -256,7 +274,8 @@ const SingleBook = () => {
 
         query = toast.loading("Обновление", {
             containerId: "singleBook",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData("POST", URL, formFields)
@@ -270,7 +289,11 @@ const SingleBook = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
 
                     setFormFields((prev) => ({
@@ -289,7 +312,11 @@ const SingleBook = () => {
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                     containerId: "singleBook",
                 });
             });
@@ -359,7 +386,8 @@ const SingleBook = () => {
 
         query = toast.loading("Обновление", {
             containerId: "singleBook",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData("PATCH", `${URL}/${data.id}`, data)
@@ -373,7 +401,11 @@ const SingleBook = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
 
                     if (bookId === "roles") {
@@ -386,7 +418,11 @@ const SingleBook = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                         containerId: "singleBook",
                     });
                 }
@@ -398,7 +434,11 @@ const SingleBook = () => {
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                     containerId: "singleBook",
                 });
             });
@@ -407,7 +447,8 @@ const SingleBook = () => {
     const saveAllList = () => {
         query = toast.loading("Сохранение", {
             containerId: "singleBook",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData("PATCH", URL, { year: currentYear, hours: booksItems })
@@ -421,7 +462,11 @@ const SingleBook = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 } else {
                     toast.dismiss(query);
@@ -430,7 +475,11 @@ const SingleBook = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                         containerId: "singleBook",
                     });
                 }
@@ -442,7 +491,11 @@ const SingleBook = () => {
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                     containerId: "singleBook",
                 });
             });
@@ -452,7 +505,8 @@ const SingleBook = () => {
     const editContragentAndCreditorContact = (data) => {
         query = toast.loading("Обновление", {
             containerId: "singleBook",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData(
@@ -472,7 +526,11 @@ const SingleBook = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 } else {
                     toast.dismiss(query);
@@ -481,7 +539,11 @@ const SingleBook = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                         containerId: "singleBook",
                     });
                 }
@@ -493,7 +555,11 @@ const SingleBook = () => {
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                     containerId: "singleBook",
                 });
             });
@@ -503,7 +569,8 @@ const SingleBook = () => {
     const deleteContact = (id) => {
         query = toast.loading("Удаление", {
             containerId: "singleBook",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         let url;
@@ -531,7 +598,11 @@ const SingleBook = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 } else {
                     toast.dismiss(query);
@@ -540,7 +611,11 @@ const SingleBook = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                         containerId: "singleBook",
                     });
                 }
@@ -552,7 +627,11 @@ const SingleBook = () => {
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                     containerId: "singleBook",
                 });
             });
@@ -562,7 +641,8 @@ const SingleBook = () => {
     const deleteElement = (id) => {
         query = toast.loading("Удаление", {
             containerId: "singleBook",
-            position: "top-center",
+            draggable: true,
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData("DELETE", `${URL}/${id}`, {})
@@ -582,7 +662,11 @@ const SingleBook = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 } else {
                     toast.dismiss(query);
@@ -591,7 +675,11 @@ const SingleBook = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                         containerId: "singleBook",
                     });
                 }
@@ -603,7 +691,11 @@ const SingleBook = () => {
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                     containerId: "singleBook",
                 });
             });
