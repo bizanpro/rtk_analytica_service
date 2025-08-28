@@ -20,7 +20,7 @@ const Employees = () => {
         { label: "Должность", key: "position" },
         { label: "Телефон", key: "phone_number" },
         { label: "Email", key: "email" },
-        { label: "Подразделение", key: "department_id" },
+        { label: "Подразделение", key: "department_name" },
         { label: "Тип", key: "is_staff" },
         { label: "Статус", key: "is_active" },
     ];
