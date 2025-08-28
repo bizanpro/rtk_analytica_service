@@ -169,7 +169,14 @@ const EmployeeCard = () => {
             { params: payload }
         ).then((response) => {
             if (response.status === 200) {
-                setWorkloadSummary(response.data.projects);
+                if (response.data.projects.length > 0) {
+                    setWorkloadSummary(
+                        response.data.projects.sort(
+                            (a, b) => b.total_hours - a.total_hours
+                        )
+                    );
+                }
+
                 if (response.data.projects.length > 0) {
                     const maxValue = Math.max(
                         ...response.data.projects.map(
