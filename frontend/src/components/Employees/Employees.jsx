@@ -73,7 +73,13 @@ const Employees = () => {
         getData(`${import.meta.env.VITE_API_URL}departments`).then(
             (response) => {
                 if (response.status == 200) {
-                    setDepartments(response.data.data);
+                    if (response.data.data.length > 0) {
+                        setDepartments(
+                            response.data.data.filter(
+                                (item) => item.employee_count > 0
+                            )
+                        );
+                    }
                 }
             }
         );
