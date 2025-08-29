@@ -32,7 +32,7 @@ const Employees = () => {
                     ? employee.is_staff === (selectedType === "true")
                     : true) &&
                 (selectedStatus !== "default"
-                    ? employee.status === selectedStatus
+                    ? employee.is_active === (selectedStatus === "true")
                     : true) &&
                 (selectedName !== null
                     ? employee.name === selectedName
@@ -164,8 +164,8 @@ const Employees = () => {
                             }}
                         >
                             <option value="default">Статус</option>
-                            <option value="Работает">работает</option>
-                            <option value="-">не работает</option>
+                            <option value="true">работает</option>
+                            <option value="false">не работает</option>
                         </select>
                     </div>
                 </div>
