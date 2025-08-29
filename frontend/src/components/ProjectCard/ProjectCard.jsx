@@ -55,12 +55,14 @@ const ProjectCard = () => {
 
     // const [mode, setMode] = useState(location.state?.mode || "read");
     const [mode, setMode] = useState("edit");
-    const [isAvailableToSave, setIsAvailableToSave] = useState(true);
+
     const [activeReportTab, setActiveReportTab] = useState("projectReports"); // Активная вкладка отчетов
     const [activeWindow, setActiveWindow] = useState(""); // Активное окно на мобилке (Отчеты или ОСВ)
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [firstInit, setFirstInit] = useState(true);
+
+    const [isAvailableToSave, setIsAvailableToSave] = useState(false); // Можно сохранять изменения
 
     const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
 
@@ -732,20 +734,13 @@ const ProjectCard = () => {
     }, [searchParams]);
 
     useEffect(() => {
-        setProjectDataCustom({
-            ...projectDataCustom,
+        setProjectDataCustom((prev) => ({
+            ...prev,
             industries: {
                 ...projectData.industries,
                 others: otherIndustries.others,
             },
-        });
-        setProjectData({
-            ...projectData,
-            industries: {
-                ...projectData.industries,
-                others: otherIndustries.others,
-            },
-        });
+        }));
     }, [otherIndustries]);
 
     useEffect(() => {
@@ -764,13 +759,11 @@ const ProjectCard = () => {
         }
     }, [width]);
 
-    // useEffect(() => {
-    //     if (firstInit) return;
-    //     if (!isDataLoaded) return;
-    //     console.log(formFields);
+    useEffect(() => {
+        console.log(projectDataCustom);
 
-    //     setIsAvailableToSave(true);
-    // }, [formFields, firstInit, isDataLoaded]);
+        // setIsAvailableToSave(true);
+    }, [projectDataCustom]);
 
     return (
         <main className="page">
