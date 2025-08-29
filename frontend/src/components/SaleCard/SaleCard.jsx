@@ -325,7 +325,7 @@ const SaleCard = () => {
     };
 
     // Обновляем детализацию этапа продажи
-    const updateStageDetails = (nextStage = false) => {
+    const updateStageDetails = (nextStage = false, stage_status) => {
         const activeStageData = saleStages.stages.find(
             (item) => item.id === stageMetrics.stage_id
         );
@@ -368,7 +368,7 @@ const SaleCard = () => {
                     fetchServices();
 
                     if (nextStage) {
-                        requestNextStage(nextStage, newDate);
+                        requestNextStage(nextStage, newDate, stage_status);
                     } else {
                         toast.success(response.message, {
                             type: "success",
@@ -439,13 +439,13 @@ const SaleCard = () => {
     };
 
     // Запрос следующего этапа в воронке продаж
-    const requestNextStage = (stage_id, stage_date) => {
+    const requestNextStage = (stage_id, stage_date, stage_status) => {
         postData(
             "POST",
             `${
                 import.meta.env.VITE_API_URL
             }sales-funnel-projects/${saleId}/stages`,
-            { stage_id, stage_date }
+            { stage_id, stage_date, status: stage_status }
         )
             .then((response) => {
                 if (response?.ok) {
@@ -474,7 +474,7 @@ const SaleCard = () => {
     };
 
     // Валидируем поля стоимости предложения перед запросом следующего этапа
-    const handleNextStage = (stage_id, name) => {
+    const handleNextStage = (stage_id, name, stage_status) => {
         if (
             name.toLowerCase() !== "получен запрос" &&
             name.toLowerCase() !== "проект отложен" &&
@@ -488,7 +488,7 @@ const SaleCard = () => {
                         item.current_value !== null && item.current_value !== ""
                 )
             ) {
-                updateStageDetails(stage_id);
+                updateStageDetails(stage_id, stage_status);
             } else {
                 toast.error("Заполните все поля стоимости предложения", {
                     containerId: "projectCard",
@@ -500,7 +500,7 @@ const SaleCard = () => {
                 });
             }
         } else {
-            updateStageDetails(stage_id);
+            updateStageDetails(stage_id, stage_status);
         }
     };
 

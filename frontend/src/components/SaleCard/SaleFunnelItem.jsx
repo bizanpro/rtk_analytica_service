@@ -77,7 +77,8 @@ const SaleFunnelItem = ({
                             if (confirm("Вы уверены?")) {
                                 handleNextStage(
                                     stage.next_possible_stages[2].id,
-                                    stage.name
+                                    stage.name,
+                                    "rejected"
                                 );
                             }
                         }}
@@ -92,7 +93,8 @@ const SaleFunnelItem = ({
                             evt.stopPropagation();
                             handleNextStage(
                                 stage.next_possible_stages[1].id,
-                                stage.name
+                                stage.name,
+                                "postponed"
                             );
                         }}
                     ></button>
@@ -106,7 +108,8 @@ const SaleFunnelItem = ({
                             evt.stopPropagation();
                             handleNextStage(
                                 stage.next_possible_stages[0].id,
-                                stage.name
+                                stage.name,
+                                "success"
                             );
                         }}
                     ></button>
