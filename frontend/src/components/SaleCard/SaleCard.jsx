@@ -405,37 +405,37 @@ const SaleCard = () => {
 
     // Валидация полей стоимости этапа перед сохранением
     const handleSaveDetails = () => {
-        const activeStageData = saleStages.stages.find(
-            (item) => item.id === stageMetrics.stage_id
-        );
+        // const activeStageData = saleStages.stages.find(
+        //     (item) => item.id === stageMetrics.stage_id
+        // );
 
-        if (
-            activeStageData.name.toLowerCase() !== "получен запрос" &&
-            activeStageData.name.toLowerCase() !== "проект отложен" &&
-            activeStageData.name.toLowerCase() !== "получен отказ" &&
-            activeStageData.name.toLowerCase() !== "подготовка кп"
-        ) {
-            if (
-                metrics.metrics?.length > 0 &&
-                metrics.metrics?.every(
-                    (item) =>
-                        item.current_value !== null && item.current_value !== ""
-                )
-            ) {
-                updateStageDetails();
-            } else {
-                toast.error("Заполните все поля стоимости предложения", {
-                    containerId: "projectCard",
-                    isLoading: false,
-                    autoClose: 2000,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    position: "top-center",
-                });
-            }
-        } else {
+        // if (
+        //     activeStageData.name.toLowerCase() !== "получен запрос" &&
+        //     activeStageData.name.toLowerCase() !== "проект отложен" &&
+        //     activeStageData.name.toLowerCase() !== "получен отказ" &&
+        //     activeStageData.name.toLowerCase() !== "подготовка кп"
+        // ) {
+        //     if (
+        //         metrics.metrics?.length > 0 &&
+        //         metrics.metrics?.every(
+        //             (item) =>
+        //                 item.current_value !== null && item.current_value !== ""
+        //         )
+        //     ) {
+        //         updateStageDetails();
+        //     } else {
+        //         toast.error("Заполните все поля стоимости предложения", {
+        //             containerId: "projectCard",
+        //             isLoading: false,
+        //             autoClose: 2000,
+        //             pauseOnFocusLoss: false,
+        //             pauseOnHover: false,
+        //             position: "top-center",
+        //         });
+        //     }
+        // } else {
             updateStageDetails();
-        }
+        // }
     };
 
     // Запрос следующего этапа в воронке продаж
