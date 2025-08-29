@@ -946,10 +946,17 @@ const ProjectCard = () => {
                                                 ...updated,
                                             }))
                                         }
-                                        options={industries.map((industry) => ({
-                                            value: industry.id,
-                                            label: industry.name,
-                                        }))}
+                                        options={industries
+                                            .filter(
+                                                (industry) =>
+                                                    industry.id !==
+                                                    projectDataCustom
+                                                        ?.industries?.main
+                                            )
+                                            .map((industry) => ({
+                                                value: industry.id,
+                                                label: industry.name,
+                                            }))}
                                     />
                                 </div>
 
