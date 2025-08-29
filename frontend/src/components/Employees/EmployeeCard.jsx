@@ -76,7 +76,7 @@ const EmployeeCard = () => {
             phone_number: !employeeData.phone_number,
             email: !employeeData.email || !validateEmail(employeeData.email),
             dismissal_date:
-                employeeData?.status == "-" && !employeeData.dismissal_date,
+                !employeeData?.is_active && !employeeData.dismissal_date,
         };
 
         setErrors(newErrors);
@@ -91,7 +91,7 @@ const EmployeeCard = () => {
             value = e ? formatToUtcDateOnly(e) : null;
         } else if (name === "phone_number") {
             value = e;
-        } else if (name === "is_staff") {
+        } else if (name === "is_staff" || name === "is_active") {
             value = JSON.parse(e.target.value);
         } else {
             value = e.target.value;
@@ -420,13 +420,13 @@ const EmployeeCard = () => {
     }, []);
 
     useEffect(() => {
-        if (employeeData?.status != "-") {
+        if (employeeData?.is_active) {
             setEmployeeData((prev) => ({
                 ...prev,
                 dismissal_date: null,
             }));
         }
-    }, [employeeData?.status]);
+    }, [employeeData?.is_active]);
 
     useEffect(() => {
         if (!employeeData?.is_staff) {
@@ -434,7 +434,7 @@ const EmployeeCard = () => {
                 ...prev,
                 dismissal_date: null,
                 employment_date: null,
-                status: true,
+                is_active: true,
             }));
         }
     }, [employeeData?.is_staff]);
@@ -499,16 +499,21 @@ const EmployeeCard = () => {
                                     {employeeData.is_staff && (
                                         <select
                                             className="border-2 h-[32px] p-1 border-gray-300 min-w-[120px] cursor-pointer"
-                                            value={String(employeeData.status)}
+                                            value={String(
+                                                employeeData.is_active
+                                            )}
                                             onChange={(e) =>
-                                                handleInputChange(e, "status")
+                                                handleInputChange(
+                                                    e,
+                                                    "is_active"
+                                                )
                                             }
                                             disabled={mode == "read"}
                                         >
-                                            <option value="Работает">
+                                            <option value="true">
                                                 работает
                                             </option>
-                                            <option value="-">
+                                            <option value="false">
                                                 не работает
                                             </option>
                                         </select>
@@ -652,7 +657,11 @@ const EmployeeCard = () => {
                                                 Дата приема
                                             </span>
                                             <DatePicker
-                                                className="border-2 border-gray-300 p-1 w-full h-[32px]"
+                                                className={`border-2 border-gray-300 p-1 w-full h-[32px] transition ${
+                                                    !employeeData.is_staff
+                                                        ? "bg-gray-100"
+                                                        : ""
+                                                }`}
                                                 selected={
                                                     employeeData.employment_date
                                                 }
@@ -675,7 +684,12 @@ const EmployeeCard = () => {
                                                 Дата увольнения
                                             </span>
                                             <DatePicker
-                                                className="border-2 border-gray-300 p-1 w-full h-[32px]"
+                                                className={`border-2 border-gray-300 p-1 w-full h-[32px] transition ${
+                                                    employeeData?.is_active ||
+                                                    !employeeData.is_staff
+                                                        ? "bg-gray-100"
+                                                        : ""
+                                                }`}
                                                 selected={
                                                     employeeData.dismissal_date
                                                 }
@@ -688,8 +702,7 @@ const EmployeeCard = () => {
                                                 dateFormat="dd.MM.yyyy"
                                                 disabled={
                                                     mode === "read" ||
-                                                    employeeData?.status ==
-                                                        "Работает" ||
+                                                    employeeData?.is_active ||
                                                     !employeeData.is_staff
                                                 }
                                             />
