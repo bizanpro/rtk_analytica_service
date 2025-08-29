@@ -74,5 +74,12 @@
         { "label": "Кол-во проектов", "key": "projects_count" },
         { "label": "Последнее изменение", "key": "updated_at" },
         { "label": "Автор измнения", "key": "author" }
+    ],
+    "departments": [
+        { "label": "Наименование", "key": "name" },
+        { "label": "Учитывать в численности и ФОТ", "key": "include_in_payroll" },
+        { "label": "Кол-во сотрудников в подразделении", "key": "employee_count" },
+        { "label": "Последнее изменение", "key": "updated_at" },
+        { "label": "Автор измнения", "key": "author" }
     ]
 }

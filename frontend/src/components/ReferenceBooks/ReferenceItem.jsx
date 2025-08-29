@@ -242,6 +242,24 @@ const ReferenceItem = ({
                                     <option value="true">Да</option>
                                     <option value="false">Нет</option>
                                 </select>
+                            ) : key === "include_in_payroll" ? (
+                                <select
+                                    className={`w-full min-h-[30px] ${
+                                        mode == "read"
+                                            ? ""
+                                            : "border border-gray-300"
+                                    }`}
+                                    name={key}
+                                    value={value.toString() || ""}
+                                    onChange={(e) =>
+                                        handleInputChange(e, key, data.id)
+                                    }
+                                    disabled={mode == "read"}
+                                >
+                                    <option value="">Выбрать</option>
+                                    <option value="true">Да</option>
+                                    <option value="false">Нет</option>
+                                </select>
                             ) : key === "show_cost" ? (
                                 <select
                                     className={`w-full min-h-[30px] ${
@@ -334,7 +352,10 @@ const ReferenceItem = ({
                                 className="delete-button delete-icon"
                                 title="Удалить элемент"
                                 id={data.id}
-                                disabled={data.projects_count > 0}
+                                disabled={
+                                    data.projects_count > 0 ||
+                                    data.employee_count > 0
+                                }
                             ></button>
                         )}
                     </div>

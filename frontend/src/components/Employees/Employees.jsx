@@ -7,9 +7,11 @@ import CreatableSelect from "react-select/creatable";
 
 const Employees = () => {
     const [list, setList] = useState([]);
+    const [departments, setDepartments] = useState([]);
     const [selectedType, setSelectedType] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
     const [selectedName, setSelectedName] = useState(null);
+    const [selectedDepartment, setSelectedDepartment] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     const COLUMNS = [
@@ -17,9 +19,10 @@ const Employees = () => {
         { label: "Загрузка", key: "reports_count" },
         { label: "Должность", key: "position" },
         { label: "Телефон", key: "phone_number" },
-        { label: "email", key: "email" },
+        { label: "Email", key: "email" },
+        { label: "Подразделение", key: "department_name" },
         { label: "Тип", key: "is_staff" },
-        { label: "Статус", key: "is_active" },
+        { label: "Статус", key: "status" },
     ];
 
     const filteredEmployees = useMemo(() => {
@@ -31,12 +34,17 @@ const Employees = () => {
                 (selectedStatus !== "default"
                     ? employee.is_active === (selectedStatus === "true")
                     : true) &&
-                (selectedName !== null ? employee.name === selectedName : true)
+                (selectedName !== null
+                    ? employee.name === selectedName
+                    : true) &&
+                (selectedDepartment !== null
+                    ? employee.department_id === selectedDepartment
+                    : true)
             );
         });
 
         return result;
-    }, [list, selectedType, selectedStatus, selectedName]);
+    }, [list, selectedType, selectedStatus, selectedName, selectedDepartment]);
 
     // Заполняем селектор сотрудников
     const nameOptions = useMemo(() => {
@@ -48,7 +56,8 @@ const Employees = () => {
         return Array.from(new Set(allNames));
     }, [list]);
 
-    useEffect(() => {
+    // Получени списка сотрудников
+    const getList = () => {
         setIsLoading(true);
         getData(`${import.meta.env.VITE_API_URL}physical-persons`)
             .then((response) => {
@@ -57,6 +66,28 @@ const Employees = () => {
                 }
             })
             .finally(() => setIsLoading(false));
+    };
+
+    // Получение списка подразделений
+    const getDepartments = () => {
+        getData(`${import.meta.env.VITE_API_URL}departments`).then(
+            (response) => {
+                if (response.status == 200) {
+                    if (response.data.data.length > 0) {
+                        setDepartments(
+                            response.data.data.filter(
+                                (item) => item.employee_count > 0
+                            )
+                        );
+                    }
+                }
+            }
+        );
+    };
+
+    useEffect(() => {
+        getDepartments();
+        getList();
     }, []);
 
     return (
@@ -70,21 +101,46 @@ const Employees = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        <CreatableSelect
-                            isClearable
-                            options={nameOptions}
-                            className="p-1 border border-gray-300 min-w-[250px] max-w-[300px] executor-block__name-field"
-                            placeholder="Сотрудник"
-                            noOptionsMessage={() => "Совпадений нет"}
-                            isValidNewOption={() => false}
-                            onChange={(selectedOption) => {
-                                if (selectedOption) {
-                                    setSelectedName(selectedOption.label);
-                                } else {
-                                    setSelectedName(null);
-                                }
-                            }}
-                        />
+                        {nameOptions.length > 0 && (
+                            <CreatableSelect
+                                isClearable
+                                options={nameOptions}
+                                className="p-1 border border-gray-300 min-w-[250px] max-w-[300px] executor-block__name-field"
+                                placeholder="Сотрудник"
+                                noOptionsMessage={() => "Совпадений нет"}
+                                isValidNewOption={() => false}
+                                onChange={(selectedOption) => {
+                                    if (selectedOption) {
+                                        setSelectedName(selectedOption.label);
+                                    } else {
+                                        setSelectedName(null);
+                                    }
+                                }}
+                            />
+                        )}
+
+                        {departments.length > 0 && (
+                            <CreatableSelect
+                                isClearable
+                                options={departments.map((item) => ({
+                                    value: item.id,
+                                    label: item.name,
+                                }))}
+                                className="p-1 border border-gray-300 min-w-[250px] max-w-[300px] executor-block__name-field"
+                                placeholder="Подразделение"
+                                noOptionsMessage={() => "Совпадений нет"}
+                                isValidNewOption={() => false}
+                                onChange={(selectedOption) => {
+                                    if (selectedOption) {
+                                        setSelectedDepartment(
+                                            selectedOption.value
+                                        );
+                                    } else {
+                                        setSelectedDepartment(null);
+                                    }
+                                }}
+                            />
+                        )}
 
                         <select
                             className={
