@@ -76,7 +76,7 @@ const EmployeeCard = () => {
             phone_number: !employeeData.phone_number,
             email: !employeeData.email || !validateEmail(employeeData.email),
             dismissal_date:
-                !employeeData?.is_active && !employeeData.dismissal_date,
+                employeeData?.status == "-" && !employeeData.dismissal_date,
         };
 
         setErrors(newErrors);
@@ -91,7 +91,7 @@ const EmployeeCard = () => {
             value = e ? formatToUtcDateOnly(e) : null;
         } else if (name === "phone_number") {
             value = e;
-        } else if (name === "is_staff" || name === "is_active") {
+        } else if (name === "is_staff") {
             value = JSON.parse(e.target.value);
         } else {
             value = e.target.value;
@@ -420,13 +420,13 @@ const EmployeeCard = () => {
     }, []);
 
     useEffect(() => {
-        if (employeeData?.is_active) {
+        if (employeeData?.status != "-") {
             setEmployeeData((prev) => ({
                 ...prev,
                 dismissal_date: null,
             }));
         }
-    }, [employeeData?.is_active]);
+    }, [employeeData?.status]);
 
     useEffect(() => {
         if (!employeeData?.is_staff) {
@@ -434,7 +434,7 @@ const EmployeeCard = () => {
                 ...prev,
                 dismissal_date: null,
                 employment_date: null,
-                is_active: true,
+                status: true,
             }));
         }
     }, [employeeData?.is_staff]);
@@ -499,21 +499,16 @@ const EmployeeCard = () => {
                                     {employeeData.is_staff && (
                                         <select
                                             className="border-2 h-[32px] p-1 border-gray-300 min-w-[120px] cursor-pointer"
-                                            value={String(
-                                                employeeData.is_active
-                                            )}
+                                            value={String(employeeData.status)}
                                             onChange={(e) =>
-                                                handleInputChange(
-                                                    e,
-                                                    "is_active"
-                                                )
+                                                handleInputChange(e, "status")
                                             }
                                             disabled={mode == "read"}
                                         >
-                                            <option value="true">
+                                            <option value="Работает">
                                                 работает
                                             </option>
-                                            <option value="false">
+                                            <option value="-">
                                                 не работает
                                             </option>
                                         </select>
@@ -693,7 +688,8 @@ const EmployeeCard = () => {
                                                 dateFormat="dd.MM.yyyy"
                                                 disabled={
                                                     mode === "read" ||
-                                                    employeeData?.is_active ||
+                                                    employeeData?.status ==
+                                                        "Работает" ||
                                                     !employeeData.is_staff
                                                 }
                                             />
