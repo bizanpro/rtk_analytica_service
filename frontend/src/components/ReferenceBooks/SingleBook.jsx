@@ -629,7 +629,13 @@ const SingleBook = () => {
             Accept: "application/json",
         }).then((response) => {
             if (response.status == 200) {
-                setPositions(response.data.data);
+                if (response.data.data?.length > 0) {
+                    setPositions(
+                        response.data.data.filter(
+                            (item) => item.type === "one_to_one"
+                        )
+                    );
+                }
             }
         });
     };

@@ -637,7 +637,7 @@ const Indicators = () => {
                         </select>
                     </div>
 
-                    <div className="flex flex-col">
+                    {/* <div className="flex flex-col">
                         <select
                             className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
                             onChange={(evt) =>
@@ -655,7 +655,7 @@ const Indicators = () => {
                                     </option>
                                 ))}
                         </select>
-                    </div>
+                    </div> */}
 
                     <button
                         type="button"

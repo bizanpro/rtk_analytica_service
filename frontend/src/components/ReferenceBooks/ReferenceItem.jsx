@@ -37,6 +37,8 @@ const ReferenceItem = ({
         }
     };
 
+    console.log(positions);
+
     return (
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
@@ -205,14 +207,17 @@ const ReferenceItem = ({
                                     disabled={mode == "read"}
                                 >
                                     {bookId === "management-report-types" ? (
-                                        positions.map((position) => (
-                                            <option
-                                                value={position.id}
-                                                key={position.id}
-                                            >
-                                                {position.name}
-                                            </option>
-                                        ))
+                                        <>
+                                            <option value=""></option>
+                                            {positions.map((position) => (
+                                                <option
+                                                    value={position.id}
+                                                    key={position.id}
+                                                >
+                                                    {position.name}
+                                                </option>
+                                            ))}
+                                        </>
                                     ) : (
                                         <>
                                             <option value="">Тип</option>
