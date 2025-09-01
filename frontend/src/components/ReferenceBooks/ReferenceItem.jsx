@@ -37,8 +37,6 @@ const ReferenceItem = ({
         }
     };
 
-    console.log(positions);
-
     return (
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"

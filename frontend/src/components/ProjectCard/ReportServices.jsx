@@ -7,7 +7,9 @@ const ReportServices = ({ services }) => {
                     className="grid grid-cols-[10%_25%_25%_28%] items-center gap-5"
                 >
                     <div className="text-lg">{service.name}</div>
-                    <div className="text-lg">{service.cost} млн руб.</div>
+                    <div className="text-lg">
+                        {service.cost != "-" && <>{service.cost} млн руб.</>}
+                    </div>
                     <div className="text-lg">{service.regularity}</div>
                     <div>
                         <div className="bg-gray-200 py-1 px-3 text-center rounded-md">
