@@ -1,4 +1,4 @@
-const CustomerProjectItem = ({
+const ContragentProjectItem = ({
     id,
     name,
     project_budget,
@@ -81,4 +81,4 @@ const CustomerProjectItem = ({
     );
 };
 
-export default CustomerProjectItem;
+export default ContragentProjectItem;

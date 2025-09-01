@@ -4,7 +4,7 @@ import getData from "../../utils/getData";
 
 import Loader from "../Loader";
 
-const CustomerStatisticBlock = ({ contragentId, activeProject }) => {
+const ContragentStatisticBlock = ({ contragentId, activeProject }) => {
     const [period, setPeriod] = useState("current_year");
     const [revenue, setRevenue] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -13,10 +13,10 @@ const CustomerStatisticBlock = ({ contragentId, activeProject }) => {
         activeProject != null
             ? `${
                   import.meta.env.VITE_API_URL
-              }projects/${activeProject}/revenue/?period=${period}`
+              }projects/${activeProject}/revenue?period=${period}`
             : `${
                   import.meta.env.VITE_API_URL
-              }contragents/${contragentId}/financial-metrics/?period=${period}`;
+              }contragents/${contragentId}/financial-metrics?period=${period}`;
 
     const getRevenue = () => {
         setIsDataLoaded(false);
@@ -290,4 +290,4 @@ const CustomerStatisticBlock = ({ contragentId, activeProject }) => {
     );
 };
 
-export default CustomerStatisticBlock;
+export default ContragentStatisticBlock;

@@ -15,7 +15,7 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }projects/${projectId}/revenue/?period=${period}`
+            }projects/${projectId}/revenue?period=${period}`
         )
             .then((response) => {
                 if (response.status == 200) {

@@ -8,7 +8,7 @@ import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 import { ToastContainer, toast } from "react-toastify";
 
-import CustomerProjectItem from "../CustomerCard/CustomerProjectItem";
+import CustomerProjectItem from "../ContragentCard/ContragentProjectItem";
 import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
 import SupplierStatisticBlock from "./SupplierStatisticBlock";

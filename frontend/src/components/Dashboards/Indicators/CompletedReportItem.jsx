@@ -27,7 +27,7 @@ const CompletedReportItem = ({
             <Link
                 to={`${import.meta.env.VITE_BASE_URL}projects/${
                     project.id
-                }/?report=${id}`}
+                }?report=${id}`}
                 onClick={() => window.scrollTo(0, 0)}
                 className="flex gap-3 items-center"
                 title="Открыть отчёт в карточке проекта"
@@ -51,7 +51,7 @@ const CompletedReportItem = ({
                         <Link
                             to={`${import.meta.env.VITE_BASE_URL}projects/${
                                 project.id
-                            }/?report=${id}&with_conclusion=true`}
+                            }?report=${id}&with_conclusion=true`}
                             onClick={() => window.scrollTo(0, 0)}
                             className="info-icon flex-none w-[20px]"
                             title="Открыть заключение в карточке проекта"

@@ -653,7 +653,7 @@ const SingleBook = () => {
         setIsLoading(true);
 
         const url =
-            bookId == "working-hours" ? `${URL}/?year=${currentYear}` : URL;
+            bookId == "working-hours" ? `${URL}?year=${currentYear}` : URL;
 
         getData(url, {
             Accept: "application/json",

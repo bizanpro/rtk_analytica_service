@@ -216,7 +216,7 @@ const Reports = () => {
             });
         });
 
-        getData(`${MANAGEMENT_URL}/?${queryParams.toString()}`)
+        getData(`${MANAGEMENT_URL}?${queryParams.toString()}`)
             .then((response) => {
                 if (response.status === 200) {
                     setManagementList(response.data);

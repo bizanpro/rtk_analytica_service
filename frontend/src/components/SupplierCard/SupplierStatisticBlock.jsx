@@ -15,7 +15,7 @@ const SupplierStatisticBlock = ({ supplierId }) => {
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }contragents/${supplierId}/supplier-metrics/?period=${period}`
+            }contragents/${supplierId}/supplier-metrics?period=${period}`
         )
             .then((response) => {
                 if (response.status == 200) {

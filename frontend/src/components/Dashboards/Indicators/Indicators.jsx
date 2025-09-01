@@ -420,7 +420,7 @@ const Indicators = () => {
 
     // Получение заказчиков
     const getContragents = () => {
-        getData(`${import.meta.env.VITE_API_URL}contragents/?all=true`).then(
+        getData(`${import.meta.env.VITE_API_URL}contragents?all=true`).then(
             (response) => {
                 if (response?.status == 200) {
                     setContragents(response.data);

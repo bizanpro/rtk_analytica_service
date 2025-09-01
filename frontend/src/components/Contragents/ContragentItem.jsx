@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import handleStatus from "../../utils/handleStatus";
 
-const CustomerItem = ({ props, columns }) => {
+const ContragentItem = ({ props, columns }) => {
     const navigate = useNavigate();
 
     const handleRowClick = () => {
@@ -100,4 +100,4 @@ const CustomerItem = ({ props, columns }) => {
     );
 };
 
-export default CustomerItem;
+export default ContragentItem;

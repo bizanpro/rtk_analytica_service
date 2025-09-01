@@ -121,7 +121,7 @@ const EmployeeCard = () => {
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }personal-available-years/?physical_person_id=${employeeId}`
+            }personal-available-years?physical_person_id=${employeeId}`
         ).then((response) => {
             if (response.status == 200) {
                 setDatesData(response.data);

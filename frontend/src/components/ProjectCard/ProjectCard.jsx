@@ -115,7 +115,7 @@ const ProjectCard = () => {
 
     // Получение заказчика
     const fetchContragents = () => {
-        getData(`${import.meta.env.VITE_API_URL}contragents/?all=true`, {
+        getData(`${import.meta.env.VITE_API_URL}contragents?all=true`, {
             Accept: "application/json",
         }).then((response) => {
             if (response?.status == 200) {

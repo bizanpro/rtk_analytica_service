@@ -5,11 +5,11 @@ import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
 import { createDebounce } from "../../utils/debounce";
 
-import ProjectItem from "./CustomerItem";
+import ContragentItem from "./ContragentItem";
 import Select from "../Select";
 import Search from "../Search/Search";
 
-const Customers = () => {
+const Contragents = () => {
     const [list, setList] = useState([]);
     const [selectedName, setSelectedName] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
@@ -33,7 +33,7 @@ const Customers = () => {
         { label: "Статус", key: "status" },
     ];
 
-    const filteredCustomers = useMemo(() => {
+    const filteredContragents = useMemo(() => {
         return list.filter((customer) => {
             const matchName =
                 selectedName && selectedName !== "default"
@@ -53,7 +53,7 @@ const Customers = () => {
         const searchQuery = event.value.toLowerCase();
 
         setIsLoading(true);
-        getData(`${URL}/?page=${page}&active=true&search=${searchQuery}`, {
+        getData(`${URL}?page=${page}&active=true&search=${searchQuery}`, {
             Accept: "application/json",
         })
             .then((response) => {
@@ -89,7 +89,7 @@ const Customers = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        getData(`${URL}/?page=${page}&active=true`, {
+        getData(`${URL}?page=${page}&active=true`, {
             Accept: "application/json",
         })
             .then((response) => {
@@ -118,8 +118,8 @@ const Customers = () => {
                 <div className="flex justify-between items-center gap-6 mb-8">
                     <h1 className="text-3xl font-medium">
                         Реестр заказчиков{" "}
-                        {filteredCustomers.length > 0 &&
-                            `(${filteredCustomers.length})`}
+                        {filteredContragents.length > 0 &&
+                            `(${filteredContragents.length})`}
                     </h1>
 
                     <div className="flex items-center gap-6">
@@ -179,9 +179,9 @@ const Customers = () => {
                         </thead>
 
                         <tbody>
-                            {filteredCustomers.length > 0 &&
-                                filteredCustomers.map((item) => (
-                                    <ProjectItem
+                            {filteredContragents.length > 0 &&
+                                filteredContragents.map((item) => (
+                                    <ContragentItem
                                         key={item.id}
                                         props={item}
                                         columns={COLUMNS}
@@ -198,4 +198,4 @@ const Customers = () => {
     );
 };
 
-export default Customers;
+export default Contragents;

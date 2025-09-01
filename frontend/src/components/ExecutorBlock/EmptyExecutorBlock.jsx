@@ -73,7 +73,7 @@ const EmptyExecutorBlock = ({
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }responsible-persons/creditor/?project_id=${projectId}&creditor_id=${
+            }responsible-persons/creditor?project_id=${projectId}&creditor_id=${
                 newContact.creditor_id
             }`
         ).then((response) => {
@@ -88,7 +88,7 @@ const EmptyExecutorBlock = ({
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }responsible-persons/contragent/?project_id=${projectId}`
+            }responsible-persons/contragent?project_id=${projectId}`
         ).then((response) => {
             if (response.status == 200) {
                 setContactsList(response.data.data);

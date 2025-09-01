@@ -7,7 +7,7 @@ import ReportRateEditor from "../Reports/ReportRateEditor";
 
 const URL = `${import.meta.env.VITE_API_URL}projects`;
 
-const CustomerManagementReportsTab = ({
+const ContragentManagementReportsTab = ({
     managerReports,
 }: {
     managerReports: [];
@@ -53,7 +53,7 @@ const CustomerManagementReportsTab = ({
     );
 };
 
-export default CustomerManagementReportsTab;
+export default ContragentManagementReportsTab;
 
 // interface RateSwitchProps {
 //     name: string;
