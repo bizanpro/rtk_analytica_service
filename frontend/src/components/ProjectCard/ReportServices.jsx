@@ -8,7 +8,11 @@ const ReportServices = ({ services }) => {
                 >
                     <div className="text-lg">{service.name}</div>
                     <div className="text-lg">
-                        {service.cost != "-" && <>{service.cost} млн руб.</>}
+                        {service.cost != "-" ? (
+                            <>{service.cost} млн руб.</>
+                        ) : (
+                            "-"
+                        )}
                     </div>
                     <div className="text-lg">{service.regularity}</div>
                     <div>
