@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
+import { sortList } from "../../utils/sortList";
 
 import ProjectItem from "./ProjectItem";
 import Popup from "../Popup/Popup";
 import CustomSelect from "../Select";
+import TheadSortButton from "../TheadSortButton/TheadSortButton";
 import Select from "react-select";
 
 const Projects = () => {
@@ -14,20 +16,31 @@ const Projects = () => {
     const navigate = useNavigate();
 
     const [mode, setMode] = useState("read");
+
+    const [sortBy, setSortBy] = useState({ key: "", action: "" });
+
     const [list, setList] = useState([]);
+    const [sortedList, setSortedList] = useState([]);
+
     const [popupState, setPopupState] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
     const [newProjectName, setNewProjectName] = useState("");
+
     const [selectedName, setSelectedName] = useState("default");
     const [selectedSector, setSelectedSector] = useState([]);
     const [selectedBank, setSelectedBank] = useState("default");
     const [selectedManager, setSelectedManager] = useState("default");
-    const [isLoading, setIsLoading] = useState(true);
 
     const COLUMNS = [
         { label: "Проект", key: "name" },
         { label: "Заказчик", key: "contragent" },
         { label: "Банк", key: "creditors" },
-        { label: "Бюджет (млрд руб.)", key: "project_budget" },
+        {
+            label: "Бюджет (млрд руб.)",
+            key: "project_budget",
+            is_sortable: true,
+        },
         { label: "Срок (мес.)", key: "implementation_period" },
         { label: "Руководитель проекта", key: "project_manager" },
         { label: "Статус", key: "status" },
@@ -35,7 +48,7 @@ const Projects = () => {
     ];
 
     const filteredProjects = useMemo(() => {
-        const result = list.filter((project) => {
+        const result = sortedList.filter((project) => {
             return (
                 (selectedSector.length > 0
                     ? selectedSector.some(
@@ -59,41 +72,51 @@ const Projects = () => {
             );
         });
         return result;
-    }, [list, selectedSector, selectedBank, selectedManager, selectedName]);
+    }, [
+        sortedList,
+        selectedSector,
+        selectedBank,
+        selectedManager,
+        selectedName,
+    ]);
 
     // Заполняем селектор проектов
     const nameOptions = useMemo(() => {
-        const allNames = list
+        const allNames = sortedList
             .map((item) => item.name)
             .filter((name) => name !== null);
 
         return Array.from(new Set(allNames));
-    }, [list]);
+    }, [sortedList]);
 
     // Заполняем селектор отраслей
     const sectorOptions = useMemo(() => {
-        const allSectors = list
+        const allSectors = sortedList
             .map((item) => item.industries.main?.name)
             .filter((name) => name !== null && name !== undefined);
 
         return Array.from(new Set(allSectors));
-    }, [list]);
+    }, [sortedList]);
 
     // Заполняем селектор банков
     const bankOptions = useMemo(() => {
-        const allBanks = list.flatMap((item) =>
+        const allBanks = sortedList.flatMap((item) =>
             item.creditors?.map((bank) => bank.name)
         );
         return Array.from(new Set(allBanks));
-    }, [list]);
+    }, [sortedList]);
 
     // Заполняем селектор руководителей
     const projectManagerOptions = useMemo(() => {
-        const allPM = list
+        const allPM = sortedList
             .map((item) => item.manager)
             .filter((manager) => manager !== null && manager !== undefined);
         return Array.from(new Set(allPM));
-    }, [list]);
+    }, [sortedList]);
+
+    const handleListSort = () => {
+        setSortedList(sortList(list, sortBy));
+    };
 
     const handleProjectsNameChange = (e) => {
         setNewProjectName(e.target.value);
@@ -114,6 +137,7 @@ const Projects = () => {
         getData(URL, { Accept: "application/json" })
             .then((response) => {
                 setList(response.data);
+                setSortedList(response.data);
             })
             .finally(() => setIsLoading(false));
     };
@@ -137,6 +161,10 @@ const Projects = () => {
             }
         });
     };
+
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
 
     useEffect(() => {
         getProjects();
@@ -254,13 +282,22 @@ const Projects = () => {
                     <table className="table-auto w-full border-collapse border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
-                                {COLUMNS.map(({ label, key }) => (
+                                {COLUMNS.map(({ label, key, is_sortable }) => (
                                     <th
-                                        className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
+                                        className="text-base px-4 py-2 min-w-[180px] max-w-[230px] thead__item"
                                         rowSpan="2"
                                         key={key}
                                     >
-                                        {label}
+                                        {is_sortable ? (
+                                            <TheadSortButton
+                                                label={label}
+                                                value={key}
+                                                sortBy={sortBy}
+                                                setSortBy={setSortBy}
+                                            />
+                                        ) : (
+                                            label
+                                        )}
                                     </th>
                                 ))}
                             </tr>

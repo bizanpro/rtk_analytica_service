@@ -4,6 +4,7 @@ import getData from "../../utils/getData";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
 import { createDebounce } from "../../utils/debounce";
+import { sortList } from "../../utils/sortList";
 
 import ContragentItem from "./ContragentItem";
 import TheadSortButton from "../TheadSortButton/TheadSortButton";
@@ -73,42 +74,7 @@ const Contragents = () => {
     }, [sortedList, selectedName, selectedStatus]);
 
     const handleListSort = () => {
-        switch (sortBy.action) {
-            case "":
-                setSortedList(list);
-
-                break;
-
-            case "ascending":
-                setSortedList(
-                    [...list].sort((a, b) => {
-                        const valA = Number(
-                            String(a[sortBy.key]).replace(",", ".")
-                        );
-                        const valB = Number(
-                            String(b[sortBy.key]).replace(",", ".")
-                        );
-                        return valB - valA;
-                    })
-                );
-
-                break;
-
-            case "descending":
-                setSortedList(
-                    [...list].sort((a, b) => {
-                        const valA = Number(
-                            String(a[sortBy.key]).replace(",", ".")
-                        );
-                        const valB = Number(
-                            String(b[sortBy.key]).replace(",", ".")
-                        );
-                        return valA - valB;
-                    })
-                );
-
-                break;
-        }
+        setSortedList(sortList(list, sortBy));
     };
 
     const handleSearch = (event) => {
