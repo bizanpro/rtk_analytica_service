@@ -135,10 +135,10 @@ const Indicators = () => {
                 data:
                     financialListFilters.metric[0] === "revenue"
                         ? financialList.items?.map((item) =>
-                              parseFloat(item.revenue.value.replace(",", "."))
+                              parseFloat(item.revenue.value)
                           )
                         : financialList.items?.map((item) =>
-                              parseFloat(item.receipts.value.replace(",", "."))
+                              parseFloat(item.receipts.value)
                           ),
                 backgroundColor: "black",
                 borderRadius: 2,
@@ -155,14 +155,10 @@ const Indicators = () => {
                 data:
                     financialProfitListFilters.metric[0] === "gross_profit"
                         ? financialProfitList.items?.map((item) =>
-                              parseFloat(
-                                  item.gross_profit.value.replace(",", ".")
-                              )
+                              parseFloat(item.gross_profit.value)
                           )
                         : financialProfitList.items?.map((item) =>
-                              parseFloat(
-                                  item.gross_margin.value.replace(",", ".")
-                              )
+                              parseFloat(item.gross_margin.value)
                           ),
                 backgroundColor: "black",
                 borderRadius: 2,
@@ -729,7 +725,15 @@ const Indicators = () => {
                             </div>
 
                             <div className="h-[214px] overflow-x-hidden overflow-y-auto">
-                                <div style={{ height: `${Math.max(214, (financialListData.labels?.length || 0) * 40)}px` }}>
+                                <div
+                                    style={{
+                                        height: `${Math.max(
+                                            214,
+                                            (financialListData.labels?.length ||
+                                                0) * 40
+                                        )}px`,
+                                    }}
+                                >
                                     <Bar
                                         data={financialListData}
                                         options={horizontalOptions}
@@ -797,7 +801,15 @@ const Indicators = () => {
 
                         {chartView == "headcount" ? (
                             <div className="h-[340px] overflow-x-hidden overflow-y-auto">
-                                <div style={{ height: `${Math.max(340, (EmployeeMetricsData.labels?.length || 0) * 40)}px` }}>
+                                <div
+                                    style={{
+                                        height: `${Math.max(
+                                            340,
+                                            (EmployeeMetricsData.labels
+                                                ?.length || 0) * 40
+                                        )}px`,
+                                    }}
+                                >
                                     <Bar
                                         data={EmployeeMetricsData}
                                         options={horizontalOptions}
@@ -904,7 +916,15 @@ const Indicators = () => {
                             </div>
 
                             <div className="h-[214px] overflow-x-hidden overflow-y-auto">
-                                <div style={{ height: `${Math.max(214, (financialProfitListData.labels?.length || 0) * 40)}px` }}>
+                                <div
+                                    style={{
+                                        height: `${Math.max(
+                                            214,
+                                            (financialProfitListData.labels
+                                                ?.length || 0) * 40
+                                        )}px`,
+                                    }}
+                                >
                                     <Bar
                                         data={financialProfitListData}
                                         options={horizontalOptions}
