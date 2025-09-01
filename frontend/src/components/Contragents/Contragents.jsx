@@ -6,15 +6,22 @@ import handleStatus from "../../utils/handleStatus";
 import { createDebounce } from "../../utils/debounce";
 
 import ContragentItem from "./ContragentItem";
+import TheadSortButton from "../TheadSortButton/TheadSortButton";
 import Select from "../Select";
 import Search from "../Search/Search";
 
 const Contragents = () => {
     const [list, setList] = useState([]);
+    const [sortedList, setSortedList] = useState([]);
+
+    const [sortBy, setSortBy] = useState({ key: "", action: "" });
+
     const [selectedName, setSelectedName] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
+
     const [isLoading, setIsLoading] = useState(true);
     const [isFiltering, setIsFiltering] = useState(false);
+
     const [page, setPage] = useState(1);
     const [meta, setMeta] = useState({
         current_page: 1,
@@ -24,17 +31,33 @@ const Contragents = () => {
     const URL = `${import.meta.env.VITE_API_URL}contragents`;
 
     const COLUMNS = [
-        { label: "Наименование", key: "program_name" },
-        { label: "Кол-во проектов, всего", key: "projects_total_count" },
-        { label: "Кол-во активных проектов", key: "projects_active_count" },
-        { label: "Бюджет проектов, млрд руб.", key: "projects_total_budget" },
-        { label: "Выручка, млн руб.", key: "revenue_total" },
-        { label: "Получено оплат, млн руб.", key: "income_total" },
-        { label: "Статус", key: "status" },
+        { label: "Наименование", key: "program_name", is_sortable: false },
+        {
+            label: "Кол-во проектов, всего",
+            key: "projects_total_count",
+            is_sortable: true,
+        },
+        {
+            label: "Кол-во активных проектов",
+            key: "projects_active_count",
+            is_sortable: true,
+        },
+        {
+            label: "Бюджет проектов, млрд руб.",
+            key: "projects_total_budget",
+            is_sortable: true,
+        },
+        { label: "Выручка, млн руб.", key: "revenue_total", is_sortable: true },
+        {
+            label: "Получено оплат, млн руб.",
+            key: "income_total",
+            is_sortable: true,
+        },
+        { label: "Статус", key: "status", is_sortable: false },
     ];
 
     const filteredContragents = useMemo(() => {
-        return list.filter((customer) => {
+        return sortedList.filter((customer) => {
             const matchName =
                 selectedName && selectedName !== "default"
                     ? customer.program_name === selectedName
@@ -47,7 +70,46 @@ const Contragents = () => {
 
             return matchName && matchStatus;
         });
-    }, [list, selectedName, selectedStatus]);
+    }, [sortedList, selectedName, selectedStatus]);
+
+    const handleListSort = () => {
+        switch (sortBy.action) {
+            case "":
+                setSortedList(list);
+
+                break;
+
+            case "ascending":
+                setSortedList(
+                    [...list].sort((a, b) => {
+                        const valA = Number(
+                            String(a[sortBy.key]).replace(",", ".")
+                        );
+                        const valB = Number(
+                            String(b[sortBy.key]).replace(",", ".")
+                        );
+                        return valB - valA;
+                    })
+                );
+
+                break;
+
+            case "descending":
+                setSortedList(
+                    [...list].sort((a, b) => {
+                        const valA = Number(
+                            String(a[sortBy.key]).replace(",", ".")
+                        );
+                        const valB = Number(
+                            String(b[sortBy.key]).replace(",", ".")
+                        );
+                        return valA - valB;
+                    })
+                );
+
+                break;
+        }
+    };
 
     const handleSearch = (event) => {
         const searchQuery = event.value.toLowerCase();
@@ -66,16 +128,16 @@ const Contragents = () => {
 
     // Заполняем селектор заказчиков
     const nameOptions = useMemo(() => {
-        const allNames = list
+        const allNames = sortedList
             .map((item) => item.program_name)
             .filter((program_name) => program_name !== null);
 
         return Array.from(new Set(allNames));
-    }, [list]);
+    }, [sortedList]);
 
     // Заполняем селектор статусов
     const statusOptions = useMemo(() => {
-        const allStatuses = list
+        const allStatuses = sortedList
             .map((item) => item.status)
             .filter((status) => status !== null);
 
@@ -85,7 +147,7 @@ const Contragents = () => {
             value: status,
             label: handleStatus(status),
         }));
-    }, [list]);
+    }, [sortedList]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -94,6 +156,7 @@ const Contragents = () => {
         })
             .then((response) => {
                 setList((prev) => [...prev, ...response.data.data]);
+                setSortedList((prev) => [...prev, ...response.data.data]);
                 setMeta(response.data.meta);
             })
             .finally(() => setIsLoading(false));
@@ -104,6 +167,10 @@ const Contragents = () => {
             ? setIsFiltering(false)
             : setIsFiltering(true);
     }, [selectedName, selectedStatus]);
+
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
 
     const loaderRef = useInfiniteScroll({
         isLoading,
@@ -166,13 +233,22 @@ const Contragents = () => {
                     <table className="table-auto w-full border-collapse border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
-                                {COLUMNS.map(({ label, key }) => (
+                                {COLUMNS.map(({ label, key, is_sortable }) => (
                                     <th
-                                        className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
+                                        className="text-base px-4 py-2 min-w-[180px] max-w-[230px] thead__item"
                                         rowSpan="2"
                                         key={key}
                                     >
-                                        {label}
+                                        {is_sortable ? (
+                                            <TheadSortButton
+                                                label={label}
+                                                value={key}
+                                                sortBy={sortBy}
+                                                setSortBy={setSortBy}
+                                            />
+                                        ) : (
+                                            label
+                                        )}
                                     </th>
                                 ))}
                             </tr>

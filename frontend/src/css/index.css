@@ -371,3 +371,34 @@ body {
     opacity: 0.5;
     pointer-events: none;
 }
+
+.thead__item-sort-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.thead__item-sort-btn span {
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.thead__item-sort-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.thead__item-sort-btn_ascending,
+.thead__item-sort-btn_descending {
+    font-weight: 600;
+    color: #000;
+}
+
+.thead__item-sort-btn_ascending svg {
+    transform: rotate(180deg);
+}
