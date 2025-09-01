@@ -134,9 +134,11 @@ const Indicators = () => {
                 label: "",
                 data:
                     financialListFilters.metric[0] === "revenue"
-                        ? financialList.items?.map((item) => item.revenue.value)
-                        : financialList.items?.map(
-                              (item) => item.receipts.value
+                        ? financialList.items?.map((item) =>
+                              parseFloat(item.revenue.value.replace(",", "."))
+                          )
+                        : financialList.items?.map((item) =>
+                              parseFloat(item.receipts.value.replace(",", "."))
                           ),
                 backgroundColor: "black",
                 borderRadius: 2,
@@ -152,11 +154,15 @@ const Indicators = () => {
                 label: "",
                 data:
                     financialProfitListFilters.metric[0] === "gross_profit"
-                        ? financialProfitList.items?.map(
-                              (item) => item.gross_profit.value
+                        ? financialProfitList.items?.map((item) =>
+                              parseFloat(
+                                  item.gross_profit.value.replace(",", ".")
+                              )
                           )
-                        : financialProfitList.items?.map(
-                              (item) => item.gross_margin.value
+                        : financialProfitList.items?.map((item) =>
+                              parseFloat(
+                                  item.gross_margin.value.replace(",", ".")
+                              )
                           ),
                 backgroundColor: "black",
                 borderRadius: 2,
@@ -254,6 +260,12 @@ const Indicators = () => {
                 ticks: {
                     autoSkip: false,
                     maxRotation: 0,
+                    callback: function (value) {
+                        let label = this.getLabelForValue(value);
+                        return label.length > 15
+                            ? label.slice(0, 15) + "…"
+                            : label;
+                    },
                 },
                 barPercentage: 0.7,
                 categoryPercentage: 0.8,
