@@ -229,6 +229,7 @@ const Indicators = () => {
 
     const horizontalOptions = {
         responsive: true,
+        maintainAspectRatio: false,
         animation: false,
         indexAxis: "y",
         plugins: {
@@ -716,10 +717,12 @@ const Indicators = () => {
                             </div>
 
                             <div className="h-[214px] overflow-x-hidden overflow-y-auto">
-                                <Bar
-                                    data={financialListData}
-                                    options={horizontalOptions}
-                                />
+                                <div style={{ height: `${Math.max(214, (financialListData.labels?.length || 0) * 40)}px` }}>
+                                    <Bar
+                                        data={financialListData}
+                                        options={horizontalOptions}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -781,10 +784,14 @@ const Indicators = () => {
                         </div>
 
                         {chartView == "headcount" ? (
-                            <Bar
-                                data={EmployeeMetricsData}
-                                options={horizontalOptions}
-                            />
+                            <div className="h-[340px] overflow-x-hidden overflow-y-auto">
+                                <div style={{ height: `${Math.max(340, (EmployeeMetricsData.labels?.length || 0) * 40)}px` }}>
+                                    <Bar
+                                        data={EmployeeMetricsData}
+                                        options={horizontalOptions}
+                                    />
+                                </div>
+                            </div>
                         ) : (
                             <div className="flex flex-col gap-7 max-h-[340px] overflow-x-hidden overflow-y-auto">
                                 <div>
@@ -885,10 +892,12 @@ const Indicators = () => {
                             </div>
 
                             <div className="h-[214px] overflow-x-hidden overflow-y-auto">
-                                <Bar
-                                    data={financialProfitListData}
-                                    options={horizontalOptions}
-                                />
+                                <div style={{ height: `${Math.max(214, (financialProfitListData.labels?.length || 0) * 40)}px` }}>
+                                    <Bar
+                                        data={financialProfitListData}
+                                        options={horizontalOptions}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
