@@ -374,7 +374,7 @@ const Indicators = () => {
     };
 
     const getCompletedReports = () => {
-        const queryString = buildQueryParams(selectedFilters);
+        const queryString = buildQueryParams(funnelMetricsFilters);
 
         getData(
             `${import.meta.env.VITE_API_URL}completed-reports?${queryString}`
@@ -558,6 +558,7 @@ const Indicators = () => {
                 return;
             }
             getFunnelMetrics();
+            getCompletedReports();
         }
     }, [funnelMetricsFilters]);
 
