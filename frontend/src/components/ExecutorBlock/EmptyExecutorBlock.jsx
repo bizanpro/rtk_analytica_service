@@ -97,15 +97,28 @@ const EmptyExecutorBlock = ({
     };
 
     useEffect(() => {
-        setAllContacts(
-            contactsList?.map((person) => ({
-                value: person.full_name,
-                label: person.full_name,
-                email: person.email,
-                phone: person.phone,
-                position: person.position,
-            }))
-        );
+        if (type === "creditor") {
+            setAllContacts(
+                contactsList?.map((person) => ({
+                    value: person.full_name,
+                    label: person.full_name,
+                    email: person.email,
+                    phone: person.phone,
+                    position: person.position,
+                    creditor_id: person.creditor.id,
+                }))
+            );
+        } else {
+            setAllContacts(
+                contactsList?.map((person) => ({
+                    value: person.full_name,
+                    label: person.full_name,
+                    email: person.email,
+                    phone: person.phone,
+                    position: person.position,
+                }))
+            );
+        }
     }, [contactsList]);
 
     useEffect(() => {
@@ -164,6 +177,8 @@ const EmptyExecutorBlock = ({
                                         phone: selectedOption.phone || "",
                                         email: selectedOption.email || "",
                                         position: selectedOption.position || "",
+                                        creditor_id:
+                                            selectedOption.creditor_id || "",
                                     });
 
                                     setInputValue("");
@@ -253,7 +268,9 @@ const EmptyExecutorBlock = ({
 
                 {type === "creditor" && (
                     <div
-                        className={`py-2 px-3 border-t transition-all ${borderClass}`}
+                        className={`py-2 px-3 border-t transition-all ${borderClass} ${
+                            isReadonly ? "bg-gray-100" : ""
+                        }`}
                     >
                         <select
                             className="w-full h-full"
@@ -263,6 +280,8 @@ const EmptyExecutorBlock = ({
                                     creditor_id: e.target.value,
                                 })
                             }
+                            value={newContact.creditor_id}
+                            disabled={isReadonly}
                         >
                             <option value="">Выберите банк</option>
                             {banks?.map((bank) => (
