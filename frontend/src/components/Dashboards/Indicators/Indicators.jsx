@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+
 import getData from "../../../utils/getData";
 import buildQueryParams from "../../../utils/buildQueryParams";
 
@@ -11,7 +12,7 @@ import GrossMetrics from "./GrossMetrics";
 import CompletedReportItem from "./CompletedReportItem";
 import EmployeeItem from "./EmployeeItem";
 import EmployeeMetrics from "./EmployeeMetrics";
-import ManagerReportsEditor from "./ManagerReportsEditor";
+import ManagerReportsWindow from "./ManagerReportsWindow";
 import Loader from "../../Loader";
 
 import {
@@ -44,6 +45,8 @@ const Indicators = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     const [filtertOptions, setFilterOptions] = useState([]);
+
+    const [selectedReportMonth, setSelectedReportMonth] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState({});
     const [financialListFilters, setFinancialListFilters] = useState({
         type: ["project"],
@@ -59,6 +62,7 @@ const Indicators = () => {
         metric_type: ["headcount"],
     });
     const [funnelMetricsFilters, setFunnelMetricsFilters] = useState({});
+
     const [financialMetrics, setFinancialMetrics] = useState({});
     const [financialList, setFinancialList] = useState({});
     const [financialProfitList, setFinancialProfitList] = useState({});
@@ -188,7 +192,6 @@ const Indicators = () => {
         plugins: {
             legend: {
                 display: false,
-                // position: "top",
             },
             title: {
                 display: false,
@@ -237,7 +240,6 @@ const Indicators = () => {
         plugins: {
             legend: {
                 display: false,
-                // position: "top",
             },
             title: {
                 display: false,
@@ -274,6 +276,10 @@ const Indicators = () => {
     const handleFilterChange = (filterKey, value) => {
         const filteredValues = value.filter((v) => v !== "");
 
+        setSelectedReportMonth({
+            [filterKey]: filteredValues.length > 0 ? filteredValues : [],
+        });
+
         setSelectedFilters((prev) => ({
             ...prev,
             [filterKey]: filteredValues.length > 0 ? filteredValues : [],
@@ -308,6 +314,10 @@ const Indicators = () => {
 
                     const periodValue = response.data.periods[0]?.value;
                     const reportMonthValue = response.data.months[0]?.value;
+
+                    setSelectedReportMonth({
+                        report_month: [reportMonthValue],
+                    });
 
                     setSelectedFilters({
                         period: [periodValue],
@@ -975,7 +985,9 @@ const Indicators = () => {
                         </ul>
                     </div>
 
-                    <ManagerReportsEditor />
+                    <ManagerReportsWindow
+                        selectedReportMonth={selectedReportMonth}
+                    />
                 </section>
             </div>
         </div>

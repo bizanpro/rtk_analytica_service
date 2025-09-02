@@ -9,8 +9,10 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
 
     // Преобразуем входящую строку в объект
     const period = useMemo(() => {
-        const [from = "", to = ""] = value.split(" - ");
-        return { date_from: from, date_to: to };
+        if (value) {
+            const [from = "", to = ""] = value.split(" - ");
+            return { date_from: from, date_to: to };
+        }
     }, [value]);
 
     const handleChange = (field, val) => {
@@ -58,7 +60,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     }}
                     lazy={true}
                     autofix={true}
-                    value={period.date_from}
+                    value={period?.date_from}
                     onAccept={(val) => handleChange("date_from", val)}
                     onComplete={() => dateToRef.current?.focus()}
                     placeholder="дд.мм.гггг"
@@ -79,14 +81,14 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     }}
                     lazy={true}
                     autofix={true}
-                    value={period.date_to}
+                    value={period?.date_to}
                     onAccept={(val) => handleChange("date_to", val)}
                     placeholder="дд.мм.гггг"
                     className="h-full min-w-[5ch] max-w-[9ch]"
                     disabled={mode === "read"}
                 />
             </div>
-            
+
             {errorMessage !== "" && (
                 <span className="text-red-400 top-[100%] text-sm">
                     {errorMessage}

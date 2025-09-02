@@ -1,38 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import buildQueryParams from "../../../utils/buildQueryParams";
+import getData from "../../../utils/getData";
 
-const ManagerReportsEditor = ({
-    reportData,
-    reportEditorName,
-    reportId,
-    setReportEditorState,
-    setReportId,
-    mode,
-}) => {
-    const [extendReportData, setExtendReportData] = useState(reportData || {});
+const tabOptions = [
+    { id: "general_summary", label: "Общий статус" },
+    { id: "bank_summary", label: "Проблемы" },
+    { id: "customer_summary", label: "Перспективы" },
+    { id: "contractor_summary", label: "Команда" },
+    { id: "team_summary", label: "Суды, претензии" },
+    { id: "risk_summary", label: "Прочее" },
+];
 
+const ManagerReportsWindow = ({ selectedReportMonth }) => {
+    const [reportsData, setReportsData] = useState({});
     const [currentTab, setCurrentTab] = useState("general_summary");
-    const tabOptions = [
-        { id: "general_summary", label: "Общий статус" },
-        { id: "bank_summary", label: "Проблемы" },
-        { id: "customer_summary", label: "Перспективы" },
-        { id: "contractor_summary", label: "Команда" },
-        { id: "team_summary", label: "Суды, претензии" },
-        { id: "risk_summary", label: "Прочее" },
-    ];
 
-    let query;
+    const getManagementReportsDashboard = () => {
+        const queryString = buildQueryParams(selectedReportMonth);
 
-    const handleTextArea = (e, name) => {
-        setExtendReportData({ ...extendReportData, [name]: e.target.value });
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }company/management-reports-dashboard?${queryString}`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setReportsData(response.data);
+                console.log(response.data);
+            }
+        });
     };
+
+    useEffect(() => {
+        if (Object.keys(selectedReportMonth).length > 0) {
+            getManagementReportsDashboard();
+        }
+    }, [selectedReportMonth]);
 
     return (
         <div className="border-2 border-gray-300 py-5 px-3 bg-white">
-            <ToastContainer containerId="report" />
-
             <div className="flex items-center gap-2 w-full mb-3">
                 <div className="text-2xl"> Отчёты менеджмента / Март 2025</div>
 
@@ -47,7 +53,6 @@ const ManagerReportsEditor = ({
                         type="radio"
                         name="create_report"
                         id="createReportYes"
-                        disabled={mode === "read" ? true : false}
                     />
                     <label
                         htmlFor="createReportYes"
@@ -61,7 +66,6 @@ const ManagerReportsEditor = ({
                         type="radio"
                         name="create_report"
                         id="createReportNo"
-                        disabled={mode === "read" ? true : false}
                     />
                     <label
                         htmlFor="createReportNo"
@@ -102,55 +106,12 @@ const ManagerReportsEditor = ({
                         placeholder="Описание"
                         type="text"
                         name={currentTab}
-                        // value={extendReportData[currentTab] || ""}
-                        // onChange={(e) => handleTextArea(e, currentTab)}
-                        disabled={mode === "read" ? true : false}
+                        disabled
                     ></textarea>
                 </div>
             </div>
-
-            {/* <div className="mt-5 flex items-center gap-6 justify-between">
-                {mode === "edit" ? (
-                    <>
-                        <button
-                            type="button"
-                            className="rounded-lg py-3 px-5 bg-black text-white flex-[1_1_50%]"
-                            onClick={() =>
-                                reportId ? updateReport() : sendReport()
-                            }
-                            title="Сохранить отчёт"
-                        >
-                            Сохранить
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setReportEditorState(false);
-                                setReportId(null);
-                            }}
-                            className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
-                            title="Отменить сохранение отчёта"
-                        >
-                            Отменить
-                        </button>
-                    </>
-                ) : (
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setReportEditorState(false);
-                            setReportId(null);
-                        }}
-                        className="border rounded-lg py-3 px-5 flex-[1_1_50%]"
-                        title="Закрыть отчёт"
-                    >
-                        Закрыть
-                    </button>
-                )}
-            </div> */}
         </div>
     );
 };
 
-export default ManagerReportsEditor;
+export default ManagerReportsWindow;
