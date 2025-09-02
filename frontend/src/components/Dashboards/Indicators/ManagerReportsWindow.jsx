@@ -5,17 +5,17 @@ import getData from "../../../utils/getData";
 import formatDateYM from "../../../utils/formatDateYM";
 
 const tabOptions = [
-    { id: "general_summary", label: "Общий статус" },
+    { id: "status_summary", label: "Общий статус" },
     { id: "problems", label: "Проблемы" },
     { id: "prospects", label: "Перспективы" },
-    { id: "team_summary", label: "Команда" },
+    { id: "team", label: "Команда" },
     { id: "legal_issues", label: "Суды, претензии" },
     { id: "misc", label: "Прочее" },
 ];
 
 const ManagerReportsWindow = ({ selectedReportMonth }) => {
     const [reportsData, setReportsData] = useState({});
-    const [currentTab, setCurrentTab] = useState("general_summary");
+    const [currentTab, setCurrentTab] = useState("status_summary");
     const [currentReport, setCurrentReport] = useState({});
     const [selectedId, setSelectedId] = useState(null);
 
@@ -37,8 +37,6 @@ const ManagerReportsWindow = ({ selectedReportMonth }) => {
         setCurrentReport(
             reportsData.reports?.find((report) => report.id === id)
         );
-
-        console.log(reportsData.reports?.find((report) => report.id === id));
     };
 
     useEffect(() => {
@@ -126,7 +124,7 @@ const ManagerReportsWindow = ({ selectedReportMonth }) => {
                     placeholder="Описание"
                     type="text"
                     name={currentTab}
-                    value={currentReport.currentTab}
+                    value={currentReport[currentTab] || ""}
                     disabled
                 ></textarea>
             </div>
