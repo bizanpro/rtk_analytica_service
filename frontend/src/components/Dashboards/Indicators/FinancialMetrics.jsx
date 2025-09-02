@@ -1,9 +1,6 @@
 import CountUp from "react-countup";
 
 const FinancialMetrics = ({ financialMetrics }) => {
-
-    console.log(financialMetrics);
-    
     return (
         <div className="grid items-stretch grid-cols-3 gap-3 mb-5">
             <div className="flex flex-col gap-2">

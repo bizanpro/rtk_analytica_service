@@ -209,20 +209,11 @@ const SingleBook = () => {
             value = e.target.value;
         }
 
-        if (bookId === "roles" && name === "is_project_report_responsible") {
-            setBooksItems(
-                booksItems.map((item) => ({
-                    ...item,
-                    is_project_report_responsible: item.id === id,
-                }))
-            );
-        } else {
-            setBooksItems((prevBooksItems) =>
-                prevBooksItems.map((item) =>
-                    item.id === id ? { ...item, [name]: value } : item
-                )
-            );
-        }
+        setBooksItems((prevBooksItems) =>
+            prevBooksItems.map((item) =>
+                item.id === id ? { ...item, [name]: value } : item
+            )
+        );
     };
 
     // Закрытие попапа
@@ -389,10 +380,6 @@ const SingleBook = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
-
-                    if (bookId === "roles") {
-                        getBooks();
-                    }
                 } else {
                     toast.dismiss(query);
                     toast.error("Ошибка обновления записи", {
