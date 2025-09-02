@@ -272,7 +272,7 @@ const Projects = () => {
                                     ({ label, key, filter, options }) => {
                                         return (
                                             <th
-                                                className={`min-w-[120px] ${
+                                                className={`min-w-[125px] ${
                                                     filter
                                                         ? "registry-table__thead-filter-item"
                                                         : ""

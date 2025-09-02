@@ -384,7 +384,7 @@ body {
     position: absolute;
     inset: 0px;
     border-radius: 50%;
-    border: 5px solid #222222;
+    border: 5px solid var(--color-orange-70);
     animation: prixClipFix 2s linear infinite;
 }
 

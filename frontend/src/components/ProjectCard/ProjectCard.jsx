@@ -759,12 +759,6 @@ const ProjectCard = () => {
         }
     }, [width]);
 
-    useEffect(() => {
-        console.log(projectDataCustom);
-
-        // setIsAvailableToSave(true);
-    }, [projectDataCustom]);
-
     return (
         <main className="page">
             <section className="card project-card">

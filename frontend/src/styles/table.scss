@@ -114,7 +114,7 @@
                 -webkit-box-orient: vertical;
                 -webkit-line-clamp: 2;
                 overflow: hidden;
-                max-width: 120px;
+                max-width: 125px;
             }
 
             .hidden-text {
@@ -155,13 +155,13 @@
             background: var(--color-gray-30);
 
             &_completed {
-                color: var(--color-green-80);
-                background: var(--color-green-30);
+                color: var(--color-orange-80);
+                background: var(--color-orange-30);
             }
 
             &_active {
-                color: var(--color-orange-80);
-                background: var(--color-orange-30);
+                color: var(--color-green-80);
+                background: var(--color-green-30);
             }
         }
 
@@ -203,7 +203,7 @@
 
             div {
                 text-align: center;
-                width: 107px;
+                width: 115px;
                 padding: 5px 8px 5px 28px;
                 border: 1px solid var(--color-gray-50);
                 color: var(--color-gray-70);

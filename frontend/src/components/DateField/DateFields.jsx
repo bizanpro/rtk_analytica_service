@@ -73,12 +73,12 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                         }
                     }}
                     placeholder="дд.мм.гггг"
-                    className="h-full min-w-[5ch] max-w-[8.5ch]"
+                    className="h-full min-w-[5ch] max-w-[9ch]"
                     inputMode="numeric"
                     disabled={mode === "read"}
                 />
 
-                <span className="self-center text-gray-400 mr-[3.5px]">-</span>
+                <span className="self-center text-gray-400 mr-[4px]">-</span>
 
                 <IMaskInput
                     inputRef={dateToRef}

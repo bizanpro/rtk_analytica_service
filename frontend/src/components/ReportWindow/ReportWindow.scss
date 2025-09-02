@@ -53,9 +53,12 @@
     }
 
     &__fields {
-        display: flex;
-        flex-direction: column;
+        display: grid;
         gap: 20px;
+
+        @media (min-width: $media-xxl) {
+            grid-template-columns: repeat(2, 1fr);
+        }
 
         input {
             width: 100%;
