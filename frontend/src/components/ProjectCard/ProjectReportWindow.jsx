@@ -478,6 +478,12 @@ const ProjectReportWindow = ({
                     regularity: "one_time",
                 }),
             }));
+        } else {
+            setReportData((prev) => ({
+                ...prev,
+                regularity: "",
+                is_regular: true,
+            }));
         }
     }, [reportData.report_type_id]);
 
