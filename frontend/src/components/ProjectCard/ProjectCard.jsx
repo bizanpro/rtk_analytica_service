@@ -1252,6 +1252,7 @@ const ProjectCard = () => {
                                                 contracts={contracts}
                                                 updateReport={updateReport}
                                                 reportId={reportId}
+                                                projectId={projectId}
                                                 setReportId={setReportId}
                                                 mode={mode}
                                             />

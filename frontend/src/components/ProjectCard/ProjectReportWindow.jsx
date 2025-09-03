@@ -3,8 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import getData from "../../utils/getData";
 import formatMoney from "../../utils/formatMoney";
 import parseDate from "../../utils/parseDate";
-
-// import { IMaskInput } from "react-imask";
+import buildQueryParams from "../../utils/buildQueryParams";
 
 import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
@@ -30,6 +29,7 @@ const ProjectReportWindow = ({
     reportWindowsState,
     contracts,
     reportId,
+    projectId,
     updateReport,
     setReportId,
     mode,
@@ -47,6 +47,7 @@ const ProjectReportWindow = ({
         responsible_persons: [],
         contragents: [],
         show_cost: true,
+        regularity: "",
     });
 
     const [teammates, setTeammates] = useState([]);
@@ -60,6 +61,7 @@ const ProjectReportWindow = ({
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isAutoPrefill, setIsAutoPrefill] = useState(!reportId); // Нужно ли предзаполнять отчет
 
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -293,37 +295,6 @@ const ProjectReportWindow = ({
         });
     };
 
-    useEffect(() => {
-        if (isDataLoaded && reportId) {
-            getData(`${import.meta.env.VITE_API_URL}reports/${reportId}`).then(
-                (response) => {
-                    setReportData(response.data);
-                    setTeammates(response.data.responsible_persons);
-                    setContractors(response.data.contragents);
-                    setIsLoading(false);
-                }
-            );
-        }
-    }, [isDataLoaded, reportId]);
-
-    // События зависимости от выбранного типа отчета
-    useEffect(() => {
-        const selectedType = reportTypes.find(
-            (type) => type.id === +reportData.report_type_id
-        );
-
-        if (selectedType) {
-            setReportData((prev) => ({
-                ...prev,
-                show_cost: selectedType.show_cost,
-                is_regular: selectedType.is_regular,
-                ...(selectedType.is_regular === false && {
-                    regularity: "единоразовый",
-                }),
-            }));
-        }
-    }, [reportData.report_type_id]);
-
     // Выставление статуса отчета
     const validateApprovalDate = () => {
         if (isValidDate(reportData.approval_date)) {
@@ -429,6 +400,92 @@ const ProjectReportWindow = ({
         }));
     };
 
+    // Получение данных для предзаполнения отчета
+    const handleReportPrefillUrl = () => {
+        const selectedType = reportTypes.find(
+            (type) => type.id === +reportData.report_type_id
+        );
+
+        if (selectedType) {
+            console.log(selectedType.is_regular);
+            console.log(reportData.regularity != "");
+            console.log(reportData.regularity != "one_time");
+
+            if (
+                selectedType.is_regular &&
+                reportData.regularity != "" &&
+                reportData.regularity != "one_time"
+            ) {
+                const queryString = buildQueryParams(reportData.regularity);
+
+                getReportPrefill(
+                    `${
+                        import.meta.env.VITE_API_URL
+                    }reports/prefill/${projectId}/${
+                        selectedType.id
+                    }?${queryString}`
+                );
+            } else {
+                getReportPrefill(
+                    `${
+                        import.meta.env.VITE_API_URL
+                    }reports/prefill/${projectId}/${selectedType.id}`
+                );
+            }
+        }
+    };
+
+    const getReportPrefill = (url) => {
+        console.log(url);
+        
+        // getData(url).then((response) => {
+        //     if (response.status == 200 && response.data.has_prefill_data) {
+                // console.log(response.data);
+
+                // setIsAutoPrefill(false);
+            // }
+        // });
+    };
+
+    useEffect(() => {
+        if (isDataLoaded && reportId) {
+            getData(`${import.meta.env.VITE_API_URL}reports/${reportId}`).then(
+                (response) => {
+                    setReportData(response.data);
+                    setTeammates(response.data.responsible_persons);
+                    setContractors(response.data.contragents);
+                    setIsLoading(false);
+                }
+            );
+        }
+    }, [isDataLoaded, reportId]);
+
+    // События зависимости от выбранного типа отчета
+    useEffect(() => {
+        const selectedType = reportTypes.find(
+            (type) => type.id === +reportData.report_type_id
+        );
+
+        if (selectedType) {
+            setReportData((prev) => ({
+                ...prev,
+                show_cost: selectedType.show_cost,
+                is_regular: selectedType.is_regular,
+                ...(selectedType.is_regular === false
+                    ? {
+                          regularity: "one_time",
+                      }
+                    : { regularity: "" }),
+            }));
+        } else {
+            setReportData((prev) => ({
+                ...prev,
+                regularity: "",
+                is_regular: true,
+            }));
+        }
+    }, [reportData.report_type_id]);
+
     // Обновление статуса проекта в отчете
     useEffect(() => {
         validateApprovalDate();
@@ -487,6 +544,12 @@ const ProjectReportWindow = ({
         fetchData();
     }, []);
 
+    useEffect(() => {
+        if (isAutoPrefill) {
+            handleReportPrefillUrl();
+        }
+    }, [reportData.report_type_id, reportData.regularity]);
+
     return (
         <div className="grid gap-6 relative bg-white">
             {reportId ? isLoading && <Loader /> : !isDataLoaded && <Loader />}
@@ -522,15 +585,6 @@ const ProjectReportWindow = ({
                     <span className="block mb-2 text-gray-400">
                         Отчетный период
                     </span>
-
-                    {/* <IMaskInput
-                        mask="00.00.0000 - 00.00.0000"
-                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        onAccept={(e) => handleInputChange(e, "report_period")}
-                        value={reportData.report_period}
-                        placeholder="дд.мм.гггг - дд.мм.гггг"
-                        disabled={mode === "read"}
-                    /> */}
 
                     <DateFields
                         mode={mode}
@@ -574,17 +628,6 @@ const ProjectReportWindow = ({
                     <span className="block mb-2 text-gray-400">
                         Период реализации
                     </span>
-
-                    {/* <IMaskInput
-                        mask="00.00.0000 - 00.00.0000"
-                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        onAccept={(e) =>
-                            handleInputChange(e, "implementation_period")
-                        }
-                        value={reportData.implementation_period}
-                        placeholder="дд.мм.гггг - дд.мм.гггг"
-                        disabled={mode === "read"}
-                    /> */}
 
                     <DateFields
                         mode={mode}
@@ -666,17 +709,6 @@ const ProjectReportWindow = ({
                         Период выполнения
                     </span>
 
-                    {/* <IMaskInput
-                        mask="00.00.0000 - 00.00.0000"
-                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        onAccept={(e) =>
-                            handleInputChange(e, "execution_period")
-                        }
-                        value={reportData.execution_period}
-                        placeholder="дд.мм.гггг - дд.мм.гггг"
-                        disabled={mode === "read"}
-                    /> */}
-
                     <DateFields
                         mode={mode}
                         className={
@@ -709,18 +741,19 @@ const ProjectReportWindow = ({
                             <option value="">Выбрать из списка</option>
                             {regularityOptions.length > 0 &&
                                 regularityOptions.map((item) => {
-                                    const value = item.toLowerCase();
-
                                     if (
-                                        value === "единоразовый" &&
+                                        item.alias === "one_time" &&
                                         reportData.is_regular === true
                                     ) {
                                         return null;
                                     }
 
                                     return (
-                                        <option value={value} key={item}>
-                                            {item}
+                                        <option
+                                            value={item.alias}
+                                            key={item.alias}
+                                        >
+                                            {item.name}
                                         </option>
                                     );
                                 })}
@@ -755,18 +788,6 @@ const ProjectReportWindow = ({
                     <span className="block mb-2 text-gray-400">
                         Дата утверждения
                     </span>
-
-                    {/* <IMaskInput
-                        mask="00.00.0000"
-                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                        onAccept={(e) => handleInputChange(e, "approval_date")}
-                        value={reportData.approval_date}
-                        placeholder="дд.мм.гггг"
-                        disabled={
-                            mode === "read" ||
-                            !isFirstDateValid(reportData.execution_period)
-                        }
-                    /> */}
 
                     <DateField
                         mode={mode}
