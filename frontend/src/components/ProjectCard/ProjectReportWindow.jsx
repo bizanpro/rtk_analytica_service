@@ -16,7 +16,7 @@ const isValidDateRange = (str) => {
     return regex.test(str);
 };
 const isFirstDateValid = (str) => {
-    const match = str.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
+    const match = str?.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
     return !!match;
 };
 const isValidDate = (str) => {
@@ -407,16 +407,14 @@ const ProjectReportWindow = ({
         );
 
         if (selectedType) {
-            console.log(selectedType.is_regular);
-            console.log(reportData.regularity != "");
-            console.log(reportData.regularity != "one_time");
-
             if (
                 selectedType.is_regular &&
                 reportData.regularity != "" &&
                 reportData.regularity != "one_time"
             ) {
-                const queryString = buildQueryParams(reportData.regularity);
+                const queryString = buildQueryParams({
+                    regularity: [reportData.regularity],
+                });
 
                 getReportPrefill(
                     `${
@@ -425,7 +423,11 @@ const ProjectReportWindow = ({
                         selectedType.id
                     }?${queryString}`
                 );
-            } else {
+            } else if (
+                !selectedType.is_regular &&
+                reportData.regularity != "" &&
+                reportData.regularity == "one_time"
+            ) {
                 getReportPrefill(
                     `${
                         import.meta.env.VITE_API_URL
@@ -436,15 +438,16 @@ const ProjectReportWindow = ({
     };
 
     const getReportPrefill = (url) => {
-        console.log(url);
-        
-        // getData(url).then((response) => {
-        //     if (response.status == 200 && response.data.has_prefill_data) {
-                // console.log(response.data);
+        getData(url).then((response) => {
+            if (response.status == 200 && response.data.has_prefill_data) {
+                setReportData((prev) => ({
+                    ...prev,
+                    ...response.data.data,
+                }));
 
-                // setIsAutoPrefill(false);
-            // }
-        // });
+                setIsAutoPrefill(false);
+            }
+        });
     };
 
     useEffect(() => {
