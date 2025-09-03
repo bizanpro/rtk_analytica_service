@@ -27,8 +27,8 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
         onChange?.(newValue);
 
         if (
-            newPeriod.date_from.length === 10 &&
-            newPeriod.date_to.length === 10 &&
+            newPeriod?.date_from?.length === 10 &&
+            newPeriod?.date_to?.length === 10 &&
             isValidDateFormat(newPeriod.date_from) &&
             isValidDateFormat(newPeriod.date_to)
         ) {
@@ -64,7 +64,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     onAccept={(val) => handleChange("date_from", val)}
                     onComplete={() => dateToRef.current?.focus()}
                     placeholder="дд.мм.гггг"
-                    className="h-full min-w-[5ch] max-w-[9ch]"
+                    className="h-full min-w-[5ch] max-w-[8.5ch]"
                     disabled={mode === "read"}
                 />
 
@@ -84,7 +84,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     value={period?.date_to}
                     onAccept={(val) => handleChange("date_to", val)}
                     placeholder="дд.мм.гггг"
-                    className="h-full min-w-[5ch] max-w-[9ch]"
+                    className="h-full min-w-[5ch] max-w-[8.5ch]"
                     disabled={mode === "read"}
                 />
             </div>

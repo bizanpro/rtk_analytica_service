@@ -474,17 +474,9 @@ const ProjectReportWindow = ({
                 ...prev,
                 show_cost: selectedType.show_cost,
                 is_regular: selectedType.is_regular,
-                ...(selectedType.is_regular === false
-                    ? {
-                          regularity: "one_time",
-                      }
-                    : { regularity: "" }),
-            }));
-        } else {
-            setReportData((prev) => ({
-                ...prev,
-                regularity: "",
-                is_regular: true,
+                ...(selectedType.is_regular === false && {
+                    regularity: "one_time",
+                }),
             }));
         }
     }, [reportData.report_type_id]);
