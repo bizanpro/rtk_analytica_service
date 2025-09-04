@@ -545,6 +545,8 @@ const ProjectReportWindow = ({
         fetchData();
     }, []);
 
+
+    // События для возможной подстановки данных для НОВОГО отчета
     useEffect(() => {
         if (isAutoPrefill) {
             handleReportPrefillUrl();
