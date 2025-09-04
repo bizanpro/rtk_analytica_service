@@ -62,7 +62,7 @@ const ProjectCard = () => {
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [firstInit, setFirstInit] = useState(true);
 
-    const [isAvailableToSave, setIsAvailableToSave] = useState(false); // Можно сохранять изменения
+    const [isAvailableToSave, setIsAvailableToSave] = useState(true); // Можно сохранять изменения
 
     const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
 
