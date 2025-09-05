@@ -64,7 +64,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     onAccept={(val) => handleChange("date_from", val)}
                     onComplete={() => dateToRef.current?.focus()}
                     placeholder="дд.мм.гггг"
-                    className="h-full min-w-[5ch] max-w-[8.5ch]"
+                    className="h-full min-w-[5ch] max-w-[8.7ch]"
                     disabled={mode === "read"}
                 />
 
@@ -84,7 +84,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     value={period?.date_to}
                     onAccept={(val) => handleChange("date_to", val)}
                     placeholder="дд.мм.гггг"
-                    className="h-full min-w-[5ch] max-w-[8.5ch]"
+                    className="h-full min-w-[5ch] max-w-[9ch]"
                     disabled={mode === "read"}
                 />
             </div>

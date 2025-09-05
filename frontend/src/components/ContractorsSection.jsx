@@ -34,7 +34,6 @@ const ContractorsSection = ({
 
     const handleContragentChange = async (value) => {
         const contragentId = value;
-        console.log(contragentId);
 
         handleContractorChange(index, "contragent_id", contragentId);
 

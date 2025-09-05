@@ -50,9 +50,10 @@ const ProjectReportWindow = ({
         regularity: "",
     });
 
-    const [teammates, setTeammates] = useState([]);
-    const [contractors, setContractors] = useState([]);
-    const [reportTypes, setReportTypes] = useState([]);
+    const [teammates, setTeammates] = useState([]); // Члены команды
+    const [contractors, setContractors] = useState([]); // Подрядчики
+
+    const [reportTypes, setReportTypes] = useState([]); 
     const [physicalPersons, setPhysicalPersons] = useState([]);
     const [roles, setRoles] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
@@ -437,13 +438,36 @@ const ProjectReportWindow = ({
         }
     };
 
+    // Получение данных отчета для автоподстановки
     const getReportPrefill = (url) => {
         getData(url).then((response) => {
             if (response.status == 200 && response.data.has_prefill_data) {
+                // Добавляем основные данные
                 setReportData((prev) => ({
                     ...prev,
                     ...response.data.data,
                 }));
+
+                // Добавляем членов команды
+                if (
+                    response.data.data.team_members &&
+                    response.data.data.team_members.length > 0
+                ) {
+                    setTeammates(response.data.data.team_members);
+
+                    setReportData((prev) => ({
+                        ...prev,
+                        responsible_persons: response.data.data.team_members,
+                    }));
+                }
+
+                // Добавляем подрядчиков
+                if (
+                    response.data.data.contragents &&
+                    response.data.data.contragents.length > 0
+                ) {
+                    setContractors(response.data.data.contragents);
+                }
 
                 setIsAutoPrefill(false);
             }
@@ -455,8 +479,11 @@ const ProjectReportWindow = ({
             getData(`${import.meta.env.VITE_API_URL}reports/${reportId}`).then(
                 (response) => {
                     setReportData(response.data);
+
                     setTeammates(response.data.responsible_persons);
+
                     setContractors(response.data.contragents);
+
                     setIsLoading(false);
                 }
             );
@@ -544,7 +571,6 @@ const ProjectReportWindow = ({
 
         fetchData();
     }, []);
-
 
     // События для возможной подстановки данных для НОВОГО отчета
     useEffect(() => {
