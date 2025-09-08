@@ -70,9 +70,7 @@ const Indicators = () => {
     const [employeeMetrics, setEmployeeMetrics] = useState({});
 
     const [contragents, setContragents] = useState([]);
-    const [reportTypes, setReportTypes] = useState([]);
     const [completedReports, setCompletedReports] = useState([]);
-    const [chartView, setChartView] = useState("headcount");
 
     const financialMetricsData = {
         labels: financialMetrics.monthly_chart?.map((item) => item.month),
@@ -131,19 +129,15 @@ const Indicators = () => {
         ],
     };
 
-    const financialListData = {
+    // Ключевые финансовые показатели - Поступления
+    const financialListData1 = {
         labels: financialList.items?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data:
-                    financialListFilters.metric[0] === "revenue"
-                        ? financialList.items?.map((item) =>
-                              parseFloat(item.revenue.value)
-                          )
-                        : financialList.items?.map((item) =>
-                              parseFloat(item.receipts.value)
-                          ),
+                data: financialList.items?.map((item) =>
+                    parseFloat(item.receipts.value)
+                ),
                 backgroundColor: "black",
                 borderRadius: 2,
                 categoryPercentage: 0.1,
@@ -151,19 +145,48 @@ const Indicators = () => {
         ],
     };
 
-    const financialProfitListData = {
+    // Ключевые финансовые показатели - Выручка
+    const financialListData2 = {
+        labels: financialList.items?.map((item) => item.name),
+        datasets: [
+            {
+                label: "",
+                data: financialList.items?.map((item) =>
+                    parseFloat(item.revenue.value)
+                ),
+
+                backgroundColor: "black",
+                borderRadius: 2,
+                categoryPercentage: 0.1,
+            },
+        ],
+    };
+
+    // Ключевые финансовые показатели - Выловая прибыль÷
+    const financialProfitListData1 = {
         labels: financialProfitList.items?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data:
-                    financialProfitListFilters.metric[0] === "gross_profit"
-                        ? financialProfitList.items?.map((item) =>
-                              parseFloat(item.gross_profit.value)
-                          )
-                        : financialProfitList.items?.map((item) =>
-                              parseFloat(item.gross_margin.value)
-                          ),
+                data: financialProfitList.items?.map((item) =>
+                    parseFloat(item.gross_profit.value)
+                ),
+                backgroundColor: "black",
+                borderRadius: 2,
+                categoryPercentage: 0.5,
+            },
+        ],
+    };
+
+    // Ключевые финансовые показатели - Валовая рентабельность
+    const financialProfitListData2 = {
+        labels: financialProfitList.items?.map((item) => item.name),
+        datasets: [
+            {
+                label: "",
+                data: financialProfitList.items?.map((item) =>
+                    parseFloat(item.gross_margin.value)
+                ),
                 backgroundColor: "black",
                 borderRadius: 2,
                 categoryPercentage: 0.5,
@@ -254,17 +277,50 @@ const Indicators = () => {
         },
 
         scales: {
-            x: { beginAtZero: true, position: "top" },
+            // x: { beginAtZero: true, position: "top" },
             y: {
                 ticks: {
                     autoSkip: false,
                     maxRotation: 0,
                     callback: function (value) {
                         let label = this.getLabelForValue(value);
-                        return label.length > 15
-                            ? label.slice(0, 15) + "…"
+                        return label.length > 20
+                            ? label.slice(0, 20) + "…"
                             : label;
                     },
+                },
+                barPercentage: 0.7,
+                categoryPercentage: 0.8,
+            },
+        },
+    };
+
+    const horizontalOptionsNoLabels = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        indexAxis: "y",
+        plugins: {
+            legend: {
+                display: false,
+            },
+            title: {
+                display: false,
+                text: "",
+            },
+            datalabels: {
+                anchor: "end",
+                align: "end",
+                color: "#000",
+                formatter: (value) => value,
+            },
+        },
+
+        scales: {
+            // x: { beginAtZero: true, position: "top" },
+            y: {
+                ticks: {
+                    display: false,
                 },
                 barPercentage: 0.7,
                 categoryPercentage: 0.8,
@@ -448,21 +504,9 @@ const Indicators = () => {
         );
     };
 
-    // Получение типов отчета
-    const getReportTypes = () => {
-        getData(`${import.meta.env.VITE_API_URL}report-types`).then(
-            (response) => {
-                if (response?.status == 200) {
-                    setReportTypes(response.data.data);
-                }
-            }
-        );
-    };
-
     useEffect(() => {
         getFilterOptions();
         getContragents();
-        getReportTypes();
     }, []);
 
     const hasInitialized = useRef(false);
@@ -576,6 +620,7 @@ const Indicators = () => {
         <div className="flex flex-col justify-between gap-6 mb-8">
             {isLoading && <Loader transparent={true} />}
 
+            {/* ФИЛЬТРЫ */}
             <section className="flex items-center justify-between gap-6">
                 <div className="flex items-center gap-8">
                     <div className="flex flex-col">
@@ -638,44 +683,34 @@ const Indicators = () => {
                         <span className="block mb-2 text-gray-400">
                             Фильтры
                         </span>
-                        <select
-                            className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
-                            onChange={(evt) =>
-                                setFunnelMetricsFilters((prev) => ({
-                                    ...prev,
-                                    contragent_id: [evt.target.value],
-                                }))
-                            }
-                        >
-                            <option value="">Заказчик</option>
-                            {contragents.length > 0 &&
-                                contragents.map((type) => (
-                                    <option key={type.id} value={type.id}>
-                                        {type.program_name}
-                                    </option>
-                                ))}
-                        </select>
-                    </div>
 
-                    {/* <div className="flex flex-col">
-                        <select
-                            className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
-                            onChange={(evt) =>
-                                setFunnelMetricsFilters((prev) => ({
-                                    ...prev,
-                                    report_type_id: [evt.target.value],
-                                }))
-                            }
-                        >
-                            <option value="">Тип отчёта</option>
-                            {reportTypes.length > 0 &&
-                                reportTypes.map((type) => (
-                                    <option key={type.id} value={type.id}>
-                                        {type.name}
-                                    </option>
-                                ))}
-                        </select>
-                    </div> */}
+                        <div className="grid grid-cols-2 gap-5">
+                            <select
+                                className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
+                                onChange={(evt) =>
+                                    setFunnelMetricsFilters((prev) => ({
+                                        ...prev,
+                                        contragent_id: [evt.target.value],
+                                    }))
+                                }
+                            >
+                                <option value="">Заказчик</option>
+                                {contragents.length > 0 &&
+                                    contragents.map((type) => (
+                                        <option key={type.id} value={type.id}>
+                                            {type.program_name}
+                                        </option>
+                                    ))}
+                            </select>
+
+                            <select
+                                className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
+                                onChange={(evt) => {}}
+                            >
+                                <option value="">Проект</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <button
                         type="button"
@@ -687,11 +722,14 @@ const Indicators = () => {
                 </div>
             </section>
 
-            <div className="grid grid-cols-3 gap-7 justify-between items-start">
-                <section className="flex flex-col gap-4">
-                    {/* ФИНАНСОВЫЕ ПОКАЗАТЕЛИ */}
-                    <div className="flex flex-col gap-8 border border-gray-300 p-2">
-                        <div className="p-4">
+            <section className="flex flex-col gap-5">
+                <section className="flex flex-col gap-8 border border-gray-300 p-4">
+                    <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
+                        Ключевые финансовые показатели
+                    </h2>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
                             <FinancialMetrics
                                 financialMetrics={financialMetrics}
                             />
@@ -702,185 +740,7 @@ const Indicators = () => {
                             />
                         </div>
 
-                        <div className="p-4">
-                            <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
-                                <select
-                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                                    onChange={(evt) =>
-                                        setFinancialListFilters((prev) => ({
-                                            ...prev,
-                                            type: [evt.target.value],
-                                        }))
-                                    }
-                                >
-                                    <option value="project">Проект</option>
-                                    <option value="customer">Заказчик</option>
-                                </select>
-
-                                <select
-                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                                    onChange={(evt) =>
-                                        setFinancialListFilters((prev) => ({
-                                            ...prev,
-                                            metric: [evt.target.value],
-                                        }))
-                                    }
-                                >
-                                    <option value="revenue">
-                                        Выручка, млн руб.
-                                    </option>
-                                    <option value="receipts">
-                                        Поступления, млн руб.
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div className="h-[214px] overflow-x-hidden overflow-y-auto">
-                                <div
-                                    style={{
-                                        height: `${Math.max(
-                                            214,
-                                            (financialListData.labels?.length ||
-                                                0) * 40
-                                        )}px`,
-                                    }}
-                                >
-                                    <Bar
-                                        data={financialListData}
-                                        options={horizontalOptions}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2 border border-gray-300 p-5">
-                        <EmployeeMetrics {...employeeMetrics} />
-
-                        <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
-                            <div className="flex items-center gap-3">
-                                <select
-                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] w-full"
-                                    value={chartView}
-                                    onChange={(evt) => {
-                                        setChartView(evt.target.value);
-
-                                        setEmployeeFilters((prev) => ({
-                                            ...prev,
-                                            view_type: [evt.target.value],
-                                        }));
-                                    }}
-                                >
-                                    <option value="headcount">Структура</option>
-                                    <option value="turnover">
-                                        Пришли / ушли
-                                    </option>
-                                </select>
-                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                    ?
-                                </span>
-                            </div>
-
-                            {chartView == "headcount" && (
-                                <div className="flex items-center gap-3">
-                                    <select
-                                        className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] w-full"
-                                        onChange={(evt) =>
-                                            setEmployeeFilters((prev) => ({
-                                                ...prev,
-                                                metric_type: [evt.target.value],
-                                            }))
-                                        }
-                                    >
-                                        <option value="headcount">
-                                            Численность, чел
-                                        </option>
-                                        <option value="gross_salary">
-                                            ФОТ gross, млн руб.
-                                        </option>
-                                        <option value="average_salary">
-                                            Средняя зп, тыс. руб.
-                                        </option>
-                                    </select>
-
-                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                        ?
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-
-                        {chartView == "headcount" ? (
-                            <div className="h-[340px] overflow-x-hidden overflow-y-auto">
-                                <div
-                                    style={{
-                                        height: `${Math.max(
-                                            340,
-                                            (EmployeeMetricsData.labels
-                                                ?.length || 0) * 40
-                                        )}px`,
-                                    }}
-                                >
-                                    <Bar
-                                        data={EmployeeMetricsData}
-                                        options={horizontalOptions}
-                                    />
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="flex flex-col gap-7 max-h-[340px] overflow-x-hidden overflow-y-auto">
-                                <div>
-                                    <div className="mb-3 font-medium">
-                                        Новые сотрудники (
-                                        {employeeMetrics.hired_employees
-                                            ?.length || 0}
-                                        )
-                                    </div>
-
-                                    <ul className="flex flex-col gap-2">
-                                        {employeeMetrics.hired_employees
-                                            ?.length > 0 &&
-                                            employeeMetrics.hired_employees.map(
-                                                (item) => (
-                                                    <EmployeeItem
-                                                        key={item.id}
-                                                        {...item}
-                                                    />
-                                                )
-                                            )}
-                                    </ul>
-                                </div>
-
-                                <div>
-                                    <div className="mb-3 font-medium">
-                                        Ушедшие сотрудники (
-                                        {employeeMetrics.dismissed_employees
-                                            ?.length || 0}
-                                        )
-                                    </div>
-
-                                    <ul className="flex flex-col gap-2">
-                                        {employeeMetrics.dismissed_employees
-                                            ?.length > 0 &&
-                                            employeeMetrics.dismissed_employees.map(
-                                                (item) => (
-                                                    <EmployeeItem
-                                                        key={item.id}
-                                                        {...item}
-                                                    />
-                                                )
-                                            )}
-                                    </ul>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </section>
-
-                <section className="flex flex-col gap-4">
-                    {/* ФИНАНСОВЫЕ ПОКАЗАТЕЛИ */}
-                    <div className="flex flex-col gap-8 border border-gray-300 p-2">
-                        <div className="p-4">
+                        <div>
                             <GrossMetrics financialMetrics={financialMetrics} />
 
                             <Bar
@@ -888,86 +748,230 @@ const Indicators = () => {
                                 options={verticalOptions2}
                             />
                         </div>
+                    </div>
 
-                        <div className="p-4">
-                            <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
+                    <div className="flex flex-col gap-3 p-4">
+                        <div className="grid grid-cols-4">
+                            <div className="flex items-center gap-5">
                                 <select
-                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                                    onChange={(evt) =>
+                                    className="border-2 h-[30px] p-1 border-gray-300 w-full max-w-[125px] cursor-pointer"
+                                    onChange={(evt) => {
+                                        setFinancialListFilters((prev) => ({
+                                            ...prev,
+                                            type: [evt.target.value],
+                                        }));
                                         setFinancialProfitListFilters(
                                             (prev) => ({
                                                 ...prev,
                                                 type: [evt.target.value],
                                             })
-                                        )
-                                    }
+                                        );
+                                    }}
                                 >
                                     <option value="project">Проект</option>
                                     <option value="customer">Заказчик</option>
                                 </select>
 
-                                <select
-                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                                    onChange={(evt) =>
-                                        setFinancialProfitListFilters(
-                                            (prev) => ({
-                                                ...prev,
-                                                metric: [evt.target.value],
-                                            })
-                                        )
-                                    }
-                                >
-                                    <option value="gross_profit">
-                                        Валовая прибыль, млн руб.
-                                    </option>
-                                    <option value="gross_margin">
-                                        Валовая рентабельность
-                                    </option>
-                                </select>
+                                <button type="button">
+                                    Поступления, млн руб.
+                                </button>
                             </div>
 
-                            <div className="h-[214px] overflow-x-hidden overflow-y-auto">
-                                <div
-                                    style={{
-                                        height: `${Math.max(
-                                            214,
-                                            (financialProfitListData.labels
-                                                ?.length || 0) * 40
-                                        )}px`,
-                                    }}
-                                >
-                                    <Bar
-                                        data={financialProfitListData}
-                                        options={horizontalOptions}
-                                    />
-                                </div>
+                            <button
+                                className="text-left ml-[10px]"
+                                type="button"
+                            >
+                                Выручка, млн руб.
+                            </button>
+
+                            <button
+                                className="text-left ml-[10px]"
+                                type="button"
+                            >
+                                Валовая прибыль, млн руб.
+                            </button>
+
+                            <button
+                                className="text-left ml-[10px]"
+                                type="button"
+                            >
+                                Валовая рентабельность
+                            </button>
+                        </div>
+
+                        <div className="h-[190px] overflow-x-hidden overflow-y-auto grid grid-cols-4 gap-2">
+                            <div
+                                style={{
+                                    height: `${Math.max(
+                                        300,
+                                        (financialProfitListData1.labels
+                                            ?.length || 0) * 40
+                                    )}px`,
+                                }}
+                            >
+                                <Bar
+                                    data={financialListData1}
+                                    options={horizontalOptions}
+                                />
+                            </div>
+
+                            <div
+                                className="pt-[8px]"
+                                style={{
+                                    height: `${Math.max(
+                                        300,
+                                        (financialProfitListData1.labels
+                                            ?.length || 0) * 40
+                                    )}px`,
+                                }}
+                            >
+                                <Bar
+                                    data={financialListData2}
+                                    options={horizontalOptionsNoLabels}
+                                />
+                            </div>
+
+                            <div
+                                className="pt-[8px]"
+                                style={{
+                                    height: `${Math.max(
+                                        300,
+                                        (financialProfitListData1.labels
+                                            ?.length || 0) * 40
+                                    )}px`,
+                                }}
+                            >
+                                <Bar
+                                    data={financialProfitListData1}
+                                    options={horizontalOptionsNoLabels}
+                                />
+                            </div>
+
+                            <div
+                                className="pt-[8px]"
+                                style={{
+                                    height: `${Math.max(
+                                        300,
+                                        (financialProfitListData1.labels
+                                            ?.length || 0) * 40
+                                    )}px`,
+                                }}
+                            >
+                                <Bar
+                                    data={financialProfitListData2}
+                                    options={horizontalOptionsNoLabels}
+                                />
                             </div>
                         </div>
                     </div>
+                </section>
 
-                    <div className="flex flex-col gap-3 border border-gray-300 py-3 px-2">
-                        <div className="flex items-center gap-2 font-medium pl-3">
-                            Завершённые отчёты (
-                            {completedReports.items?.length || 0})
+                <section className="flex flex-col gap-8 border border-gray-300 p-4">
+                    <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
+                        Персонал
+                    </h2>
+
+                    <EmployeeMetrics {...employeeMetrics} />
+
+                    <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
+                        <div className="flex items-center gap-3">
+                            <select
+                                className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] w-full"
+                                onChange={(evt) =>
+                                    setEmployeeFilters((prev) => ({
+                                        ...prev,
+                                        metric_type: [evt.target.value],
+                                    }))
+                                }
+                            >
+                                <option value="headcount">
+                                    Численность, чел
+                                </option>
+                                <option value="gross_salary">
+                                    ФОТ gross, млн руб.
+                                </option>
+                                <option value="average_salary">
+                                    Средняя зп, тыс. руб.
+                                </option>
+                            </select>
+
                             <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                                 ?
                             </span>
                         </div>
 
-                        <ul className="max-h-[300px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
-                            {completedReports.items?.length > 0 &&
-                                completedReports.items.map((report) => (
-                                    <CompletedReportItem
-                                        key={report.id}
-                                        {...report}
-                                    />
-                                ))}
-                        </ul>
+                        <div className="h-[340px] overflow-x-hidden overflow-y-auto">
+                            <div
+                                style={{
+                                    height: `${Math.max(
+                                        340,
+                                        (EmployeeMetricsData.labels?.length ||
+                                            0) * 40
+                                    )}px`,
+                                }}
+                            >
+                                <Bar
+                                    data={EmployeeMetricsData}
+                                    options={horizontalOptions}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-7 max-h-[340px] overflow-x-hidden overflow-y-auto">
+                        <div>
+                            <div className="mb-3 font-medium">
+                                Новые сотрудники (
+                                {employeeMetrics.hired_employees?.length || 0})
+                            </div>
+
+                            <ul className="flex flex-col gap-2">
+                                {employeeMetrics.hired_employees?.length > 0 &&
+                                    employeeMetrics.hired_employees.map(
+                                        (item) => (
+                                            <EmployeeItem
+                                                key={item.id}
+                                                {...item}
+                                            />
+                                        )
+                                    )}
+                            </ul>
+                        </div>
+
+                        <div>
+                            <div className="mb-3 font-medium">
+                                Ушедшие сотрудники (
+                                {employeeMetrics.dismissed_employees?.length ||
+                                    0}
+                                )
+                            </div>
+
+                            <ul className="flex flex-col gap-2">
+                                {employeeMetrics.dismissed_employees?.length >
+                                    0 &&
+                                    employeeMetrics.dismissed_employees.map(
+                                        (item) => (
+                                            <EmployeeItem
+                                                key={item.id}
+                                                {...item}
+                                            />
+                                        )
+                                    )}
+                            </ul>
+                        </div>
                     </div>
                 </section>
 
-                <section className="flex flex-col gap-4">
-                    <div className="flex flex-col border border-gray-300 p-2">
+                <section className="grid grid-cols-2 gap-4">
+                    <ManagerReportsWindow
+                        selectedReportMonth={selectedReportMonth}
+                    />
+
+                    <div className="flex flex-col gap-3 border border-gray-300 py-3 px-2">
+                        <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
+                            Продажи
+                        </h2>
+
                         <FunnelMetrics funnelMetrics={funnelMetrics.metrics} />
 
                         <ul className="max-h-[300px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
@@ -984,12 +988,33 @@ const Indicators = () => {
                                 )}
                         </ul>
                     </div>
-
-                    <ManagerReportsWindow
-                        selectedReportMonth={selectedReportMonth}
-                    />
                 </section>
-            </div>
+
+                <section className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-3 border border-gray-300 py-3 px-2">
+                        <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
+                            Отчёты руководителей проектов (20)
+                        </h2>
+                    </div>
+
+                    <div className="flex flex-col gap-3 border border-gray-300 py-3 px-2">
+                        <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
+                            Завершённые отчёты (
+                            {completedReports.items?.length || 0})
+                        </h2>
+
+                        <ul className="max-h-[300px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
+                            {completedReports.items?.length > 0 &&
+                                completedReports.items.map((report) => (
+                                    <CompletedReportItem
+                                        key={report.id}
+                                        {...report}
+                                    />
+                                ))}
+                        </ul>
+                    </div>
+                </section>
+            </section>
         </div>
     );
 };
