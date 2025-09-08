@@ -115,9 +115,10 @@ const Reports = () => {
 
     // Заполняем селектор ответственных
     const physicalPersonOptions = useMemo(() => {
-        const allReports = managementList.flatMap(
-            (item) => item?.physical_person?.name
+        const allReports = managementList.flatMap((item) =>
+            item?.physical_person ? [item.physical_person.name] : []
         );
+
         return Array.from(new Set(allReports));
     }, [managementList]);
 
