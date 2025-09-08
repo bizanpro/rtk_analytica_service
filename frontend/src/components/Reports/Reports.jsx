@@ -11,9 +11,6 @@ import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// import { format, parseISO } from "date-fns";
-// import { ru } from "date-fns/locale";
-
 const Reports = () => {
     const REPORTS_URL = `${import.meta.env.VITE_API_URL}reports`;
     const MANAGEMENT_URL = `${import.meta.env.VITE_API_URL}management-reports`;
@@ -108,7 +105,7 @@ const Reports = () => {
         });
 
         return result;
-    }, [managementList, selectedManagementReport, selectedPhysicalPerson]);
+    }, [managementList, selectedManagementReport, selectedPhysicalPerson]); // Фильтрованный список отчетов
 
     // Заполняем селектор отчетов Сотрудника
     const managementReportsOptions = useMemo(() => {
@@ -281,6 +278,7 @@ const Reports = () => {
         setManagementEditorState(false);
     };
 
+    // Обработчик открытия отчета руководителя с учетов выставленной оценки
     const managementReportEditorHandler = (reportData, rate) => {
         switch (rate) {
             case 0: {
