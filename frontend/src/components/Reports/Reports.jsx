@@ -106,6 +106,7 @@ const Reports = () => {
                     : true)
             );
         });
+
         return result;
     }, [managementList, selectedManagementReport, selectedPhysicalPerson]);
 
@@ -163,22 +164,23 @@ const Reports = () => {
             .finally(() => setIsLoading(false));
     };
 
+    // Фильтрация доступных отчётных месяцев
     const filterAvailableMonths = () => {
         if (selectedManagementReport === "default") {
             setFilteredAvailableMonths(availableMonths);
         } else {
-            const targetReport = managementList.find(
-                (item) => item.name === selectedManagementReport
+            const availableReports = filteredReports.filter(
+                (item) => item?.report_month
             );
 
-            const selectedMonth = format(
-                parseISO(targetReport?.report_month),
-                "yyyy-MM",
-                { locale: ru }
+            const monthsLabels = availableReports.map(
+                (item) => item.report_month
             );
 
             setFilteredAvailableMonths(
-                availableMonths.filter((item) => item.value === selectedMonth)
+                availableMonths.filter((item) =>
+                    monthsLabels.includes(item.label)
+                )
             );
         }
     };
@@ -645,9 +647,9 @@ const Reports = () => {
                                         <option value="">Ответственный</option>
                                         {physicalPersonOptions.length > 0 &&
                                             physicalPersonOptions.map(
-                                                (item) => (
+                                                (item, index) => (
                                                     <option
-                                                        key={item}
+                                                        key={`${item}_${index}`}
                                                         value={item}
                                                     >
                                                         {item}
