@@ -751,7 +751,7 @@ const Indicators = () => {
                     </div>
 
                     <div className="flex flex-col gap-3 p-4">
-                        <div className="grid grid-cols-4">
+                        <div className="grid grid-cols-[32%_1fr_1fr_1fr]">
                             <div className="flex items-center gap-5">
                                 <select
                                     className="border-2 h-[30px] p-1 border-gray-300 w-full max-w-[125px] cursor-pointer"
@@ -799,7 +799,7 @@ const Indicators = () => {
                             </button>
                         </div>
 
-                        <div className="h-[190px] overflow-x-hidden overflow-y-auto grid grid-cols-4 gap-2">
+                        <div className="h-[190px] overflow-x-hidden overflow-y-auto grid grid-cols-[32%_1fr_1fr_1fr] gap-2">
                             <div
                                 style={{
                                     height: `${Math.max(
@@ -1039,7 +1039,7 @@ const Indicators = () => {
                             {completedReports.items?.length || 0})
                         </h2>
 
-                        <ul className="max-h-[300px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
+                        <ul className="max-h-[280px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
                             {completedReports.items?.length > 0 &&
                                 completedReports.items.map((report) => (
                                     <CompletedReportItem

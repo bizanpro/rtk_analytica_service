@@ -116,7 +116,7 @@ const ManagerReportsWindow = ({ selectedReportMonth }) => {
                 </div>
 
                 <textarea
-                    className="w-full border-2 border-gray-300 p-5 min-h-[500px] max-h-[600px] resize-none"
+                    className="w-full border-2 border-gray-300 p-5 h-[350px] resize-none"
                     placeholder="Описание"
                     type="text"
                     name={currentTab}
