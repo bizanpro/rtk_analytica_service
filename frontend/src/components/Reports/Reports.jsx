@@ -11,8 +11,8 @@ import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { format, parseISO } from "date-fns";
-import { ru } from "date-fns/locale";
+// import { format, parseISO } from "date-fns";
+// import { ru } from "date-fns/locale";
 
 const Reports = () => {
     const REPORTS_URL = `${import.meta.env.VITE_API_URL}reports`;
@@ -72,10 +72,10 @@ const Reports = () => {
     const [filteredAvailableMonths, setFilteredAvailableMonths] = useState([]);
     const [filterOptionsList, setFilterOptionsList] = useState({}); // Список доступных параметров фильтров
 
-    const [selectedProjectsFilters, setSelectedProjectsFilters] = useState({}); // Выбранные параметры фильтров во вкладке проектов
-    const [selectedManagementFilters, setSelectedManagementFilters] = useState(
-        {}
-    ); // Выбранные параметры фильтров во вкладке Сотрудника
+    const [selectedProjectsFilters, setSelectedProjectsFilters] = useState({}); // Выбранные параметры фильтров во вкладке отчетов проектов
+    const [selectedManagementFilters, setSelectedManagementFilters] = useState({
+        report_month: [""],
+    }); // Выбранные параметры фильтров во вкладке отчетов сотрудника
 
     const [selectedManagementReport, setSelectedManagementReport] =
         useState("default"); // Выбранный отчет
@@ -573,6 +573,7 @@ const Reports = () => {
                                         onClick={() =>
                                             setSelectedProjectsFilters([])
                                         }
+                                        title="Очистить фильтр"
                                     >
                                         Очистить
                                     </button>
@@ -591,6 +592,7 @@ const Reports = () => {
                                                 evt.target.value
                                             )
                                         }
+                                        value={selectedManagementReport}
                                     >
                                         <option value="default">Отчёт</option>
                                         {managementReportsOptions.length > 0 &&
@@ -613,12 +615,17 @@ const Reports = () => {
                                             const selectedValue = Array.from(
                                                 e.target.selectedOptions
                                             ).map((option) => option.value);
+
                                             handleFilterChange(
                                                 "report_month",
                                                 selectedValue,
                                                 "management"
                                             );
                                         }}
+                                        value={
+                                            selectedManagementFilters
+                                                .report_month[0]
+                                        }
                                     >
                                         <option value="">Отчётный месяц</option>
                                         {filteredAvailableMonths.length > 0 &&
@@ -643,8 +650,11 @@ const Reports = () => {
                                                 evt.target.value
                                             )
                                         }
+                                        value={selectedPhysicalPerson}
                                     >
-                                        <option value="">Ответственный</option>
+                                        <option value="default">
+                                            Ответственный
+                                        </option>
                                         {physicalPersonOptions.length > 0 &&
                                             physicalPersonOptions.map(
                                                 (item, index) => (
@@ -661,6 +671,18 @@ const Reports = () => {
                                     <button
                                         type="button"
                                         className="border rounded-lg py-1 px-5"
+                                        onClick={() => {
+                                            setSelectedPhysicalPerson(
+                                                "default"
+                                            );
+                                            setSelectedManagementReport(
+                                                "default"
+                                            );
+                                            setSelectedManagementFilters({
+                                                report_month: [""],
+                                            });
+                                        }}
+                                        title="Очистить фильтр"
                                     >
                                         Очистить
                                     </button>
