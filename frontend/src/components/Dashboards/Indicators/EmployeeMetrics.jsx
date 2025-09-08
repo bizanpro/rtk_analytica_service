@@ -6,7 +6,7 @@ const EmployeeMetrics = ({
     gross_salary,
 }) => {
     return (
-        <div className="grid items-stretch grid-cols-3 gap-3 mb-5">
+        <div className="grid items-stretch grid-cols-4 gap-3 mb-5">
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 font-medium">
                     Численность

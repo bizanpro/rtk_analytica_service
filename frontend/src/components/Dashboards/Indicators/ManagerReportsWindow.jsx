@@ -54,17 +54,13 @@ const ManagerReportsWindow = ({ selectedReportMonth }) => {
     }, [selectedReportMonth]);
 
     return (
-        <div className="border-2 border-gray-300 py-5 px-3 bg-white">
+        <div className="border-1 border-gray-300 p-4">
             <div className="flex items-center gap-2 w-full mb-3">
-                <div className="text-2xl">
+                <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
                     Отчёты менеджмента /{" "}
                     {reportsData.period?.report_month &&
                         formatDateYM(reportsData.period?.report_month)}
-                </div>
-
-                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] min-w-[20px] h-[20px] mr-3">
-                    ?
-                </span>
+                </h2>
             </div>
 
             <div className="flex gap-5 mb-5 items-stretch overflow-x-auto overflow-y-hidden pb-1">

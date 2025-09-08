@@ -871,14 +871,14 @@ const Indicators = () => {
                         Персонал
                     </h2>
 
-                    <div className="grid grid-cols-2 gap-5">
+                    <div className="grid grid-cols-2 gap-8">
                         <div className="flex flex-col gap-3">
                             <EmployeeMetrics {...employeeMetrics} />
 
                             <div className="flex flex-col gap-3">
                                 <div className="flex items-center gap-3">
                                     <select
-                                        className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] w-full"
+                                        className="border-2 h-[30px] p-1 border-gray-300 max-w-[175px] w-full"
                                         onChange={(evt) =>
                                             setEmployeeFilters((prev) => ({
                                                 ...prev,
@@ -902,11 +902,11 @@ const Indicators = () => {
                                     </span>
                                 </div>
 
-                                <div className="h-[340px] overflow-x-hidden overflow-y-auto">
+                                <div className="h-[280px] overflow-x-hidden overflow-y-auto">
                                     <div
                                         style={{
                                             height: `${Math.max(
-                                                340,
+                                                280,
                                                 (EmployeeMetricsData.labels
                                                     ?.length || 0) * 40
                                             )}px`,
@@ -921,49 +921,78 @@ const Indicators = () => {
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-7 max-h-[340px] overflow-x-hidden overflow-y-auto">
-                            <div>
-                                <div className="mb-3 font-medium">
-                                    Новые сотрудники (
-                                    {employeeMetrics.hired_employees?.length ||
-                                        0}
-                                    )
+                        <div className="flex flex-col gap-5">
+                            <div className="grid items-stretch grid-cols-5 gap-3 mb-5">
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex items-center gap-2 font-medium">
+                                        Пришли
+                                    </div>
+                                    <div className="flex items-center flex-grow gap-2">
+                                        <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                            <span>
+                                                {employeeMetrics.hired_employees
+                                                    ?.length || 0}
+                                            </span>
+                                        </strong>
+                                        <small className="text-sm">чел.</small>
+                                    </div>
                                 </div>
 
-                                <ul className="flex flex-col gap-2">
-                                    {employeeMetrics.hired_employees?.length >
-                                        0 &&
-                                        employeeMetrics.hired_employees.map(
-                                            (item) => (
-                                                <EmployeeItem
-                                                    key={item.id}
-                                                    {...item}
-                                                />
-                                            )
-                                        )}
-                                </ul>
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex items-center gap-2 font-medium">
+                                        Ушли
+                                    </div>
+                                    <div className="flex items-center flex-grow gap-2">
+                                        <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                            <span>
+                                                {employeeMetrics
+                                                    .dismissed_employees
+                                                    ?.length || 0}
+                                            </span>
+                                        </strong>
+                                        <small className="text-sm">чел.</small>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div>
-                                <div className="mb-3 font-medium">
-                                    Ушедшие сотрудники (
-                                    {employeeMetrics.dismissed_employees
-                                        ?.length || 0}
-                                    )
+                            <div className="flex flex-col gap-7 max-h-[280px] overflow-x-hidden overflow-y-auto">
+                                <div>
+                                    <div className="mb-3 font-medium">
+                                        Новые сотрудники
+                                    </div>
+
+                                    <ul className="flex flex-col gap-2">
+                                        {employeeMetrics.hired_employees
+                                            ?.length > 0 &&
+                                            employeeMetrics.hired_employees.map(
+                                                (item) => (
+                                                    <EmployeeItem
+                                                        key={item.id}
+                                                        {...item}
+                                                    />
+                                                )
+                                            )}
+                                    </ul>
                                 </div>
 
-                                <ul className="flex flex-col gap-2">
-                                    {employeeMetrics.dismissed_employees
-                                        ?.length > 0 &&
-                                        employeeMetrics.dismissed_employees.map(
-                                            (item) => (
-                                                <EmployeeItem
-                                                    key={item.id}
-                                                    {...item}
-                                                />
-                                            )
-                                        )}
-                                </ul>
+                                <div>
+                                    <div className="mb-3 font-medium">
+                                        Ушедшие сотрудники
+                                    </div>
+
+                                    <ul className="flex flex-col gap-2">
+                                        {employeeMetrics.dismissed_employees
+                                            ?.length > 0 &&
+                                            employeeMetrics.dismissed_employees.map(
+                                                (item) => (
+                                                    <EmployeeItem
+                                                        key={item.id}
+                                                        {...item}
+                                                    />
+                                                )
+                                            )}
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -974,7 +1003,7 @@ const Indicators = () => {
                         selectedReportMonth={selectedReportMonth}
                     />
 
-                    <div className="flex flex-col gap-3 border border-gray-300 py-3 px-2">
+                    <div className="flex flex-col gap-3 border border-gray-300 p-4">
                         <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
                             Продажи
                         </h2>
@@ -998,13 +1027,13 @@ const Indicators = () => {
                 </section>
 
                 <section className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-3 border border-gray-300 py-3 px-2">
+                    <div className="flex flex-col gap-3 border border-gray-300 p-4">
                         <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
                             Отчёты руководителей проектов (20)
                         </h2>
                     </div>
 
-                    <div className="flex flex-col gap-3 border border-gray-300 py-3 px-2">
+                    <div className="flex flex-col gap-3 border border-gray-300 p-4">
                         <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
                             Завершённые отчёты (
                             {completedReports.items?.length || 0})
