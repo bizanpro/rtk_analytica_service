@@ -871,93 +871,100 @@ const Indicators = () => {
                         Персонал
                     </h2>
 
-                    <EmployeeMetrics {...employeeMetrics} />
+                    <div className="grid grid-cols-2 gap-5">
+                        <div className="flex flex-col gap-3">
+                            <EmployeeMetrics {...employeeMetrics} />
 
-                    <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
-                        <div className="flex items-center gap-3">
-                            <select
-                                className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] w-full"
-                                onChange={(evt) =>
-                                    setEmployeeFilters((prev) => ({
-                                        ...prev,
-                                        metric_type: [evt.target.value],
-                                    }))
-                                }
-                            >
-                                <option value="headcount">
-                                    Численность, чел
-                                </option>
-                                <option value="gross_salary">
-                                    ФОТ gross, млн руб.
-                                </option>
-                                <option value="average_salary">
-                                    Средняя зп, тыс. руб.
-                                </option>
-                            </select>
+                            <div className="flex flex-col gap-3">
+                                <div className="flex items-center gap-3">
+                                    <select
+                                        className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] w-full"
+                                        onChange={(evt) =>
+                                            setEmployeeFilters((prev) => ({
+                                                ...prev,
+                                                metric_type: [evt.target.value],
+                                            }))
+                                        }
+                                    >
+                                        <option value="headcount">
+                                            Численность, чел
+                                        </option>
+                                        <option value="gross_salary">
+                                            ФОТ gross, млн руб.
+                                        </option>
+                                        <option value="average_salary">
+                                            Средняя зп, тыс. руб.
+                                        </option>
+                                    </select>
 
-                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                ?
-                            </span>
-                        </div>
+                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                                        ?
+                                    </span>
+                                </div>
 
-                        <div className="h-[340px] overflow-x-hidden overflow-y-auto">
-                            <div
-                                style={{
-                                    height: `${Math.max(
-                                        340,
-                                        (EmployeeMetricsData.labels?.length ||
-                                            0) * 40
-                                    )}px`,
-                                }}
-                            >
-                                <Bar
-                                    data={EmployeeMetricsData}
-                                    options={horizontalOptions}
-                                />
+                                <div className="h-[340px] overflow-x-hidden overflow-y-auto">
+                                    <div
+                                        style={{
+                                            height: `${Math.max(
+                                                340,
+                                                (EmployeeMetricsData.labels
+                                                    ?.length || 0) * 40
+                                            )}px`,
+                                        }}
+                                    >
+                                        <Bar
+                                            data={EmployeeMetricsData}
+                                            options={horizontalOptions}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="flex flex-col gap-7 max-h-[340px] overflow-x-hidden overflow-y-auto">
-                        <div>
-                            <div className="mb-3 font-medium">
-                                Новые сотрудники (
-                                {employeeMetrics.hired_employees?.length || 0})
+                        <div className="flex flex-col gap-7 max-h-[340px] overflow-x-hidden overflow-y-auto">
+                            <div>
+                                <div className="mb-3 font-medium">
+                                    Новые сотрудники (
+                                    {employeeMetrics.hired_employees?.length ||
+                                        0}
+                                    )
+                                </div>
+
+                                <ul className="flex flex-col gap-2">
+                                    {employeeMetrics.hired_employees?.length >
+                                        0 &&
+                                        employeeMetrics.hired_employees.map(
+                                            (item) => (
+                                                <EmployeeItem
+                                                    key={item.id}
+                                                    {...item}
+                                                />
+                                            )
+                                        )}
+                                </ul>
                             </div>
 
-                            <ul className="flex flex-col gap-2">
-                                {employeeMetrics.hired_employees?.length > 0 &&
-                                    employeeMetrics.hired_employees.map(
-                                        (item) => (
-                                            <EmployeeItem
-                                                key={item.id}
-                                                {...item}
-                                            />
-                                        )
-                                    )}
-                            </ul>
-                        </div>
+                            <div>
+                                <div className="mb-3 font-medium">
+                                    Ушедшие сотрудники (
+                                    {employeeMetrics.dismissed_employees
+                                        ?.length || 0}
+                                    )
+                                </div>
 
-                        <div>
-                            <div className="mb-3 font-medium">
-                                Ушедшие сотрудники (
-                                {employeeMetrics.dismissed_employees?.length ||
-                                    0}
-                                )
+                                <ul className="flex flex-col gap-2">
+                                    {employeeMetrics.dismissed_employees
+                                        ?.length > 0 &&
+                                        employeeMetrics.dismissed_employees.map(
+                                            (item) => (
+                                                <EmployeeItem
+                                                    key={item.id}
+                                                    {...item}
+                                                />
+                                            )
+                                        )}
+                                </ul>
                             </div>
-
-                            <ul className="flex flex-col gap-2">
-                                {employeeMetrics.dismissed_employees?.length >
-                                    0 &&
-                                    employeeMetrics.dismissed_employees.map(
-                                        (item) => (
-                                            <EmployeeItem
-                                                key={item.id}
-                                                {...item}
-                                            />
-                                        )
-                                    )}
-                            </ul>
                         </div>
                     </div>
                 </section>
