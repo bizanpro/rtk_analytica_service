@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 import getData from "../../../utils/getData";
-import { sortList } from "../../../utils/sortList";
+import { sortFinanceValues } from "../../../utils/sortFinanceValues";
 import buildQueryParams from "../../../utils/buildQueryParams";
 
 import ChartDataLabels from "chartjs-plugin-datalabels";
@@ -630,16 +630,23 @@ const Indicators = () => {
     }, [funnelMetricsFilters]);
 
     const handleListSort = () => {
-        console.log(sortBy);
-
         if (financialList?.items) {
-            setSortedFinancialList(sortList(financialList?.items, sortBy));
+            // console.log(sortFinanceValues(financialList?.items, sortBy));
+
+            setSortedFinancialList((prev) => ({
+                ...prev,
+                items: sortFinanceValues(financialList?.items, sortBy),
+            }));
         }
     };
 
     useEffect(() => {
         handleListSort();
     }, [sortBy]);
+
+    useEffect(() => {
+        console.log(sortedFinancialList);
+    }, [sortedFinancialList]);
 
     return (
         <div className="flex flex-col justify-between gap-6 mb-8">

@@ -1,6 +1,10 @@
-export const sortList = (list, sortBy) => {
+const getNestedValue = (obj, path) => {
+    return path.split(".").reduce((acc, key) => acc?.[key], obj);
+};
+
+export const sortFinanceValues = (list, sortBy) => {
     const getValue = (item) => {
-        const raw = item?.[sortBy.key];
+        const raw = getNestedValue(item, sortBy.key);
 
         if (raw === null || raw === undefined) return NaN;
 

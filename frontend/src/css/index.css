@@ -389,31 +389,6 @@ body {
     pointer-events: none;
 }
 
-.sort-btn span {
-    position: relative;
-    height: 2px;
-    width: 18px;
-    background: #000;
-}
-
-.sort-btn span::before,
-.sort-btn span::after {
-    content: "";
-    position: absolute;
-    height: 2px;
-    width: 18px;
-    background: #000;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.sort-btn span::before {
-    top: -5px;
-}
-.sort-btn span::after {
-    top: 5px;
-}
-
 .thead__item-sort-btn svg {
     width: 16px;
     height: 16px;
@@ -427,4 +402,43 @@ body {
 
 .thead__item-sort-btn_ascending svg {
     transform: rotate(180deg);
+}
+
+.sort-btn span {
+    position: relative;
+    height: 2px;
+    width: 18px;
+    background: #000;
+    transition: all 0.2s ease-in-out;
+}
+
+.sort-btn span::before,
+.sort-btn span::after {
+    content: "";
+    position: absolute;
+    height: 2px;
+    width: 18px;
+    background: #000;
+    left: 0;
+    transition: all 0.2s ease-in-out;
+}
+
+.sort-btn span::before {
+    top: -5px;
+}
+.sort-btn span::after {
+    top: 5px;
+}
+
+.sort-btn_descending span,
+.sort-btn_ascending span {
+    width: 10px;
+}
+
+.sort-btn_ascending span::after {
+    width: 5px;
+}
+
+.sort-btn_descending span::before {
+    width: 5px;
 }
