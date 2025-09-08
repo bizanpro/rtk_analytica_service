@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 import getData from "../../../utils/getData";
+import { sortList } from "../../../utils/sortList";
 import buildQueryParams from "../../../utils/buildQueryParams";
 
 import ChartDataLabels from "chartjs-plugin-datalabels";
@@ -14,6 +15,7 @@ import EmployeeItem from "./EmployeeItem";
 import EmployeeMetrics from "./EmployeeMetrics";
 import ManagerReportsWindow from "./ManagerReportsWindow";
 import Loader from "../../Loader";
+import SortBtn from "../../SortBtn";
 
 import {
     Chart as ChartJS,
@@ -46,6 +48,8 @@ const Indicators = () => {
 
     const [filtertOptions, setFilterOptions] = useState([]);
 
+    const [sortBy, setSortBy] = useState({ key: "", action: "" });
+
     const [selectedReportMonth, setSelectedReportMonth] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState({});
     const [financialListFilters, setFinancialListFilters] = useState({
@@ -64,8 +68,15 @@ const Indicators = () => {
     const [funnelMetricsFilters, setFunnelMetricsFilters] = useState({});
 
     const [financialMetrics, setFinancialMetrics] = useState({});
+
     const [financialList, setFinancialList] = useState({});
+    const [sortedFinancialList, setSortedFinancialList] = useState({});
+
     const [financialProfitList, setFinancialProfitList] = useState({});
+    const [sortedFinancialProfitList, setSortedFinancialProfitList] = useState(
+        {}
+    );
+
     const [funnelMetrics, setFunnelMetrics] = useState({});
     const [employeeMetrics, setEmployeeMetrics] = useState({});
 
@@ -131,11 +142,11 @@ const Indicators = () => {
 
     // Ключевые финансовые показатели - Поступления
     const financialListData1 = {
-        labels: financialList.items?.map((item) => item.name),
+        labels: sortedFinancialList.items?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: financialList.items?.map((item) =>
+                data: sortedFinancialList.items?.map((item) =>
                     parseFloat(item.receipts.value)
                 ),
                 backgroundColor: "black",
@@ -147,11 +158,11 @@ const Indicators = () => {
 
     // Ключевые финансовые показатели - Выручка
     const financialListData2 = {
-        labels: financialList.items?.map((item) => item.name),
+        labels: sortedFinancialList.items?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: financialList.items?.map((item) =>
+                data: sortedFinancialList.items?.map((item) =>
                     parseFloat(item.revenue.value)
                 ),
 
@@ -164,11 +175,11 @@ const Indicators = () => {
 
     // Ключевые финансовые показатели - Выловая прибыль÷
     const financialProfitListData1 = {
-        labels: financialProfitList.items?.map((item) => item.name),
+        labels: sortedFinancialProfitList.items?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: financialProfitList.items?.map((item) =>
+                data: sortedFinancialProfitList.items?.map((item) =>
                     parseFloat(item.gross_profit.value)
                 ),
                 backgroundColor: "black",
@@ -180,11 +191,11 @@ const Indicators = () => {
 
     // Ключевые финансовые показатели - Валовая рентабельность
     const financialProfitListData2 = {
-        labels: financialProfitList.items?.map((item) => item.name),
+        labels: sortedFinancialProfitList.items?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: financialProfitList.items?.map((item) =>
+                data: sortedFinancialProfitList.items?.map((item) =>
                     parseFloat(item.gross_margin.value)
                 ),
                 backgroundColor: "black",
@@ -461,6 +472,7 @@ const Indicators = () => {
         ).then((response) => {
             if (response?.status == 200) {
                 setFinancialList(response.data);
+                setSortedFinancialList(response.data);
             }
         });
     };
@@ -475,6 +487,7 @@ const Indicators = () => {
         ).then((response) => {
             if (response?.status == 200) {
                 setFinancialProfitList(response.data);
+                setSortedFinancialProfitList(response.data);
             }
         });
     };
@@ -615,6 +628,18 @@ const Indicators = () => {
             getCompletedReports();
         }
     }, [funnelMetricsFilters]);
+
+    const handleListSort = () => {
+        console.log(sortBy);
+
+        if (financialList?.items) {
+            setSortedFinancialList(sortList(financialList?.items, sortBy));
+        }
+    };
+
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
 
     return (
         <div className="flex flex-col justify-between gap-6 mb-8">
@@ -772,31 +797,37 @@ const Indicators = () => {
                                     <option value="customer">Заказчик</option>
                                 </select>
 
-                                <button type="button">
-                                    Поступления, млн руб.
-                                </button>
+                                <SortBtn
+                                    label={"Поступления, млн руб."}
+                                    value={"receipts.value"}
+                                    sortBy={sortBy}
+                                    setSortBy={setSortBy}
+                                />
                             </div>
 
-                            <button
-                                className="text-left ml-[10px]"
-                                type="button"
-                            >
-                                Выручка, млн руб.
-                            </button>
+                            <SortBtn
+                                label={"Выручка, млн руб."}
+                                value={"revenue.value"}
+                                sortBy={sortBy}
+                                setSortBy={setSortBy}
+                                className={"text-left ml-[10px]"}
+                            />
 
-                            <button
-                                className="text-left ml-[10px]"
-                                type="button"
-                            >
-                                Валовая прибыль, млн руб.
-                            </button>
+                            <SortBtn
+                                label={"Валовая прибыль, млн руб."}
+                                value={"gross_profit.value"}
+                                sortBy={sortBy}
+                                setSortBy={setSortBy}
+                                className={"text-left ml-[10px]"}
+                            />
 
-                            <button
-                                className="text-left ml-[10px]"
-                                type="button"
-                            >
-                                Валовая рентабельность
-                            </button>
+                            <SortBtn
+                                label={"Валовая рентабельность"}
+                                value={"gross_margin.value"}
+                                sortBy={sortBy}
+                                setSortBy={setSortBy}
+                                className={"text-left ml-[10px]"}
+                            />
                         </div>
 
                         <div className="h-[190px] overflow-x-hidden overflow-y-auto grid grid-cols-[32%_1fr_1fr_1fr] gap-2">

@@ -5,6 +5,11 @@ export const sortList = (list, sortBy) => {
         return Number(String(raw).replace(",", "."));
     };
 
+    console.log(sortBy.key);
+
+    
+    
+
     switch (sortBy.action) {
         case "":
             return list;

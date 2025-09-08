@@ -372,10 +372,11 @@ body {
     pointer-events: none;
 }
 
+.sort-btn,
 .thead__item-sort-btn {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 10px;
 }
 
 .thead__item-sort-btn span {
@@ -386,6 +387,31 @@ body {
     align-items: center;
     justify-content: center;
     pointer-events: none;
+}
+
+.sort-btn span {
+    position: relative;
+    height: 2px;
+    width: 18px;
+    background: #000;
+}
+
+.sort-btn span::before,
+.sort-btn span::after {
+    content: "";
+    position: absolute;
+    height: 2px;
+    width: 18px;
+    background: #000;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.sort-btn span::before {
+    top: -5px;
+}
+.sort-btn span::after {
+    top: 5px;
 }
 
 .thead__item-sort-btn svg {
