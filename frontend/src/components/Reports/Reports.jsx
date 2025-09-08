@@ -173,8 +173,16 @@ const Reports = () => {
                 (item) => item?.report_month
             );
 
-            const monthsLabels = availableReports.map(
-                (item) => item.report_month
+            const monthsLabels = [
+                ...new Set(
+                    availableReports.map(({ report_month }) => report_month)
+                ),
+            ];
+
+            console.log(
+                availableMonths.filter((item) =>
+                    monthsLabels.includes(item.label)
+                )
             );
 
             setFilteredAvailableMonths(
