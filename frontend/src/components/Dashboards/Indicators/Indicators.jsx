@@ -48,34 +48,52 @@ const Indicators = () => {
 
     const [filtertOptions, setFilterOptions] = useState([]);
 
-    const [sortBy, setSortBy] = useState({ key: "", action: "" });
+    const [receiptsSortBy, setReceiptsSortBy] = useState({
+        key: "",
+        action: "",
+    });
+    const [revenueSortBy, setRevenueSortBy] = useState({ key: "", action: "" });
+
+    const [grossProfitSortBy, setGrossProfitSortBy] = useState({
+        key: "",
+        action: "",
+    });
+    const [grossMarginSortBy, setGrossMarginSortBy] = useState({
+        key: "",
+        action: "",
+    });
 
     const [selectedReportMonth, setSelectedReportMonth] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState({});
+
     const [financialListFilters, setFinancialListFilters] = useState({
         type: ["project"],
         metric: ["revenue"],
     });
+
     const [financialProfitListFilters, setFinancialProfitListFilters] =
         useState({
             type: ["project"],
             metric: ["gross_profit"],
         });
+
     const [employeeFilters, setEmployeeFilters] = useState({
         view_type: ["headcount"],
         metric_type: ["headcount"],
     });
-    const [funnelMetricsFilters, setFunnelMetricsFilters] = useState({});
 
+    const [funnelMetricsFilters, setFunnelMetricsFilters] = useState({});
     const [financialMetrics, setFinancialMetrics] = useState({});
 
-    const [financialList, setFinancialList] = useState({});
-    const [sortedFinancialList, setSortedFinancialList] = useState({});
+    const [financialList, setFinancialList] = useState({}); // Сортированные ключевые финансовые показатели - Поступления и выручка
 
-    const [financialProfitList, setFinancialProfitList] = useState({});
-    const [sortedFinancialProfitList, setSortedFinancialProfitList] = useState(
-        {}
-    );
+    const [sortedReceiptsList, setSortedReceiptsList] = useState({}); // Сортированные ключевые финансовые показатели - Поступления
+    const [sortedRevenueList, setSortedRevenueList] = useState({}); // Сортированные ключевые финансовые показатели - Выручка
+
+    const [financialProfitList, setFinancialProfitList] = useState({}); // Сортированные ключевые финансовые показатели - Выловая прибыль и рентабельность
+
+    const [sortedGrossProfitList, setSortedGrossProfitList] = useState({}); // Сортированные ключевые финансовые показатели - Выловая прибыль
+    const [sortedGrossMarginList, setSortedGrossMarginListt] = useState({}); // Сортированные ключевые финансовые показатели - Валовая рентабельность
 
     const [funnelMetrics, setFunnelMetrics] = useState({});
     const [employeeMetrics, setEmployeeMetrics] = useState({});
@@ -142,11 +160,11 @@ const Indicators = () => {
 
     // Ключевые финансовые показатели - Поступления
     const financialListData1 = {
-        labels: sortedFinancialList.items?.map((item) => item.name),
+        labels: sortedReceiptsList.items?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: sortedFinancialList.items?.map((item) =>
+                data: sortedReceiptsList.items?.map((item) =>
                     parseFloat(item.receipts.value)
                 ),
                 backgroundColor: "black",
@@ -158,11 +176,11 @@ const Indicators = () => {
 
     // Ключевые финансовые показатели - Выручка
     const financialListData2 = {
-        labels: sortedFinancialList.items?.map((item) => item.name),
+        labels: sortedRevenueList.items?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: sortedFinancialList.items?.map((item) =>
+                data: sortedRevenueList.items?.map((item) =>
                     parseFloat(item.revenue.value)
                 ),
 
@@ -173,13 +191,13 @@ const Indicators = () => {
         ],
     };
 
-    // Ключевые финансовые показатели - Выловая прибыль÷
+    // Ключевые финансовые показатели - Выловая прибыль
     const financialProfitListData1 = {
-        labels: sortedFinancialProfitList.items?.map((item) => item.name),
+        labels: sortedGrossProfitList.items?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: sortedFinancialProfitList.items?.map((item) =>
+                data: sortedGrossProfitList.items?.map((item) =>
                     parseFloat(item.gross_profit.value)
                 ),
                 backgroundColor: "black",
@@ -191,11 +209,11 @@ const Indicators = () => {
 
     // Ключевые финансовые показатели - Валовая рентабельность
     const financialProfitListData2 = {
-        labels: sortedFinancialProfitList.items?.map((item) => item.name),
+        labels: sortedGrossMarginList.items?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: sortedFinancialProfitList.items?.map((item) =>
+                data: sortedGrossMarginList.items?.map((item) =>
                     parseFloat(item.gross_margin.value)
                 ),
                 backgroundColor: "black",
@@ -450,6 +468,7 @@ const Indicators = () => {
         });
     };
 
+    // Получение завершенных отчетов
     const getCompletedReports = () => {
         const queryString = buildQueryParams(funnelMetricsFilters);
 
@@ -472,7 +491,8 @@ const Indicators = () => {
         ).then((response) => {
             if (response?.status == 200) {
                 setFinancialList(response.data);
-                setSortedFinancialList(response.data);
+                setSortedReceiptsList(response.data);
+                setSortedRevenueList(response.data);
             }
         });
     };
@@ -487,7 +507,8 @@ const Indicators = () => {
         ).then((response) => {
             if (response?.status == 200) {
                 setFinancialProfitList(response.data);
-                setSortedFinancialProfitList(response.data);
+                setSortedGrossProfitList(response.data);
+                setSortedGrossMarginListt(response.data);
             }
         });
     };
@@ -629,24 +650,50 @@ const Indicators = () => {
         }
     }, [funnelMetricsFilters]);
 
-    const handleListSort = () => {
+    useEffect(() => {
         if (financialList?.items) {
-            // console.log(sortFinanceValues(financialList?.items, sortBy));
-
-            setSortedFinancialList((prev) => ({
+            setSortedReceiptsList((prev) => ({
                 ...prev,
-                items: sortFinanceValues(financialList?.items, sortBy),
+                items: sortFinanceValues(financialList?.items, receiptsSortBy),
             }));
         }
-    };
+    }, [receiptsSortBy]);
 
     useEffect(() => {
-        handleListSort();
-    }, [sortBy]);
+        if (financialList?.items) {
+            setSortedRevenueList((prev) => ({
+                ...prev,
+                items: sortFinanceValues(
+                    financialList?.items,
+                    revenueSortBy
+                ),
+            }));
+        }
+    }, [revenueSortBy]);
 
     useEffect(() => {
-        console.log(sortedFinancialList);
-    }, [sortedFinancialList]);
+        if (financialProfitList?.items) {
+            setSortedGrossProfitList((prev) => ({
+                ...prev,
+                items: sortFinanceValues(
+                    financialProfitList?.items,
+                    grossProfitSortBy
+                ),
+            }));
+        }
+    }, [grossProfitSortBy]);
+
+    useEffect(() => {
+        if (financialProfitList?.items) {
+            setSortedGrossMarginListt((prev) => ({
+                ...prev,
+                items: sortFinanceValues(
+                    financialProfitList?.items,
+                    grossMarginSortBy
+                ),
+            }));
+        }
+    }, [grossMarginSortBy]);
 
     return (
         <div className="flex flex-col justify-between gap-6 mb-8">
@@ -807,32 +854,32 @@ const Indicators = () => {
                                 <SortBtn
                                     label={"Поступления, млн руб."}
                                     value={"receipts.value"}
-                                    sortBy={sortBy}
-                                    setSortBy={setSortBy}
+                                    sortBy={receiptsSortBy}
+                                    setSortBy={setReceiptsSortBy}
                                 />
                             </div>
 
                             <SortBtn
                                 label={"Выручка, млн руб."}
                                 value={"revenue.value"}
-                                sortBy={sortBy}
-                                setSortBy={setSortBy}
+                                sortBy={revenueSortBy}
+                                setSortBy={setRevenueSortBy}
                                 className={"text-left ml-[10px]"}
                             />
 
                             <SortBtn
                                 label={"Валовая прибыль, млн руб."}
                                 value={"gross_profit.value"}
-                                sortBy={sortBy}
-                                setSortBy={setSortBy}
+                                sortBy={grossProfitSortBy}
+                                setSortBy={setGrossProfitSortBy}
                                 className={"text-left ml-[10px]"}
                             />
 
                             <SortBtn
                                 label={"Валовая рентабельность"}
                                 value={"gross_margin.value"}
-                                sortBy={sortBy}
-                                setSortBy={setSortBy}
+                                sortBy={grossMarginSortBy}
+                                setSortBy={setGrossMarginSortBy}
                                 className={"text-left ml-[10px]"}
                             />
                         </div>
