@@ -469,6 +469,8 @@ const Indicators = () => {
     useEffect(() => {
         if (!hasInitialized.current) return;
 
+        console.log(funnelMetricsFilters);
+
         if (isFunnelMetricsFiltersReady) {
             if (hasCalledFunnelMetricsOnSelected.current) {
                 hasCalledFunnelMetricsOnSelected.current = false;
@@ -556,6 +558,7 @@ const Indicators = () => {
                                         contragent_id: [evt.target.value],
                                     }))
                                 }
+                                value={funnelMetricsFilters.contragent_id || ""}
                             >
                                 <option value="">Заказчик</option>
                                 {contragents.length > 0 &&
@@ -568,7 +571,13 @@ const Indicators = () => {
 
                             <select
                                 className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
-                                onChange={(evt) => {}}
+                                onChange={(evt) => {
+                                    setFunnelMetricsFilters((prev) => ({
+                                        ...prev,
+                                        project_id: [evt.target.value],
+                                    }));
+                                }}
+                                value={funnelMetricsFilters.project_id || ""}
                             >
                                 <option value="">Проект</option>
                                 {projects.length > 0 &&
@@ -584,7 +593,13 @@ const Indicators = () => {
                     <button
                         type="button"
                         className="border rounded-lg py-1 px-5 h-[32px]"
-                        // onClick={() => setSelectedFilters([])}
+                        onClick={() =>
+                            setFunnelMetricsFilters((prev) => {
+                                const { project_id, contragent_id, ...rest } =
+                                    prev;
+                                return rest;
+                            })
+                        }
                     >
                         Очистить
                     </button>
