@@ -48,6 +48,23 @@ const Indicators = () => {
     const [selectedReportMonth, setSelectedReportMonth] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState({});
 
+    const [funnelMetricsFilters, setFunnelMetricsFilters] = useState({});
+    const [financialMetrics, setFinancialMetrics] = useState({});
+
+    const [financialList, setFinancialList] = useState({}); // Сортированные ключевые финансовые показатели - Поступления и выручка
+    const [financialProfitList, setFinancialProfitList] = useState({}); // Сортированные ключевые финансовые показатели - Выловая прибыль и рентабельность
+
+    const [funnelMetrics, setFunnelMetrics] = useState({});
+    const [employeeMetrics, setEmployeeMetrics] = useState({});
+
+    const [contragents, setContragents] = useState([]);
+    const [projects, setProjects] = useState([]);
+
+    const [filteredContragents, setFilteredContragents] = useState([]);
+    const [filteredProjects, setFilteredProjects] = useState([]);
+
+    const [completedReports, setCompletedReports] = useState([]);
+
     const [financialListFilters, setFinancialListFilters] = useState({
         type: ["project"],
         metric: ["revenue"],
@@ -64,18 +81,23 @@ const Indicators = () => {
         metric_type: ["headcount"],
     });
 
-    const [funnelMetricsFilters, setFunnelMetricsFilters] = useState({});
-    const [financialMetrics, setFinancialMetrics] = useState({});
+    const hasInitialized = useRef(false);
+    const hasCalledListOnSelected = useRef(false);
+    const hasCalledProfitListOnSelected = useRef(false);
+    const hasCalledFunnelMetricsOnSelected = useRef(false);
+    const hasEmployeeMetricsOnSelected = useRef(false);
 
-    const [financialList, setFinancialList] = useState({}); // Сортированные ключевые финансовые показатели - Поступления и выручка
-    const [financialProfitList, setFinancialProfitList] = useState({}); // Сортированные ключевые финансовые показатели - Выловая прибыль и рентабельность
+    const isFinancialListFiltersReady =
+        Object.keys(financialListFilters).length > 3;
 
-    const [funnelMetrics, setFunnelMetrics] = useState({});
-    const [employeeMetrics, setEmployeeMetrics] = useState({});
+    const isFinancialProfitListFiltersReady =
+        Object.keys(financialProfitListFilters).length > 3;
 
-    const [contragents, setContragents] = useState([]);
-    const [projects, setProjects] = useState([]);
-    const [completedReports, setCompletedReports] = useState([]);
+    const isFunnelMetricsFiltersReady =
+        Object.keys(funnelMetricsFilters).length > 1;
+
+    const isEmployeeMetricsFiltersReady =
+        Object.keys(employeeFilters).length > 3;
 
     const financialMetricsData = {
         labels: financialMetrics.monthly_chart?.map((item) => item.month),
@@ -352,6 +374,7 @@ const Indicators = () => {
             (response) => {
                 if (response?.status == 200) {
                     setContragents(response.data);
+                    setFilteredContragents(response.data);
                 }
             }
         );
@@ -362,33 +385,10 @@ const Indicators = () => {
         getData(`${import.meta.env.VITE_API_URL}projects`).then((response) => {
             if (response?.status == 200) {
                 setProjects(response.data);
+                setFilteredProjects(response.data);
             }
         });
     };
-
-    useEffect(() => {
-        getFilterOptions();
-        getContragents();
-        getProjects();
-    }, []);
-
-    const hasInitialized = useRef(false);
-    const hasCalledListOnSelected = useRef(false);
-    const hasCalledProfitListOnSelected = useRef(false);
-    const hasCalledFunnelMetricsOnSelected = useRef(false);
-    const hasEmployeeMetricsOnSelected = useRef(false);
-
-    const isFinancialListFiltersReady =
-        Object.keys(financialListFilters).length > 3;
-
-    const isFinancialProfitListFiltersReady =
-        Object.keys(financialProfitListFilters).length > 3;
-
-    const isFunnelMetricsFiltersReady =
-        Object.keys(funnelMetricsFilters).length > 1;
-
-    const isEmployeeMetricsFiltersReady =
-        Object.keys(employeeFilters).length > 3;
 
     useEffect(() => {
         if (!hasInitialized.current) {
@@ -469,8 +469,6 @@ const Indicators = () => {
     useEffect(() => {
         if (!hasInitialized.current) return;
 
-        console.log(funnelMetricsFilters);
-
         if (isFunnelMetricsFiltersReady) {
             if (hasCalledFunnelMetricsOnSelected.current) {
                 hasCalledFunnelMetricsOnSelected.current = false;
@@ -479,7 +477,25 @@ const Indicators = () => {
             getFunnelMetrics();
             getCompletedReports();
         }
+
+        // if (funnelMetricsFilters.contragent_id) {
+        //     console.log(funnelMetricsFilters.contragent_id);
+        // } else {
+        //     setFilteredContragents(contragents);
+        // }
+
+        // if (funnelMetricsFilters.project_id) {
+        //     console.log(funnelMetricsFilters.contragent_id);
+        // } else {
+        //     setFilteredProjects(projects);
+        // }
     }, [funnelMetricsFilters]);
+
+    useEffect(() => {
+        getFilterOptions();
+        getContragents();
+        getProjects();
+    }, []);
 
     return (
         <div className="flex flex-col justify-between gap-6 mb-8">
@@ -552,17 +568,43 @@ const Indicators = () => {
                         <div className="grid grid-cols-2 gap-5">
                             <select
                                 className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
-                                onChange={(evt) =>
+                                onChange={(evt) => {
                                     setFunnelMetricsFilters((prev) => ({
                                         ...prev,
                                         contragent_id: [evt.target.value],
-                                    }))
-                                }
+                                    }));
+
+                                    if (evt.target.value !== "") {
+                                        const selectedContragentProjects =
+                                            contragents.find(
+                                                (item) =>
+                                                    item.id ===
+                                                    +evt.target.value
+                                            ).project_ids;
+
+                                        if (
+                                            selectedContragentProjects.length >
+                                            0
+                                        ) {
+                                            setFilteredProjects(
+                                                projects.filter((item) =>
+                                                    selectedContragentProjects.includes(
+                                                        item.id
+                                                    )
+                                                )
+                                            );
+                                        } else {
+                                            setFilteredProjects(projects);
+                                        }
+                                    } else {
+                                        setFilteredProjects(projects);
+                                    }
+                                }}
                                 value={funnelMetricsFilters.contragent_id || ""}
                             >
                                 <option value="">Заказчик</option>
-                                {contragents.length > 0 &&
-                                    contragents.map((item) => (
+                                {filteredContragents.length > 0 &&
+                                    filteredContragents.map((item) => (
                                         <option key={item.id} value={item.id}>
                                             {item.program_name}
                                         </option>
@@ -576,12 +618,24 @@ const Indicators = () => {
                                         ...prev,
                                         project_id: [evt.target.value],
                                     }));
+
+                                    if (evt.target.value !== "") {
+                                        setFilteredContragents(
+                                            contragents.filter((item) =>
+                                                item.project_ids.includes(
+                                                    +evt.target.value
+                                                )
+                                            )
+                                        );
+                                    } else {
+                                        setFilteredContragents(contragents);
+                                    }
                                 }}
                                 value={funnelMetricsFilters.project_id || ""}
                             >
                                 <option value="">Проект</option>
-                                {projects.length > 0 &&
-                                    projects.map((item) => (
+                                {filteredProjects.length > 0 &&
+                                    filteredProjects.map((item) => (
                                         <option key={item.id} value={item.id}>
                                             {item.name}
                                         </option>
