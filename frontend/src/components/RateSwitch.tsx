@@ -15,7 +15,9 @@ const RateSwitch = ({
         <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2">
             <button
                 type="button"
-                className={`w-[12px] h-[12px] rounded-[50%] bg-red-400 hover:opacity-100 transition-opacity ${
+                className={`w-[12px] h-[12px] rounded-[50%] bg-red-400 ${
+                    mode === "edit" ? "hover:opacity-100" : "cursor-none"
+                } transition-opacity ${
                     reportRateData[name] === 0 ? "opacity-100" : "opacity-30"
                 }`}
                 title="Поставить оценку Плохо"
@@ -27,7 +29,9 @@ const RateSwitch = ({
             ></button>
             <button
                 type="button"
-                className={`w-[12px] h-[12px] rounded-[50%] bg-yellow-400 hover:opacity-100 transition-opacity ${
+                className={`w-[12px] h-[12px] rounded-[50%] bg-yellow-400 ${
+                    mode === "edit" ? "hover:opacity-100" : "cursor-none"
+                }  transition-opacity ${
                     reportRateData[name] === 1 ? "opacity-100" : "opacity-30"
                 }`}
                 title="Поставить оценку Средне"
@@ -39,7 +43,9 @@ const RateSwitch = ({
             ></button>
             <button
                 type="button"
-                className={`w-[12px] h-[12px] rounded-[50%] bg-green-400 hover:opacity-100 transition-opacity ${
+                className={`w-[12px] h-[12px] rounded-[50%] bg-green-400 ${
+                    mode === "edit" ? "hover:opacity-100" : "cursor-none"
+                }  transition-opacity ${
                     reportRateData[name] === 2 ? "opacity-100" : "opacity-30"
                 }`}
                 title="Поставить оценку Хорошо"

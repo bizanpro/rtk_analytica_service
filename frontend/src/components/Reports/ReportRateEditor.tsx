@@ -38,7 +38,11 @@ const ReportRateEditor = ({
     }, [reportData]);
 
     return (
-        <div className="px-4 py-3 min-h-full flex flex-col border-2 border-gray-300">
+        <div
+            className={`min-h-full flex flex-col ${
+                mode === "read" ? "p-2" : "border-2 border-gray-300 px-4 py-3"
+            }`}
+        >
             <div className="flex items-start gap-2 justify-between mb-3">
                 <div className="flex items-start gap-5 flex-grow">
                     <div>
