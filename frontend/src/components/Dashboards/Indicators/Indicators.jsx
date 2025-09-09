@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 import getData from "../../../utils/getData";
-import { sortFinanceValues } from "../../../utils/sortFinanceValues";
+
 import buildQueryParams from "../../../utils/buildQueryParams";
 
 import ChartDataLabels from "chartjs-plugin-datalabels";
@@ -15,7 +15,8 @@ import EmployeeItem from "./EmployeeItem";
 import EmployeeMetrics from "./EmployeeMetrics";
 import ManagerReportsWindow from "./ManagerReportsWindow";
 import Loader from "../../Loader";
-import SortBtn from "../../SortBtn";
+
+import FinancialIndicators from "./FinancialIndicators";
 
 import {
     Chart as ChartJS,
@@ -48,21 +49,6 @@ const Indicators = () => {
 
     const [filtertOptions, setFilterOptions] = useState([]);
 
-    const [receiptsSortBy, setReceiptsSortBy] = useState({
-        key: "",
-        action: "",
-    });
-    const [revenueSortBy, setRevenueSortBy] = useState({ key: "", action: "" });
-
-    const [grossProfitSortBy, setGrossProfitSortBy] = useState({
-        key: "",
-        action: "",
-    });
-    const [grossMarginSortBy, setGrossMarginSortBy] = useState({
-        key: "",
-        action: "",
-    });
-
     const [selectedReportMonth, setSelectedReportMonth] = useState([]);
     const [selectedFilters, setSelectedFilters] = useState({});
 
@@ -86,14 +72,7 @@ const Indicators = () => {
     const [financialMetrics, setFinancialMetrics] = useState({});
 
     const [financialList, setFinancialList] = useState({}); // Сортированные ключевые финансовые показатели - Поступления и выручка
-
-    const [sortedReceiptsList, setSortedReceiptsList] = useState({}); // Сортированные ключевые финансовые показатели - Поступления
-    const [sortedRevenueList, setSortedRevenueList] = useState({}); // Сортированные ключевые финансовые показатели - Выручка
-
     const [financialProfitList, setFinancialProfitList] = useState({}); // Сортированные ключевые финансовые показатели - Выловая прибыль и рентабельность
-
-    const [sortedGrossProfitList, setSortedGrossProfitList] = useState({}); // Сортированные ключевые финансовые показатели - Выловая прибыль
-    const [sortedGrossMarginList, setSortedGrossMarginListt] = useState({}); // Сортированные ключевые финансовые показатели - Валовая рентабельность
 
     const [funnelMetrics, setFunnelMetrics] = useState({});
     const [employeeMetrics, setEmployeeMetrics] = useState({});
@@ -154,71 +133,6 @@ const Indicators = () => {
                 categoryPercentage: 0.5,
                 stack: "stack1",
                 borderRadius: 2,
-            },
-        ],
-    };
-
-    // Ключевые финансовые показатели - Поступления
-    const financialListData1 = {
-        labels: sortedReceiptsList.items?.map((item) => item.name),
-        datasets: [
-            {
-                label: "",
-                data: sortedReceiptsList.items?.map((item) =>
-                    parseFloat(item.receipts.value)
-                ),
-                backgroundColor: "black",
-                borderRadius: 2,
-                categoryPercentage: 0.1,
-            },
-        ],
-    };
-
-    // Ключевые финансовые показатели - Выручка
-    const financialListData2 = {
-        labels: sortedRevenueList.items?.map((item) => item.name),
-        datasets: [
-            {
-                label: "",
-                data: sortedRevenueList.items?.map((item) =>
-                    parseFloat(item.revenue.value)
-                ),
-
-                backgroundColor: "black",
-                borderRadius: 2,
-                categoryPercentage: 0.1,
-            },
-        ],
-    };
-
-    // Ключевые финансовые показатели - Выловая прибыль
-    const financialProfitListData1 = {
-        labels: sortedGrossProfitList.items?.map((item) => item.name),
-        datasets: [
-            {
-                label: "",
-                data: sortedGrossProfitList.items?.map((item) =>
-                    parseFloat(item.gross_profit.value)
-                ),
-                backgroundColor: "black",
-                borderRadius: 2,
-                categoryPercentage: 0.5,
-            },
-        ],
-    };
-
-    // Ключевые финансовые показатели - Валовая рентабельность
-    const financialProfitListData2 = {
-        labels: sortedGrossMarginList.items?.map((item) => item.name),
-        datasets: [
-            {
-                label: "",
-                data: sortedGrossMarginList.items?.map((item) =>
-                    parseFloat(item.gross_margin.value)
-                ),
-                backgroundColor: "black",
-                borderRadius: 2,
-                categoryPercentage: 0.5,
             },
         ],
     };
@@ -317,39 +231,6 @@ const Indicators = () => {
                             ? label.slice(0, 20) + "…"
                             : label;
                     },
-                },
-                barPercentage: 0.7,
-                categoryPercentage: 0.8,
-            },
-        },
-    };
-
-    const horizontalOptionsNoLabels = {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: false,
-        indexAxis: "y",
-        plugins: {
-            legend: {
-                display: false,
-            },
-            title: {
-                display: false,
-                text: "",
-            },
-            datalabels: {
-                anchor: "end",
-                align: "end",
-                color: "#000",
-                formatter: (value) => value,
-            },
-        },
-
-        scales: {
-            // x: { beginAtZero: true, position: "top" },
-            y: {
-                ticks: {
-                    display: false,
                 },
                 barPercentage: 0.7,
                 categoryPercentage: 0.8,
@@ -491,8 +372,6 @@ const Indicators = () => {
         ).then((response) => {
             if (response?.status == 200) {
                 setFinancialList(response.data);
-                setSortedReceiptsList(response.data);
-                setSortedRevenueList(response.data);
             }
         });
     };
@@ -507,8 +386,6 @@ const Indicators = () => {
         ).then((response) => {
             if (response?.status == 200) {
                 setFinancialProfitList(response.data);
-                setSortedGrossProfitList(response.data);
-                setSortedGrossMarginListt(response.data);
             }
         });
     };
@@ -650,48 +527,6 @@ const Indicators = () => {
         }
     }, [funnelMetricsFilters]);
 
-    useEffect(() => {
-        if (financialList?.items) {
-            setSortedReceiptsList((prev) => ({
-                ...prev,
-                items: sortFinanceValues(financialList?.items, receiptsSortBy),
-            }));
-        }
-    }, [receiptsSortBy]);
-
-    useEffect(() => {
-        if (financialList?.items) {
-            setSortedRevenueList((prev) => ({
-                ...prev,
-                items: sortFinanceValues(financialList?.items, revenueSortBy),
-            }));
-        }
-    }, [revenueSortBy]);
-
-    useEffect(() => {
-        if (financialProfitList?.items) {
-            setSortedGrossProfitList((prev) => ({
-                ...prev,
-                items: sortFinanceValues(
-                    financialProfitList?.items,
-                    grossProfitSortBy
-                ),
-            }));
-        }
-    }, [grossProfitSortBy]);
-
-    useEffect(() => {
-        if (financialProfitList?.items) {
-            setSortedGrossMarginListt((prev) => ({
-                ...prev,
-                items: sortFinanceValues(
-                    financialProfitList?.items,
-                    grossMarginSortBy
-                ),
-            }));
-        }
-    }, [grossMarginSortBy]);
-
     return (
         <div className="flex flex-col justify-between gap-6 mb-8">
             {isLoading && <Loader transparent={true} />}
@@ -826,146 +661,12 @@ const Indicators = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-3 p-4">
-                        <div className="grid grid-cols-[32%_1fr_1fr_1fr]">
-                            <div className="flex items-center gap-5">
-                                <select
-                                    className="border-2 h-[30px] p-1 border-gray-300 w-full max-w-[125px] cursor-pointer"
-                                    onChange={(evt) => {
-                                        setFinancialListFilters((prev) => ({
-                                            ...prev,
-                                            type: [evt.target.value],
-                                        }));
-                                        setFinancialProfitListFilters(
-                                            (prev) => ({
-                                                ...prev,
-                                                type: [evt.target.value],
-                                            })
-                                        );
-
-                                        setReceiptsSortBy({
-                                            key: "",
-                                            action: "",
-                                        });
-
-                                        setRevenueSortBy({
-                                            key: "",
-                                            action: "",
-                                        });
-
-                                        setGrossProfitSortBy({
-                                            key: "",
-                                            action: "",
-                                        });
-
-                                        setGrossMarginSortBy({
-                                            key: "",
-                                            action: "",
-                                        });
-                                    }}
-                                >
-                                    <option value="project">Проект</option>
-                                    <option value="customer">Заказчик</option>
-                                </select>
-
-                                <SortBtn
-                                    label={"Поступления, млн руб."}
-                                    value={"receipts.value"}
-                                    sortBy={receiptsSortBy}
-                                    setSortBy={setReceiptsSortBy}
-                                />
-                            </div>
-
-                            <SortBtn
-                                label={"Выручка, млн руб."}
-                                value={"revenue.value"}
-                                sortBy={revenueSortBy}
-                                setSortBy={setRevenueSortBy}
-                                className={"text-left ml-[10px]"}
-                            />
-
-                            <SortBtn
-                                label={"Валовая прибыль, млн руб."}
-                                value={"gross_profit.value"}
-                                sortBy={grossProfitSortBy}
-                                setSortBy={setGrossProfitSortBy}
-                                className={"text-left ml-[10px]"}
-                            />
-
-                            <SortBtn
-                                label={"Валовая рентабельность"}
-                                value={"gross_margin.value"}
-                                sortBy={grossMarginSortBy}
-                                setSortBy={setGrossMarginSortBy}
-                                className={"text-left ml-[10px]"}
-                            />
-                        </div>
-
-                        <div className="h-[190px] overflow-x-hidden overflow-y-auto grid grid-cols-[32%_1fr_1fr_1fr] gap-2">
-                            <div
-                                style={{
-                                    height: `${Math.max(
-                                        300,
-                                        (financialProfitListData1.labels
-                                            ?.length || 0) * 40
-                                    )}px`,
-                                }}
-                            >
-                                <Bar
-                                    data={financialListData1}
-                                    options={horizontalOptions}
-                                />
-                            </div>
-
-                            <div
-                                className="pt-[8px]"
-                                style={{
-                                    height: `${Math.max(
-                                        300,
-                                        (financialProfitListData1.labels
-                                            ?.length || 0) * 40
-                                    )}px`,
-                                }}
-                            >
-                                <Bar
-                                    data={financialListData2}
-                                    options={horizontalOptionsNoLabels}
-                                />
-                            </div>
-
-                            <div
-                                className="pt-[8px]"
-                                style={{
-                                    height: `${Math.max(
-                                        300,
-                                        (financialProfitListData1.labels
-                                            ?.length || 0) * 40
-                                    )}px`,
-                                }}
-                            >
-                                <Bar
-                                    data={financialProfitListData1}
-                                    options={horizontalOptionsNoLabels}
-                                />
-                            </div>
-
-                            <div
-                                className="pt-[8px]"
-                                style={{
-                                    height: `${Math.max(
-                                        300,
-                                        (financialProfitListData1.labels
-                                            ?.length || 0) * 40
-                                    )}px`,
-                                }}
-                            >
-                                <Bar
-                                    data={financialProfitListData2}
-                                    options={horizontalOptionsNoLabels}
-                                />
-                            </div>
-                        </div>
-                    </div>
+                    <FinancialIndicators
+                        financialList={financialList}
+                        financialProfitList={financialProfitList}
+                        setFinancialListFilters={setFinancialListFilters}
+                        setFinancialProfitListFilters={setFinancialProfitListFilters}
+                    />
                 </section>
 
                 <section className="flex flex-col gap-8 border border-gray-300 p-4">
