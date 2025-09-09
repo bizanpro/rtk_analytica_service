@@ -12,7 +12,11 @@ const ManagementItem = ({
 }) => {
     return (
         <tr
-            className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
+            className={`border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer ${
+                props?.status?.toLowerCase() == "не начат"
+                    ? "opacity-[40%]"
+                    : ""
+            }`}
             onClick={() => {
                 !props.is_management
                     ? openRateReportEditor(props)
@@ -73,7 +77,12 @@ const ManagementItem = ({
                 } else {
                     return (
                         <td
-                            className="border-b border-gray-300 px-4 py-5 min-w-[180px] max-w-[200px] text-lg"
+                            className={`border-b border-gray-300 px-4 py-5 min-w-[180px] max-w-[200px] text-lg ${
+                                key === "status" &&
+                                value?.toLowerCase() == "утверждён"
+                                    ? "text-green-400"
+                                    : ""
+                            }`}
                             key={key}
                         >
                             {(() => {
