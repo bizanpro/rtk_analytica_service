@@ -7,7 +7,13 @@ import ReportRateEditor from "../Reports/ReportRateEditor";
 
 const URL = `${import.meta.env.VITE_API_URL}projects`;
 
-const ManagementReportsTab = ({ projectId }: { projectId: number }) => {
+const ManagementReportsTab = ({
+    projectId,
+    mode,
+}: {
+    projectId: number;
+    mode: string;
+}) => {
     const [list, setList] = useState([]);
     const [rateEditorState, setRateEditorState] = useState(false); // Редактор оценки отчёта
     const [reportData, setReportData] = useState({});
@@ -109,6 +115,7 @@ const ManagementReportsTab = ({ projectId }: { projectId: number }) => {
             reportData={reportData}
             closeEditor={closeRateReportEditor}
             updateReportDetails={updateReportDetails}
+            mode={mode}
         />
     );
 };

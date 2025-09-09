@@ -45,7 +45,10 @@ const ContragentCard = () => {
     let query;
 
     const handleInputChange = (e, name) => {
-        setContragentDataCustom((prev) => ({ ...prev, [name]: e.target.value }));
+        setContragentDataCustom((prev) => ({
+            ...prev,
+            [name]: e.target.value,
+        }));
         setContragentData((prev) => ({ ...prev, [name]: e.target.value }));
     };
 
@@ -565,6 +568,7 @@ const ContragentCard = () => {
                                             managerReports={
                                                 selectedManagerReports
                                             }
+                                            mode={"read"}
                                         />
                                     )}
                                 </div>

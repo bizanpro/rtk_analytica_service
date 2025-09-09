@@ -784,6 +784,7 @@ const Reports = () => {
                                         updateReportDetails={
                                             updateReportDetails
                                         }
+                                        mode={"edit"}
                                     />
                                 </div>
                             )}

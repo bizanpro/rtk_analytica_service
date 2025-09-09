@@ -23,6 +23,7 @@ import ProjectBudget from "./ProjectBudget";
 import Loader from "../Loader";
 import AutoResizeTextarea from "../AutoResizeTextarea";
 import ManagementReportsTab from "../ManagementReportsTab/ManagementReportsTab";
+import ManagementReportEditor from "../Reports/ManagementReportEditor";
 
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
@@ -1156,11 +1157,6 @@ const ProjectCard = () => {
                                                         );
                                                     }
                                                 }}
-                                                // disabled={
-                                                //     projectData.contragent_id
-                                                //         ? false
-                                                //         : true
-                                                // }
                                                 title={
                                                     projectData.contragent_id
                                                         ? "Открыть конструктор отчёта"
@@ -1262,6 +1258,7 @@ const ProjectCard = () => {
                                         "managementReports" && (
                                         <ManagementReportsTab
                                             projectId={projectId}
+                                            mode={"read"}
                                         />
                                     )}
                                 </div>

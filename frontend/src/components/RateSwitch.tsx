@@ -2,9 +2,15 @@ interface RateSwitchProps {
     name: string;
     rateHandler: (name: string, value: string | number) => void;
     reportRateData: Record<string, number | undefined>;
+    mode: string;
 }
 
-const RateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
+const RateSwitch = ({
+    name,
+    reportRateData,
+    rateHandler,
+    mode,
+}: RateSwitchProps) => {
     return (
         <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2">
             <button
@@ -14,6 +20,7 @@ const RateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
                 }`}
                 title="Поставить оценку Плохо"
                 onClick={(evt) => {
+                    if (mode == "read") return;
                     evt.stopPropagation();
                     rateHandler(name, 0);
                 }}
@@ -25,6 +32,7 @@ const RateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
                 }`}
                 title="Поставить оценку Средне"
                 onClick={(evt) => {
+                    if (mode == "read") return;
                     evt.stopPropagation();
                     rateHandler(name, 1);
                 }}
@@ -36,6 +44,7 @@ const RateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
                 }`}
                 title="Поставить оценку Хорошо"
                 onClick={(evt) => {
+                    if (mode == "read") return;
                     evt.stopPropagation();
                     rateHandler(name, 2);
                 }}

@@ -6,8 +6,8 @@ type Props = {
 const ManagementReportListItem = ({ openEditor, reportData }: Props) => {
     return (
         <li
-            className="grid items-center grid-cols-[20%_60px_20%_1fr] gap-3"
-            // onClick={() => openEditor(reportData)}
+            className="grid items-center grid-cols-[20%_60px_20%_1fr] gap-3 cursor-pointer"
+            onClick={() => openEditor(reportData)}
         >
             <div className="text-lg">{reportData.report_month}</div>
 

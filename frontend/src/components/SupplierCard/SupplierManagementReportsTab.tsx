@@ -9,8 +9,10 @@ const URL = `${import.meta.env.VITE_API_URL}projects`;
 
 const SupplierManagementReportsTab = ({
     managerReports,
+    mode,
 }: {
     managerReports: [];
+    mode: string;
 }) => {
     const [rateEditorState, setRateEditorState] = useState(false); // Редактор оценки отчёта
     const [reportData, setReportData] = useState({});
@@ -48,6 +50,7 @@ const SupplierManagementReportsTab = ({
         <ReportRateEditor
             reportData={reportData}
             closeEditor={closeRateReportEditor}
+            mode={mode}
             // updateReportDetails={updateReportDetails}
         />
     );
