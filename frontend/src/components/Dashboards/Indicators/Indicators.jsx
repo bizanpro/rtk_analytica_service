@@ -663,10 +663,7 @@ const Indicators = () => {
         if (financialList?.items) {
             setSortedRevenueList((prev) => ({
                 ...prev,
-                items: sortFinanceValues(
-                    financialList?.items,
-                    revenueSortBy
-                ),
+                items: sortFinanceValues(financialList?.items, revenueSortBy),
             }));
         }
     }, [revenueSortBy]);
@@ -845,6 +842,26 @@ const Indicators = () => {
                                                 type: [evt.target.value],
                                             })
                                         );
+
+                                        setReceiptsSortBy({
+                                            key: "",
+                                            action: "",
+                                        });
+
+                                        setRevenueSortBy({
+                                            key: "",
+                                            action: "",
+                                        });
+
+                                        setGrossProfitSortBy({
+                                            key: "",
+                                            action: "",
+                                        });
+
+                                        setGrossMarginSortBy({
+                                            key: "",
+                                            action: "",
+                                        });
                                     }}
                                 >
                                     <option value="project">Проект</option>
