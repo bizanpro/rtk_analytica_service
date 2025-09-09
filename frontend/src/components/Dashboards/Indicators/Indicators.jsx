@@ -647,13 +647,15 @@ const Indicators = () => {
                     <button
                         type="button"
                         className="border rounded-lg py-1 px-5 h-[32px]"
-                        onClick={() =>
+                        onClick={() => {
                             setFunnelMetricsFilters((prev) => {
                                 const { project_id, contragent_id, ...rest } =
                                     prev;
                                 return rest;
-                            })
-                        }
+                            });
+                            setFilteredProjects(projects);
+                            setFilteredContragents(contragents);
+                        }}
                     >
                         Очистить
                     </button>
