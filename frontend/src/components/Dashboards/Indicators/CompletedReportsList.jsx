@@ -53,7 +53,7 @@ const CompletedReportsList = ({ completedReports }) => {
 
             {reportWindowsState && (
                 <div
-                    className="bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%] p-3"
+                    className="w-full max-w-[500px] bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%] p-3"
                     style={{ minHeight: "calc(100vh - 10%)" }}
                 >
                     <ProjectReportWindow

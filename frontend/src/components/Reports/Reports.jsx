@@ -388,7 +388,7 @@ const Reports = () => {
             "PATCH",
             `${
                 import.meta.env.VITE_API_URL
-            }management-reports/project-manager/${report.id}`,
+            }management-reports/project-manager/${report.real_id}`,
             report
         )
             .then((response) => {
