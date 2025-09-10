@@ -65,7 +65,7 @@ const ReportItem = ({
                                 {value?.name?.toString() || "—"}
                                 <br />
                                 <span className="text-gray-400 text-sm">
-                                    {value?.industry?.name}
+                                    {props.industries?.main?.name}
                                 </span>
                             </td>
                         );

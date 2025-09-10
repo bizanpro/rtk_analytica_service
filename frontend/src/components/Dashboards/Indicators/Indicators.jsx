@@ -7,12 +7,11 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import FinancialMetrics from "./FinancialMetrics";
 import Sales from "./Sales";
 import GrossMetrics from "./GrossMetrics";
-import CompletedReportsStats from "./CompletedReportsStats";
+import CompletedReportsList from "./CompletedReportsList";
 import EmployeesStats from "./EmployeesStats";
+import FinancialIndicators from "./FinancialIndicators";
 import ManagerReportsWindow from "./ManagerReportsWindow";
 import Loader from "../../Loader";
-
-import FinancialIndicators from "./FinancialIndicators";
 
 import {
     Chart as ChartJS,
@@ -713,7 +712,15 @@ const Indicators = () => {
                     <Sales funnelMetrics={funnelMetrics} />
                 </section>
 
-                <CompletedReportsStats completedReports={completedReports} />
+                <section className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-3 border border-gray-300 p-4">
+                        <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
+                            Отчёты руководителей проектов (20)
+                        </h2>
+                    </div>
+
+                    <CompletedReportsList completedReports={completedReports} />
+                </section>
             </section>
         </div>
     );
