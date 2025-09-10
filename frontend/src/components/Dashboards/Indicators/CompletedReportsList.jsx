@@ -41,6 +41,12 @@ const CompletedReportsList = ({ completedReports }) => {
             </h2>
 
             <ul className="max-h-[280px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
+                <li className="grid items-center grid-cols-[30%_34%_34%] justify-between gap-3 mb-2 text-gray-400">
+                    <span>Проект</span>
+                    <span>Отчёт</span>
+                    <span>Период. выполн.</span>
+                </li>
+
                 {completedReports.items?.length > 0 &&
                     completedReports.items.map((report) => (
                         <CompletedReportItem
