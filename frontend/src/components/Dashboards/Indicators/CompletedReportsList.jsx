@@ -36,12 +36,12 @@ const CompletedReportsList = ({ completedReports }) => {
 
     return (
         <div className="flex flex-col gap-3 border border-gray-300 p-4">
-            <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
+            <h2 className="mb-2 text-2xl font-semibold tracking-tight text-balance">
                 Завершённые отчёты ({completedReports.items?.length || 0})
             </h2>
 
-            <ul className="max-h-[280px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
-                <li className="grid items-center grid-cols-[30%_34%_34%] justify-between gap-3 mb-2 text-gray-400">
+            <ul className="max-h-[280px] overflow-x-hidden overflow-y-auto p-2 flex flex-col gap-3">
+                <li className="grid items-center grid-cols-[30%_34%_34%] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
                     <span>Проект</span>
                     <span>Отчёт</span>
                     <span>Период. выполн.</span>

@@ -83,7 +83,7 @@ const EmployeesStats = ({ employeeMetrics, setEmployeeFilters }) => {
 
     return (
         <section className="flex flex-col gap-8 border border-gray-300 p-4">
-            <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
+            <h2 className="mb-2 text-2xl font-semibold tracking-tight text-balance">
                 Персонал
             </h2>
 

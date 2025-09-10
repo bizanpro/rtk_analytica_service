@@ -2,7 +2,7 @@ import CountUp from "react-countup";
 
 const FunnelMetrics = ({ funnelMetrics }) => {
     return (
-        <div className="flex items-center gap-2 mb-3 p-4 border-b border-gray-300">
+        <div className="flex items-center gap-2 mb-3 py-2">
             <div className="grid items-center grid-cols-2 justify-between gap-8 border-r border-gray-300 pr-[20px]">
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 font-medium">

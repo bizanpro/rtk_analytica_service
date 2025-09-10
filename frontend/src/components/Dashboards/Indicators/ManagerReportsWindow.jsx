@@ -56,7 +56,7 @@ const ManagerReportsWindow = ({ selectedReportMonth }) => {
     return (
         <div className="border-1 border-gray-300 p-4">
             <div className="flex items-center gap-2 w-full mb-3">
-                <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
+                <h2 className="mb-2 text-2xl font-semibold tracking-tight text-balance">
                     Отчёты менеджмента /{" "}
                     {reportsData.period?.report_month &&
                         formatDateYM(reportsData.period?.report_month)}

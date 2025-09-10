@@ -9,7 +9,7 @@ const FunnelProjectItem = ({
     current_stage,
 }) => {
     return (
-        <li className="grid grid-cols-[1fr_120px_80px_1fr] gap-2 items-start">
+        <li className="grid grid-cols-[200px_120px_85px_1fr] gap-2 items-start">
             <div className="flex flex-col">
                 <div className="text-lg">{name}</div>
                 <span className="text-gray-400">{industry?.name}</span>

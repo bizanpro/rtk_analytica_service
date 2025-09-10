@@ -10,6 +10,7 @@ import GrossMetrics from "./GrossMetrics";
 import CompletedReportsList from "./CompletedReportsList";
 import EmployeesStats from "./EmployeesStats";
 import FinancialIndicators from "./FinancialIndicators";
+import ProjectManagerReports from "./ProjectManagerReports";
 import ManagerReportsWindow from "./ManagerReportsWindow";
 import Loader from "../../Loader";
 
@@ -663,7 +664,7 @@ const Indicators = () => {
 
             <section className="flex flex-col gap-5">
                 <section className="flex flex-col gap-8 border border-gray-300 p-4">
-                    <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
+                    <h2 className="mb-2 text-2xl font-semibold tracking-tight text-balance">
                         Ключевые финансовые показатели
                     </h2>
 
@@ -713,11 +714,7 @@ const Indicators = () => {
                 </section>
 
                 <section className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-3 border border-gray-300 p-4">
-                        <h2 className="mb-4 text-3xl font-semibold tracking-tight text-balance">
-                            Отчёты руководителей проектов (20)
-                        </h2>
-                    </div>
+                    <ProjectManagerReports />
 
                     <CompletedReportsList completedReports={completedReports} />
                 </section>
