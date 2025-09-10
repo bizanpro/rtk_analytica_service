@@ -10,7 +10,7 @@ const CompletedReportItem = ({
         <li
             className="grid items-center grid-cols-[30%_34%_34%] justify-between gap-3 cursor-pointer"
             onClick={() => {
-                openReportEditor({ id });
+                openReportEditor({ id, contragent: project.contragent });
             }}
             title={`Открыть отчёт ${report_period_code}`}
         >

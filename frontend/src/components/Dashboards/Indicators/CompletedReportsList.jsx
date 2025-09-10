@@ -26,7 +26,7 @@ const CompletedReportsList = ({ completedReports }) => {
 
     // Открытие редактора отчёта
     const openReportEditor = (reportData) => {
-        // getContracts(reportData.contragent?.id);
+        getContracts(reportData.contragent?.id);
         setReportId(reportData.id);
 
         if (reportData.id) {
