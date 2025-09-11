@@ -11,7 +11,7 @@ import CompletedReportsList from "./CompletedReportsList";
 import EmployeesStats from "./EmployeesStats";
 import FinancialIndicators from "./FinancialIndicators";
 import ProjectManagerReports from "./ProjectManagerReports";
-import ManagerReportsWindow from "./ManagerReportsWindow";
+import ManagerReports from "./ManagerReports";
 import Loader from "../../Loader";
 
 import {
@@ -712,7 +712,7 @@ const Indicators = () => {
                 />
 
                 <section className="grid grid-cols-2 gap-4">
-                    <ManagerReportsWindow
+                    <ManagerReports
                         selectedReportMonth={selectedReportMonth}
                     />
 
@@ -720,7 +720,9 @@ const Indicators = () => {
                 </section>
 
                 <section className="grid grid-cols-2 gap-4">
-                    <ProjectManagerReports projectManagerReports={projectManagerReports} />
+                    <ProjectManagerReports
+                        projectManagerReports={projectManagerReports}
+                    />
 
                     <CompletedReportsList completedReports={completedReports} />
                 </section>

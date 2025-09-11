@@ -71,7 +71,7 @@ const ManagementReportEditor = ({
                 </div>
 
                 <textarea
-                    className="w-full border-2 border-gray-300 p-5 h-full max-h-[90%]"
+                    className="w-full border-2 border-gray-300 p-5 h-full max-h-[85%] resize-none"
                     placeholder="Добавьте описание"
                     type="text"
                     name={currentTab}
@@ -81,27 +81,31 @@ const ManagementReportEditor = ({
                 ></textarea>
             </div>
 
-            <div className="mt-5 grid grid-cols-2 items-center gap-6 shrink-0">
-                <button
-                    type="button"
-                    className="border rounded-lg py-2 px-5 bg-black text-white"
-                    onClick={() =>
-                        updateReport(managementReportData, "approve")
-                    }
-                    title="Сохранить и утвердить"
-                >
-                    Сохранить и утвердить
-                </button>
+            {mode == "edit" && (
+                <div className="mt-5 grid grid-cols-2 items-center gap-6 shrink-0">
+                    <button
+                        type="button"
+                        className="border rounded-lg py-2 px-5 bg-black text-white"
+                        onClick={() =>
+                            updateReport(managementReportData, "approve")
+                        }
+                        title="Сохранить и утвердить"
+                    >
+                        Сохранить и утвердить
+                    </button>
 
-                <button
-                    type="button"
-                    className="border rounded-lg py-2 px-5"
-                    onClick={() => updateReport(managementReportData, "save")}
-                    title="Сохранить без утверждения"
-                >
-                    Сохранить без утверждения
-                </button>
-            </div>
+                    <button
+                        type="button"
+                        className="border rounded-lg py-2 px-5"
+                        onClick={() =>
+                            updateReport(managementReportData, "save")
+                        }
+                        title="Сохранить без утверждения"
+                    >
+                        Сохранить без утверждения
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

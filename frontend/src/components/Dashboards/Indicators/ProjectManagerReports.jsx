@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import handleStatusString from "../../../utils/handleStatusString";
+
 import ReportRateEditor from "../../Reports/ReportRateEditor";
 
 const ProjectManagerReports = ({ projectManagerReports }) => {
@@ -27,7 +29,7 @@ const ProjectManagerReports = ({ projectManagerReports }) => {
             <h2 className="mb-2 text-2xl font-semibold tracking-tight text-balance">
                 Отчёты руководителей проектов{" "}
                 {projectManagerReports.length > 0 &&
-                    projectManagerReports.length}
+                    `(${projectManagerReports.length})`}
             </h2>
 
             <ul className="max-h-[280px] overflow-x-hidden overflow-y-auto p-2 flex flex-col gap-3">
@@ -68,7 +70,13 @@ const ProjectManagerReports = ({ projectManagerReports }) => {
                                 {item.responsible}
                             </div>
 
-                            <div className="text-lg">{item.status}</div>
+                            <div
+                                className={`text-lg ${handleStatusString(
+                                    item.status
+                                )}`}
+                            >
+                                {item.status}
+                            </div>
 
                             <div>
                                 <div className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 w-fit">

@@ -56,8 +56,8 @@ const Reports = () => {
     const [reportsList, setReportsList] = useState([]);
     const [managementList, setManagementList] = useState([]);
 
-    const [managementEditorState, setManagementEditorState] = useState(false); // Редактор оценки
-    const [rateEditorState, setRateEditorState] = useState(false); // Редактор отчёта менеджмента
+    const [managementEditorState, setManagementEditorState] = useState(false); // Редактор отчёта менеджмента
+    const [rateEditorState, setRateEditorState] = useState(false); // Редактор оценки
     const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
 
     const [reportData, setReportData] = useState({});
@@ -805,6 +805,7 @@ const Reports = () => {
                                         closeManagementReportEditor={
                                             closeManagementReportEditor
                                         }
+                                        mode={"edit"}
                                     />
                                 </div>
                             )}
