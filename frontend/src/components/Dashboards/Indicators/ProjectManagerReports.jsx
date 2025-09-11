@@ -31,7 +31,7 @@ const ProjectManagerReports = ({ projectManagerReports }) => {
             </h2>
 
             <ul className="max-h-[280px] overflow-x-hidden overflow-y-auto p-2 flex flex-col gap-3">
-                <li className="grid items-center grid-cols-[1fr_80px_150px_100px_80px] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
+                <li className="grid items-center grid-cols-[1fr_75px_140px_100px_80px] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
                     <span>Проект</span>
                     <span>Месяц</span>
                     <span>Рук.</span>
