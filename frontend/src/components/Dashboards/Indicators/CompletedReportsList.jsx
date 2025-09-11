@@ -10,6 +10,7 @@ const CompletedReportsList = ({ completedReports }) => {
 
     const [contracts, setContracts] = useState([]);
     const [reportId, setReportId] = useState(null);
+    const [reportName, setReportName] = useState(null);
 
     // Получение договоров для детального отчёта
     const getContracts = (contragentId) => {
@@ -28,8 +29,9 @@ const CompletedReportsList = ({ completedReports }) => {
     const openReportEditor = (reportData) => {
         getContracts(reportData.contragent?.id);
         setReportId(reportData.id);
+        setReportName(reportData.report_name);
 
-        if (reportData.id) {
+        if (reportData.id && reportName != "") {
             setReportWindowsState(true);
         }
     };
@@ -71,6 +73,7 @@ const CompletedReportsList = ({ completedReports }) => {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <ProjectReportWindow
+                            reportName={reportName}
                             reportWindowsState={setReportWindowsState}
                             contracts={contracts}
                             reportId={reportId}

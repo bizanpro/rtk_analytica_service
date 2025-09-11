@@ -25,6 +25,7 @@ const isValidDate = (str) => {
 };
 
 const ProjectReportWindow = ({
+    reportName,
     sendReport,
     reportWindowsState,
     contracts,
@@ -53,7 +54,7 @@ const ProjectReportWindow = ({
     const [teammates, setTeammates] = useState([]); // Члены команды
     const [contractors, setContractors] = useState([]); // Подрядчики
 
-    const [reportTypes, setReportTypes] = useState([]); 
+    const [reportTypes, setReportTypes] = useState([]);
     const [physicalPersons, setPhysicalPersons] = useState([]);
     const [roles, setRoles] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
@@ -584,7 +585,7 @@ const ProjectReportWindow = ({
             {reportId ? isLoading && <Loader /> : !isDataLoaded && <Loader />}
 
             <div className="text-2xl w-full">
-                {reportData.report_period_code}
+                {reportName ? reportName : reportData.report_period_code}
             </div>
 
             <div className="grid gap-3 grid-cols-2">
