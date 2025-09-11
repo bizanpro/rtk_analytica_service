@@ -120,7 +120,7 @@ const ManagementItem = ({
                                             {value?.toString() || "—"}
 
                                             {props.misc?.length > 0 && (
-                                                <ul className="flex flex-col gap-2">
+                                                <ul className="flex flex-wrap gap-2">
                                                     {props.misc?.map(
                                                         (item, index) => (
                                                             <li
