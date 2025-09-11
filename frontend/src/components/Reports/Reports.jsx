@@ -331,7 +331,7 @@ const Reports = () => {
         postData(
             "PATCH",
             `${import.meta.env.VITE_API_URL}management-reports/${
-                extendReportData.id
+                extendReportData.real_id
             }`,
             extendReportData
         )
