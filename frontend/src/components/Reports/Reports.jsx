@@ -61,6 +61,7 @@ const Reports = () => {
     const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
 
     const [reportData, setReportData] = useState({});
+    const [reportName, setReportName] = useState("");
     const [contracts, setContracts] = useState([]);
     const [reportId, setReportId] = useState(null);
 
@@ -250,7 +251,11 @@ const Reports = () => {
         getContracts(reportData.contragent?.id);
         setReportId(reportData.id);
 
-        if (reportData.id) {
+        setReportName(
+            `${reportData?.project?.name} / ${reportData?.report_period_code}`
+        );
+
+        if (reportData.id && reportName != "") {
             setReportWindowsState(true);
         }
     };
@@ -766,6 +771,7 @@ const Reports = () => {
                                 contracts={contracts}
                                 reportId={reportId}
                                 setReportId={setReportId}
+                                reportName={reportName}
                                 mode={"read"}
                             />
                         </div>
