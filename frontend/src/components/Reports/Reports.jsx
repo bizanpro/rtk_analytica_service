@@ -287,7 +287,7 @@ const Reports = () => {
                     ...reportData,
                     general_assessment: 0,
                 };
-                openManagementReportEditor(newReportData);
+                openRateReportEditor(newReportData);
                 break;
             }
 
@@ -296,7 +296,7 @@ const Reports = () => {
                     ...reportData,
                     general_assessment: 1,
                 };
-                openManagementReportEditor(newReportData);
+                openRateReportEditor(newReportData);
                 break;
             }
 
