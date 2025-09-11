@@ -59,16 +59,25 @@ const CompletedReportsList = ({ completedReports }) => {
 
             {reportWindowsState && (
                 <div
-                    className="w-full max-w-[500px] bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%] p-3"
-                    style={{ minHeight: "calc(100vh - 10%)" }}
+                    className="fixed w-[100vw] h-[100vh] inset-0 z-2"
+                    onClick={() => {
+                        setReportWindowsState(false);
+                        setReportId(null);
+                    }}
                 >
-                    <ProjectReportWindow
-                        reportWindowsState={setReportWindowsState}
-                        contracts={contracts}
-                        reportId={reportId}
-                        setReportId={setReportId}
-                        mode={"read"}
-                    />
+                    <div
+                        className="w-full max-w-[500px] bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%] p-3"
+                        style={{ minHeight: "calc(100vh - 10%)" }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <ProjectReportWindow
+                            reportWindowsState={setReportWindowsState}
+                            contracts={contracts}
+                            reportId={reportId}
+                            setReportId={setReportId}
+                            mode={"read"}
+                        />
+                    </div>
                 </div>
             )}
         </div>

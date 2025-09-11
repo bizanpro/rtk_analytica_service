@@ -64,6 +64,7 @@ const Indicators = () => {
     const [filteredProjects, setFilteredProjects] = useState([]);
 
     const [completedReports, setCompletedReports] = useState([]);
+    const [projectManagerReports, setProjectManagerReports] = useState([]);
 
     const [financialListFilters, setFinancialListFilters] = useState({
         type: ["project"],
@@ -326,6 +327,21 @@ const Indicators = () => {
         });
     };
 
+    // Получение отчетов руководителя проектов
+    const getProjectManagerReports = () => {
+        const queryString = buildQueryParams(funnelMetricsFilters);
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }company/project-manager-reports-dashboard?${queryString}`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setProjectManagerReports(response.data);
+            }
+        });
+    };
+
     const getFinancialList = () => {
         const queryString = buildQueryParams(financialListFilters);
 
@@ -419,6 +435,7 @@ const Indicators = () => {
         if (isFinancialListFiltersReady && isFinancialProfitListFiltersReady) {
             getFinancialMetrics();
             getCompletedReports();
+            getProjectManagerReports();
         }
     }, [selectedFilters]);
 
@@ -476,19 +493,8 @@ const Indicators = () => {
             }
             getFunnelMetrics();
             getCompletedReports();
+            getProjectManagerReports();
         }
-
-        // if (funnelMetricsFilters.contragent_id) {
-        //     console.log(funnelMetricsFilters.contragent_id);
-        // } else {
-        //     setFilteredContragents(contragents);
-        // }
-
-        // if (funnelMetricsFilters.project_id) {
-        //     console.log(funnelMetricsFilters.contragent_id);
-        // } else {
-        //     setFilteredProjects(projects);
-        // }
     }, [funnelMetricsFilters]);
 
     useEffect(() => {
@@ -714,7 +720,7 @@ const Indicators = () => {
                 </section>
 
                 <section className="grid grid-cols-2 gap-4">
-                    <ProjectManagerReports />
+                    <ProjectManagerReports projectManagerReports={projectManagerReports} />
 
                     <CompletedReportsList completedReports={completedReports} />
                 </section>
