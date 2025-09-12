@@ -56,7 +56,8 @@ const EmployeeMetrics = ({
                             )}
                             duration={1}
                             separator=" "
-                            decimals={2}
+                            decimals={1}
+                            decimal=","
                         />
                     </strong>
                     <small className="text-sm">{gross_salary?.label}</small>
@@ -85,7 +86,8 @@ const EmployeeMetrics = ({
                             )}
                             duration={1}
                             separator=" "
-                            decimals={2}
+                            decimals={1}
+                            decimal=","
                         />
                     </strong>
                     <small className="text-sm">{average_salary?.label}</small>

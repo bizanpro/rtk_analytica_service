@@ -23,7 +23,8 @@ const GrossMetrics = ({ financialMetrics }) => {
                             )}
                             duration={1}
                             separator=" "
-                            decimals={2}
+                            decimals={1}
+                            decimal=","
                         />
                     </strong>
                     <small className="text-sm">
@@ -52,6 +53,7 @@ const GrossMetrics = ({ financialMetrics }) => {
                             duration={1}
                             separator=" "
                             decimals={1}
+                            decimal=","
                         />
                     </strong>
                     <small className="text-sm">
