@@ -68,7 +68,7 @@ const FinancialIndicators = ({
             {
                 label: "",
                 data: sortedReceiptsList.items?.map((item) =>
-                    parseFloat(item.receipts.value)
+                    parseFloat(item.receipts.value.toString().replace(",", "."))
                 ),
                 backgroundColor: "black",
                 borderRadius: 2,
@@ -84,7 +84,7 @@ const FinancialIndicators = ({
             {
                 label: "",
                 data: sortedRevenueList.items?.map((item) =>
-                    parseFloat(item.revenue.value)
+                    parseFloat(item.revenue.value.toString().replace(",", "."))
                 ),
 
                 backgroundColor: "black",
@@ -101,7 +101,9 @@ const FinancialIndicators = ({
             {
                 label: "",
                 data: sortedGrossProfitList.items?.map((item) =>
-                    parseFloat(item.gross_profit.value)
+                    parseFloat(
+                        item.gross_profit.value.toString().replace(",", ".")
+                    )
                 ),
                 backgroundColor: "black",
                 borderRadius: 2,
@@ -117,7 +119,9 @@ const FinancialIndicators = ({
             {
                 label: "",
                 data: sortedGrossMarginList.items?.map((item) =>
-                    parseFloat(item.gross_margin.value)
+                    parseFloat(
+                        item.gross_margin.value.toString().replace(",", ".")
+                    )
                 ),
                 backgroundColor: "black",
                 borderRadius: 2,
@@ -144,7 +148,11 @@ const FinancialIndicators = ({
                 align: "left",
                 color: "#fff",
                 clip: true,
-                formatter: (value) => value,
+                formatter: (value) => {
+                    return typeof value === "number"
+                        ? value.toFixed(1).toString().replace(".", ",")
+                        : value;
+                },
             },
         },
 
@@ -192,7 +200,11 @@ const FinancialIndicators = ({
                 align: "left",
                 color: "#fff",
                 clip: true,
-                formatter: (value) => value,
+                formatter: (value) => {
+                    return typeof value === "number"
+                        ? value.toFixed(1).toString().replace(".", ",")
+                        : value;
+                },
             },
         },
 
@@ -328,9 +340,18 @@ const FinancialIndicators = ({
         setSortedGrossMarginListt(financialProfitList);
     }, [financialProfitList]);
 
-    console.log(financialList.items);
-    console.log(financialProfitList.items);
-    
+    useEffect(() => {
+        if (financialList.items && financialProfitList.items) {
+            const merged = financialList?.items?.map((item) => {
+                const match = financialProfitList?.items?.find(
+                    (el) => el.id === item.id
+                );
+                return { ...item, ...match };
+            });
+
+            console.log(merged);
+        }
+    }, [financialList, financialProfitList]);
 
     return (
         <div className="flex flex-col gap-3 p-4">
