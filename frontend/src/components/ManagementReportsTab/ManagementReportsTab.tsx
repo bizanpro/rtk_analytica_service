@@ -95,7 +95,7 @@ const ManagementReportsTab = ({
 
     return !rateEditorState ? (
         <ul className="grid gap-3">
-            <li className="grid items-center grid-cols-[20%_65px_20%_1fr] gap-3 mb-2 text-gray-400">
+            <li className="grid items-center grid-cols-[20%_65px_20%_1fr] gap-4 mb-2 text-gray-400">
                 <span>Месяц</span>
                 <span>Оценка</span>
                 <span>Статус</span>
