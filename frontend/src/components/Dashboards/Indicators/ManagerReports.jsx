@@ -59,48 +59,52 @@ const ManagerReports = ({ selectedReportMonth }) => {
                 {reportsList.length > 0 && `(${reportsList.length})`}
             </h2>
 
-            <ul className="max-h-[280px] overflow-x-hidden overflow-y-auto p-2 flex flex-col gap-3">
-                <li className="grid items-center grid-cols-[1fr_110px_150px_100px] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
+            <div className="p-2">
+                <div className="grid items-center grid-cols-[1fr_110px_150px_100px] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
                     <span>Отчёт</span>
                     <span>Месяц</span>
                     <span>Ответственный</span>
                     <span>Статус</span>
-                </li>
+                </div>
 
-                {reportsList.length > 0 &&
-                    reportsList.map((item) => (
-                        <li
-                            className="grid grid-cols-[1fr_120px_150px_100px] gap-2 items-start cursor-pointer"
-                            key={item.id}
-                            onClick={() => {
-                                openManagementReportEditor(item);
-                            }}
-                        >
-                            <div className="text-lg">{item.name}</div>
-
-                            <div className="text-lg">{item.report_month}</div>
-
-                            <div
-                                className="text-lg overflow-hidden text-ellipsis"
-                                style={{
-                                    WebkitLineClamp: 2,
-                                    WebkitBoxOrient: "vertical",
-                                    display: "-webkit-box",
+                <ul className="min-h-[350px] max-h-[350px] overflow-x-hidden overflow-y-auto flex flex-col gap-3 py-3">
+                    {reportsList.length > 0 &&
+                        reportsList.map((item) => (
+                            <li
+                                className="grid grid-cols-[1fr_120px_150px_100px] gap-2 items-start cursor-pointer"
+                                key={item.id}
+                                onClick={() => {
+                                    openManagementReportEditor(item);
                                 }}
                             >
-                                {item.physical_person?.name}
-                            </div>
+                                <div className="text-lg">{item.name}</div>
 
-                            <div
-                                className={`text-lg ${handleStatusString(
-                                    item.status
-                                )}`}
-                            >
-                                {item.status}
-                            </div>
-                        </li>
-                    ))}
-            </ul>
+                                <div className="text-lg">
+                                    {item.report_month}
+                                </div>
+
+                                <div
+                                    className="text-lg overflow-hidden text-ellipsis"
+                                    style={{
+                                        WebkitLineClamp: 2,
+                                        WebkitBoxOrient: "vertical",
+                                        display: "-webkit-box",
+                                    }}
+                                >
+                                    {item.physical_person?.name}
+                                </div>
+
+                                <div
+                                    className={`text-lg ${handleStatusString(
+                                        item.status
+                                    )}`}
+                                >
+                                    {item.status}
+                                </div>
+                            </li>
+                        ))}
+                </ul>
+            </div>
 
             {managementEditorState && (
                 <div

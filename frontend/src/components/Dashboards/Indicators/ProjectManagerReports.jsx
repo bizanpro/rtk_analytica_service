@@ -32,82 +32,88 @@ const ProjectManagerReports = ({ projectManagerReports }) => {
                     `(${projectManagerReports.length})`}
             </h2>
 
-            <ul className="max-h-[280px] overflow-x-hidden overflow-y-auto p-2 flex flex-col gap-3">
-                <li className="grid items-center grid-cols-[1fr_75px_140px_100px_80px] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
+            <div className="p-2">
+                <div className="grid items-center grid-cols-[1fr_75px_140px_100px_80px] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
                     <span>Проект</span>
                     <span>Месяц</span>
                     <span>Рук.</span>
                     <span>Статус</span>
                     <span>Оценка</span>
-                </li>
+                </div>
 
-                {projectManagerReports.length > 0 &&
-                    projectManagerReports.map((item) => (
-                        <li
-                            className="grid grid-cols-[1fr_80px_150px_100px_75px] gap-2 items-start cursor-pointer"
-                            key={item.id}
-                            onClick={() => {
-                                openRateReportEditor(item);
-                            }}
-                        >
-                            <div className="flex flex-col">
-                                <div className="text-lg">{item.project}</div>
-                                <span className="text-gray-400">
-                                    {item.industry}
-                                </span>
-                            </div>
-
-                            <div className="text-lg">{item.report_month}</div>
-
-                            <div
-                                className="text-lg overflow-hidden text-ellipsis"
-                                style={{
-                                    WebkitLineClamp: 2,
-                                    WebkitBoxOrient: "vertical",
-                                    display: "-webkit-box",
+                <ul className="min-h-[270px] max-h-[270px] overflow-x-hidden overflow-y-auto flex flex-col gap-3 py-3">
+                    {projectManagerReports.length > 0 &&
+                        projectManagerReports.map((item) => (
+                            <li
+                                className="grid grid-cols-[1fr_80px_150px_100px_75px] gap-2 items-start cursor-pointer"
+                                key={item.id}
+                                onClick={() => {
+                                    openRateReportEditor(item);
                                 }}
                             >
-                                {item.responsible}
-                            </div>
-
-                            <div
-                                className={`text-lg ${handleStatusString(
-                                    item.status
-                                )}`}
-                            >
-                                {item.status}
-                            </div>
-
-                            <div>
-                                <div className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 w-fit">
-                                    <div
-                                        className={`w-[12px] h-[12px] rounded-[50%] bg-red-400 ${
-                                            item.assessment === 0
-                                                ? "opacity-100"
-                                                : "opacity-30"
-                                        }`}
-                                    ></div>
-
-                                    <div
-                                        className={`w-[12px] h-[12px] rounded-[50%] bg-yellow-400 ${
-                                            item.assessment === 1
-                                                ? "opacity-100"
-                                                : "opacity-30"
-                                        }`}
-                                    ></div>
-
-                                    <div
-                                        className={`w-[12px] h-[12px] rounded-[50%] bg-green-400 ${
-                                            item.assessment === 2
-                                                ? "opacity-100"
-                                                : "opacity-30"
-                                        }`}
-                                    ></div>
+                                <div className="flex flex-col">
+                                    <div className="text-lg">
+                                        {item.project}
+                                    </div>
+                                    <span className="text-gray-400">
+                                        {item.industry}
+                                    </span>
                                 </div>
-                            </div>
-                        </li>
-                    ))}
-            </ul>
+
+                                <div className="text-lg">
+                                    {item.report_month}
+                                </div>
+
+                                <div
+                                    className="text-lg overflow-hidden text-ellipsis"
+                                    style={{
+                                        WebkitLineClamp: 2,
+                                        WebkitBoxOrient: "vertical",
+                                        display: "-webkit-box",
+                                    }}
+                                >
+                                    {item.responsible}
+                                </div>
+
+                                <div
+                                    className={`text-lg ${handleStatusString(
+                                        item.status
+                                    )}`}
+                                >
+                                    {item.status}
+                                </div>
+
+                                <div>
+                                    <div className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 w-fit">
+                                        <div
+                                            className={`w-[12px] h-[12px] rounded-[50%] bg-red-400 ${
+                                                item.assessment === 0
+                                                    ? "opacity-100"
+                                                    : "opacity-30"
+                                            }`}
+                                        ></div>
+
+                                        <div
+                                            className={`w-[12px] h-[12px] rounded-[50%] bg-yellow-400 ${
+                                                item.assessment === 1
+                                                    ? "opacity-100"
+                                                    : "opacity-30"
+                                            }`}
+                                        ></div>
+
+                                        <div
+                                            className={`w-[12px] h-[12px] rounded-[50%] bg-green-400 ${
+                                                item.assessment === 2
+                                                    ? "opacity-100"
+                                                    : "opacity-30"
+                                            }`}
+                                        ></div>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                </ul>
+            </div>
 
             {rateEditorState && (
                 <div

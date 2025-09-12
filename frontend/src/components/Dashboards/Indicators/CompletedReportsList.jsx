@@ -42,22 +42,24 @@ const CompletedReportsList = ({ completedReports }) => {
                 Завершённые отчёты ({completedReports.items?.length || 0})
             </h2>
 
-            <ul className="max-h-[280px] overflow-x-hidden overflow-y-auto p-2 flex flex-col gap-3">
-                <li className="grid items-center grid-cols-[30%_34%_34%] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
+            <div className="p-2">
+                <div className="grid items-center grid-cols-[30%_34%_34%] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
                     <span>Проект</span>
                     <span>Отчёт</span>
                     <span>Период. выполн.</span>
-                </li>
+                </div>
 
-                {completedReports.items?.length > 0 &&
-                    completedReports.items.map((report) => (
-                        <CompletedReportItem
-                            key={report.id}
-                            {...report}
-                            openReportEditor={openReportEditor}
-                        />
-                    ))}
-            </ul>
+                <ul className="min-h-[270px] max-h-[270px] overflow-x-hidden overflow-y-auto py-3 flex flex-col gap-3">
+                    {completedReports.items?.length > 0 &&
+                        completedReports.items.map((report) => (
+                            <CompletedReportItem
+                                key={report.id}
+                                {...report}
+                                openReportEditor={openReportEditor}
+                            />
+                        ))}
+                </ul>
+            </div>
 
             {reportWindowsState && (
                 <div
