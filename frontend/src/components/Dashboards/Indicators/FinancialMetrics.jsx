@@ -20,10 +20,14 @@ const FinancialMetrics = ({ financialMetrics }) => {
                 >
                     <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                         <CountUp
-                            end={financialMetrics.revenue?.value || 0}
+                            end={parseFloat(
+                                (
+                                    financialMetrics.revenue?.value || "0"
+                                ).replace(",", ".")
+                            )}
                             duration={1}
                             separator=" "
-                            decimals={3}
+                            decimals={2}
                         />
                     </strong>
                     <small className="text-sm">
@@ -52,10 +56,14 @@ const FinancialMetrics = ({ financialMetrics }) => {
                 >
                     <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                         <CountUp
-                            end={financialMetrics.receipts?.value || 0}
+                            end={parseFloat(
+                                (
+                                    financialMetrics.receipts?.value || "0"
+                                ).replace(",", ".")
+                            )}
                             duration={1}
                             separator=" "
-                            decimals={3}
+                            decimals={2}
                         />
                     </strong>
                     <small className="text-sm">
@@ -84,10 +92,15 @@ const FinancialMetrics = ({ financialMetrics }) => {
                 >
                     <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                         <CountUp
-                            end={financialMetrics.debts?.value || 0}
+                            end={parseFloat(
+                                (financialMetrics.debts?.value || "0").replace(
+                                    ",",
+                                    "."
+                                )
+                            )}
                             duration={1}
                             separator=" "
-                            decimals={3}
+                            decimals={2}
                         />
                     </strong>
                     <small className="text-sm">

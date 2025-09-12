@@ -22,7 +22,6 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                                 }
                                 duration={1}
                                 separator=" "
-                                decimals={2}
                             />
                         </strong>
                     </div>
@@ -43,7 +42,6 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                                 end={funnelMetrics?.proposal_sent?.value || 0}
                                 duration={1}
                                 separator=" "
-                                decimals={2}
                             />
                         </strong>
                     </div>
@@ -67,7 +65,6 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                                 end={funnelMetrics?.agreement?.value || 0}
                                 duration={1}
                                 separator=" "
-                                decimals={2}
                             />
                         </strong>
                     </div>
@@ -88,7 +85,6 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                                 end={funnelMetrics?.rejected?.value || 0}
                                 duration={1}
                                 separator=" "
-                                decimals={2}
                             />
                         </strong>
                     </div>
@@ -109,7 +105,6 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                                 end={funnelMetrics?.postponed?.value || 0}
                                 duration={1}
                                 separator=" "
-                                decimals={2}
                             />
                         </strong>
                     </div>

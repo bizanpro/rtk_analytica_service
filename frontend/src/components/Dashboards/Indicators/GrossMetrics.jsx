@@ -1,3 +1,5 @@
+import CountUp from "react-countup";
+
 const GrossMetrics = ({ financialMetrics }) => {
     return (
         <div className="grid items-stretch grid-cols-3 gap-3 mb-3">
@@ -13,7 +15,16 @@ const GrossMetrics = ({ financialMetrics }) => {
                     title={`${financialMetrics.gross_profit?.value} ${financialMetrics.gross_profit?.label}`}
                 >
                     <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
-                        {financialMetrics.gross_profit?.value}
+                        <CountUp
+                            end={parseFloat(
+                                (
+                                    financialMetrics.gross_profit?.value || "0"
+                                ).replace(",", ".")
+                            )}
+                            duration={1}
+                            separator=" "
+                            decimals={2}
+                        />
                     </strong>
                     <small className="text-sm">
                         {financialMetrics.gross_profit?.label}
@@ -36,7 +47,12 @@ const GrossMetrics = ({ financialMetrics }) => {
                         className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap"
                         title={`${financialMetrics.gross_margin?.value} ${financialMetrics.gross_margin?.label}`}
                     >
-                        {financialMetrics.gross_margin?.value}
+                        <CountUp
+                            end={financialMetrics.gross_margin?.value || "0"}
+                            duration={1}
+                            separator=" "
+                            decimals={1}
+                        />
                     </strong>
                     <small className="text-sm">
                         {financialMetrics.gross_margin?.label}

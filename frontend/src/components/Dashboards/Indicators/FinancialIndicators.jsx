@@ -72,7 +72,7 @@ const FinancialIndicators = ({
                 ),
                 backgroundColor: "black",
                 borderRadius: 2,
-                categoryPercentage: 0.1,
+                categoryPercentage: 0.2,
             },
         ],
     };
@@ -89,7 +89,7 @@ const FinancialIndicators = ({
 
                 backgroundColor: "black",
                 borderRadius: 2,
-                categoryPercentage: 0.1,
+                categoryPercentage: 0.2,
             },
         ],
     };
@@ -105,7 +105,7 @@ const FinancialIndicators = ({
                 ),
                 backgroundColor: "black",
                 borderRadius: 2,
-                categoryPercentage: 0.5,
+                categoryPercentage: 0.2,
             },
         ],
     };
@@ -121,7 +121,7 @@ const FinancialIndicators = ({
                 ),
                 backgroundColor: "black",
                 borderRadius: 2,
-                categoryPercentage: 0.5,
+                categoryPercentage: 0.2,
             },
         ],
     };
@@ -162,6 +162,14 @@ const FinancialIndicators = ({
                 barPercentage: 0.7,
                 categoryPercentage: 0.8,
             },
+            x: {
+                ticks: {
+                    display: false,
+                },
+                grid: {
+                    drawTicks: false,
+                },
+            },
         },
     };
 
@@ -189,10 +197,30 @@ const FinancialIndicators = ({
         scales: {
             y: {
                 ticks: {
-                    display: false,
+                    autoSkip: false,
+                    maxRotation: 0,
+                    callback: function (value) {
+                        let label = this.getLabelForValue(value);
+                        return label.length > 0 ? label.slice(0, 0) : label;
+                    },
                 },
                 barPercentage: 0.7,
                 categoryPercentage: 0.8,
+            },
+            // y: {
+            //     ticks: {
+            //         display: false,
+            //     },
+            //     barPercentage: 0.7,
+            //     categoryPercentage: 0.8,
+            // },
+            x: {
+                ticks: {
+                    display: false,
+                },
+                grid: {
+                    drawTicks: false,
+                },
             },
         },
     };
@@ -323,13 +351,16 @@ const FinancialIndicators = ({
                 />
             </div>
 
-            <div className="h-[190px] overflow-x-hidden overflow-y-auto grid grid-cols-[32%_1fr_1fr_1fr] gap-2">
+            <div className="h-[200px] overflow-x-hidden overflow-y-auto grid grid-cols-[32%_1fr_1fr_1fr]">
                 <div
                     style={{
-                        height: `${Math.max(
-                            300,
-                            (financialProfitListData1.labels?.length || 0) * 40
-                        )}px`,
+                        height:
+                            (financialProfitListData1.labels?.length || 0) > 5
+                                ? `${
+                                      financialProfitListData1.labels.length *
+                                      40
+                                  }px`
+                                : "200px",
                     }}
                 >
                     <Bar
@@ -339,12 +370,15 @@ const FinancialIndicators = ({
                 </div>
 
                 <div
-                    className="pt-[8px]"
+                    // className="pt-[9px]"
                     style={{
-                        height: `${Math.max(
-                            300,
-                            (financialProfitListData1.labels?.length || 0) * 40
-                        )}px`,
+                        height:
+                            (financialProfitListData1.labels?.length || 0) > 5
+                                ? `${
+                                      financialProfitListData1.labels.length *
+                                      40
+                                  }px`
+                                : "200px",
                     }}
                 >
                     <Bar
@@ -354,12 +388,15 @@ const FinancialIndicators = ({
                 </div>
 
                 <div
-                    className="pt-[8px]"
+                    // className="pt-[9px]"
                     style={{
-                        height: `${Math.max(
-                            300,
-                            (financialProfitListData1.labels?.length || 0) * 40
-                        )}px`,
+                        height:
+                            (financialProfitListData1.labels?.length || 0) > 5
+                                ? `${
+                                      financialProfitListData1.labels.length *
+                                      40
+                                  }px`
+                                : "200px",
                     }}
                 >
                     <Bar
@@ -369,12 +406,15 @@ const FinancialIndicators = ({
                 </div>
 
                 <div
-                    className="pt-[8px]"
+                    // className="pt-[9px]"
                     style={{
-                        height: `${Math.max(
-                            300,
-                            (financialProfitListData1.labels?.length || 0) * 40
-                        )}px`,
+                        height:
+                            (financialProfitListData1.labels?.length || 0) > 5
+                                ? `${
+                                      financialProfitListData1.labels.length *
+                                      40
+                                  }px`
+                                : "200px",
                     }}
                 >
                     <Bar
