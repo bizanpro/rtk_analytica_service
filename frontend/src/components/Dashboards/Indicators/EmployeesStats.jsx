@@ -76,7 +76,7 @@ const EmployeesStats = ({ employeeMetrics, setEmployeeFilters }) => {
                 ),
                 backgroundColor: "black",
                 borderRadius: 2,
-                categoryPercentage: 0.5,
+                categoryPercentage: 0.3,
             },
         ],
     };
@@ -118,11 +118,11 @@ const EmployeesStats = ({ employeeMetrics, setEmployeeFilters }) => {
                             </span>
                         </div>
 
-                        <div className="h-[280px] overflow-x-hidden overflow-y-auto">
+                        <div className="h-[250px] overflow-x-hidden overflow-y-auto">
                             <div
                                 style={{
                                     height: `${Math.max(
-                                        280,
+                                        250,
                                         (EmployeeMetricsData.labels?.length ||
                                             0) * 40
                                     )}px`,

@@ -158,6 +158,7 @@ const Indicators = () => {
     };
 
     const verticalOptions = {
+        maintainAspectRatio: false,
         responsive: true,
         animation: false,
         plugins: {
@@ -175,12 +176,15 @@ const Indicators = () => {
                 stacked: true,
             },
             y: {
-                stacked: true,
+                ticks: {
+                    display: false,
+                },
             },
         },
     };
 
     const verticalOptions2 = {
+        maintainAspectRatio: false,
         responsive: true,
         animation: false,
         indexAxis: "x",
@@ -198,7 +202,9 @@ const Indicators = () => {
                 stacked: true,
             },
             y: {
-                stacked: false,
+                ticks: {
+                    display: false,
+                },
             },
         },
     };
@@ -674,25 +680,31 @@ const Indicators = () => {
                         Ключевые финансовые показатели
                     </h2>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-10">
                         <div>
                             <FinancialMetrics
                                 financialMetrics={financialMetrics}
                             />
 
-                            <Bar
-                                data={financialMetricsData}
-                                options={verticalOptions}
-                            />
+                            <div className="h-[320px]">
+                                <Bar
+                                    data={financialMetricsData}
+                                    options={verticalOptions}
+                                    height={320}
+                                />
+                            </div>
                         </div>
 
                         <div>
                             <GrossMetrics financialMetrics={financialMetrics} />
 
-                            <Bar
-                                data={grossMetricsData}
-                                options={verticalOptions2}
-                            />
+                            <div className="h-[320px]">
+                                <Bar
+                                    data={grossMetricsData}
+                                    options={verticalOptions2}
+                                    height={320}
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -712,9 +724,7 @@ const Indicators = () => {
                 />
 
                 <section className="grid grid-cols-2 gap-4">
-                    <ManagerReports
-                        selectedReportMonth={selectedReportMonth}
-                    />
+                    <ManagerReports selectedReportMonth={selectedReportMonth} />
 
                     <Sales funnelMetrics={funnelMetrics} />
                 </section>

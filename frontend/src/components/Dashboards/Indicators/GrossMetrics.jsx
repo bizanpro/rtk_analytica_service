@@ -2,7 +2,7 @@ import CountUp from "react-countup";
 
 const GrossMetrics = ({ financialMetrics }) => {
     return (
-        <div className="grid items-stretch grid-cols-3 gap-3 mb-3">
+        <div className="grid items-stretch grid-cols-3 gap-3 mb-5 h-[90px]">
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 font-medium">
                     Валовая прибыль

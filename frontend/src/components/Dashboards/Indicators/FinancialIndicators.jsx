@@ -370,7 +370,6 @@ const FinancialIndicators = ({
                 </div>
 
                 <div
-                    // className="pt-[9px]"
                     style={{
                         height:
                             (financialProfitListData1.labels?.length || 0) > 5
@@ -388,7 +387,6 @@ const FinancialIndicators = ({
                 </div>
 
                 <div
-                    // className="pt-[9px]"
                     style={{
                         height:
                             (financialProfitListData1.labels?.length || 0) > 5
@@ -406,7 +404,6 @@ const FinancialIndicators = ({
                 </div>
 
                 <div
-                    // className="pt-[9px]"
                     style={{
                         height:
                             (financialProfitListData1.labels?.length || 0) > 5
