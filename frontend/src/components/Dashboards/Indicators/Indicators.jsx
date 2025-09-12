@@ -509,6 +509,10 @@ const Indicators = () => {
         getProjects();
     }, []);
 
+    useEffect(() => {
+        console.log(financialProfitListFilters);
+    }, [financialProfitListFilters]);
+
     return (
         <div className="flex flex-col justify-between gap-6 mb-8">
             {isLoading && <Loader transparent={true} />}

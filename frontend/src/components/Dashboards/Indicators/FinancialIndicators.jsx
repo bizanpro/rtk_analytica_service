@@ -52,7 +52,9 @@ const FinancialIndicators = ({
             {
                 label: "",
                 data: sortedMergedList?.map((item) =>
-                    parseFloat(item.receipts.value.toString().replace(",", "."))
+                    parseFloat(
+                        item.receipts?.value?.toString().replace(",", ".")
+                    )
                 ),
                 backgroundColor: "black",
                 borderRadius: 2,
@@ -68,7 +70,9 @@ const FinancialIndicators = ({
             {
                 label: "",
                 data: sortedMergedList?.map((item) =>
-                    parseFloat(item.revenue.value.toString().replace(",", "."))
+                    parseFloat(
+                        item.revenue?.value?.toString().replace(",", ".")
+                    )
                 ),
 
                 backgroundColor: "black",
@@ -86,7 +90,7 @@ const FinancialIndicators = ({
                 label: "",
                 data: sortedMergedList?.map((item) =>
                     parseFloat(
-                        item.gross_profit.value.toString().replace(",", ".")
+                        item.gross_profit?.value?.toString().replace(",", ".")
                     )
                 ),
                 backgroundColor: "black",
@@ -104,7 +108,7 @@ const FinancialIndicators = ({
                 label: "",
                 data: sortedMergedList?.map((item) =>
                     parseFloat(
-                        item.gross_margin.value.toString().replace(",", ".")
+                        item.gross_margin?.value?.toString().replace(",", ".")
                     )
                 ),
                 backgroundColor: "black",
@@ -291,6 +295,10 @@ const FinancialIndicators = ({
             setSortedMergetList(merged);
         }
     }, [financialList, financialProfitList]);
+
+    // useEffect(() => {
+    //     console.log(sortedMergedList);
+    // }, [sortedMergedList]);
 
     return (
         <div className="flex flex-col gap-3 p-4">
