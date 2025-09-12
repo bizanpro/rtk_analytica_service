@@ -1,10 +1,32 @@
 import { useState, useEffect } from "react";
 
-const SortBtn = ({ label, value, sortBy, setSortBy, className = "" }) => {
-    const [state, setState] = useState({
-        class: "",
-        title: "Сортировать по убыванию",
-    });
+const SortBtn = ({
+    label,
+    value,
+    sortBy,
+    setSortBy,
+    className = "",
+    initialSort = null,
+}) => {
+    const getInitialState = () => {
+        if (initialSort?.key === value) {
+            switch (initialSort.action) {
+                case "ascending":
+                    return {
+                        class: "sort-btn_ascending",
+                        title: "Сортировать по возрастанию",
+                    };
+                case "descending":
+                    return {
+                        class: "sort-btn_descending",
+                        title: "Отменить сортировку",
+                    };
+            }
+        }
+        return { class: "", title: "Сортировать по убыванию" };
+    };
+
+    const [state, setState] = useState(getInitialState);
 
     const handleState = () => {
         switch (state.class) {
@@ -39,12 +61,19 @@ const SortBtn = ({ label, value, sortBy, setSortBy, className = "" }) => {
 
     useEffect(() => {
         if (value !== sortBy.key) {
-            setState({
-                class: "",
-                title: "Сортировать по убыванию",
-            });
+            setState({ class: "", title: "Сортировать по убыванию" });
         }
-    }, [sortBy]);
+    }, [sortBy, value]);
+
+    useEffect(() => {
+        if (
+            initialSort?.key === value &&
+            (sortBy.key !== initialSort.key ||
+                sortBy.action !== initialSort.action)
+        ) {
+            setSortBy(initialSort);
+        }
+    }, [initialSort, value, sortBy, setSortBy]);
 
     return (
         <button

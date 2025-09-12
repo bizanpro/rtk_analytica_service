@@ -41,8 +41,8 @@ const FinancialIndicators = ({
     const [sortedMergedList, setSortedMergetList] = useState([]);
 
     const [sortBy, setSortBy] = useState({
-        key: "",
-        action: "",
+        key: "receipts.value",
+        action: "ascending",
     });
 
     // Ключевые финансовые показатели - Поступления
@@ -59,6 +59,7 @@ const FinancialIndicators = ({
                 backgroundColor: "black",
                 borderRadius: 2,
                 categoryPercentage: 0.3,
+                barThickness: 30,
             },
         ],
     };
@@ -78,11 +79,12 @@ const FinancialIndicators = ({
                 backgroundColor: "black",
                 borderRadius: 2,
                 categoryPercentage: 0.3,
+                barThickness: 30,
             },
         ],
     };
 
-    // // Ключевые финансовые показатели - Выловая прибыль
+    // Ключевые финансовые показатели - Выловая прибыль
     const financialProfitListData1 = {
         labels: sortedMergedList?.map((item) => item.name),
         datasets: [
@@ -96,11 +98,12 @@ const FinancialIndicators = ({
                 backgroundColor: "black",
                 borderRadius: 2,
                 categoryPercentage: 0.3,
+                barThickness: 30,
             },
         ],
     };
 
-    // // Ключевые финансовые показатели - Валовая рентабельность
+    // Ключевые финансовые показатели - Валовая рентабельность
     const financialProfitListData2 = {
         labels: sortedMergedList?.map((item) => item.name),
         datasets: [
@@ -114,6 +117,7 @@ const FinancialIndicators = ({
                 backgroundColor: "black",
                 borderRadius: 2,
                 categoryPercentage: 0.3,
+                barThickness: 30,
             },
         ],
     };
@@ -327,6 +331,10 @@ const FinancialIndicators = ({
                         value={"receipts.value"}
                         sortBy={sortBy}
                         setSortBy={setSortBy}
+                        initialSort={{
+                            key: "receipts.value",
+                            action: "ascending",
+                        }}
                     />
                 </div>
 
@@ -355,16 +363,16 @@ const FinancialIndicators = ({
                 />
             </div>
 
-            <div className="h-[200px] overflow-x-hidden overflow-y-auto grid grid-cols-[32%_1fr_1fr_1fr]">
+            <div className="h-[300px] overflow-x-hidden overflow-y-auto grid grid-cols-[32%_1fr_1fr_1fr]">
                 <div
                     style={{
                         height:
                             (financialProfitListData1.labels?.length || 0) > 5
                                 ? `${
                                       financialProfitListData1.labels.length *
-                                      40
+                                      60
                                   }px`
-                                : "200px",
+                                : "300px",
                     }}
                 >
                     <Bar
@@ -379,9 +387,9 @@ const FinancialIndicators = ({
                             (financialProfitListData1.labels?.length || 0) > 5
                                 ? `${
                                       financialProfitListData1.labels.length *
-                                      40
+                                      60
                                   }px`
-                                : "200px",
+                                : "300px",
                     }}
                 >
                     <Bar
@@ -396,9 +404,9 @@ const FinancialIndicators = ({
                             (financialProfitListData1.labels?.length || 0) > 5
                                 ? `${
                                       financialProfitListData1.labels.length *
-                                      40
+                                      60
                                   }px`
-                                : "200px",
+                                : "300px",
                     }}
                 >
                     <Bar
@@ -413,9 +421,9 @@ const FinancialIndicators = ({
                             (financialProfitListData1.labels?.length || 0) > 5
                                 ? `${
                                       financialProfitListData1.labels.length *
-                                      40
+                                      60
                                   }px`
-                                : "200px",
+                                : "300px",
                     }}
                 >
                     <Bar
