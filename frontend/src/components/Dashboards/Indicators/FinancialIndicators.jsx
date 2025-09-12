@@ -296,10 +296,6 @@ const FinancialIndicators = ({
         }
     }, [financialList, financialProfitList]);
 
-    // useEffect(() => {
-    //     console.log(sortedMergedList);
-    // }, [sortedMergedList]);
-
     return (
         <div className="flex flex-col gap-3 p-4">
             <div className="grid grid-cols-[32%_1fr_1fr_1fr]">
