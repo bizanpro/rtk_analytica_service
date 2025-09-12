@@ -4,7 +4,7 @@ const ProjectReportItem = ({
     status,
     report_period,
     days,
-    execution_period_code,
+    execution_period,
     openReportEditor,
     deleteReport,
     mode,
@@ -28,7 +28,7 @@ const ProjectReportItem = ({
             <div className="flex gap-3 items-center">
                 <div className="flex flex-col flex-grow">
                     <div className="text-lg">{days}</div>
-                    <span className="text-sm">{execution_period_code}</span>
+                    <span className="text-sm">{execution_period}</span>
                 </div>
             </div>
 
