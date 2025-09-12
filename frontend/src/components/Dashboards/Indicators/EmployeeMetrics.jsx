@@ -27,7 +27,6 @@ const EmployeeMetrics = ({
                             end={total_active_employees?.value || 0}
                             duration={1}
                             separator=" "
-                            decimals={0}
                         />
                     </strong>
                     <small className="text-sm">
@@ -52,10 +51,12 @@ const EmployeeMetrics = ({
                 >
                     <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                         <CountUp
-                            end={gross_salary?.value || 0}
+                            end={parseFloat(
+                                (gross_salary?.value || "0").replace(",", ".")
+                            )}
                             duration={1}
                             separator=" "
-                            decimals={3}
+                            decimals={2}
                         />
                     </strong>
                     <small className="text-sm">{gross_salary?.label}</small>
@@ -79,10 +80,12 @@ const EmployeeMetrics = ({
                 >
                     <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
                         <CountUp
-                            end={average_salary?.value || 0}
+                            end={parseFloat(
+                                (average_salary?.value || "0").replace(",", ".")
+                            )}
                             duration={1}
                             separator=" "
-                            decimals={3}
+                            decimals={2}
                         />
                     </strong>
                     <small className="text-sm">{average_salary?.label}</small>

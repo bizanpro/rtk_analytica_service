@@ -42,8 +42,8 @@ const EmployeesStats = ({ employeeMetrics, setEmployeeFilters }) => {
             },
             datalabels: {
                 anchor: "end",
-                align: "end",
-                color: "#000",
+                align: "left",
+                color: "#fff",
                 formatter: (value) => value,
             },
         },
@@ -62,6 +62,14 @@ const EmployeesStats = ({ employeeMetrics, setEmployeeFilters }) => {
                 },
                 barPercentage: 0.7,
                 categoryPercentage: 0.8,
+            },
+            x: {
+                ticks: {
+                    display: false,
+                },
+                grid: {
+                    drawTicks: false,
+                },
             },
         },
     };

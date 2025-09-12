@@ -72,7 +72,7 @@ const FinancialIndicators = ({
                 ),
                 backgroundColor: "black",
                 borderRadius: 2,
-                categoryPercentage: 0.2,
+                categoryPercentage: 0.3,
             },
         ],
     };
@@ -89,7 +89,7 @@ const FinancialIndicators = ({
 
                 backgroundColor: "black",
                 borderRadius: 2,
-                categoryPercentage: 0.2,
+                categoryPercentage: 0.3,
             },
         ],
     };
@@ -105,7 +105,7 @@ const FinancialIndicators = ({
                 ),
                 backgroundColor: "black",
                 borderRadius: 2,
-                categoryPercentage: 0.2,
+                categoryPercentage: 0.3,
             },
         ],
     };
@@ -121,7 +121,7 @@ const FinancialIndicators = ({
                 ),
                 backgroundColor: "black",
                 borderRadius: 2,
-                categoryPercentage: 0.2,
+                categoryPercentage: 0.3,
             },
         ],
     };
@@ -141,8 +141,9 @@ const FinancialIndicators = ({
             },
             datalabels: {
                 anchor: "end",
-                align: "end",
-                color: "#000",
+                align: "left",
+                color: "#fff",
+                clip: true,
                 formatter: (value) => value,
             },
         },
@@ -188,8 +189,9 @@ const FinancialIndicators = ({
             },
             datalabels: {
                 anchor: "end",
-                align: "end",
-                color: "#000",
+                align: "left",
+                color: "#fff",
+                clip: true,
                 formatter: (value) => value,
             },
         },
@@ -207,13 +209,62 @@ const FinancialIndicators = ({
                 barPercentage: 0.7,
                 categoryPercentage: 0.8,
             },
-            // y: {
-            //     ticks: {
-            //         display: false,
-            //     },
-            //     barPercentage: 0.7,
-            //     categoryPercentage: 0.8,
-            // },
+
+            x: {
+                ticks: {
+                    display: false,
+                },
+                grid: {
+                    drawTicks: false,
+                },
+            },
+        },
+    };
+
+    const horizontalOptionsWithPercent = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        indexAxis: "y",
+        plugins: {
+            legend: {
+                display: false,
+            },
+            title: {
+                display: false,
+                text: "",
+            },
+            datalabels: {
+                anchor: "end",
+                align: "left",
+                color: "#fff",
+                clip: true,
+                formatter: (value) => `${value}%`,
+            },
+            tooltip: {
+                callbacks: {
+                    label: (context) => {
+                        let value = context.raw;
+                        return `${value}%`;
+                    },
+                },
+            },
+        },
+
+        scales: {
+            y: {
+                ticks: {
+                    autoSkip: false,
+                    maxRotation: 0,
+                    callback: function (value) {
+                        let label = this.getLabelForValue(value);
+                        return label.length > 0 ? label.slice(0, 0) : label;
+                    },
+                },
+                barPercentage: 0.7,
+                categoryPercentage: 0.8,
+            },
+
             x: {
                 ticks: {
                     display: false,
@@ -416,7 +467,7 @@ const FinancialIndicators = ({
                 >
                     <Bar
                         data={financialProfitListData2}
-                        options={horizontalOptionsNoLabels}
+                        options={horizontalOptionsWithPercent}
                     />
                 </div>
             </div>
