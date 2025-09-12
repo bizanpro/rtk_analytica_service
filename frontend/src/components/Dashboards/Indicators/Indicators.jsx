@@ -105,8 +105,8 @@ const Indicators = () => {
         datasets: [
             {
                 label: "",
-                data: financialMetrics.monthly_chart?.map(
-                    (item) => item.revenue
+                data: financialMetrics.monthly_chart?.map((item) =>
+                    parseFloat(item.revenue?.toString().replace(",", "."))
                 ),
                 backgroundColor: "black",
                 categoryPercentage: 0.5,
@@ -115,8 +115,8 @@ const Indicators = () => {
             },
             {
                 label: "",
-                data: financialMetrics.monthly_chart?.map(
-                    (item) => item.receipts
+                data: financialMetrics.monthly_chart?.map((item) =>
+                    parseFloat(item.receipts?.toString().replace(",", "."))
                 ),
                 backgroundColor: "rgba(204, 204, 204, 0.5)",
                 categoryPercentage: 0.5,
@@ -132,8 +132,8 @@ const Indicators = () => {
             {
                 type: "line",
                 label: "",
-                data: financialMetrics.monthly_chart?.map(
-                    (item) => item.gross_margin
+                data: financialMetrics.monthly_chart?.map((item) =>
+                    parseFloat(item.gross_margin?.toString().replace(",", "."))
                 ),
                 backgroundColor: "rgba(204, 204, 204, 1)",
                 borderColor: "rgba(204, 204, 204, 1)",
@@ -146,8 +146,8 @@ const Indicators = () => {
             {
                 type: "bar",
                 label: "",
-                data: financialMetrics.monthly_chart?.map(
-                    (item) => item.gross_profit
+                data: financialMetrics.monthly_chart?.map((item) =>
+                    parseFloat(item.gross_profit?.toString().replace(",", "."))
                 ),
                 backgroundColor: "black",
                 categoryPercentage: 0.5,
