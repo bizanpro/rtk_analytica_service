@@ -37,37 +37,21 @@ const FinancialIndicators = ({
     setFinancialListFilters,
     setFinancialProfitListFilters,
 }) => {
-    const [sortedReceiptsList, setSortedReceiptsList] = useState({}); // Сортированные ключевые финансовые показатели - Поступления
-    const [sortedRevenueList, setSortedRevenueList] = useState({}); // Сортированные ключевые финансовые показатели - Выручка
+    const [mergedList, setMergetList] = useState([]);
+    const [sortedMergedList, setSortedMergetList] = useState([]);
 
-    const [sortedGrossProfitList, setSortedGrossProfitList] = useState({}); // Сортированные ключевые финансовые показатели - Выловая прибыль
-
-    const [sortedGrossMarginList, setSortedGrossMarginListt] = useState({}); // Сортированные ключевые финансовые показатели - Валовая рентабельность
-
-    const [receiptsSortBy, setReceiptsSortBy] = useState({
-        key: "",
-        action: "",
-    });
-
-    const [revenueSortBy, setRevenueSortBy] = useState({ key: "", action: "" });
-
-    const [grossProfitSortBy, setGrossProfitSortBy] = useState({
-        key: "",
-        action: "",
-    });
-
-    const [grossMarginSortBy, setGrossMarginSortBy] = useState({
+    const [sortBy, setSortBy] = useState({
         key: "",
         action: "",
     });
 
     // Ключевые финансовые показатели - Поступления
     const financialListData1 = {
-        labels: sortedReceiptsList.items?.map((item) => item.name),
+        labels: sortedMergedList?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: sortedReceiptsList.items?.map((item) =>
+                data: sortedMergedList?.map((item) =>
                     parseFloat(item.receipts.value.toString().replace(",", "."))
                 ),
                 backgroundColor: "black",
@@ -79,11 +63,11 @@ const FinancialIndicators = ({
 
     // Ключевые финансовые показатели - Выручка
     const financialListData2 = {
-        labels: sortedRevenueList.items?.map((item) => item.name),
+        labels: sortedMergedList?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: sortedRevenueList.items?.map((item) =>
+                data: sortedMergedList?.map((item) =>
                     parseFloat(item.revenue.value.toString().replace(",", "."))
                 ),
 
@@ -94,13 +78,13 @@ const FinancialIndicators = ({
         ],
     };
 
-    // Ключевые финансовые показатели - Выловая прибыль
+    // // Ключевые финансовые показатели - Выловая прибыль
     const financialProfitListData1 = {
-        labels: sortedGrossProfitList.items?.map((item) => item.name),
+        labels: sortedMergedList?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: sortedGrossProfitList.items?.map((item) =>
+                data: sortedMergedList?.map((item) =>
                     parseFloat(
                         item.gross_profit.value.toString().replace(",", ".")
                     )
@@ -112,13 +96,13 @@ const FinancialIndicators = ({
         ],
     };
 
-    // Ключевые финансовые показатели - Валовая рентабельность
+    // // Ключевые финансовые показатели - Валовая рентабельность
     const financialProfitListData2 = {
-        labels: sortedGrossMarginList.items?.map((item) => item.name),
+        labels: sortedMergedList?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: sortedGrossMarginList.items?.map((item) =>
+                data: sortedMergedList?.map((item) =>
                     parseFloat(
                         item.gross_margin.value.toString().replace(",", ".")
                     )
@@ -289,56 +273,10 @@ const FinancialIndicators = ({
     };
 
     useEffect(() => {
-        if (financialList?.items) {
-            setSortedReceiptsList((prev) => ({
-                ...prev,
-                items: sortFinanceValues(financialList?.items, receiptsSortBy),
-            }));
+        if (sortedMergedList.length > 0) {
+            setSortedMergetList(sortFinanceValues(mergedList, sortBy));
         }
-    }, [receiptsSortBy]);
-
-    useEffect(() => {
-        if (financialList?.items) {
-            setSortedRevenueList((prev) => ({
-                ...prev,
-                items: sortFinanceValues(financialList?.items, revenueSortBy),
-            }));
-        }
-    }, [revenueSortBy]);
-
-    useEffect(() => {
-        if (financialProfitList?.items) {
-            setSortedGrossProfitList((prev) => ({
-                ...prev,
-                items: sortFinanceValues(
-                    financialProfitList?.items,
-                    grossProfitSortBy
-                ),
-            }));
-        }
-    }, [grossProfitSortBy]);
-
-    useEffect(() => {
-        if (financialProfitList?.items) {
-            setSortedGrossMarginListt((prev) => ({
-                ...prev,
-                items: sortFinanceValues(
-                    financialProfitList?.items,
-                    grossMarginSortBy
-                ),
-            }));
-        }
-    }, [grossMarginSortBy]);
-
-    useEffect(() => {
-        setSortedReceiptsList(financialList);
-        setSortedRevenueList(financialList);
-    }, [financialList]);
-
-    useEffect(() => {
-        setSortedGrossProfitList(financialProfitList);
-        setSortedGrossMarginListt(financialProfitList);
-    }, [financialProfitList]);
+    }, [sortBy]);
 
     useEffect(() => {
         if (financialList.items && financialProfitList.items) {
@@ -349,7 +287,8 @@ const FinancialIndicators = ({
                 return { ...item, ...match };
             });
 
-            console.log(merged);
+            setMergetList(merged);
+            setSortedMergetList(merged);
         }
     }, [financialList, financialProfitList]);
 
@@ -369,22 +308,7 @@ const FinancialIndicators = ({
                                 type: [evt.target.value],
                             }));
 
-                            setReceiptsSortBy({
-                                key: "",
-                                action: "",
-                            });
-
-                            setRevenueSortBy({
-                                key: "",
-                                action: "",
-                            });
-
-                            setGrossProfitSortBy({
-                                key: "",
-                                action: "",
-                            });
-
-                            setGrossMarginSortBy({
+                            setSortBy({
                                 key: "",
                                 action: "",
                             });
@@ -397,32 +321,32 @@ const FinancialIndicators = ({
                     <SortBtn
                         label={"Поступления, млн руб."}
                         value={"receipts.value"}
-                        sortBy={receiptsSortBy}
-                        setSortBy={setReceiptsSortBy}
+                        sortBy={sortBy}
+                        setSortBy={setSortBy}
                     />
                 </div>
 
                 <SortBtn
                     label={"Выручка, млн руб."}
                     value={"revenue.value"}
-                    sortBy={revenueSortBy}
-                    setSortBy={setRevenueSortBy}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
                     className={"text-left ml-[10px]"}
                 />
 
                 <SortBtn
                     label={"Валовая прибыль, млн руб."}
                     value={"gross_profit.value"}
-                    sortBy={grossProfitSortBy}
-                    setSortBy={setGrossProfitSortBy}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
                     className={"text-left ml-[10px]"}
                 />
 
                 <SortBtn
                     label={"Валовая рентабельность"}
                     value={"gross_margin.value"}
-                    sortBy={grossMarginSortBy}
-                    setSortBy={setGrossMarginSortBy}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
                     className={"text-left ml-[10px]"}
                 />
             </div>
