@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import handleStatusString from "../../utils/handleStatusString";
+
 const ManagementReportEditor = ({
     managementReportData,
     setManagementReportData,
@@ -29,10 +31,17 @@ const ManagementReportEditor = ({
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-5 flex-grow">
                     <div className="text-2xl">
+                        {managementReportData.name} /{" "}
                         {managementReportData.report_month}
                     </div>
 
-                    <div>{managementReportData.status}</div>
+                    <div
+                        className={handleStatusString(
+                            managementReportData.status
+                        )}
+                    >
+                        {managementReportData.status}
+                    </div>
                 </div>
 
                 <button

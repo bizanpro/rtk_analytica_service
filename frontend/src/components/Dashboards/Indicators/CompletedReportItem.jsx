@@ -3,7 +3,7 @@ const CompletedReportItem = ({
     id,
     report_period_code,
     days,
-    execution_period_code,
+    execution_period,
     report_period,
     openReportEditor,
 }) => {
@@ -36,7 +36,7 @@ const CompletedReportItem = ({
             <div className="flex gap-3 items-center">
                 <div className="flex flex-col flex-grow">
                     <div className="text-lg">{days}</div>
-                    <span className="text-sm">{execution_period_code}</span>
+                    <span className="text-sm">{execution_period}</span>
                 </div>
             </div>
         </li>
