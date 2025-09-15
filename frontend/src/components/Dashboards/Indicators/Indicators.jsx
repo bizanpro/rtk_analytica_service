@@ -4,6 +4,8 @@ import getData from "../../../utils/getData";
 import buildQueryParams from "../../../utils/buildQueryParams";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
+import Loader from "../../Loader";
+import CreatableSelect from "react-select/creatable";
 import FinancialMetrics from "./FinancialMetrics";
 import Sales from "./Sales";
 import GrossMetrics from "./GrossMetrics";
@@ -12,7 +14,6 @@ import EmployeesStats from "./EmployeesStats";
 import FinancialIndicators from "./FinancialIndicators";
 import ProjectManagerReports from "./ProjectManagerReports";
 import ManagerReports from "./ManagerReports";
-import Loader from "../../Loader";
 
 import {
     Chart as ChartJS,
@@ -582,20 +583,45 @@ const Indicators = () => {
                         </span>
 
                         <div className="grid grid-cols-2 gap-5">
-                            <select
-                                className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
-                                onChange={(evt) => {
+                            <CreatableSelect
+                                isClearable
+                                options={
+                                    contragents.length > 0 &&
+                                    contragents.map((item) => ({
+                                        value: item.id,
+                                        label: item.program_name,
+                                    }))
+                                }
+                                className="executor-block__name-field border-2 border-gray-300 w-[240px]"
+                                placeholder="Заказчик"
+                                noOptionsMessage={() => "Совпадений нет"}
+                                isValidNewOption={() => false}
+                                value={
+                                    contragents
+                                        .map((item) => ({
+                                            value: item.id,
+                                            label: item.program_name,
+                                        }))
+                                        .find(
+                                            (opt) =>
+                                                opt.value ===
+                                                funnelMetricsFilters
+                                                    .contragent_id?.[0]
+                                        ) || null
+                                }
+                                onChange={(selectedOption) => {
+                                    const newValue =
+                                        selectedOption?.value || "";
+
                                     setFunnelMetricsFilters((prev) => ({
                                         ...prev,
-                                        contragent_id: [evt.target.value],
+                                        contragent_id: [newValue],
                                     }));
 
-                                    if (evt.target.value !== "") {
+                                    if (newValue != "") {
                                         const selectedContragentProjects =
                                             contragents.find(
-                                                (item) =>
-                                                    item.id ===
-                                                    +evt.target.value
+                                                (item) => item.id === +newValue
                                             ).project_ids;
 
                                         if (
@@ -616,30 +642,48 @@ const Indicators = () => {
                                         setFilteredProjects(projects);
                                     }
                                 }}
-                                value={funnelMetricsFilters.contragent_id || ""}
-                            >
-                                <option value="">Заказчик</option>
-                                {filteredContragents.length > 0 &&
-                                    filteredContragents.map((item) => (
-                                        <option key={item.id} value={item.id}>
-                                            {item.program_name}
-                                        </option>
-                                    ))}
-                            </select>
+                            />
 
-                            <select
-                                className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
-                                onChange={(evt) => {
+                            <CreatableSelect
+                                isClearable
+                                options={
+                                    filteredProjects.length > 0 &&
+                                    filteredProjects.map((item) => ({
+                                        value: item.id,
+                                        label: item.name,
+                                    }))
+                                }
+                                className="executor-block__name-field border-2 border-gray-300 w-[240px]"
+                                placeholder="Проект"
+                                noOptionsMessage={() => "Совпадений нет"}
+                                isValidNewOption={() => false}
+                                value={
+                                    filteredProjects
+                                        .map((item) => ({
+                                            value: item.id,
+                                            label: item.name,
+                                        }))
+                                        .find(
+                                            (opt) =>
+                                                opt.value ===
+                                                funnelMetricsFilters
+                                                    .project_id?.[0]
+                                        ) || null
+                                }
+                                onChange={(selectedOption) => {
+                                    const newValue =
+                                        selectedOption?.value || "";
+
                                     setFunnelMetricsFilters((prev) => ({
                                         ...prev,
-                                        project_id: [evt.target.value],
+                                        project_id: [newValue],
                                     }));
 
-                                    if (evt.target.value !== "") {
+                                    if (newValue != "") {
                                         setFilteredContragents(
                                             contragents.filter((item) =>
                                                 item.project_ids.includes(
-                                                    +evt.target.value
+                                                    newValue
                                                 )
                                             )
                                         );
@@ -647,22 +691,13 @@ const Indicators = () => {
                                         setFilteredContragents(contragents);
                                     }
                                 }}
-                                value={funnelMetricsFilters.project_id || ""}
-                            >
-                                <option value="">Проект</option>
-                                {filteredProjects.length > 0 &&
-                                    filteredProjects.map((item) => (
-                                        <option key={item.id} value={item.id}>
-                                            {item.name}
-                                        </option>
-                                    ))}
-                            </select>
+                            />
                         </div>
                     </div>
 
                     <button
                         type="button"
-                        className="border rounded-lg py-1 px-5 h-[32px]"
+                        className="border rounded-lg py-1 px-5 h-[32px] mb-2"
                         onClick={() => {
                             setFunnelMetricsFilters((prev) => {
                                 const { project_id, contragent_id, ...rest } =
