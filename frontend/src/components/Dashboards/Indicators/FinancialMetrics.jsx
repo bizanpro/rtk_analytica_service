@@ -1,5 +1,7 @@
 import CountUp from "react-countup";
 
+import getColorBySign from "../../../utils/getColorBySign";
+
 const FinancialMetrics = ({ financialMetrics }) => {
     return (
         <div className="grid items-stretch grid-cols-3 gap-3 mb-5 h-[90px]">
@@ -35,10 +37,19 @@ const FinancialMetrics = ({ financialMetrics }) => {
                         {financialMetrics.revenue?.label}
                     </small>
                 </div>
-                <div className="text-green-400">
-                    {financialMetrics.revenue?.change_percent > 0 &&
-                        `+${financialMetrics.revenue?.change_percent}%`}
-                </div>
+
+                {financialMetrics.revenue &&
+                    financialMetrics.revenue?.change_percent != "" && (
+                        <div
+                            className={`flex gap-1 ${getColorBySign(
+                                financialMetrics.revenue?.change_percent.toString(),
+                                "text-green-400",
+                                "text-red-400"
+                            )}`}
+                        >
+                            {`${financialMetrics.revenue?.change_percent}%`}
+                        </div>
+                    )}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -73,12 +84,21 @@ const FinancialMetrics = ({ financialMetrics }) => {
                         {financialMetrics.receipts?.label}
                     </small>
                 </div>
-                <div className="text-green-400">
-                    {financialMetrics.receipts?.change_percent > 0 &&
-                        `+${financialMetrics.receipts?.change_percent}%`}
-                </div>
+
+                {financialMetrics.receipts &&
+                    financialMetrics.receipts?.change_percent != "" && (
+                        <div
+                            className={`flex gap-1 ${getColorBySign(
+                                financialMetrics.receipts?.change_percent.toString(),
+                                "text-green-400",
+                                "text-red-400"
+                            )}`}
+                        >
+                            {`${financialMetrics.receipts?.change_percent}%`}
+                        </div>
+                    )}
             </div>
-            
+
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 font-medium">
                     ДЗ
@@ -113,10 +133,18 @@ const FinancialMetrics = ({ financialMetrics }) => {
                     </small>
                 </div>
 
-                <div className="text-red-400">
-                    {financialMetrics.debts?.change_percent > 0 &&
-                        `+${financialMetrics.debts?.change_percent}%`}
-                </div>
+                {financialMetrics.debts &&
+                    financialMetrics.debts?.change_percent != "" && (
+                        <div
+                            className={`flex gap-1 ${getColorBySign(
+                                financialMetrics.debts?.change_percent.toString(),
+                                "text-red-400",
+                                "text-green-400"
+                            )}`}
+                        >
+                            {`${financialMetrics.debts?.change_percent}%`}
+                        </div>
+                    )}
             </div>
         </div>
     );
