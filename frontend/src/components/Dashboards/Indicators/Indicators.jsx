@@ -249,8 +249,10 @@ const Indicators = () => {
                 if (response?.status == 200) {
                     setFilterOptions(response.data);
 
-                    const periodValue = response.data.periods[0]?.value;
-                    const reportMonthValue = response.data.months[0]?.value;
+                    const periodValue = response.data.periods[1]?.value;
+                    const reportMonthValue = response.data.months[1]?.value
+                        ? response.data.months[1]?.value
+                        : response.data.months[0]?.value;
 
                     setSelectedReportMonth({
                         report_month: [reportMonthValue],
@@ -514,7 +516,7 @@ const Indicators = () => {
             {isLoading && <Loader transparent={true} />}
 
             {/* ФИЛЬТРЫ */}
-            <section className="flex items-center justify-between gap-6">
+            <section className="filters flex items-center justify-between gap-6">
                 <div className="flex items-center gap-8">
                     <div className="flex flex-col">
                         <span className="block mb-2 text-gray-400">
@@ -522,6 +524,7 @@ const Indicators = () => {
                         </span>
                         <select
                             className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
+                            value={selectedFilters?.report_month?.[0] ?? ""}
                             onChange={(e) => {
                                 const selectedValue = Array.from(
                                     e.target.selectedOptions
@@ -551,6 +554,7 @@ const Indicators = () => {
                         </span>
                         <select
                             className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
+                            value={selectedFilters?.period?.[0] ?? ""}
                             onChange={(e) => {
                                 const selectedValue = Array.from(
                                     e.target.selectedOptions

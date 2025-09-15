@@ -281,10 +281,10 @@ const FinancialIndicators = ({
     };
 
     useEffect(() => {
-        if (sortedMergedList.length > 0) {
+        if (mergedList.length > 0) {
             setSortedMergetList(sortFinanceValues(mergedList, sortBy));
         }
-    }, [sortBy]);
+    }, [sortBy, mergedList]);
 
     useEffect(() => {
         if (financialList.items && financialProfitList.items) {
@@ -294,6 +294,8 @@ const FinancialIndicators = ({
                 );
                 return { ...item, ...match };
             });
+
+            console.log(merged);
 
             setMergetList(merged);
             setSortedMergetList(merged);
@@ -327,14 +329,10 @@ const FinancialIndicators = ({
                     </select>
 
                     <SortBtn
-                        label={"Поступления, млн руб."}
-                        value={"receipts.value"}
+                        label="Поступления, млн руб."
+                        value="receipts.value"
                         sortBy={sortBy}
                         setSortBy={setSortBy}
-                        initialSort={{
-                            key: "receipts.value",
-                            action: "ascending",
-                        }}
                     />
                 </div>
 
@@ -353,7 +351,6 @@ const FinancialIndicators = ({
                     setSortBy={setSortBy}
                     className={"text-left ml-[10px]"}
                 />
-
                 <SortBtn
                     label={"Валовая рентабельность"}
                     value={"gross_margin.value"}

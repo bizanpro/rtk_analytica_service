@@ -1,16 +1,9 @@
 import { useState, useEffect } from "react";
 
-const SortBtn = ({
-    label,
-    value,
-    sortBy,
-    setSortBy,
-    className = "",
-    initialSort = null,
-}) => {
+const SortBtn = ({ label, value, sortBy, setSortBy, className = "" }) => {
     const getInitialState = () => {
-        if (initialSort?.key === value) {
-            switch (initialSort.action) {
+        if (sortBy.key === value) {
+            switch (sortBy.action) {
                 case "ascending":
                     return {
                         class: "sort-btn_ascending",
@@ -31,59 +24,31 @@ const SortBtn = ({
     const handleState = () => {
         switch (state.class) {
             case "":
-                setState({
-                    class: "sort-btn_ascending",
-                    title: "Сортировать по возрастанию",
-                });
                 setSortBy({ key: value, action: "ascending" });
-
                 break;
 
             case "sort-btn_ascending":
-                setState({
-                    class: "sort-btn_descending",
-                    title: "Отменить сортировку",
-                });
                 setSortBy({ key: value, action: "descending" });
-
                 break;
 
             case "sort-btn_descending":
-                setState({
-                    class: "",
-                    title: "Сортировать по убыванию",
-                });
                 setSortBy({ key: "", action: "" });
-
                 break;
         }
     };
 
     useEffect(() => {
-        if (value !== sortBy.key) {
-            setState({ class: "", title: "Сортировать по убыванию" });
-        }
+        setState(getInitialState());
     }, [sortBy, value]);
-
-    useEffect(() => {
-        if (
-            initialSort?.key === value &&
-            (sortBy.key !== initialSort.key ||
-                sortBy.action !== initialSort.action)
-        ) {
-            setSortBy(initialSort);
-        }
-    }, [initialSort, value, sortBy, setSortBy]);
 
     return (
         <button
             type="button"
             className={`sort-btn ${className} ${state.class}`}
-            onClick={() => handleState()}
+            onClick={handleState}
             title={state.title}
         >
             {label}
-
             <span></span>
         </button>
     );
