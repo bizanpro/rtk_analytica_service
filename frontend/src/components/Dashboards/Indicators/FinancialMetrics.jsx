@@ -40,6 +40,7 @@ const FinancialMetrics = ({ financialMetrics }) => {
                         `+${financialMetrics.revenue?.change_percent}%`}
                 </div>
             </div>
+
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 font-medium">
                     Поступления
@@ -77,6 +78,7 @@ const FinancialMetrics = ({ financialMetrics }) => {
                         `+${financialMetrics.receipts?.change_percent}%`}
                 </div>
             </div>
+            
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 font-medium">
                     ДЗ

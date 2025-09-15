@@ -33,7 +33,7 @@ const ProjectManagerReports = ({ projectManagerReports }) => {
             </h2>
 
             <div className="p-2">
-                <div className="grid items-center grid-cols-[1fr_75px_140px_100px_80px] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
+                <div className="grid items-center grid-cols-[1fr_75px_185px_100px_85px] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
                     <span>Проект</span>
                     <span>Месяц</span>
                     <span>Рук.</span>
@@ -45,7 +45,7 @@ const ProjectManagerReports = ({ projectManagerReports }) => {
                     {projectManagerReports.length > 0 &&
                         projectManagerReports.map((item) => (
                             <li
-                                className="grid grid-cols-[1fr_80px_150px_100px_75px] gap-2 items-start cursor-pointer"
+                                className="grid grid-cols-[1fr_75px_180px_100px_85px] gap-3 items-start cursor-pointer"
                                 key={item.id}
                                 onClick={() => {
                                     openRateReportEditor(item);

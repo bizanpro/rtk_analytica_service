@@ -60,7 +60,7 @@ const ManagerReports = ({ selectedReportMonth }) => {
             </h2>
 
             <div className="p-2">
-                <div className="grid items-center grid-cols-[1fr_110px_150px_100px] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
+                <div className="grid items-center grid-cols-[1fr_100px_200px_100px] justify-between gap-3 pb-2 text-gray-400 border-b border-gray-300">
                     <span>Отчёт</span>
                     <span>Месяц</span>
                     <span>Ответственный</span>
@@ -71,7 +71,7 @@ const ManagerReports = ({ selectedReportMonth }) => {
                     {reportsList.length > 0 &&
                         reportsList.map((item) => (
                             <li
-                                className="grid grid-cols-[1fr_120px_150px_100px] gap-2 items-start cursor-pointer"
+                                className="grid grid-cols-[1fr_100px_200px_100px] gap-3 items-start cursor-pointer"
                                 key={item.id}
                                 onClick={() => {
                                     openManagementReportEditor(item);
@@ -91,7 +91,7 @@ const ManagerReports = ({ selectedReportMonth }) => {
                                         display: "-webkit-box",
                                     }}
                                 >
-                                    {item.physical_person?.name}
+                                    {item.physical_person}
                                 </div>
 
                                 <div
