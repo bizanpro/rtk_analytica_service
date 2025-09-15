@@ -1,10 +1,9 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 
-// import Select from "../Select";
 import Popup from "../Popup/Popup";
 import ReferenceItem from "./ReferenceItem";
 import ReferenceItemExtended from "./ReferenceItemExtended";
@@ -312,6 +311,20 @@ const SingleBook = () => {
                                 : item
                         )
                     );
+                    setRefBooksItems((booksItems) =>
+                        booksItems.map((item) =>
+                            item.id === data.contragent_id
+                                ? {
+                                      ...item,
+                                      contacts: [
+                                          ...(item.contacts || []),
+                                          response,
+                                      ],
+                                  }
+                                : item
+                        )
+                    );
+
                     toast("Контакт добавлен", {
                         type: "success",
                         containerId: "singleBook",
@@ -380,6 +393,7 @@ const SingleBook = () => {
                         pauseOnHover: false,
                         position: "top-center",
                     });
+                    getBooks();
                 } else {
                     toast.dismiss(query);
                     toast.error("Ошибка обновления записи", {
