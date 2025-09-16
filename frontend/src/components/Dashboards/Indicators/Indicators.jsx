@@ -224,6 +224,34 @@ const Indicators = () => {
                 display: false,
             },
             datalabels: false,
+            tooltip: {
+                displayColors: false,
+                callbacks: {
+                    label: (context) => {
+                        const month = context.label;
+                        const value = context.raw;
+
+                        let formattedValue = "—";
+                        if (typeof value === "number" && !isNaN(value)) {
+                            formattedValue = value.toLocaleString("ru-RU", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            });
+                        }
+
+                        let labelText = "";
+                        if (context.datasetIndex === 0) {
+                            labelText = "Валовая рентаб.";
+                            formattedValue = `${formattedValue}%`;
+                        } else if (context.datasetIndex === 1) {
+                            labelText = "Валовая прибыль, млн руб.";
+                        }
+
+                        return [month, labelText, formattedValue];
+                    },
+                    title: () => "",
+                },
+            },
         },
         scales: {
             x: {
