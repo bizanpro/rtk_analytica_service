@@ -1,18 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-import getData from "../../utils/getData";
-
-import ManagementReportListItem from "../ManagementReportsTab/ManagementReportListItem";
+import ContragentManagementReportListItem from "./ContragentManagementReportListItem";
 import ReportRateEditor from "../Reports/ReportRateEditor";
-
-const URL = `${import.meta.env.VITE_API_URL}projects`;
 
 const ContragentManagementReportsTab = ({
     managerReports,
-    mode
+    mode,
 }: {
     managerReports: [];
-    mode: string
+    mode: string;
 }) => {
     const [rateEditorState, setRateEditorState] = useState(false); // Редактор оценки отчёта
     const [reportData, setReportData] = useState({});
@@ -31,7 +27,8 @@ const ContragentManagementReportsTab = ({
 
     return !rateEditorState ? (
         <ul className="grid gap-3">
-            <li className="grid items-center grid-cols-[20%_15%_20%_1fr] gap-3 mb-2 text-gray-400">
+            <li className="grid items-center grid-cols-[18%_15%_46px_15%_1fr] gap-[20px] mb-2 text-gray-400">
+                <span>Проект</span>
                 <span>Месяц</span>
                 <span>Оценка</span>
                 <span>Статус</span>
@@ -40,7 +37,7 @@ const ContragentManagementReportsTab = ({
 
             {managerReports.length > 0 &&
                 managerReports.map((item) => (
-                    <ManagementReportListItem
+                    <ContragentManagementReportListItem
                         openEditor={openRateReportEditor}
                         reportData={item}
                     />
@@ -51,17 +48,8 @@ const ContragentManagementReportsTab = ({
             reportData={reportData}
             closeEditor={closeRateReportEditor}
             mode={mode}
-            // updateReportDetails={updateReportDetails}
         />
     );
 };
 
 export default ContragentManagementReportsTab;
-
-// interface RateSwitchProps {
-//     name: string;
-//     rateHandler: (name: string, value: string | number) => void;
-//     reportRateData: Record<string, number | undefined>;
-// }
-
-// const RateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
