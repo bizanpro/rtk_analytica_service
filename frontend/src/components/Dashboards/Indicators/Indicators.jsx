@@ -393,7 +393,7 @@ const Indicators = () => {
 
     // Получение отчетов руководителя проектов
     const getProjectManagerReports = () => {
-        const queryString = buildQueryParams(funnelMetricsFilters);
+        const queryString = buildQueryParams(selectedReportMonth);
 
         getData(
             `${
@@ -501,7 +501,6 @@ const Indicators = () => {
         if (isFinancialListFiltersReady && isFinancialProfitListFiltersReady) {
             getFinancialMetrics();
             getCompletedReports();
-            getProjectManagerReports();
         }
     }, [selectedFilters]);
 
@@ -520,6 +519,18 @@ const Indicators = () => {
         financialListFilters.period,
         financialListFilters.type,
     ]);
+
+    useEffect(() => {
+        if (!hasInitialized.current) return;
+
+        if (
+            selectedReportMonth?.report_month &&
+            selectedReportMonth.report_month.length > 0 &&
+            selectedReportMonth.report_month[0] !== ""
+        ) {
+            getProjectManagerReports();
+        }
+    }, [selectedReportMonth.report_month]);
 
     useEffect(() => {
         if (!hasInitialized.current) return;
@@ -559,7 +570,6 @@ const Indicators = () => {
             }
             getFunnelMetrics();
             getCompletedReports();
-            getProjectManagerReports();
         }
     }, [funnelMetricsFilters]);
 
