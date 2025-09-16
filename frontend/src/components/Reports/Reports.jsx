@@ -39,6 +39,7 @@ const Reports = () => {
     ];
 
     const FILTER_LABELS = [
+        { key: "projects", label: "Проект" },
         { key: "contragents", label: "Заказчик" },
         { key: "industries", label: "Отрасль" },
         { key: "creditors", label: "Банк" },
@@ -619,6 +620,7 @@ const Reports = () => {
                                                 )
                                             )}
                                     </select>
+
                                     <select
                                         className={
                                             "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"

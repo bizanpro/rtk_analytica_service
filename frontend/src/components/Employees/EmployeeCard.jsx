@@ -63,13 +63,13 @@ const EmployeeCard = () => {
     let query;
 
     // Свод по трудозатратам, массив доступных дат периода
-    const allowedDates = useMemo(() => {
-        return datesData.flatMap((yearData) =>
-            yearData.months.map(
-                (month) => new Date(yearData.year, month.number - 1, 1)
-            )
-        );
-    }, [datesData]);
+    // const allowedDates = useMemo(() => {
+    //     return datesData.flatMap((yearData) =>
+    //         yearData.months.map(
+    //             (month) => new Date(yearData.year, month.number - 1, 1)
+    //         )
+    //     );
+    // }, [datesData]);
 
     const handleSave = () => {
         const newErrors = {
@@ -415,11 +415,6 @@ const EmployeeCard = () => {
     }, [availablePersonalMonths]);
 
     useEffect(() => {
-        getDepartments();
-        getEmployee();
-    }, []);
-
-    useEffect(() => {
         if (employeeData?.is_active) {
             setEmployeeData((prev) => ({
                 ...prev,
@@ -438,6 +433,26 @@ const EmployeeCard = () => {
             }));
         }
     }, [employeeData?.is_staff]);
+
+    // Инициируем даты периода в своде по трудозатратам
+    useEffect(() => {
+        const today = new Date();
+
+        const endDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+
+        const startDate = new Date(
+            endDate.getFullYear(),
+            endDate.getMonth() - 2,
+            1
+        );
+
+        setDateRange([startDate, endDate]);
+    }, []);
+
+    useEffect(() => {
+        getDepartments();
+        getEmployee();
+    }, []);
 
     return (
         <main className="page">
@@ -763,7 +778,7 @@ const EmployeeCard = () => {
                                                     dateFormat="MM-yyyy"
                                                     placeholderText="мм.гггг - мм.гггг"
                                                     showMonthYearPicker
-                                                    includeDates={allowedDates}
+                                                    // includeDates={allowedDates}
                                                     locale={ru}
                                                 />
                                             </div>
