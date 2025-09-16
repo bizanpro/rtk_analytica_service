@@ -26,6 +26,11 @@ const customStyles = {
     }),
 };
 
+// const validateEmail = (email) => {
+//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//     return emailRegex.test(email);
+// };
+
 const EmployeeCard = () => {
     const { employeeId } = useParams();
     const navigate = useNavigate();
@@ -66,15 +71,10 @@ const EmployeeCard = () => {
         );
     }, [datesData]);
 
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
     const handleSave = () => {
         const newErrors = {
-            phone_number: !employeeData.phone_number,
-            email: !employeeData.email || !validateEmail(employeeData.email),
+            // phone_number: !employeeData.phone_number,
+            // email: !employeeData.email || !validateEmail(employeeData.email),
             dismissal_date:
                 !employeeData?.is_active && !employeeData.dismissal_date,
         };
