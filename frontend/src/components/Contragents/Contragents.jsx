@@ -81,9 +81,12 @@ const Contragents = () => {
         const searchQuery = event.value.toLowerCase();
 
         setIsLoading(true);
-        getData(`${URL}?page=${page}&active=true&search=${searchQuery}`, {
-            Accept: "application/json",
-        })
+        getData(
+            `${URL}?page=${page}&active=true&has_projects=true&scope=registry&search=${searchQuery}`,
+            {
+                Accept: "application/json",
+            }
+        )
             .then((response) => {
                 setList(response.data.data);
             })
@@ -117,9 +120,12 @@ const Contragents = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        getData(`${URL}?page=${page}&active=true`, {
-            Accept: "application/json",
-        })
+        getData(
+            `${URL}?page=${page}&active=true&has_projects=true&scope=registry`,
+            {
+                Accept: "application/json",
+            }
+        )
             .then((response) => {
                 setList((prev) => [...prev, ...response.data.data]);
                 setSortedList((prev) => [...prev, ...response.data.data]);

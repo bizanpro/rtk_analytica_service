@@ -395,14 +395,16 @@ const Indicators = () => {
 
     // Получение заказчиков
     const getContragents = () => {
-        getData(`${import.meta.env.VITE_API_URL}contragents?all=true`).then(
-            (response) => {
-                if (response?.status == 200) {
-                    setContragents(response.data);
-                    setFilteredContragents(response.data);
-                }
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }contragents?all=true&has_projects=true&scope=both`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setContragents(response.data);
+                setFilteredContragents(response.data);
             }
-        );
+        });
     };
 
     // Получение проектов
@@ -586,8 +588,8 @@ const Indicators = () => {
                             <CreatableSelect
                                 isClearable
                                 options={
-                                    contragents.length > 0 &&
-                                    contragents.map((item) => ({
+                                    filteredContragents.length > 0 &&
+                                    filteredContragents.map((item) => ({
                                         value: item.id,
                                         label: item.program_name,
                                     }))

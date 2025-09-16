@@ -272,24 +272,41 @@ const EmptyExecutorBlock = ({
                             isReadonly ? "bg-gray-100" : ""
                         }`}
                     >
-                        <select
-                            className="w-full h-full"
-                            onChange={(e) =>
+                        <CreatableSelect
+                            isClearable
+                            options={
+                                banks.length > 0 &&
+                                banks.map((item) => ({
+                                    value: item.id,
+                                    label: item.name,
+                                }))
+                            }
+                            className="w-full executor-block__name-field"
+                            placeholder="Выберите банк"
+                            noOptionsMessage={() => "Совпадений нет"}
+                            isValidNewOption={() => false}
+                            value={
+                                banks
+                                    ?.map((item) => ({
+                                        value: item.id,
+                                        label: item.name,
+                                    }))
+                                    .find(
+                                        (option) =>
+                                            option.value ===
+                                            newContact.creditor_id
+                                    ) || null
+                            }
+                            onChange={(selectedOption) => {
+                                const newValue = selectedOption?.value || "";
+
                                 setNewContact({
                                     ...newContact,
-                                    creditor_id: e.target.value,
-                                })
-                            }
-                            value={newContact.creditor_id}
-                            disabled={isReadonly}
-                        >
-                            <option value="">Выберите банк</option>
-                            {banks?.map((bank) => (
-                                <option value={bank.id} key={bank.id}>
-                                    {bank.name}
-                                </option>
-                            ))}
-                        </select>
+                                    creditor_id: newValue,
+                                });
+                            }}
+                        />
+
                         {errors.creditor_id && (
                             <p className="text-red-500 text-sm">
                                 Выберите банк

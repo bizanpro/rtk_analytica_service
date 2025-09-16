@@ -100,6 +100,7 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                         </small>
                     </div>
                 </div>
+
                 <div className="flex flex-col gap-2">
                     <div className="text-gray-400">Поступления</div>
                     <div className="flex items-center flex-grow gap-2">
@@ -122,6 +123,7 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                         </small>
                     </div>
                 </div>
+
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-gray-400">
                         ДЗ
@@ -150,6 +152,7 @@ const ProjectStatisticsBlock = forwardRef(({ projectId }, ref) => {
                     </div>
                 </div>
             </div>
+            
             <div className="grid items-stretch grid-cols-3 gap-3">
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center flex-grow gap-2 text-gray-400">
