@@ -171,6 +171,33 @@ const Indicators = () => {
                 text: "",
             },
             datalabels: false,
+
+            tooltip: {
+                displayColors: false,
+                callbacks: {
+                    label: (context) => {
+                        const month = context.label;
+                        const value = context.raw;
+
+                        const formattedValue = value
+                            ? value.toLocaleString("ru-RU", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                              })
+                            : "—";
+
+                        let labelText = "";
+                        if (context.datasetIndex === 0) {
+                            labelText = "Выручка, млн руб.";
+                        } else if (context.datasetIndex === 1) {
+                            labelText = "Поступления, млн руб.";
+                        }
+
+                        return [month, labelText, formattedValue];
+                    },
+                    title: () => "",
+                },
+            },
         },
         scales: {
             x: {
@@ -178,7 +205,7 @@ const Indicators = () => {
             },
             y: {
                 ticks: {
-                    display: false,
+                    // display: false,
                 },
             },
         },
@@ -204,7 +231,7 @@ const Indicators = () => {
             },
             y: {
                 ticks: {
-                    display: false,
+                    // display: false,
                 },
             },
         },
