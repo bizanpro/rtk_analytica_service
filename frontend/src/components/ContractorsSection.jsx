@@ -142,12 +142,46 @@ const ContractorsSection = ({
                 <div className="grid gap-3 grid-cols-1">
                     <div className="flex flex-col gap-2 justify-between">
                         <span className="text-gray-400"></span>
-                        <div
-                            className={`border-2 border-gray-300 p-1 ${
-                                mode == "read" ? "h-[32px]" : "h-[42px]"
-                            }`}
-                        >
-                            <select
+                        <div className="border-2 border-gray-300">
+                            <CreatableSelect
+                                isClearable
+                                options={
+                                    localContracts.length > 0 &&
+                                    localContracts.map((item) => ({
+                                        value: item.id,
+                                        label: item.contract_name,
+                                    }))
+                                }
+                                className="w-full executor-block__name-field"
+                                placeholder="Выберите договор"
+                                noOptionsMessage={() => "Совпадений нет"}
+                                isValidNewOption={() => false}
+                                value={
+                                    localContracts
+                                        ?.map((item) => ({
+                                            value: item.id,
+                                            label: item.contract_name,
+                                        }))
+                                        .find(
+                                            (option) =>
+                                                option.value ===
+                                                person?.contract_id
+                                        ) || null
+                                }
+                                onChange={(selectedOption) => {
+                                    const newValue =
+                                        selectedOption?.value || "";
+
+                                    handleContractorChange(
+                                        index,
+                                        "contract_id",
+                                        Number(newValue)
+                                    );
+                                }}
+                                isDisabled={mode === "read"}
+                            />
+
+                            {/* <select
                                 className="w-full h-full"
                                 value={person?.contract_id}
                                 onChange={(e) =>
@@ -157,7 +191,7 @@ const ContractorsSection = ({
                                         Number(e.target.value)
                                     )
                                 }
-                                disabled={mode === "read" ? true : false}
+                                disabled={mode === "read"}
                             >
                                 <option value="0">Выберите договор</option>
                                 {localContracts?.map((contract) => (
@@ -168,7 +202,7 @@ const ContractorsSection = ({
                                         {contract.contract_name}
                                     </option>
                                 ))}
-                            </select>
+                            </select> */}
                         </div>
                     </div>
                 </div>
