@@ -55,7 +55,8 @@ const Indicators = () => {
     const [financialList, setFinancialList] = useState({}); // Сортированные ключевые финансовые показатели - Поступления и выручка
     const [financialProfitList, setFinancialProfitList] = useState({}); // Сортированные ключевые финансовые показатели - Выловая прибыль и рентабельность
 
-    const [funnelMetrics, setFunnelMetrics] = useState({});
+    const [funnelMetrics, setFunnelMetrics] = useState({}); // Продажи
+
     const [employeeMetrics, setEmployeeMetrics] = useState({});
 
     const [contragents, setContragents] = useState([]);
@@ -96,7 +97,7 @@ const Indicators = () => {
         Object.keys(financialProfitListFilters).length > 3;
 
     const isFunnelMetricsFiltersReady =
-        Object.keys(funnelMetricsFilters).length > 1;
+        Object.keys(funnelMetricsFilters).length > 3;
 
     const isEmployeeMetricsFiltersReady =
         Object.keys(employeeFilters).length > 3;
@@ -265,7 +266,7 @@ const Indicators = () => {
         },
     };
 
-    // Обработка фильтров
+    // Добавляем значение отчетного месяца и периода в параметры запроса
     const handleFilterChange = (filterKey, value) => {
         const filteredValues = value.filter((v) => v !== "");
 
@@ -299,6 +300,7 @@ const Indicators = () => {
         }));
     };
 
+    // Получаем доступные фильтры
     const getFilterOptions = () => {
         getData(`${import.meta.env.VITE_API_URL}company/filter-options`).then(
             (response) => {
@@ -347,22 +349,6 @@ const Indicators = () => {
         );
     };
 
-    const getFinancialMetrics = () => {
-        setIsLoading(true);
-        const queryString = buildQueryParams(selectedFilters);
-
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }company/financial-metrics?${queryString}`
-        ).then((response) => {
-            if (response?.status == 200) {
-                setFinancialMetrics(response.data);
-                setIsLoading(false);
-            }
-        });
-    };
-
     // Получение сотрудников
     const getEmployeeMetrics = () => {
         const queryString = buildQueryParams(employeeFilters);
@@ -393,7 +379,14 @@ const Indicators = () => {
 
     // Получение отчетов руководителя проектов
     const getProjectManagerReports = () => {
-        const queryString = buildQueryParams(selectedReportMonth);
+        const query = {
+            ...funnelMetricsFilters,
+            ...selectedReportMonth,
+        };
+
+        delete query.period;
+
+        const queryString = buildQueryParams(query);
 
         getData(
             `${
@@ -406,6 +399,25 @@ const Indicators = () => {
         });
     };
 
+    // Ключевые финансовые показатели - верхняя часть
+    const getFinancialMetrics = () => {
+        setIsLoading(true);
+
+        const queryString = buildQueryParams(funnelMetricsFilters);
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }company/financial-metrics?${queryString}`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setFinancialMetrics(response.data);
+                setIsLoading(false);
+            }
+        });
+    };
+
+    // Ключевые финансовые показатели - левый блок
     const getFinancialList = () => {
         const queryString = buildQueryParams(financialListFilters);
 
@@ -420,6 +432,7 @@ const Indicators = () => {
         });
     };
 
+    // Ключевые финансовые показатели - правый блок
     const getFinancialProfitList = () => {
         const queryString = buildQueryParams(financialProfitListFilters);
 
@@ -434,6 +447,7 @@ const Indicators = () => {
         });
     };
 
+    // Продажи
     const getFunnelMetrics = () => {
         const queryString = buildQueryParams(funnelMetricsFilters);
 
@@ -478,21 +492,6 @@ const Indicators = () => {
             return;
         }
 
-        if (isFinancialListFiltersReady) {
-            getFinancialList();
-            hasCalledListOnSelected.current = true;
-        }
-
-        if (isFinancialProfitListFiltersReady) {
-            getFinancialProfitList();
-            hasCalledProfitListOnSelected.current = true;
-        }
-
-        if (isFunnelMetricsFiltersReady) {
-            getFunnelMetrics();
-            hasCalledFunnelMetricsOnSelected.current = true;
-        }
-
         if (isEmployeeMetricsFiltersReady) {
             getEmployeeMetrics();
             hasEmployeeMetricsOnSelected.current = true;
@@ -501,6 +500,9 @@ const Indicators = () => {
         if (isFinancialListFiltersReady && isFinancialProfitListFiltersReady) {
             getFinancialMetrics();
             getCompletedReports();
+
+            hasCalledListOnSelected.current = true;
+            hasCalledProfitListOnSelected.current = true;
         }
     }, [selectedFilters]);
 
@@ -523,18 +525,6 @@ const Indicators = () => {
     useEffect(() => {
         if (!hasInitialized.current) return;
 
-        if (
-            selectedReportMonth?.report_month &&
-            selectedReportMonth.report_month.length > 0 &&
-            selectedReportMonth.report_month[0] !== ""
-        ) {
-            getProjectManagerReports();
-        }
-    }, [selectedReportMonth.report_month]);
-
-    useEffect(() => {
-        if (!hasInitialized.current) return;
-
         if (isFinancialProfitListFiltersReady) {
             if (hasCalledProfitListOnSelected.current) {
                 hasCalledProfitListOnSelected.current = false;
@@ -551,14 +541,18 @@ const Indicators = () => {
     useEffect(() => {
         if (!hasInitialized.current) return;
 
-        if (isEmployeeMetricsFiltersReady) {
-            if (hasEmployeeMetricsOnSelected.current) {
-                hasEmployeeMetricsOnSelected.current = false;
-                return;
-            }
-            getEmployeeMetrics();
+        if (
+            selectedReportMonth?.report_month &&
+            selectedReportMonth.report_month.length > 0 &&
+            selectedReportMonth.report_month[0] !== ""
+        ) {
+            getProjectManagerReports(); // Отчёты руководителей проектов
         }
-    }, [employeeFilters]);
+    }, [
+        selectedReportMonth.report_month,
+        funnelMetricsFilters.contragent_id,
+        funnelMetricsFilters.project_id,
+    ]);
 
     useEffect(() => {
         if (!hasInitialized.current) return;
@@ -568,10 +562,26 @@ const Indicators = () => {
                 hasCalledFunnelMetricsOnSelected.current = false;
                 return;
             }
-            getFunnelMetrics();
-            getCompletedReports();
+
+            getFinancialMetrics(); // Ключевые финансовые показатели - верхняя часть
+            getFinancialList(); // Ключевые финансовые показатели - левый блок
+            getFinancialProfitList(); // Ключевые финансовые показатели - правый блок
+            getFunnelMetrics(); // Продажи
+            getCompletedReports(); // Завершенные отчеты
         }
     }, [funnelMetricsFilters]);
+
+    useEffect(() => {
+        if (!hasInitialized.current) return;
+
+        if (isEmployeeMetricsFiltersReady) {
+            if (hasEmployeeMetricsOnSelected.current) {
+                hasEmployeeMetricsOnSelected.current = false;
+                return;
+            }
+            getEmployeeMetrics();
+        }
+    }, [employeeFilters]);
 
     useEffect(() => {
         getFilterOptions();
@@ -685,6 +695,11 @@ const Indicators = () => {
                                         contragent_id: [newValue],
                                     }));
 
+                                    setFinancialListFilters((prev) => ({
+                                        ...prev,
+                                        contragent_id: [newValue],
+                                    }));
+
                                     if (newValue != "") {
                                         const selectedContragentProjects =
                                             contragents.find(
@@ -742,6 +757,11 @@ const Indicators = () => {
                                         selectedOption?.value || "";
 
                                     setFunnelMetricsFilters((prev) => ({
+                                        ...prev,
+                                        project_id: [newValue],
+                                    }));
+
+                                    setFinancialListFilters((prev) => ({
                                         ...prev,
                                         project_id: [newValue],
                                     }));
