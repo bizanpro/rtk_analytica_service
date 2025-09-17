@@ -3,13 +3,14 @@ import { useEffect, useState, useMemo } from "react";
 import getData from "../../utils/getData";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
-import { createDebounce } from "../../utils/debounce";
+// import { createDebounce } from "../../utils/debounce";
 import { sortList } from "../../utils/sortList";
 
 import ContragentItem from "./ContragentItem";
 import TheadSortButton from "../TheadSortButton/TheadSortButton";
 import Select from "../Select";
-import Search from "../Search/Search";
+import CreatableSelect from "react-select/creatable";
+// import Search from "../Search/Search";
 
 const Contragents = () => {
     const [list, setList] = useState([]);
@@ -77,28 +78,31 @@ const Contragents = () => {
         setSortedList(sortList(list, sortBy));
     };
 
-    const handleSearch = (event) => {
-        const searchQuery = event.value.toLowerCase();
+    // const handleSearch = (event) => {
+    //     const searchQuery = event.value.toLowerCase();
 
-        setIsLoading(true);
-        getData(
-            `${URL}?page=${page}&active=true&has_projects=true&scope=registry&search=${searchQuery}`,
-            {
-                Accept: "application/json",
-            }
-        )
-            .then((response) => {
-                setList(response.data.data);
-            })
-            .finally(() => setIsLoading(false));
-    };
+    //     setIsLoading(true);
+    //     getData(
+    //         `${URL}?page=${page}&active=true&has_projects=true&scope=registry&search=${searchQuery}`,
+    //         {
+    //             Accept: "application/json",
+    //         }
+    //     )
+    //         .then((response) => {
+    //             setList(response.data.data);
+    //         })
+    //         .finally(() => setIsLoading(false));
+    // };
 
-    const debounce = createDebounce(handleSearch, 300, true);
+    // const debounce = createDebounce(handleSearch, 300, true);
 
     // Заполняем селектор заказчиков
     const nameOptions = useMemo(() => {
         const allNames = sortedList
-            .map((item) => item.program_name)
+            .map((item) => ({
+                value: item.id,
+                label: item.program_name,
+            }))
             .filter((program_name) => program_name !== null);
 
         return Array.from(new Set(allNames));
@@ -135,7 +139,7 @@ const Contragents = () => {
     }, [page]);
 
     useEffect(() => {
-        selectedName === "default" && selectedStatus === "default"
+        selectedName === null && selectedStatus === "default"
             ? setIsFiltering(false)
             : setIsFiltering(true);
     }, [selectedName, selectedStatus]);
@@ -162,13 +166,31 @@ const Contragents = () => {
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        <Search
+                        {/* <Search
                             onSearch={debounce}
                             className="search-fullpage"
                             placeholder="Поиск заказчика"
-                        />
+                        /> */}
 
                         {nameOptions.length > 0 && (
+                            <CreatableSelect
+                                isClearable
+                                options={nameOptions}
+                                className="p-1 border border-gray-300 w-[300px] executor-block__name-field"
+                                placeholder="Заказчик"
+                                noOptionsMessage={() => "Совпадений нет"}
+                                isValidNewOption={() => false}
+                                onChange={(selectedOption) => {
+                                    if (selectedOption) {
+                                        setSelectedName(selectedOption.label);
+                                    } else {
+                                        setSelectedName(null);
+                                    }
+                                }}
+                            />
+                        )}
+
+                        {/* {nameOptions.length > 0 && (
                             <Select
                                 className={
                                     "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
@@ -179,7 +201,7 @@ const Contragents = () => {
                                     setSelectedName(evt.target.value);
                                 }}
                             />
-                        )}
+                        )} */}
 
                         {statusOptions.length > 0 && (
                             <select
