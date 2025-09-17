@@ -11,13 +11,13 @@ const SaleFunnelItem = ({
     handleActiveStageDate,
     mode,
 }) => {
-    let statusLabel = "";
+    // let statusLabel = "";
 
-    if (stage.type === "postponed") {
-        statusLabel = "Проект отложен";
-    } else if (stage.type === "rejected") {
-        statusLabel = "Получен отказ";
-    }
+    // if (stage.type === "postponed") {
+    //     statusLabel = "Проект отложен";
+    // } else if (stage.type === "rejected") {
+    //     statusLabel = "Получен отказ";
+    // }
 
     return (
         <li
@@ -38,9 +38,9 @@ const SaleFunnelItem = ({
 
                 <div className="flex flex-col">
                     {stage.name}
-                    <span className="text-gray-400 text-sm">
+                    {/* <span className="text-gray-400 text-sm">
                         {stage.type !== "main" && statusLabel}
-                    </span>
+                    </span> */}
                 </div>
             </div>
 
