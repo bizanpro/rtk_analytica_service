@@ -6,17 +6,20 @@ import ManagementItemRateSwitch from "./ManagementItemRateSwitch";
 const ManagementItem = ({
     columns,
     props,
+    selectedRateReport,
+    selectedReport,
     openManagementReportEditor,
     openRateReportEditor,
     managementReportEditorHandler,
 }) => {
     return (
         <tr
-            className={`border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer ${
+            className={`border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer 
+            ${
                 props?.status?.toLowerCase() == "не начат"
                     ? "opacity-[40%]"
                     : ""
-            }`}
+            } `}
             onClick={() => {
                 !props.is_management
                     ? openRateReportEditor(props)
@@ -112,12 +115,34 @@ const ManagementItem = ({
                                         </div>
                                     );
                                 } else if (
-                                    key === "name" &&
-                                    !props.is_management
+                                    props.is_management &&
+                                    key === "name"
+                                ) {
+                                    return (
+                                        <div
+                                            className={`${
+                                                selectedReport.id == props.id &&
+                                                "font-semibold"
+                                            }`}
+                                        >
+                                            {value?.toString() || "—"}
+                                        </div>
+                                    );
+                                } else if (
+                                    !props.is_management &&
+                                    key === "name"
                                 ) {
                                     return (
                                         <div className="flex flex-col gap-2">
-                                            {value?.toString() || "—"}
+                                            <div
+                                                className={`${
+                                                    selectedRateReport.real_id ==
+                                                        props.real_id &&
+                                                    "font-semibold"
+                                                }`}
+                                            >
+                                                {value?.toString() || "—"}
+                                            </div>
 
                                             {props.misc?.length > 0 && (
                                                 <ul className="flex flex-wrap gap-2">

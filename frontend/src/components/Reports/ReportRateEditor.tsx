@@ -24,9 +24,6 @@ const ReportRateEditor = ({
 }: Props) => {
     const [reportRateData, setReportRateData] = useState<object>(reportData);
 
-    console.log(reportRateData);
-    
-
     const rateHandler = (name: string, value: string | number) => {
         setReportRateData((prev) => ({
             ...prev,

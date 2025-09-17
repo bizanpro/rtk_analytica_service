@@ -179,12 +179,6 @@ const Reports = () => {
                 ),
             ];
 
-            console.log(
-                availableMonths.filter((item) =>
-                    monthsLabels.includes(item.label)
-                )
-            );
-
             setFilteredAvailableMonths(
                 availableMonths.filter((item) =>
                     monthsLabels.includes(item.label)
@@ -263,6 +257,7 @@ const Reports = () => {
 
     // Открытие окна редактора оценки отчета
     const openRateReportEditor = (props) => {
+        closeManagementReportEditor();
         setReportData(props);
         setRateEditorState(true);
     };
@@ -275,6 +270,7 @@ const Reports = () => {
 
     // Открытие окна редактора отчета менеджмента
     const openManagementReportEditor = (props) => {
+        closeRateReportEditor();
         setManagementReportData(props);
         setManagementEditorState(true);
     };
@@ -743,6 +739,8 @@ const Reports = () => {
                                         key={item.id}
                                         columns={COLUMNS[1]}
                                         props={item}
+                                        selectedRateReport={reportData}
+                                        selectedReport={managementReportData}
                                         openManagementReportEditor={
                                             openManagementReportEditor
                                         }
