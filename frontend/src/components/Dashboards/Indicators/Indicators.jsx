@@ -46,10 +46,12 @@ const Indicators = () => {
 
     const [filtertOptions, setFilterOptions] = useState([]);
 
-    const [selectedReportMonth, setSelectedReportMonth] = useState([]);
-    const [selectedFilters, setSelectedFilters] = useState({});
+    const [selectedReportMonth, setSelectedReportMonth] = useState([]); // Отчетный месяц
 
-    const [funnelMetricsFilters, setFunnelMetricsFilters] = useState({});
+    const [selectedFilters, setSelectedFilters] = useState({}); // Отчетный месяц, отчетный период
+
+    const [mainFilters, setMainFilters] = useState({}); // Отчетный месяц, отчетный период, заказчик, проект
+
     const [financialMetrics, setFinancialMetrics] = useState({});
 
     const [financialList, setFinancialList] = useState({}); // Сортированные ключевые финансовые показатели - Поступления и выручка
@@ -85,9 +87,13 @@ const Indicators = () => {
     });
 
     const hasInitialized = useRef(false);
+
     const hasCalledListOnSelected = useRef(false);
+
     const hasCalledProfitListOnSelected = useRef(false);
-    const hasCalledFunnelMetricsOnSelected = useRef(false);
+
+    const hasCalledMainMetricsOnSelected = useRef(false);
+
     const hasEmployeeMetricsOnSelected = useRef(false);
 
     const isFinancialListFiltersReady =
@@ -96,8 +102,7 @@ const Indicators = () => {
     const isFinancialProfitListFiltersReady =
         Object.keys(financialProfitListFilters).length > 3;
 
-    const isFunnelMetricsFiltersReady =
-        Object.keys(funnelMetricsFilters).length > 3;
+    const isMainFiltersReady = Object.keys(mainFilters).length > 1;
 
     const isEmployeeMetricsFiltersReady =
         Object.keys(employeeFilters).length > 3;
@@ -289,7 +294,7 @@ const Indicators = () => {
             [filterKey]: filteredValues.length > 0 ? filteredValues : [],
         }));
 
-        setFunnelMetricsFilters((prev) => ({
+        setMainFilters((prev) => ({
             ...prev,
             [filterKey]: filteredValues.length > 0 ? filteredValues : [],
         }));
@@ -321,6 +326,12 @@ const Indicators = () => {
                         report_month: [reportMonthValue],
                     });
 
+                    setMainFilters((prev) => ({
+                        ...prev,
+                        period: [periodValue],
+                        report_month: [reportMonthValue],
+                    }));
+
                     setFinancialListFilters((prev) => ({
                         ...prev,
                         period: [periodValue],
@@ -328,12 +339,6 @@ const Indicators = () => {
                     }));
 
                     setFinancialProfitListFilters((prev) => ({
-                        ...prev,
-                        period: [periodValue],
-                        report_month: [reportMonthValue],
-                    }));
-
-                    setFunnelMetricsFilters((prev) => ({
                         ...prev,
                         period: [periodValue],
                         report_month: [reportMonthValue],
@@ -366,7 +371,7 @@ const Indicators = () => {
 
     // Получение завершенных отчетов
     const getCompletedReports = () => {
-        const queryString = buildQueryParams(funnelMetricsFilters);
+        const queryString = buildQueryParams(mainFilters);
 
         getData(
             `${import.meta.env.VITE_API_URL}completed-reports?${queryString}`
@@ -380,7 +385,7 @@ const Indicators = () => {
     // Получение отчетов руководителя проектов
     const getProjectManagerReports = () => {
         const query = {
-            ...funnelMetricsFilters,
+            ...mainFilters,
             ...selectedReportMonth,
         };
 
@@ -403,7 +408,7 @@ const Indicators = () => {
     const getFinancialMetrics = () => {
         setIsLoading(true);
 
-        const queryString = buildQueryParams(funnelMetricsFilters);
+        const queryString = buildQueryParams(mainFilters);
 
         getData(
             `${
@@ -449,7 +454,7 @@ const Indicators = () => {
 
     // Продажи
     const getFunnelMetrics = () => {
-        const queryString = buildQueryParams(funnelMetricsFilters);
+        const queryString = buildQueryParams(mainFilters);
 
         getData(
             `${
@@ -497,14 +502,31 @@ const Indicators = () => {
             hasEmployeeMetricsOnSelected.current = true;
         }
 
-        if (isFinancialListFiltersReady && isFinancialProfitListFiltersReady) {
-            getFinancialMetrics();
-            getCompletedReports();
+        // if (isFinancialListFiltersReady && isFinancialProfitListFiltersReady) {
+        //     getFinancialMetrics();
+        //     getCompletedReports();
 
-            hasCalledListOnSelected.current = true;
-            hasCalledProfitListOnSelected.current = true;
-        }
+        //     hasCalledListOnSelected.current = true;
+        //     hasCalledProfitListOnSelected.current = true;
+        // }
     }, [selectedFilters]);
+
+    useEffect(() => {
+        if (!hasInitialized.current) return;
+
+        if (isMainFiltersReady) {
+            if (hasCalledMainMetricsOnSelected.current) {
+                hasCalledMainMetricsOnSelected.current = false;
+                return;
+            }
+
+            getFinancialMetrics(); // Ключевые финансовые показатели - верхняя часть
+            getFinancialList(); // Ключевые финансовые показатели - левый блок
+            getFinancialProfitList(); // Ключевые финансовые показатели - правый блок
+            getFunnelMetrics(); // Продажи
+            getCompletedReports(); // Завершенные отчеты
+        }
+    }, [mainFilters]);
 
     useEffect(() => {
         if (!hasInitialized.current) return;
@@ -550,26 +572,9 @@ const Indicators = () => {
         }
     }, [
         selectedReportMonth.report_month,
-        funnelMetricsFilters.contragent_id,
-        funnelMetricsFilters.project_id,
+        mainFilters.contragent_id,
+        mainFilters.project_id,
     ]);
-
-    useEffect(() => {
-        if (!hasInitialized.current) return;
-
-        if (isFunnelMetricsFiltersReady) {
-            if (hasCalledFunnelMetricsOnSelected.current) {
-                hasCalledFunnelMetricsOnSelected.current = false;
-                return;
-            }
-
-            getFinancialMetrics(); // Ключевые финансовые показатели - верхняя часть
-            getFinancialList(); // Ключевые финансовые показатели - левый блок
-            getFinancialProfitList(); // Ключевые финансовые показатели - правый блок
-            getFunnelMetrics(); // Продажи
-            getCompletedReports(); // Завершенные отчеты
-        }
-    }, [funnelMetricsFilters]);
 
     useEffect(() => {
         if (!hasInitialized.current) return;
@@ -682,15 +687,14 @@ const Indicators = () => {
                                         .find(
                                             (opt) =>
                                                 opt.value ===
-                                                funnelMetricsFilters
-                                                    .contragent_id?.[0]
+                                                mainFilters.contragent_id?.[0]
                                         ) || null
                                 }
                                 onChange={(selectedOption) => {
                                     const newValue =
                                         selectedOption?.value || "";
 
-                                    setFunnelMetricsFilters((prev) => ({
+                                    setMainFilters((prev) => ({
                                         ...prev,
                                         contragent_id: [newValue],
                                     }));
@@ -748,15 +752,14 @@ const Indicators = () => {
                                         .find(
                                             (opt) =>
                                                 opt.value ===
-                                                funnelMetricsFilters
-                                                    .project_id?.[0]
+                                                mainFilters.project_id?.[0]
                                         ) || null
                                 }
                                 onChange={(selectedOption) => {
                                     const newValue =
                                         selectedOption?.value || "";
 
-                                    setFunnelMetricsFilters((prev) => ({
+                                    setMainFilters((prev) => ({
                                         ...prev,
                                         project_id: [newValue],
                                     }));
@@ -786,7 +789,7 @@ const Indicators = () => {
                         type="button"
                         className="border rounded-lg py-1 px-5 h-[32px] mb-2"
                         onClick={() => {
-                            setFunnelMetricsFilters((prev) => {
+                            setMainFilters((prev) => {
                                 const { project_id, contragent_id, ...rest } =
                                     prev;
                                 return rest;

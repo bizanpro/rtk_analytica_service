@@ -526,56 +526,51 @@ const Reports = () => {
                         {activeTab === "projects" && (
                             <>
                                 <div className="flex items-center gap-5">
-                                    {Object.entries(filterOptionsList).map(
-                                        ([filterKey, filterValues], index) => {
-                                            const filterLabel =
-                                                FILTER_LABELS.find(
-                                                    (item) =>
-                                                        item.key === filterKey
-                                                )?.label || filterKey;
+                                    {FILTER_LABELS.map(({ key, label }) => {
+                                        const filterValues =
+                                            filterOptionsList[key];
+                                        if (!filterValues) return null;
 
-                                            return (
-                                                <select
-                                                    key={index}
-                                                    className="p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                                    value={
-                                                        selectedProjectsFilters[
-                                                            filterKey
-                                                        ] || ""
-                                                    }
-                                                    onChange={(e) => {
-                                                        const selectedValue =
-                                                            Array.from(
-                                                                e.target
-                                                                    .selectedOptions
-                                                            ).map(
-                                                                (option) =>
-                                                                    option.value
-                                                            );
-                                                        handleFilterChange(
-                                                            filterKey,
-                                                            selectedValue,
-                                                            "projects"
+                                        return (
+                                            <select
+                                                key={key}
+                                                className="p-1 border border-gray-300 min-w-[110px] max-w-[180px]"
+                                                value={
+                                                    selectedProjectsFilters[
+                                                        key
+                                                    ] || ""
+                                                }
+                                                onChange={(e) => {
+                                                    const selectedValue =
+                                                        Array.from(
+                                                            e.target
+                                                                .selectedOptions
+                                                        ).map(
+                                                            (option) =>
+                                                                option.value
                                                         );
-                                                    }}
-                                                >
-                                                    <option value="">
-                                                        {filterLabel}
+
+                                                    handleFilterChange(
+                                                        key,
+                                                        selectedValue,
+                                                        "projects"
+                                                    );
+                                                }}
+                                            >
+                                                <option value="">
+                                                    {label}
+                                                </option>
+                                                {filterValues.map((item) => (
+                                                    <option
+                                                        key={item.id}
+                                                        value={item.id}
+                                                    >
+                                                        {item.name}
                                                     </option>
-                                                    {filterValues.map(
-                                                        (item) => (
-                                                            <option
-                                                                key={item.id}
-                                                                value={item.id}
-                                                            >
-                                                                {item.name}
-                                                            </option>
-                                                        )
-                                                    )}
-                                                </select>
-                                            );
-                                        }
-                                    )}
+                                                ))}
+                                            </select>
+                                        );
+                                    })}
                                 </div>
 
                                 {Object.entries(filterOptionsList).length >
