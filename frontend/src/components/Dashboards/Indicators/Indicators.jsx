@@ -97,10 +97,10 @@ const Indicators = () => {
     const hasEmployeeMetricsOnSelected = useRef(false);
 
     const isFinancialListFiltersReady =
-        Object.keys(financialListFilters).length > 3;
+        Object.keys(financialListFilters).length > 2;
 
     const isFinancialProfitListFiltersReady =
-        Object.keys(financialProfitListFilters).length > 3;
+        Object.keys(financialProfitListFilters).length > 2;
 
     const isMainFiltersReady = Object.keys(mainFilters).length > 1;
 
@@ -424,7 +424,12 @@ const Indicators = () => {
 
     // Ключевые финансовые показатели - левый блок
     const getFinancialList = () => {
-        const queryString = buildQueryParams(financialListFilters);
+        const query = {
+            ...financialListFilters,
+            ...mainFilters,
+        };
+
+        const queryString = buildQueryParams(query);
 
         getData(
             `${
@@ -497,23 +502,6 @@ const Indicators = () => {
             return;
         }
 
-        if (isEmployeeMetricsFiltersReady) {
-            getEmployeeMetrics();
-            hasEmployeeMetricsOnSelected.current = true;
-        }
-
-        // if (isFinancialListFiltersReady && isFinancialProfitListFiltersReady) {
-        //     getFinancialMetrics();
-        //     getCompletedReports();
-
-        //     hasCalledListOnSelected.current = true;
-        //     hasCalledProfitListOnSelected.current = true;
-        // }
-    }, [selectedFilters]);
-
-    useEffect(() => {
-        if (!hasInitialized.current) return;
-
         if (isMainFiltersReady) {
             if (hasCalledMainMetricsOnSelected.current) {
                 hasCalledMainMetricsOnSelected.current = false;
@@ -531,6 +519,27 @@ const Indicators = () => {
     useEffect(() => {
         if (!hasInitialized.current) return;
 
+        if (isEmployeeMetricsFiltersReady) {
+            getEmployeeMetrics();
+            hasEmployeeMetricsOnSelected.current = true;
+        }
+    }, [selectedFilters]);
+
+    useEffect(() => {
+        if (!hasInitialized.current) return;
+
+        if (isEmployeeMetricsFiltersReady) {
+            if (hasEmployeeMetricsOnSelected.current) {
+                hasEmployeeMetricsOnSelected.current = false;
+                return;
+            }
+            getEmployeeMetrics();
+        }
+    }, [employeeFilters]);
+
+    useEffect(() => {
+        if (!hasInitialized.current) return;
+
         if (isFinancialListFiltersReady) {
             if (hasCalledListOnSelected.current) {
                 hasCalledListOnSelected.current = false;
@@ -538,11 +547,7 @@ const Indicators = () => {
             }
             getFinancialList();
         }
-    }, [
-        financialListFilters.report_month,
-        financialListFilters.period,
-        financialListFilters.type,
-    ]);
+    }, [financialListFilters.type]);
 
     useEffect(() => {
         if (!hasInitialized.current) return;
@@ -554,11 +559,7 @@ const Indicators = () => {
             }
             getFinancialProfitList();
         }
-    }, [
-        financialProfitListFilters.report_month,
-        financialProfitListFilters.period,
-        financialProfitListFilters.type,
-    ]);
+    }, [financialProfitListFilters.type]);
 
     useEffect(() => {
         if (!hasInitialized.current) return;
@@ -575,18 +576,6 @@ const Indicators = () => {
         mainFilters.contragent_id,
         mainFilters.project_id,
     ]);
-
-    useEffect(() => {
-        if (!hasInitialized.current) return;
-
-        if (isEmployeeMetricsFiltersReady) {
-            if (hasEmployeeMetricsOnSelected.current) {
-                hasEmployeeMetricsOnSelected.current = false;
-                return;
-            }
-            getEmployeeMetrics();
-        }
-    }, [employeeFilters]);
 
     useEffect(() => {
         getFilterOptions();
@@ -699,10 +688,10 @@ const Indicators = () => {
                                         contragent_id: [newValue],
                                     }));
 
-                                    setFinancialListFilters((prev) => ({
-                                        ...prev,
-                                        contragent_id: [newValue],
-                                    }));
+                                    // setFinancialListFilters((prev) => ({
+                                    //     ...prev,
+                                    //     contragent_id: [newValue],
+                                    // }));
 
                                     if (newValue != "") {
                                         const selectedContragentProjects =
@@ -764,10 +753,10 @@ const Indicators = () => {
                                         project_id: [newValue],
                                     }));
 
-                                    setFinancialListFilters((prev) => ({
-                                        ...prev,
-                                        project_id: [newValue],
-                                    }));
+                                    // setFinancialListFilters((prev) => ({
+                                    //     ...prev,
+                                    //     project_id: [newValue],
+                                    // }));
 
                                     if (newValue != "") {
                                         setFilteredContragents(
