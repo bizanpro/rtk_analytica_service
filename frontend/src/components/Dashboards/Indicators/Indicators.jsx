@@ -688,11 +688,6 @@ const Indicators = () => {
                                         contragent_id: [newValue],
                                     }));
 
-                                    // setFinancialListFilters((prev) => ({
-                                    //     ...prev,
-                                    //     contragent_id: [newValue],
-                                    // }));
-
                                     if (newValue != "") {
                                         const selectedContragentProjects =
                                             contragents.find(
@@ -752,11 +747,6 @@ const Indicators = () => {
                                         ...prev,
                                         project_id: [newValue],
                                     }));
-
-                                    // setFinancialListFilters((prev) => ({
-                                    //     ...prev,
-                                    //     project_id: [newValue],
-                                    // }));
 
                                     if (newValue != "") {
                                         setFilteredContragents(
