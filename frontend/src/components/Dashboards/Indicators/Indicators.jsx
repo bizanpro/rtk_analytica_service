@@ -417,6 +417,7 @@ const Indicators = () => {
         ).then((response) => {
             if (response?.status == 200) {
                 setFinancialMetrics(response.data);
+
                 setIsLoading(false);
             }
         });
@@ -514,7 +515,7 @@ const Indicators = () => {
             getFunnelMetrics(); // Продажи
             getCompletedReports(); // Завершенные отчеты
         }
-    }, [mainFilters]);
+    }, [mainFilters]); // Отчетный месяц, отчетный период, заказчик, проект
 
     useEffect(() => {
         if (!hasInitialized.current) return;
@@ -523,7 +524,7 @@ const Indicators = () => {
             getEmployeeMetrics();
             hasEmployeeMetricsOnSelected.current = true;
         }
-    }, [selectedFilters]);
+    }, [selectedFilters]); // Отчетный месяц, отчетный период
 
     useEffect(() => {
         if (!hasInitialized.current) return;
