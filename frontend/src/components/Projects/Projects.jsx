@@ -28,6 +28,7 @@ const Projects = () => {
     const [newProjectName, setNewProjectName] = useState("");
 
     const [selectedName, setSelectedName] = useState("default");
+    const [selectedСontragent, setSelectedСontragent] = useState("default");
     const [selectedSector, setSelectedSector] = useState([]);
     const [selectedBank, setSelectedBank] = useState("default");
     const [selectedManager, setSelectedManager] = useState("default");
@@ -66,6 +67,9 @@ const Projects = () => {
                 (selectedManager && selectedManager !== "default"
                     ? project.manager === selectedManager
                     : true) &&
+                (selectedСontragent && selectedСontragent !== "default"
+                    ? project.contragent === selectedСontragent
+                    : true) &&
                 (selectedName && selectedName !== "default"
                     ? project.name === selectedName
                     : true)
@@ -78,6 +82,7 @@ const Projects = () => {
         selectedBank,
         selectedManager,
         selectedName,
+        selectedСontragent,
     ]);
 
     // Заполняем селектор проектов
@@ -85,6 +90,17 @@ const Projects = () => {
         const allNames = sortedList
             .map((item) => item.name)
             .filter((name) => name !== null);
+
+        return Array.from(new Set(allNames));
+    }, [sortedList]);
+
+    // Заполняем селектор заказчиков
+    const contragentOptions = useMemo(() => {
+        const allNames = sortedList
+            .map((item) => item.contragent)
+            .filter(
+                (contragent) => contragent !== null && contragent !== undefined
+            );
 
         return Array.from(new Set(allNames));
     }, [sortedList]);
@@ -184,12 +200,25 @@ const Projects = () => {
                         {nameOptions.length > 0 && (
                             <CustomSelect
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                    "p-1 border border-gray-300 w-[160p]"
                                 }
                                 title={"Проект"}
                                 items={nameOptions}
                                 onChange={(evt) => {
                                     setSelectedName(evt.target.value);
+                                }}
+                            />
+                        )}
+
+                        {contragentOptions.length > 0 && (
+                            <CustomSelect
+                                className={
+                                    "p-1 border border-gray-300 w-[160px]"
+                                }
+                                title={"Заказчик"}
+                                items={contragentOptions}
+                                onChange={(evt) => {
+                                    setSelectedСontragent(evt.target.value);
                                 }}
                             />
                         )}
