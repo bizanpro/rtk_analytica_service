@@ -206,7 +206,7 @@ const Contragents = () => {
                         {statusOptions.length > 0 && (
                             <select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                    "p-1 border border-gray-300 w-[150px] h-[48px]"
                                 }
                                 onChange={(evt) =>
                                     setSelectedStatus(evt.target.value)
