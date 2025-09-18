@@ -149,6 +149,7 @@ const Indicators = () => {
                 pointBackgroundColor: "#ccc",
                 pointRadius: 4,
                 tension: 0.3,
+                yAxisID: "y1",
             },
             {
                 type: "bar",
@@ -160,6 +161,7 @@ const Indicators = () => {
                 categoryPercentage: 0.5,
                 stack: "stack1",
                 borderRadius: 2,
+                yAxisID: "y",
             },
         ],
     };
@@ -264,8 +266,21 @@ const Indicators = () => {
                 stacked: true,
             },
             y: {
-                ticks: {
-                    // display: false,
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: "Валовая прибыль, млн руб.",
+                },
+            },
+            y1: {
+                beginAtZero: true,
+                position: "right",
+                grid: {
+                    drawOnChartArea: false,
+                },
+                title: {
+                    display: true,
+                    text: "Валовая рентаб., %",
                 },
             },
         },
