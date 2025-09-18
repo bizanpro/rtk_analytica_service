@@ -1,12 +1,15 @@
 import { useState, useEffect, useMemo } from "react";
+
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
+import { sortDateList } from "../../utils/sortDateList";
 
 import ReportItem from "./ReportItem";
 import ManagementItem from "./ManagementItem";
 import ManagementReportEditor from "./ManagementReportEditor";
 import ReportRateEditor from "./ReportRateEditor";
 import ProjectReportWindow from "../ProjectCard/ProjectReportWindow";
+import TheadSortButton from "../TheadSortButton/TheadSortButton";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -33,7 +36,11 @@ const Reports = () => {
             { label: "Оценка", key: "score" },
             { label: "Отвественный", key: "physical_person" },
             { label: "Статус", key: "status" },
-            { label: "Дата утверждения", key: "approval_date" },
+            {
+                label: "Дата утверждения",
+                key: "approval_date",
+                is_sortable: true,
+            },
             { label: "Дата изменения", key: "updated_at" },
         ],
     ];
@@ -52,10 +59,12 @@ const Reports = () => {
 
     const [activeTab, setActiveTab] = useState("projects");
     const [isLoading, setIsLoading] = useState(true);
-    // const [mode, setMode] = useState("read");
+
+    const [sortBy, setSortBy] = useState({ key: "", action: "" });
 
     const [reportsList, setReportsList] = useState([]);
     const [managementList, setManagementList] = useState([]);
+    const [sortedManagementList, setSortedManagementList] = useState([]);
 
     const [managementEditorState, setManagementEditorState] = useState(false); // Редактор отчёта менеджмента
     const [rateEditorState, setRateEditorState] = useState(false); // Редактор оценки
@@ -94,7 +103,7 @@ const Reports = () => {
     });
 
     const filteredReports = useMemo(() => {
-        const result = managementList.filter((report) => {
+        const result = sortedManagementList.filter((report) => {
             return (
                 (selectedManagementReport &&
                 selectedManagementReport !== "default"
@@ -107,22 +116,26 @@ const Reports = () => {
         });
 
         return result;
-    }, [managementList, selectedManagementReport, selectedPhysicalPerson]); // Фильтрованный список отчетов
+    }, [
+        sortedManagementList,
+        selectedManagementReport,
+        selectedPhysicalPerson,
+    ]); // Фильтрованный список отчетов
 
     // Заполняем селектор отчетов Сотрудника
     const managementReportsOptions = useMemo(() => {
-        const allReports = managementList.flatMap((item) => item.name);
+        const allReports = sortedManagementList.flatMap((item) => item.name);
         return Array.from(new Set(allReports));
-    }, [managementList]);
+    }, [sortedManagementList]);
 
     // Заполняем селектор ответственных
     const physicalPersonOptions = useMemo(() => {
-        const allReports = managementList.flatMap((item) =>
+        const allReports = sortedManagementList.flatMap((item) =>
             item?.physical_person ? [item.physical_person.name] : []
         );
 
         return Array.from(new Set(allReports));
-    }, [managementList]);
+    }, [sortedManagementList]);
 
     // Обработка фильтров
     const handleFilterChange = (filterKey, value, section) => {
@@ -224,6 +237,7 @@ const Reports = () => {
             .then((response) => {
                 if (response.status === 200) {
                     setManagementList(response.data);
+                    setSortedManagementList(response.data);
                 }
             })
             .finally(() => setIsLoading(false));
@@ -448,6 +462,14 @@ const Reports = () => {
             }
         });
     };
+
+    const handleListSort = () => {
+        setSortedManagementList(sortDateList(managementList, sortBy));
+    };
+
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
 
     useEffect(() => {
         setManagementEditorState(false);
@@ -706,13 +728,22 @@ const Reports = () => {
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
                                 {COLUMNS[activeTab === "projects" ? 0 : 1].map(
-                                    ({ label, key }) => (
+                                    ({ label, key, is_sortable }) => (
                                         <th
                                             className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
                                             rowSpan="2"
                                             key={key}
                                         >
-                                            {label}
+                                            {is_sortable ? (
+                                                <TheadSortButton
+                                                    label={label}
+                                                    value={key}
+                                                    sortBy={sortBy}
+                                                    setSortBy={setSortBy}
+                                                />
+                                            ) : (
+                                                label
+                                            )}
                                         </th>
                                     )
                                 )}
