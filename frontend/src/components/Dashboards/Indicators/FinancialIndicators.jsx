@@ -295,6 +295,8 @@ const FinancialIndicators = ({
                 return { ...item, ...match };
             });
 
+            console.log(merged);
+
             setMergetList(merged);
             setSortedMergetList(merged);
         }
@@ -315,11 +317,6 @@ const FinancialIndicators = ({
                                 ...prev,
                                 type: [evt.target.value],
                             }));
-
-                            setSortBy({
-                                key: "",
-                                action: "",
-                            });
                         }}
                     >
                         <option value="project">Проект</option>
