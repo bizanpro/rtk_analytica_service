@@ -192,7 +192,7 @@ const EmployeeCard = () => {
 
     // Обновление данных сотрудника
     const updateEmployee = () => {
-        if (employeeData.position_id != null) {
+        // if (employeeData.position_id != null) {
             query = toast.loading("Обновление", {
                 containerId: "employee",
                 position: "top-center",
@@ -237,16 +237,16 @@ const EmployeeCard = () => {
                         position: "top-center",
                     });
                 });
-        } else {
-            toast.error("Необходимо выбрать должность", {
-                containerId: "employee",
-                isLoading: false,
-                autoClose: 1500,
-                pauseOnFocusLoss: false,
-                pauseOnHover: false,
-                position: "top-center",
-            });
-        }
+        // } else {
+        //     toast.error("Необходимо выбрать должность", {
+        //         containerId: "employee",
+        //         isLoading: false,
+        //         autoClose: 1500,
+        //         pauseOnFocusLoss: false,
+        //         pauseOnHover: false,
+        //         position: "top-center",
+        //     });
+        // }
     };
 
     // Получаем сотрудника
