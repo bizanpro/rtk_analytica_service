@@ -250,7 +250,11 @@ const Reports = () => {
             `${reportData?.project?.name} / ${reportData?.report_period_code}`
         );
 
-        if (reportData.id && reportName != "") {
+        if (
+            reportData.id &&
+            `${reportData?.project?.name} / ${reportData?.report_period_code}` !=
+                ""
+        ) {
             setReportWindowsState(true);
         }
     };
@@ -730,6 +734,7 @@ const Reports = () => {
                                         columns={COLUMNS[0]}
                                         props={item}
                                         openReportEditor={openReportEditor}
+                                        reportId={reportId}
                                     />
                                 ))
                             ) : (
@@ -758,17 +763,25 @@ const Reports = () => {
 
                     {activeTab === "projects" && reportWindowsState && (
                         <div
-                            className="bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%] p-3"
-                            style={{ minHeight: "calc(100vh - 10%)" }}
+                            className="fixed w-[100vw] h-[100vh] inset-0 z-2"
+                            onClick={() => {
+                                setReportWindowsState(false);
+                            }}
                         >
-                            <ProjectReportWindow
-                                reportWindowsState={setReportWindowsState}
-                                contracts={contracts}
-                                reportId={reportId}
-                                setReportId={setReportId}
-                                reportName={reportName}
-                                mode={"read"}
-                            />
+                            <div
+                                className="bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%] p-3"
+                                style={{ minHeight: "calc(100vh - 10%)" }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <ProjectReportWindow
+                                    reportWindowsState={setReportWindowsState}
+                                    contracts={contracts}
+                                    reportId={reportId}
+                                    setReportId={setReportId}
+                                    reportName={reportName}
+                                    mode={"read"}
+                                />
+                            </div>
                         </div>
                     )}
 
@@ -776,38 +789,58 @@ const Reports = () => {
                         <>
                             {rateEditorState && (
                                 <div
-                                    className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
-                                    style={{ minHeight: "calc(100vh - 10%)" }}
+                                    className="fixed w-[100vw] h-[100vh] inset-0 z-2"
+                                    onClick={() => {
+                                        closeRateReportEditor();
+                                    }}
                                 >
-                                    <ReportRateEditor
-                                        reportData={reportData}
-                                        closeEditor={closeRateReportEditor}
-                                        updateReportDetails={
-                                            updateReportDetails
-                                        }
-                                        mode={"edit"}
-                                    />
+                                    <div
+                                        className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
+                                        style={{
+                                            minHeight: "calc(100vh - 10%)",
+                                        }}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <ReportRateEditor
+                                            reportData={reportData}
+                                            closeEditor={closeRateReportEditor}
+                                            updateReportDetails={
+                                                updateReportDetails
+                                            }
+                                            mode={"edit"}
+                                        />
+                                    </div>
                                 </div>
                             )}
 
                             {managementEditorState && (
                                 <div
-                                    className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
-                                    style={{ minHeight: "calc(100vh - 10%)" }}
+                                    className="fixed w-[100vw] h-[100vh] inset-0 z-2"
+                                    onClick={() => {
+                                        closeManagementReportEditor();
+                                    }}
                                 >
-                                    <ManagementReportEditor
-                                        managementReportData={
-                                            managementReportData
-                                        }
-                                        setManagementReportData={
-                                            setManagementReportData
-                                        }
-                                        updateReport={updateReport}
-                                        closeManagementReportEditor={
-                                            closeManagementReportEditor
-                                        }
-                                        mode={"edit"}
-                                    />
+                                    <div
+                                        className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
+                                        style={{
+                                            minHeight: "calc(100vh - 10%)",
+                                        }}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <ManagementReportEditor
+                                            managementReportData={
+                                                managementReportData
+                                            }
+                                            setManagementReportData={
+                                                setManagementReportData
+                                            }
+                                            updateReport={updateReport}
+                                            closeManagementReportEditor={
+                                                closeManagementReportEditor
+                                            }
+                                            mode={"edit"}
+                                        />
+                                    </div>
                                 </div>
                             )}
                         </>
