@@ -35,25 +35,35 @@ const EmployeeCard = () => {
     const { employeeId } = useParams();
     const navigate = useNavigate();
 
+    const [mode, setMode] = useState("read");
+    const [errors, setErrors] = useState({});
+
     const [employeeData, setEmployeeData] = useState({});
+
     const [departments, setDepartments] = useState([]);
+
     const [workload, setworkload] = useState({});
-    const [personalWorkload, setPersonalWorkload] = useState();
+    const [personalWorkload, setPersonalWorkload] = useState({
+        other_workload: 0,
+    });
+
     const [workloadSummary, setWorkloadSummary] = useState();
     const [workloadSummaryMaxPercentage, setWorkloadSummaryMaxPercentage] =
         useState(null);
 
-    const [mode, setMode] = useState("read");
-    const [errors, setErrors] = useState({});
+    const [totalWorkload, setTotalWorkload] = useState(0);
+    const [workloads, setWorkloads] = useState([]);
 
     const [datesData, setDatesData] = useState([]);
     const [availableYears, setAvailableYears] = useState([]);
+
     const [selectedPersonalYear, setSelectedPersonalYear] = useState(2024);
     const [selectedPersonalMonth, setSelectedPersonalMonth] = useState({});
     const [selectedTypes, setSelecterTypes] = useState([]);
+
     const [reportTypes, setReportTypes] = useState([]);
     const [positions, setPositions] = useState([]);
-    const [workloads, setWorkloads] = useState([]);
+
     const [availablePersonalMonths, setAvailablePersonalMonths] = useState([]);
     const [dateRange, setDateRange] = useState([null, null]);
     const [startDate, endDate] = dateRange;
@@ -193,50 +203,50 @@ const EmployeeCard = () => {
     // Обновление данных сотрудника
     const updateEmployee = () => {
         // if (employeeData.position_id != null) {
-            query = toast.loading("Обновление", {
-                containerId: "employee",
-                position: "top-center",
-            });
+        query = toast.loading("Обновление", {
+            containerId: "employee",
+            position: "top-center",
+        });
 
-            postData(
-                "PATCH",
-                `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
-                employeeData
-            )
-                .then((response) => {
-                    if (response?.ok) {
-                        toast.update(query, {
-                            render: "Успешно обновлено!",
-                            type: "success",
-                            containerId: "employee",
-                            isLoading: false,
-                            autoClose: 1200,
-                            pauseOnFocusLoss: false,
-                            pauseOnHover: false,
-                            position: "top-center",
-                        });
-                    } else {
-                        toast.error("Ошибка обновления", {
-                            isLoading: false,
-                            autoClose: 1500,
-                            pauseOnFocusLoss: false,
-                            pauseOnHover: false,
-                            position: "top-center",
-                            containerId: "employee",
-                        });
-                    }
-                })
-                .catch((error) => {
-                    toast.dismiss(query);
-                    toast.error(error.message || "Ошибка обновления данных", {
+        postData(
+            "PATCH",
+            `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
+            employeeData
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: "Успешно обновлено!",
+                        type: "success",
                         containerId: "employee",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                } else {
+                    toast.error("Ошибка обновления", {
                         isLoading: false,
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
                         position: "top-center",
+                        containerId: "employee",
                     });
+                }
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка обновления данных", {
+                    containerId: "employee",
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
                 });
+            });
         // } else {
         //     toast.error("Необходимо выбрать должность", {
         //         containerId: "employee",
@@ -380,6 +390,22 @@ const EmployeeCard = () => {
             }
         );
     };
+
+    const setSumToTotalWorkload = (workloads, otherWorkload) => {
+        const workloadsSum = workloads.reduce(
+            (sum, current) => sum + current,
+            0
+        );
+
+        setTotalWorkload(workloadsSum + otherWorkload || 0);
+    };
+
+    useEffect(() => {
+        setSumToTotalWorkload(
+            workloads.map((item) => parseInt(item.load_percentage ?? 0, 10)),
+            parseInt(personalWorkload?.other_workload ?? 0, 10)
+        );
+    }, [workloads, personalWorkload.other_workload]);
 
     useEffect(() => {
         if (selectedPersonalYear && selectedPersonalMonth) {
@@ -929,7 +955,6 @@ const EmployeeCard = () => {
                                                             />
                                                         )
                                                     )}
-
                                                     {personalWorkload.other_workload !==
                                                         null && (
                                                         <li className="grid items-center grid-cols-[1fr_35%_15%] gap-3 mb-2">
@@ -947,19 +972,46 @@ const EmployeeCard = () => {
                                                                     max="100"
                                                                     min="0"
                                                                     value={
-                                                                        personalWorkload.other_workload
+                                                                        personalWorkload.other_workload ===
+                                                                        0
+                                                                            ? ""
+                                                                            : personalWorkload.other_workload ??
+                                                                              ""
                                                                     }
                                                                     onChange={(
                                                                         e
                                                                     ) => {
+                                                                        const raw =
+                                                                            e
+                                                                                .target
+                                                                                .value;
+
+                                                                        if (
+                                                                            raw ===
+                                                                            ""
+                                                                        ) {
+                                                                            setPersonalWorkload(
+                                                                                (
+                                                                                    prev
+                                                                                ) => ({
+                                                                                    ...prev,
+                                                                                    other_workload:
+                                                                                        "",
+                                                                                })
+                                                                            );
+                                                                            return;
+                                                                        }
+
                                                                         const value =
                                                                             parseInt(
-                                                                                e
-                                                                                    .target
-                                                                                    .value,
+                                                                                raw,
                                                                                 10
                                                                             );
+
                                                                         if (
+                                                                            !isNaN(
+                                                                                value
+                                                                            ) &&
                                                                             value >=
                                                                                 0 &&
                                                                             value <=
@@ -970,7 +1022,7 @@ const EmployeeCard = () => {
                                                                                     prev
                                                                                 ) => ({
                                                                                     ...prev,
-                                                                                    ["other_workload"]:
+                                                                                    other_workload:
                                                                                         value,
                                                                                 })
                                                                             );
@@ -986,77 +1038,15 @@ const EmployeeCard = () => {
                                                         </li>
                                                     )}
 
-                                                    {/* {vacationWorkload !==
-                                                        null && (
-                                                        <li className="grid items-center grid-cols-[1fr_35%_15%] gap-3 mb-2">
-                                                            <div className="text-lg">
-                                                                Отпуск
-                                                            </div>
+                                                    <li className="grid items-center border-t-2 border-b-2 border-gray-300 grid-cols-[1fr_15%] gap-3 py-2">
+                                                        <div className="text-lg">
+                                                            Итого
+                                                        </div>
 
-                                                            <div></div>
-
-                                                            <div className="flex items-center border-2 border-gray-300 p-1">
-                                                                <input
-                                                                    className="min-w-0"
-                                                                    type="number"
-                                                                    placeholder="0"
-                                                                    max="100"
-                                                                    min="0"
-                                                                    value={
-                                                                        vacationWorkload
-                                                                    }
-                                                                    onChange={(
-                                                                        e
-                                                                    ) => {
-                                                                        const value =
-                                                                            parseInt(
-                                                                                e
-                                                                                    .target
-                                                                                    .value,
-                                                                                10
-                                                                            );
-                                                                        if (
-                                                                            value >=
-                                                                                0 &&
-                                                                            value <=
-                                                                                100
-                                                                        ) {
-                                                                            setPersonalWorkload(
-                                                                                (
-                                                                                    prev
-                                                                                ) => ({
-                                                                                    ...prev,
-                                                                                    vacation_workload:
-                                                                                        value,
-                                                                                })
-                                                                            );
-                                                                        }
-                                                                    }}
-                                                                    disabled={
-                                                                        mode ==
-                                                                        "read"
-                                                                    }
-                                                                />
-                                                                %
-                                                            </div>
-                                                        </li>
-                                                    )} */}
-
-                                                    {personalWorkload?.total_workload !==
-                                                        null && (
-                                                        <li className="grid items-center border-t-2 border-b-2 border-gray-300 grid-cols-[1fr_15%] gap-3 py-2">
-                                                            <div className="text-lg">
-                                                                Итого
-                                                            </div>
-
-                                                            <div>
-                                                                {
-                                                                    personalWorkload?.total_workload
-                                                                }
-                                                                %
-                                                            </div>
-                                                        </li>
-                                                    )}
+                                                        <div>
+                                                            {totalWorkload}%
+                                                        </div>
+                                                    </li>
                                                 </>
                                             )}
                                     </ul>
