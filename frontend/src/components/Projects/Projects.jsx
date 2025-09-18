@@ -49,6 +49,8 @@ const Projects = () => {
     ];
 
     const filteredProjects = useMemo(() => {
+        console.log(selectedSector);
+
         const result = sortedList.filter((project) => {
             return (
                 (selectedSector.length > 0
@@ -65,7 +67,7 @@ const Projects = () => {
                         : false
                     : true) &&
                 (selectedManager && selectedManager !== "default"
-                    ? project.manager === selectedManager
+                    ? project.project_manager === selectedManager
                     : true) &&
                 (selectedСontragent && selectedСontragent !== "default"
                     ? project.contragent === selectedСontragent
@@ -125,7 +127,7 @@ const Projects = () => {
     // Заполняем селектор руководителей
     const projectManagerOptions = useMemo(() => {
         const allPM = sortedList
-            .map((item) => item.manager)
+            .map((item) => item.project_manager)
             .filter((manager) => manager !== null && manager !== undefined);
         return Array.from(new Set(allPM));
     }, [sortedList]);
@@ -204,6 +206,7 @@ const Projects = () => {
                                 }
                                 title={"Проект"}
                                 items={nameOptions}
+                                value={selectedName}
                                 onChange={(evt) => {
                                     setSelectedName(evt.target.value);
                                 }}
@@ -217,6 +220,7 @@ const Projects = () => {
                                 }
                                 title={"Заказчик"}
                                 items={contragentOptions}
+                                value={selectedСontragent}
                                 onChange={(evt) => {
                                     setSelectedСontragent(evt.target.value);
                                 }}
@@ -232,12 +236,13 @@ const Projects = () => {
                                     value: industry,
                                     label: industry,
                                 }))}
-                                className="basic-multi-select min-h-[32px] w-full max-w-[250px]"
+                                className="basic-multi-select min-h-[32px] w-[200px]"
                                 classNamePrefix="select"
                                 placeholder="Отрасль"
                                 onChange={(selectedOptions) =>
                                     setSelectedSector(selectedOptions)
                                 }
+                                value={selectedSector}
                             />
                         )}
 
@@ -248,6 +253,7 @@ const Projects = () => {
                                 }
                                 title={"Банк"}
                                 items={bankOptions}
+                                value={selectedBank}
                                 onChange={(evt) =>
                                     setSelectedBank(evt.target.value)
                                 }
@@ -261,11 +267,27 @@ const Projects = () => {
                                 }
                                 title={"Руководитель проекта"}
                                 items={projectManagerOptions}
+                                value={selectedManager}
                                 onChange={(evt) =>
                                     setSelectedManager(evt.target.value)
                                 }
                             />
                         )}
+
+                        <button
+                            type="button"
+                            className="border rounded-lg py-1 px-4 h-[30px]"
+                            title="Очистить фильтры"
+                            onClick={() => {
+                                setSelectedName("default");
+                                setSelectedСontragent("default");
+                                setSelectedSector([]);
+                                setSelectedBank("default");
+                                setSelectedManager("default");
+                            }}
+                        >
+                            Очистить
+                        </button>
 
                         {mode === "edit" && (
                             <button
