@@ -49,8 +49,6 @@ const Projects = () => {
     ];
 
     const filteredProjects = useMemo(() => {
-        console.log(selectedSector);
-
         const result = sortedList.filter((project) => {
             return (
                 (selectedSector.length > 0
