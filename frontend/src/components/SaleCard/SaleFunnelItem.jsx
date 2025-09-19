@@ -30,7 +30,7 @@ const SaleFunnelItem = ({
 
                 <div className="flex flex-col">{stage.name}</div>
             </div>
-
+            
             <div className="flex items-center gap-2">
                 <DatePicker
                     className="border-2 border-gray-300 p-1 w-full h-[32px]"
@@ -108,8 +108,14 @@ const SaleFunnelItem = ({
                     </nav>
                 )}
 
+
+            {/* Отображаем индикатор примененного действия у этапа, если действия
+            ему больше не доступны */}
             {stage.hasOwnProperty("next_possible_stages") &&
-                stage.next_possible_stages.length == 0 && (
+                stage.next_possible_stages.length == 0 &&
+                stage.name.toLowerCase() !== "отказ от участия" &&
+                stage.name.toLowerCase() !== "получен отказ" &&
+                stage.name.toLowerCase() !== "заключение договора" && (
                     <div className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 pr-8">
                         <div
                             className={`w-[12px] h-[12px] rounded-[50%] ${
