@@ -16,6 +16,7 @@ const SaleFunnelStages = ({
     activeStage,
     setActiveStage,
     handleActiveStageDate,
+    getStages,
     mode,
 }) => {
     const [popupState, setPopupState] = useState(false);
@@ -34,6 +35,7 @@ const SaleFunnelStages = ({
         });
     };
 
+    // Возобновить воронку продаж
     const resumeSaleFunnel = (id) => {
         postData(
             "POST",
@@ -44,9 +46,7 @@ const SaleFunnelStages = ({
         )
             .then((response) => {
                 if (response?.ok) {
-                    console.log(response);
-
-                    toast.success(response.message || "Ошибка возобновления", {
+                    toast.success(response.message || "Воронка возобновления", {
                         containerId: "toast",
                         isLoading: false,
                         autoClose: 3000,
@@ -54,6 +54,10 @@ const SaleFunnelStages = ({
                         pauseOnHover: false,
                         position: "top-center",
                     });
+
+                    getStages();
+                    setPopupState(false);
+                    setResumableStages([]);
                 }
             })
             .catch((error) => {
@@ -68,11 +72,48 @@ const SaleFunnelStages = ({
             });
     };
 
+    // Отменить возобновление воронки продаж
+    const cancelResumeSaleFunnel = () => {
+        postData(
+            "DELETE",
+            `${
+                import.meta.env.VITE_API_URL
+            }sales-funnel-projects/${saleId}/resume`
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    toast.success(
+                        response.message || "Возобновление отменено",
+                        {
+                            containerId: "toast",
+                            isLoading: false,
+                            autoClose: 3000,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: false,
+                            position: "top-center",
+                        }
+                    );
+
+                    getStages();
+                }
+            })
+            .catch((error) => {
+                toast.error(error.message || "Ошибка отмены", {
+                    containerId: "toast",
+                    isLoading: false,
+                    autoClose: 3000,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
+    };
+
     return (
         <ul className="grid gap-3">
             <ToastContainer containerId="toast" />
 
-            <li className="grid items-center grid-cols-[1fr_38%_18%] gap-5 mb-2 text-gray-400">
+            <li className="grid items-center grid-cols-[1fr_39%_19%] gap-5 mb-2 text-gray-400 pl-5">
                 <span className="flex items-center gap-2">Этап</span>
                 <span className="flex items-center gap-2">Дата</span>
                 <span className="flex items-center gap-2">Статус</span>
@@ -97,7 +138,33 @@ const SaleFunnelStages = ({
 
                     const isLast = index === arr.length - 1;
 
-                    return (
+                    const nextStage = arr[index + 1];
+
+                    const showCancelButton =
+                        nextStage && nextStage.can_cancel_resume === true;
+
+                    return stage.name.toLowerCase() ==
+                        "воронка возобновлена" ? (
+                        <div
+                            key={stage.id}
+                            className="text-gray-400 px-5.5 flex items-center gap-2"
+                        >
+                            {stage.name}
+
+                            {showCancelButton && (
+                                <button
+                                    className="border rounded-[50%] flex items-center justify-center w-[20px] h-[20px] flex-[0_0_20px] leading-4"
+                                    type="button"
+                                    title="Отменить возобновление воронки"
+                                    onClick={() => {
+                                        cancelResumeSaleFunnel();
+                                    }}
+                                >
+                                    X
+                                </button>
+                            )}
+                        </div>
+                    ) : (
                         <SaleFunnelItem
                             key={stage.id}
                             stage={stage}
@@ -115,16 +182,19 @@ const SaleFunnelStages = ({
 
             {saleStages.stages[
                 saleStages.stages.length - 1
-            ]?.name?.toLowerCase() === "отказ от участия" && (
+            ]?.name?.toLowerCase() === "отказ от участия" ||
+            saleStages.stages[
+                saleStages.stages.length - 1
+            ]?.name?.toLowerCase() === "получен отказ" ? (
                 <button
                     type="button"
                     className="text-lg italic w-fit px-5.5"
                     onClick={() => openResumableStagesPopup()}
-                    title=""
+                    title="Возобновить воронку"
                 >
                     Возобновить воронку
                 </button>
-            )}
+            ) : null}
 
             {popupState && (
                 <div
