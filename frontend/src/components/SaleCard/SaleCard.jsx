@@ -335,7 +335,7 @@ const SaleCard = () => {
 
         let newDate = "";
 
-        if (activeStageData.stage_date) {
+        if (activeStageData?.stage_date) {
             newDate = new Date(activeStageData.stage_date).toLocaleDateString(
                 "ru-RU"
             );
