@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import { format, parseISO } from "date-fns";
 import { ru } from "date-fns/locale";
 
@@ -12,6 +14,8 @@ const ManagementItem = ({
     openRateReportEditor,
     managementReportEditorHandler,
 }) => {
+    const navigate = useNavigate();
+
     return (
         <tr
             className={`border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer 
@@ -73,7 +77,24 @@ const ManagementItem = ({
                                 className="border-b border-gray-300 px-4 py-5 min-w-[180px] max-w-[200px] text-lg"
                                 key={key}
                             >
-                                {value?.name?.toString() || "—"}
+                                <button
+                                    type="button"
+                                    className="text-left"
+                                    title={`Перейти в карточку сотрудника ${
+                                        value?.name?.toString() || "—"
+                                    }`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        window.scrollTo(0, 0);
+                                        navigate(
+                                            `${
+                                                import.meta.env.VITE_BASE_URL
+                                            }employees/${value?.id}`
+                                        );
+                                    }}
+                                >
+                                    {value?.name?.toString() || "—"}
+                                </button>
                             </td>
                         );
                     }
