@@ -11,14 +11,6 @@ const SaleFunnelItem = ({
     handleActiveStageDate,
     mode,
 }) => {
-    // let statusLabel = "";
-
-    // if (stage.type === "postponed") {
-    //     statusLabel = "Проект отложен";
-    // } else if (stage.type === "rejected") {
-    //     statusLabel = "Получен отказ";
-    // }
-
     return (
         <li
             className="grid items-center grid-cols-[1fr_38%_18%] gap-5 mb-2 text-lg cursor-pointer"
@@ -36,12 +28,7 @@ const SaleFunnelItem = ({
                     }`}
                 ></div>
 
-                <div className="flex flex-col">
-                    {stage.name}
-                    {/* <span className="text-gray-400 text-sm">
-                        {stage.type !== "main" && statusLabel}
-                    </span> */}
-                </div>
+                <div className="flex flex-col">{stage.name}</div>
             </div>
 
             <div className="flex items-center gap-2">
@@ -63,6 +50,7 @@ const SaleFunnelItem = ({
             {stage.hasOwnProperty("next_possible_stages") &&
                 stage.next_possible_stages.length > 0 &&
                 stage.name.toLowerCase() !== "отказ от участия" &&
+                stage.name.toLowerCase() !== "получен отказ" &&
                 stage.name.toLowerCase() !== "заключение договора" && (
                     <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 pr-8">
                         <button
@@ -118,6 +106,33 @@ const SaleFunnelItem = ({
                             }}
                         ></button>
                     </nav>
+                )}
+
+            {stage.hasOwnProperty("next_possible_stages") &&
+                stage.next_possible_stages.length == 0 && (
+                    <div className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 pr-8">
+                        <div
+                            className={`w-[12px] h-[12px] rounded-[50%] ${
+                                stage.type === "rejected"
+                                    ? "opacity-100"
+                                    : "opacity-[0.3]"
+                            } bg-red-400`}
+                        ></div>
+                        <div
+                            className={`w-[12px] h-[12px] rounded-[50%] ${
+                                stage.type === "postponed"
+                                    ? "opacity-100"
+                                    : "opacity-[0.3]"
+                            } bg-yellow-400`}
+                        ></div>
+                        <div
+                            className={`w-[12px] h-[12px] rounded-[50%] ${
+                                stage.type === "main"
+                                    ? "opacity-100"
+                                    : "opacity-[0.3]"
+                            } bg-green-400`}
+                        ></div>
+                    </div>
                 )}
         </li>
     );
