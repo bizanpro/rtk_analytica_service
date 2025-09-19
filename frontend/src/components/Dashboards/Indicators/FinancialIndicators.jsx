@@ -40,6 +40,8 @@ const FinancialIndicators = ({
     const [mergedList, setMergetList] = useState([]);
     const [sortedMergedList, setSortedMergetList] = useState([]);
 
+    const [hoverLabel, setHoverLabel] = useState("");
+
     const [sortBy, setSortBy] = useState({
         key: "receipts.value",
         action: "ascending",
@@ -146,8 +148,8 @@ const FinancialIndicators = ({
                         : value;
                 },
             },
+            tooltip: { enabled: false },
         },
-
         scales: {
             y: {
                 ticks: {
@@ -155,11 +157,16 @@ const FinancialIndicators = ({
                     maxRotation: 0,
                     callback: function (value) {
                         let label = this.getLabelForValue(value);
-                        return label.length > 20
-                            ? label.slice(0, 20) + "…"
-                            : label;
+
+                        const maxLength = 20;
+                        if (label.length > maxLength) {
+                            return label.slice(0, maxLength) + "…";
+                        }
+
+                        return label;
                     },
                 },
+
                 barPercentage: 0.7,
                 categoryPercentage: 0.8,
             },
@@ -171,6 +178,14 @@ const FinancialIndicators = ({
                     drawTicks: false,
                 },
             },
+        },
+        onHover: (event, chartElements) => {
+            if (chartElements.length > 0) {
+                const index = chartElements[0].index;
+                setHoverLabel(financialListData1.labels[index]);
+            } else {
+                setHoverLabel("");
+            }
         },
     };
 
@@ -198,6 +213,7 @@ const FinancialIndicators = ({
                         : value;
                 },
             },
+            tooltip: { enabled: false },
         },
 
         scales: {
@@ -222,6 +238,14 @@ const FinancialIndicators = ({
                     drawTicks: false,
                 },
             },
+        },
+        onHover: (event, chartElements) => {
+            if (chartElements.length > 0) {
+                const index = chartElements[0].index;
+                setHoverLabel(financialListData1.labels[index]);
+            } else {
+                setHoverLabel("");
+            }
         },
     };
 
@@ -246,12 +270,13 @@ const FinancialIndicators = ({
                 formatter: (value) => `${value}%`,
             },
             tooltip: {
-                callbacks: {
-                    label: (context) => {
-                        let value = context.raw;
-                        return `${value}%`;
-                    },
-                },
+                enabled: false,
+                // callbacks: {
+                //     label: (context) => {
+                //         let value = context.raw;
+                //         return `${value}%`;
+                //     },
+                // },
             },
         },
 
@@ -278,6 +303,14 @@ const FinancialIndicators = ({
                 },
             },
         },
+        onHover: (event, chartElements) => {
+            if (chartElements.length > 0) {
+                const index = chartElements[0].index;
+                setHoverLabel(financialListData1.labels[index]);
+            } else {
+                setHoverLabel("");
+            }
+        },
     };
 
     useEffect(() => {
@@ -301,8 +334,8 @@ const FinancialIndicators = ({
     }, [financialList, financialProfitList]);
 
     return (
-        <div className="flex flex-col gap-3 p-4">
-            <div className="grid grid-cols-[32%_1fr_1fr_1fr]">
+        <div className="flex flex-col gap-3 p-4 pl-0">
+            <div className="grid grid-cols-[32%_1fr_1fr_1fr] pl-4">
                 <div className="flex items-center gap-5">
                     <select
                         className="border-2 h-[30px] p-1 border-gray-300 w-full max-w-[125px] cursor-pointer"
@@ -351,6 +384,14 @@ const FinancialIndicators = ({
                     setSortBy={setSortBy}
                     className={"text-left ml-[10px]"}
                 />
+            </div>
+
+            <div
+                className={`relative ml-4 pl-4 py-2 flex items-center w-full max-w-[1000px] h-[30px] transition-all border-l-2 border-black  ${
+                    hoverLabel != "" ? "opacity-100" : "opacity-0"
+                }`}
+            >
+                {hoverLabel}
             </div>
 
             <div className="h-[300px] overflow-x-hidden overflow-y-auto grid grid-cols-[32%_1fr_1fr_1fr]">
