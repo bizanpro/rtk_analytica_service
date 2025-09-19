@@ -113,7 +113,7 @@ const SaleFunnelStages = ({
         <ul className="grid gap-3">
             <ToastContainer containerId="toast" />
 
-            <li className="grid items-center grid-cols-[1fr_39%_19%] gap-5 mb-2 text-gray-400 pl-5">
+            <li className="grid items-center grid-cols-[1fr_36%_19%] gap-5 mb-2 text-gray-400 pl-5">
                 <span className="flex items-center gap-2">Этап</span>
                 <span className="flex items-center gap-2">Дата</span>
                 <span className="flex items-center gap-2">Статус</span>
@@ -147,7 +147,7 @@ const SaleFunnelStages = ({
                         "воронка возобновлена" ? (
                         <div
                             key={stage.id}
-                            className="text-gray-400 px-5.5 flex items-center gap-2"
+                            className="text-gray-400 px-5.5 flex items-center gap-2 mb-2"
                         >
                             {stage.name}
 

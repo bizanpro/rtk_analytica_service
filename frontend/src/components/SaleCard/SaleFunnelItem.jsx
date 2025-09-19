@@ -13,7 +13,7 @@ const SaleFunnelItem = ({
 }) => {
     return (
         <li
-            className="grid items-center grid-cols-[1fr_38%_18%] gap-5 mb-2 text-lg cursor-pointer"
+            className="grid items-center grid-cols-[1fr_35%_18%] gap-5 mb-2 text-lg cursor-pointer"
             onClick={() => {
                 if (activeStage != stage.id) {
                     setActiveStage(stage.id);
@@ -30,7 +30,7 @@ const SaleFunnelItem = ({
 
                 <div className="flex flex-col">{stage.name}</div>
             </div>
-            
+
             <div className="flex items-center gap-2">
                 <DatePicker
                     className="border-2 border-gray-300 p-1 w-full h-[32px]"
