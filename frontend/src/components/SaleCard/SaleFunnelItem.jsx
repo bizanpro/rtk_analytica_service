@@ -13,7 +13,7 @@ const SaleFunnelItem = ({
 }) => {
     return (
         <li
-            className="grid items-center grid-cols-[1fr_35%_18%] gap-5 mb-2 text-lg cursor-pointer"
+            className="grid items-center grid-cols-[1fr_31%_18%] gap-5 mb-2 text-lg cursor-pointer"
             onClick={() => {
                 if (activeStage != stage.id) {
                     setActiveStage(stage.id);

@@ -1238,7 +1238,7 @@ const SaleCard = () => {
                                             </span>
                                         </div>
 
-                                        <div className="border-2 border-gray-300 py-5 px-4 h-full overflow-x-hidden overflow-y-auto">
+                                        <div className="border-2 border-gray-300 p-3 h-full overflow-x-hidden overflow-y-auto">
                                             {saleStages.stages?.length > 0 &&
                                                 services.length > 0 && (
                                                     <SaleFunnelStages
