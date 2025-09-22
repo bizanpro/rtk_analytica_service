@@ -6,7 +6,7 @@ import handleStatusString from "../../../utils/handleStatusString";
 
 import ManagementReportEditor from "../../Reports/ManagementReportEditor";
 
-const ManagerReports = ({ selectedReportMonth }) => {
+const ManagerReports = ({ selectedFilters }) => {
     const [reportsList, setReportsList] = useState({});
     const [managementEditorState, setManagementEditorState] = useState(false); // Редактор отчёта менеджмента
     const [managementReportData, setManagementReportData] = useState({
@@ -21,7 +21,7 @@ const ManagerReports = ({ selectedReportMonth }) => {
         misc: "",
     });
     const getManagementReportsDashboard = () => {
-        const queryString = buildQueryParams(selectedReportMonth);
+        const queryString = buildQueryParams(selectedFilters);
 
         getData(
             `${
@@ -47,10 +47,10 @@ const ManagerReports = ({ selectedReportMonth }) => {
     };
 
     useEffect(() => {
-        if (Object.keys(selectedReportMonth).length > 0) {
+        if (Object.keys(selectedFilters).length > 0) {
             getManagementReportsDashboard();
         }
-    }, [selectedReportMonth]);
+    }, [selectedFilters]);
 
     return (
         <div className="flex flex-col gap-3 border border-gray-300 p-4">

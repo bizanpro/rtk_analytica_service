@@ -404,8 +404,6 @@ const Indicators = () => {
             ...selectedReportMonth,
         };
 
-        delete query.period;
-
         const queryString = buildQueryParams(query);
 
         getData(
@@ -848,7 +846,7 @@ const Indicators = () => {
                 />
 
                 <section className="grid grid-cols-2 gap-4">
-                    <ManagerReports selectedReportMonth={selectedReportMonth} />
+                    <ManagerReports selectedFilters={selectedFilters} />
 
                     <Sales funnelMetrics={funnelMetrics} />
                 </section>
