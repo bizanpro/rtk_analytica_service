@@ -1260,6 +1260,7 @@ const SaleCard = () => {
                                                             handleActiveStageDate
                                                         }
                                                         getStages={getStages}
+                                                        requestNextStage={requestNextStage}
                                                         mode={mode}
                                                     />
                                                 )}

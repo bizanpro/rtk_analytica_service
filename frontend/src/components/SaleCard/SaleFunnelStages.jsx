@@ -17,6 +17,7 @@ const SaleFunnelStages = ({
     setActiveStage,
     handleActiveStageDate,
     getStages,
+    requestNextStage,
     mode,
 }) => {
     const [popupState, setPopupState] = useState(false);
@@ -175,6 +176,7 @@ const SaleFunnelStages = ({
                             setActiveStage={setActiveStage}
                             handleNextStage={handleNextStage}
                             handleActiveStageDate={handleActiveStageDate}
+                            requestNextStage={requestNextStage}
                             mode={mode}
                         />
                     );

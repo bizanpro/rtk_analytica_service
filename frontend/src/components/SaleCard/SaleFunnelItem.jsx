@@ -9,6 +9,7 @@ const SaleFunnelItem = ({
     setActiveStage,
     handleNextStage,
     handleActiveStageDate,
+    requestNextStage,
     mode,
 }) => {
     return (
@@ -62,12 +63,24 @@ const SaleFunnelItem = ({
                             title="Отказ от участия"
                             onClick={(evt) => {
                                 evt.stopPropagation();
-                                if (confirm("Вы уверены?")) {
-                                    handleNextStage(
-                                        stage.next_possible_stages[1].id,
-                                        stage.name,
-                                        "rejected"
-                                    );
+
+                                if (stage.next_possible_stages[1]?.selected) {
+                                    if (confirm("Вы уверены?")) {
+                                        requestNextStage(
+                                            stage.next_possible_stages[1].id,
+                                            stage.name,
+                                            "rejected"
+                                        );
+                                    }
+                                    return;
+                                } else {
+                                    if (confirm("Вы уверены?")) {
+                                        handleNextStage(
+                                            stage.next_possible_stages[1].id,
+                                            stage.name,
+                                            "rejected"
+                                        );
+                                    }
                                 }
                             }}
                         ></button>
@@ -81,11 +94,20 @@ const SaleFunnelItem = ({
                             title="Отложить проект"
                             onClick={(evt) => {
                                 evt.stopPropagation();
-                                handleNextStage(
-                                    stage.next_possible_stages[2].id,
-                                    stage.name,
-                                    "postponed"
-                                );
+
+                                if (stage.next_possible_stages[2]?.selected) {
+                                    requestNextStage(
+                                        stage.next_possible_stages[2].id,
+                                        stage.name,
+                                        "postponed"
+                                    );
+                                } else {
+                                    handleNextStage(
+                                        stage.next_possible_stages[2].id,
+                                        stage.name,
+                                        "postponed"
+                                    );
+                                }
                             }}
                         ></button>
 
@@ -98,11 +120,20 @@ const SaleFunnelItem = ({
                             title="Принять"
                             onClick={(evt) => {
                                 evt.stopPropagation();
-                                handleNextStage(
-                                    stage.next_possible_stages[0].id,
-                                    stage.name,
-                                    "success"
-                                );
+
+                                if (stage.next_possible_stages[0]?.selected) {
+                                    requestNextStage(
+                                        stage.next_possible_stages[0].id,
+                                        stage.name,
+                                        "success"
+                                    );
+                                } else {
+                                    handleNextStage(
+                                        stage.next_possible_stages[0].id,
+                                        stage.name,
+                                        "success"
+                                    );
+                                }
                             }}
                         ></button>
                     </nav>
