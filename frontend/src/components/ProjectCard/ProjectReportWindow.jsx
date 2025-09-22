@@ -51,6 +51,8 @@ const ProjectReportWindow = ({
         regularity: "",
     });
 
+    const [preFillReportData, setPreFillReportData] = useState({});
+
     const [teammates, setTeammates] = useState([]); // Члены команды
     const [contractors, setContractors] = useState([]); // Подрядчики
 
@@ -443,36 +445,72 @@ const ProjectReportWindow = ({
     const getReportPrefill = (url) => {
         getData(url).then((response) => {
             if (response.status == 200 && response.data.has_prefill_data) {
-                // Добавляем основные данные
-                setReportData((prev) => ({
-                    ...prev,
-                    ...response.data.data,
-                }));
-
-                // Добавляем членов команды
-                if (
-                    response.data.data.team_members &&
-                    response.data.data.team_members.length > 0
-                ) {
-                    setTeammates(response.data.data.team_members);
-
-                    setReportData((prev) => ({
-                        ...prev,
-                        responsible_persons: response.data.data.team_members,
-                    }));
-                }
-
-                // Добавляем подрядчиков
-                if (
-                    response.data.data.contragents &&
-                    response.data.data.contragents.length > 0
-                ) {
-                    setContractors(response.data.data.contragents);
-                }
+                setPreFillReportData(response.data.data);
 
                 setIsAutoPrefill(false);
             }
         });
+    };
+
+    const handleReportPrefill = () => {
+        let result;
+
+        const selectedType = reportTypes.find(
+            (type) => type.id === +reportData.report_type_id
+        );
+
+        if (selectedType) {
+            if (
+                selectedType.is_regular &&
+                reportData.regularity != "" &&
+                reportData.regularity != "one_time"
+            ) {
+                result = confirm(
+                    `Вам доступно автозаполнение отчета. Будут заполнены следующие поля:\n- Тип отчёта\n- Отчетный период\n- Бюджет проекта\n- Период реализации\n- Договор\n- Стоимость услуг\n- Период выполнения\n- Команда проекта\n- Подрядчики`
+                );
+            } else if (
+                !selectedType.is_regular &&
+                reportData.regularity != "" &&
+                reportData.regularity == "one_time"
+            ) {
+                result = confirm(
+                    `Вам доступно автозаполнение отчета. Будут заполнены следующие поля:\n- Тип отчёта\n- Договор\n- Стоимость услуг\n- Команда проекта\n- Подрядчики`
+                );
+            }
+        }
+
+        if (result) {
+            setPrefillData();
+        }
+    };
+
+    const setPrefillData = () => {
+        // Добавляем основные данные
+        setReportData((prev) => ({
+            ...prev,
+            ...preFillReportData,
+        }));
+
+        // Добавляем членов команды
+        if (
+            preFillReportData.team_members &&
+            preFillReportData.team_members.length > 0
+        ) {
+            setTeammates(preFillReportData.team_members);
+
+            setReportData((prev) => ({
+                ...prev,
+                responsible_persons: preFillReportData.team_members,
+            }));
+        }
+
+        // Добавляем подрядчиков
+        if (
+            preFillReportData.contragents &&
+            preFillReportData.contragents.length > 0
+        ) {
+            setContractors(preFillReportData.contragents);
+        }
     };
 
     useEffect(() => {
@@ -588,6 +626,17 @@ const ProjectReportWindow = ({
                 {reportName ? reportName : reportData.report_period_code}
             </div>
 
+            {Object.keys(preFillReportData).length > 0 && (
+                <button
+                    type="button"
+                    className="bg-gray-200 p-3 text-center rounded-md"
+                    title="Доступно автозаполнение"
+                    onClick={() => handleReportPrefill()}
+                >
+                    Доступно автозаполнение
+                </button>
+            )}
+
             <div className="grid gap-3 grid-cols-2">
                 <div className="flex flex-col gap-2 justify-start">
                     <span className="text-gray-400">Тип отчёта</span>
@@ -611,6 +660,43 @@ const ProjectReportWindow = ({
                     </div>
                 </div>
 
+                <div className="flex flex-col gap-2 justify-start">
+                    <span className="text-gray-400">Регулярность</span>
+                    <div className="border-2 border-gray-300 p-1 h-[32px]">
+                        <select
+                            className="w-full h-full"
+                            onChange={(e) => handleInputChange(e, "regularity")}
+                            value={reportData.regularity || ""}
+                            disabled={
+                                mode === "read" ||
+                                reportData.is_regular === false
+                            }
+                        >
+                            <option value="">Выбрать из списка</option>
+                            {regularityOptions.length > 0 &&
+                                regularityOptions.map((item) => {
+                                    if (
+                                        item.alias === "one_time" &&
+                                        reportData.is_regular === true
+                                    ) {
+                                        return null;
+                                    }
+
+                                    return (
+                                        <option
+                                            value={item.alias}
+                                            key={item.alias}
+                                        >
+                                            {item.name}
+                                        </option>
+                                    );
+                                })}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid gap-3 grid-cols-1">
                 <div className="flex flex-col">
                     <span className="block mb-2 text-gray-400">
                         Отчетный период
@@ -752,43 +838,6 @@ const ProjectReportWindow = ({
                             }))
                         }
                     />
-                </div>
-            </div>
-
-            <div className="grid gap-3 grid-cols-1">
-                <div className="flex flex-col gap-2 justify-start">
-                    <span className="text-gray-400">Регулярность</span>
-                    <div className="border-2 border-gray-300 p-1 h-[32px]">
-                        <select
-                            className="w-full h-full"
-                            onChange={(e) => handleInputChange(e, "regularity")}
-                            value={reportData.regularity || ""}
-                            disabled={
-                                mode === "read" ||
-                                reportData.is_regular === false
-                            }
-                        >
-                            <option value="">Выбрать из списка</option>
-                            {regularityOptions.length > 0 &&
-                                regularityOptions.map((item) => {
-                                    if (
-                                        item.alias === "one_time" &&
-                                        reportData.is_regular === true
-                                    ) {
-                                        return null;
-                                    }
-
-                                    return (
-                                        <option
-                                            value={item.alias}
-                                            key={item.alias}
-                                        >
-                                            {item.name}
-                                        </option>
-                                    );
-                                })}
-                        </select>
-                    </div>
                 </div>
             </div>
 
