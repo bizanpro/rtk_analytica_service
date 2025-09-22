@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import EmployeeMetrics from "./EmployeeMetrics";
 import EmployeeItem from "./EmployeeItem";
 
@@ -46,6 +48,19 @@ const EmployeesStats = ({ employeeMetrics, setEmployeeFilters }) => {
                 color: "#fff",
                 formatter: (value) => value,
             },
+            tooltip: {
+                displayColors: false,
+                callbacks: {
+                    label: (context) => {
+                        const item =
+                            employeeMetrics.positions_histogram?.[
+                                context.dataIndex
+                            ];
+                        return `${item.name}: ${item.value} ${item.label}`;
+                    },
+                    title: () => "",
+                },
+            },
         },
 
         scales: {
@@ -55,8 +70,8 @@ const EmployeesStats = ({ employeeMetrics, setEmployeeFilters }) => {
                     maxRotation: 0,
                     callback: function (value) {
                         let label = this.getLabelForValue(value);
-                        return label.length > 20
-                            ? label.slice(0, 20) + "…"
+                        return label.length > 22
+                            ? label.slice(0, 22) + "…"
                             : label;
                     },
                 },
@@ -75,12 +90,12 @@ const EmployeesStats = ({ employeeMetrics, setEmployeeFilters }) => {
     };
 
     const EmployeeMetricsData = {
-        labels: employeeMetrics.headcount_by_position?.map((item) => item.name),
+        labels: employeeMetrics.positions_histogram?.map((item) => item.name),
         datasets: [
             {
                 label: "",
-                data: employeeMetrics.headcount_by_position?.map(
-                    (item) => item.count
+                data: employeeMetrics.positions_histogram?.map(
+                    (item) => item.value
                 ),
                 backgroundColor: "black",
                 borderRadius: 2,
