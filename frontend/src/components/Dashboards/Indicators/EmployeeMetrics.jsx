@@ -27,6 +27,7 @@ const EmployeeMetrics = ({
                             end={total_active_employees?.value || 0}
                             duration={1}
                             separator=" "
+                            decimals={2}
                         />
                     </strong>
                     <small className="text-sm">
