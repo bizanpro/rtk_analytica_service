@@ -1,22 +1,30 @@
 import { useEffect, useState, useMemo } from "react";
 
 import getData from "../../utils/getData";
+import { sortList } from "../../utils/sortList";
 
 import EmployeeItem from "./EmployeeItem";
 import CreatableSelect from "react-select/creatable";
+import TheadSortButton from "../TheadSortButton/TheadSortButton";
 
 const Employees = () => {
+    const [sortBy, setSortBy] = useState({ key: "", action: "" });
+
     const [list, setList] = useState([]);
+    const [sortedList, setSortedList] = useState([]);
+
+    const [isLoading, setIsLoading] = useState(true);
+
     const [departments, setDepartments] = useState([]);
+
     const [selectedType, setSelectedType] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
     const [selectedName, setSelectedName] = useState(null);
     const [selectedDepartment, setSelectedDepartment] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
 
     const COLUMNS = [
         { label: "ФИО", key: "name" },
-        { label: "Загрузка", key: "reports_count" },
+        { label: "Загрузка", key: "reports_count", is_sortable: true },
         { label: "Должность", key: "position" },
         { label: "Телефон", key: "phone_number" },
         { label: "Email", key: "email" },
@@ -26,7 +34,7 @@ const Employees = () => {
     ];
 
     const filteredEmployees = useMemo(() => {
-        const result = list.filter((employee) => {
+        const result = sortedList.filter((employee) => {
             return (
                 (selectedType !== "default"
                     ? employee.is_staff === (selectedType === "true")
@@ -44,17 +52,23 @@ const Employees = () => {
         });
 
         return result;
-    }, [list, selectedType, selectedStatus, selectedName, selectedDepartment]);
+    }, [
+        sortedList,
+        selectedType,
+        selectedStatus,
+        selectedName,
+        selectedDepartment,
+    ]);
 
     // Заполняем селектор сотрудников
     const nameOptions = useMemo(() => {
-        const allNames = list.map((item) => ({
+        const allNames = sortedList.map((item) => ({
             value: item.id,
             label: item.name,
         }));
 
         return Array.from(new Set(allNames));
-    }, [list]);
+    }, [sortedList]);
 
     // Получени списка сотрудников
     const getList = () => {
@@ -63,6 +77,7 @@ const Employees = () => {
             .then((response) => {
                 if (response.status == 200) {
                     setList(response.data);
+                    setSortedList(response.data);
                 }
             })
             .finally(() => setIsLoading(false));
@@ -84,6 +99,14 @@ const Employees = () => {
             }
         );
     };
+
+    const handleListSort = () => {
+        setSortedList(sortList(list, sortBy));
+    };
+
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
 
     useEffect(() => {
         getDepartments();
@@ -174,13 +197,22 @@ const Employees = () => {
                     <table className="table-auto w-full border-collapse border-b border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
-                                {COLUMNS.map(({ label, key }) => (
+                                {COLUMNS.map(({ label, key, is_sortable }) => (
                                     <th
                                         className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
                                         rowSpan="2"
                                         key={key}
                                     >
-                                        {label}
+                                        {is_sortable ? (
+                                            <TheadSortButton
+                                                label={label}
+                                                value={key}
+                                                sortBy={sortBy}
+                                                setSortBy={setSortBy}
+                                            />
+                                        ) : (
+                                            label
+                                        )}
                                     </th>
                                 ))}
                             </tr>

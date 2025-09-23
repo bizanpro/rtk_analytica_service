@@ -86,7 +86,7 @@ const EmployeeMetrics = ({
                             )}
                             duration={1}
                             separator=" "
-                            decimals={2}
+                            decimals={1}
                             decimal=","
                         />
                     </strong>
