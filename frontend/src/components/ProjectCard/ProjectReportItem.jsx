@@ -40,7 +40,7 @@ const ProjectReportItem = ({
 
             <div className="reports__list-item__col">
                 <div>{days}</div>
-                <span>{execution_period_code}</span>
+                <span>{execution_period}</span>
             </div>
 
             <div className={`reports__list-item__status status ${statusClass}`}>

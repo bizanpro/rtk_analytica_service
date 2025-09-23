@@ -259,18 +259,18 @@ const EmployeeCard = () => {
                                 : "top-right",
                     });
                 });
-        } else {
-            toast.error("Необходимо выбрать должность", {
-                containerId: "employee",
-                isLoading: false,
-                autoClose: 1500,
-                pauseOnFocusLoss: false,
-                pauseOnHover: false,
-                draggable: true,
-                position:
-                    window.innerWidth >= 1440 ? "bottom-right" : "top-right",
-            });
-        }
+        // } else {
+        //     toast.error("Необходимо выбрать должность", {
+        //         containerId: "employee",
+        //         isLoading: false,
+        //         autoClose: 1500,
+        //         pauseOnFocusLoss: false,
+        //         pauseOnHover: false,
+        //         draggable: true,
+        //         position:
+        //             window.innerWidth >= 1440 ? "bottom-right" : "top-right",
+        //     });
+        // }
     };
 
     // Получаем сотрудника

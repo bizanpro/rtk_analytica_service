@@ -29,7 +29,6 @@ const Projects = () => {
 
     const [list, setList] = useState([]);
 
-
     const [newProjectName, setNewProjectName] = useState("");
     const [openFilter, setOpenFilter] = useState("");
 
@@ -59,17 +58,16 @@ const Projects = () => {
         return Array.from(new Set(allNames));
     }, [sortedList]);
 
-
     // Заполняем селектор заказчиков
-    const contragentOptions = useMemo(() => {
-        const allNames = sortedList
-            .map((item) => item.contragent)
-            .filter(
-                (contragent) => contragent !== null && contragent !== undefined
-            );
+    // const contragentOptions = useMemo(() => {
+    //     const allNames = sortedList
+    //         .map((item) => item.contragent)
+    //         .filter(
+    //             (contragent) => contragent !== null && contragent !== undefined
+    //         );
 
-        return Array.from(new Set(allNames));
-    }, [sortedList]);
+    //     return Array.from(new Set(allNames));
+    // }, [sortedList]);
 
     const sectorOptions = useMemo(() => {
         const allSectors = sortedList

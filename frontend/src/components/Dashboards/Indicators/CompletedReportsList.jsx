@@ -3,7 +3,7 @@ import { useState } from "react";
 import getData from "../../../utils/getData";
 
 import CompletedReportItem from "./CompletedReportItem";
-import ProjectReportWindow from "../../ProjectCard/ProjectReportWindow";
+import ReportWindow from "../../ReportWindow/ReportWindow";
 
 const CompletedReportsList = ({ completedReports }) => {
     const [reportWindowsState, setReportWindowsState] = useState(false);
@@ -74,7 +74,7 @@ const CompletedReportsList = ({ completedReports }) => {
                         style={{ minHeight: "calc(100vh - 10%)" }}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <ProjectReportWindow
+                        <ReportWindow
                             reportName={reportName}
                             reportWindowsState={setReportWindowsState}
                             contracts={contracts}
