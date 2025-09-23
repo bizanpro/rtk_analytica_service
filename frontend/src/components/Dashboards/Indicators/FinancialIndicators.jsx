@@ -321,12 +321,21 @@ const FinancialIndicators = ({
 
     useEffect(() => {
         if (financialList.items && financialProfitList.items) {
-            const merged = financialList?.items?.map((item) => {
-                const match = financialProfitList?.items?.find(
-                    (el) => el.id === item.id
-                );
-                return { ...item, ...match };
-            });
+            const merged = [
+                ...(financialList?.items || []),
+                ...(financialProfitList?.items || []),
+            ]
+                // Убираем дубликаты по id
+                .reduce((acc, item) => {
+                    const existing = acc.find((el) => el.id === item.id);
+                    if (existing) {
+                        // если такой id уже был — объединяем данные
+                        Object.assign(existing, item);
+                    } else {
+                        acc.push({ ...item });
+                    }
+                    return acc;
+                }, []);
 
             setMergetList(merged);
             setSortedMergetList(merged);
