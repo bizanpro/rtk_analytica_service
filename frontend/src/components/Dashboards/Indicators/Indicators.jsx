@@ -1,18 +1,19 @@
 import { useState, useEffect, useRef } from "react";
+
 import getData from "../../../utils/getData";
 import buildQueryParams from "../../../utils/buildQueryParams";
-
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
-import FinancialMetrics from "./FinancialMetrics";
-import FunnelMetrics from "./FunnelMetrics";
-import FunnelProjectItem from "./FunnelProjectItem";
-import GrossMetrics from "./GrossMetrics";
-import CompletedReportItem from "./CompletedReportItem";
-import EmployeeItem from "./EmployeeItem";
-import EmployeeMetrics from "./EmployeeMetrics";
-import ManagerReportsEditor from "./ManagerReportsEditor";
 import Loader from "../../Loader";
+import CreatableSelect from "react-select/creatable";
+import FinancialMetrics from "./FinancialMetrics";
+import Sales from "./Sales";
+import GrossMetrics from "./GrossMetrics";
+import CompletedReportsList from "./CompletedReportsList";
+import EmployeesStats from "./EmployeesStats";
+import FinancialIndicators from "./FinancialIndicators";
+import ProjectManagerReports from "./ProjectManagerReports";
+import ManagerReports from "./ManagerReports";
 
 import {
     Chart as ChartJS,
@@ -44,39 +45,75 @@ const Indicators = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     const [filtertOptions, setFilterOptions] = useState([]);
-    const [selectedFilters, setSelectedFilters] = useState({});
+
+    const [selectedReportMonth, setSelectedReportMonth] = useState([]); // Отчетный месяц
+
+    const [selectedFilters, setSelectedFilters] = useState({}); // Отчетный месяц, отчетный период
+
+    const [mainFilters, setMainFilters] = useState({}); // Отчетный месяц, отчетный период, заказчик, проект
+
+    const [financialMetrics, setFinancialMetrics] = useState({});
+
+    const [financialList, setFinancialList] = useState({}); // Сортированные ключевые финансовые показатели - Поступления и выручка
+    const [financialProfitList, setFinancialProfitList] = useState({}); // Сортированные ключевые финансовые показатели - Выловая прибыль и рентабельность
+
+    const [funnelMetrics, setFunnelMetrics] = useState({}); // Продажи
+
+    const [employeeMetrics, setEmployeeMetrics] = useState({});
+
+    const [contragents, setContragents] = useState([]);
+    const [projects, setProjects] = useState([]);
+
+    const [filteredContragents, setFilteredContragents] = useState([]);
+    const [filteredProjects, setFilteredProjects] = useState([]);
+
+    const [completedReports, setCompletedReports] = useState([]);
+    const [projectManagerReports, setProjectManagerReports] = useState([]);
+
     const [financialListFilters, setFinancialListFilters] = useState({
         type: ["project"],
         metric: ["revenue"],
     });
+
     const [financialProfitListFilters, setFinancialProfitListFilters] =
         useState({
             type: ["project"],
             metric: ["gross_profit"],
         });
+
     const [employeeFilters, setEmployeeFilters] = useState({
         view_type: ["headcount"],
         metric_type: ["headcount"],
     });
-    const [funnelMetricsFilters, setFunnelMetricsFilters] = useState({});
-    const [financialMetrics, setFinancialMetrics] = useState({});
-    const [financialList, setFinancialList] = useState({});
-    const [financialProfitList, setFinancialProfitList] = useState({});
-    const [funnelMetrics, setFunnelMetrics] = useState({});
-    const [employeeMetrics, setEmployeeMetrics] = useState({});
 
-    const [contragents, setContragents] = useState([]);
-    const [reportTypes, setReportTypes] = useState([]);
-    const [completedReports, setCompletedReports] = useState([]);
-    const [chartView, setChartView] = useState("headcount");
+    const hasInitialized = useRef(false);
+
+    const hasCalledListOnSelected = useRef(false);
+
+    const hasCalledProfitListOnSelected = useRef(false);
+
+    const hasCalledMainMetricsOnSelected = useRef(false);
+
+    const hasEmployeeMetricsOnSelected = useRef(false);
+
+    const isFinancialListFiltersReady =
+        Object.keys(financialListFilters).length > 2;
+
+    const isFinancialProfitListFiltersReady =
+        Object.keys(financialProfitListFilters).length > 2;
+
+    const isMainFiltersReady = Object.keys(mainFilters).length > 1;
+
+    const isEmployeeMetricsFiltersReady =
+        Object.keys(employeeFilters).length > 3;
 
     const financialMetricsData = {
         labels: financialMetrics.monthly_chart?.map((item) => item.month),
         datasets: [
             {
                 label: "",
-                data: financialMetrics.monthly_chart?.map(
-                    (item) => item.revenue
+                data: financialMetrics.monthly_chart?.map((item) =>
+                    parseFloat(item.revenue?.toString().replace(",", "."))
                 ),
                 backgroundColor: "black",
                 categoryPercentage: 0.5,
@@ -85,8 +122,8 @@ const Indicators = () => {
             },
             {
                 label: "",
-                data: financialMetrics.monthly_chart?.map(
-                    (item) => item.receipts
+                data: financialMetrics.monthly_chart?.map((item) =>
+                    parseFloat(item.receipts?.toString().replace(",", "."))
                 ),
                 backgroundColor: "rgba(204, 204, 204, 0.5)",
                 categoryPercentage: 0.5,
@@ -102,8 +139,8 @@ const Indicators = () => {
             {
                 type: "line",
                 label: "",
-                data: financialMetrics.monthly_chart?.map(
-                    (item) => item.gross_margin
+                data: financialMetrics.monthly_chart?.map((item) =>
+                    parseFloat(item.gross_margin?.toString().replace(",", "."))
                 ),
                 backgroundColor: "rgba(204, 204, 204, 1)",
                 borderColor: "rgba(204, 204, 204, 1)",
@@ -112,99 +149,78 @@ const Indicators = () => {
                 pointBackgroundColor: "#ccc",
                 pointRadius: 4,
                 tension: 0.3,
+                yAxisID: "y1",
             },
             {
                 type: "bar",
                 label: "",
-                data: financialMetrics.monthly_chart?.map(
-                    (item) => item.gross_profit
+                data: financialMetrics.monthly_chart?.map((item) =>
+                    parseFloat(item.gross_profit?.toString().replace(",", "."))
                 ),
                 backgroundColor: "black",
                 categoryPercentage: 0.5,
                 stack: "stack1",
                 borderRadius: 2,
-            },
-        ],
-    };
-
-    const financialListData = {
-        labels: financialList.items?.map((item) => item.name),
-        datasets: [
-            {
-                label: "",
-                data:
-                    financialListFilters.metric[0] === "revenue"
-                        ? financialList.items?.map((item) => item.revenue.value)
-                        : financialList.items?.map(
-                              (item) => item.receipts.value
-                          ),
-                backgroundColor: "black",
-                borderRadius: 2,
-                categoryPercentage: 0.1,
-            },
-        ],
-    };
-
-    const financialProfitListData = {
-        labels: financialProfitList.items?.map((item) => item.name),
-        datasets: [
-            {
-                label: "",
-                data:
-                    financialProfitListFilters.metric[0] === "gross_profit"
-                        ? financialProfitList.items?.map(
-                              (item) => item.gross_profit.value
-                          )
-                        : financialProfitList.items?.map(
-                              (item) => item.gross_margin.value
-                          ),
-                backgroundColor: "black",
-                borderRadius: 2,
-                categoryPercentage: 0.5,
-            },
-        ],
-    };
-
-    const EmployeeMetricsData = {
-        labels: employeeMetrics.headcount_by_position?.map((item) => item.name),
-        datasets: [
-            {
-                label: "",
-                data: employeeMetrics.headcount_by_position?.map(
-                    (item) => item.count
-                ),
-                backgroundColor: "black",
-                borderRadius: 2,
-                categoryPercentage: 0.5,
+                yAxisID: "y",
             },
         ],
     };
 
     const verticalOptions = {
+        maintainAspectRatio: false,
         responsive: true,
         animation: false,
         plugins: {
             legend: {
                 display: false,
-                // position: "top",
             },
             title: {
                 display: false,
                 text: "",
             },
             datalabels: false,
+
+            tooltip: {
+                displayColors: false,
+                callbacks: {
+                    label: (context) => {
+                        const month = context.label;
+                        const value = context.raw;
+
+                        const formattedValue = value
+                            ? value.toLocaleString("ru-RU", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                              })
+                            : "—";
+
+                        let labelText = "";
+                        if (context.datasetIndex === 0) {
+                            labelText = "Выручка, млн руб.";
+                        } else if (context.datasetIndex === 1) {
+                            labelText = "Поступления, млн руб.";
+                        }
+
+                        return [month, labelText, formattedValue];
+                    },
+                    title: () => "",
+                },
+            },
         },
         scales: {
             x: {
                 stacked: true,
             },
             y: {
-                stacked: true,
+                ticks: {
+                    // display: false,
+                },
             },
         },
     };
 
     const verticalOptions2 = {
+        maintainAspectRatio: false,
         responsive: true,
         animation: false,
         indexAxis: "x",
@@ -216,54 +232,67 @@ const Indicators = () => {
                 display: false,
             },
             datalabels: false,
+            tooltip: {
+                displayColors: false,
+                callbacks: {
+                    label: (context) => {
+                        const month = context.label;
+                        const value = context.raw;
+
+                        let formattedValue = "—";
+                        if (typeof value === "number" && !isNaN(value)) {
+                            formattedValue = value.toLocaleString("ru-RU", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            });
+                        }
+
+                        let labelText = "";
+                        if (context.datasetIndex === 0) {
+                            labelText = "Валовая рентаб.";
+                            formattedValue = `${formattedValue}%`;
+                        } else if (context.datasetIndex === 1) {
+                            labelText = "Валовая прибыль, млн руб.";
+                        }
+
+                        return [month, labelText, formattedValue];
+                    },
+                    title: () => "",
+                },
+            },
         },
         scales: {
             x: {
                 stacked: true,
             },
             y: {
-                stacked: false,
-            },
-        },
-    };
-
-    const horizontalOptions = {
-        responsive: true,
-        animation: false,
-        indexAxis: "y",
-        plugins: {
-            legend: {
-                display: false,
-                // position: "top",
-            },
-            title: {
-                display: false,
-                text: "",
-            },
-            datalabels: {
-                anchor: "end",
-                align: "end",
-                color: "#000",
-                formatter: (value) => value,
-            },
-        },
-
-        scales: {
-            x: { beginAtZero: true, position: "top" },
-            y: {
-                ticks: {
-                    autoSkip: false,
-                    maxRotation: 0,
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: "Валовая прибыль, млн руб.",
                 },
-                barPercentage: 0.7,
-                categoryPercentage: 0.8,
+            },
+            y1: {
+                beginAtZero: true,
+                position: "right",
+                grid: {
+                    drawOnChartArea: false,
+                },
+                title: {
+                    display: true,
+                    text: "Валовая рентаб., %",
+                },
             },
         },
     };
 
-    // Обработка фильтров
+    // Добавляем значение отчетного месяца и периода в параметры запроса
     const handleFilterChange = (filterKey, value) => {
         const filteredValues = value.filter((v) => v !== "");
+
+        setSelectedReportMonth({
+            [filterKey]: filteredValues.length > 0 ? filteredValues : [],
+        });
 
         setSelectedFilters((prev) => ({
             ...prev,
@@ -280,7 +309,7 @@ const Indicators = () => {
             [filterKey]: filteredValues.length > 0 ? filteredValues : [],
         }));
 
-        setFunnelMetricsFilters((prev) => ({
+        setMainFilters((prev) => ({
             ...prev,
             [filterKey]: filteredValues.length > 0 ? filteredValues : [],
         }));
@@ -291,19 +320,32 @@ const Indicators = () => {
         }));
     };
 
+    // Получаем доступные фильтры
     const getFilterOptions = () => {
         getData(`${import.meta.env.VITE_API_URL}company/filter-options`).then(
             (response) => {
                 if (response?.status == 200) {
                     setFilterOptions(response.data);
 
-                    const periodValue = response.data.periods[0]?.value;
-                    const reportMonthValue = response.data.months[0]?.value;
+                    const periodValue = response.data.periods[1]?.value;
+                    const reportMonthValue = response.data.months[1]?.value
+                        ? response.data.months[1]?.value
+                        : response.data.months[0]?.value;
+
+                    setSelectedReportMonth({
+                        report_month: [reportMonthValue],
+                    });
 
                     setSelectedFilters({
                         period: [periodValue],
                         report_month: [reportMonthValue],
                     });
+
+                    setMainFilters((prev) => ({
+                        ...prev,
+                        period: [periodValue],
+                        report_month: [reportMonthValue],
+                    }));
 
                     setFinancialListFilters((prev) => ({
                         ...prev,
@@ -317,12 +359,6 @@ const Indicators = () => {
                         report_month: [reportMonthValue],
                     }));
 
-                    setFunnelMetricsFilters((prev) => ({
-                        ...prev,
-                        period: [periodValue],
-                        report_month: [reportMonthValue],
-                    }));
-
                     setEmployeeFilters((prev) => ({
                         ...prev,
                         period: [periodValue],
@@ -331,22 +367,6 @@ const Indicators = () => {
                 }
             }
         );
-    };
-
-    const getFinancialMetrics = () => {
-        setIsLoading(true);
-        const queryString = buildQueryParams(selectedFilters);
-
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }company/financial-metrics?${queryString}`
-        ).then((response) => {
-            if (response?.status == 200) {
-                setFinancialMetrics(response.data);
-                setIsLoading(false);
-            }
-        });
     };
 
     // Получение сотрудников
@@ -364,8 +384,9 @@ const Indicators = () => {
         });
     };
 
+    // Получение завершенных отчетов
     const getCompletedReports = () => {
-        const queryString = buildQueryParams(selectedFilters);
+        const queryString = buildQueryParams(mainFilters);
 
         getData(
             `${import.meta.env.VITE_API_URL}completed-reports?${queryString}`
@@ -376,8 +397,53 @@ const Indicators = () => {
         });
     };
 
+    // Получение отчетов руководителя проектов
+    const getProjectManagerReports = () => {
+        const query = {
+            ...mainFilters,
+            ...selectedReportMonth,
+        };
+
+        const queryString = buildQueryParams(query);
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }company/project-manager-reports-dashboard?${queryString}`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setProjectManagerReports(response.data);
+            }
+        });
+    };
+
+    // Ключевые финансовые показатели - верхняя часть
+    const getFinancialMetrics = () => {
+        setIsLoading(true);
+
+        const queryString = buildQueryParams(mainFilters);
+
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }company/financial-metrics?${queryString}`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setFinancialMetrics(response.data);
+
+                setIsLoading(false);
+            }
+        });
+    };
+
+    // Ключевые финансовые показатели - левый блок
     const getFinancialList = () => {
-        const queryString = buildQueryParams(financialListFilters);
+        const query = {
+            ...financialListFilters,
+            ...mainFilters,
+        };
+
+        const queryString = buildQueryParams(query);
 
         getData(
             `${
@@ -390,6 +456,7 @@ const Indicators = () => {
         });
     };
 
+    // Ключевые финансовые показатели - правый блок
     const getFinancialProfitList = () => {
         const queryString = buildQueryParams(financialProfitListFilters);
 
@@ -404,8 +471,9 @@ const Indicators = () => {
         });
     };
 
+    // Продажи
     const getFunnelMetrics = () => {
-        const queryString = buildQueryParams(funnelMetricsFilters);
+        const queryString = buildQueryParams(mainFilters);
 
         getData(
             `${
@@ -420,49 +488,27 @@ const Indicators = () => {
 
     // Получение заказчиков
     const getContragents = () => {
-        getData(`${import.meta.env.VITE_API_URL}contragents/?all=true`).then(
-            (response) => {
-                if (response?.status == 200) {
-                    setContragents(response.data);
-                }
+        getData(
+            `${
+                import.meta.env.VITE_API_URL
+            }contragents?all=true&has_projects=true&scope=both`
+        ).then((response) => {
+            if (response?.status == 200) {
+                setContragents(response.data);
+                setFilteredContragents(response.data);
             }
-        );
+        });
     };
 
-    // Получение типов отчета
-    const getReportTypes = () => {
-        getData(`${import.meta.env.VITE_API_URL}report-types`).then(
-            (response) => {
-                if (response?.status == 200) {
-                    setReportTypes(response.data.data);
-                }
+    // Получение проектов
+    const getProjects = () => {
+        getData(`${import.meta.env.VITE_API_URL}projects`).then((response) => {
+            if (response?.status == 200) {
+                setProjects(response.data);
+                setFilteredProjects(response.data);
             }
-        );
+        });
     };
-
-    useEffect(() => {
-        getFilterOptions();
-        getContragents();
-        getReportTypes();
-    }, []);
-
-    const hasInitialized = useRef(false);
-    const hasCalledListOnSelected = useRef(false);
-    const hasCalledProfitListOnSelected = useRef(false);
-    const hasCalledFunnelMetricsOnSelected = useRef(false);
-    const hasEmployeeMetricsOnSelected = useRef(false);
-
-    const isFinancialListFiltersReady =
-        Object.keys(financialListFilters).length > 3;
-
-    const isFinancialProfitListFiltersReady =
-        Object.keys(financialProfitListFilters).length > 3;
-
-    const isFunnelMetricsFiltersReady =
-        Object.keys(funnelMetricsFilters).length > 1;
-
-    const isEmployeeMetricsFiltersReady =
-        Object.keys(employeeFilters).length > 3;
 
     useEffect(() => {
         if (!hasInitialized.current) {
@@ -470,63 +516,28 @@ const Indicators = () => {
             return;
         }
 
-        if (isFinancialListFiltersReady) {
-            getFinancialList();
-            hasCalledListOnSelected.current = true;
-        }
+        if (isMainFiltersReady) {
+            if (hasCalledMainMetricsOnSelected.current) {
+                hasCalledMainMetricsOnSelected.current = false;
+                return;
+            }
 
-        if (isFinancialProfitListFiltersReady) {
-            getFinancialProfitList();
-            hasCalledProfitListOnSelected.current = true;
+            getFinancialMetrics(); // Ключевые финансовые показатели - верхняя часть
+            getFinancialList(); // Ключевые финансовые показатели - левый блок
+            getFinancialProfitList(); // Ключевые финансовые показатели - правый блок
+            getFunnelMetrics(); // Продажи
+            getCompletedReports(); // Завершенные отчеты
         }
+    }, [mainFilters]); // Отчетный месяц, отчетный период, заказчик, проект
 
-        if (isFunnelMetricsFiltersReady) {
-            getFunnelMetrics();
-            hasCalledFunnelMetricsOnSelected.current = true;
-        }
+    useEffect(() => {
+        if (!hasInitialized.current) return;
 
         if (isEmployeeMetricsFiltersReady) {
             getEmployeeMetrics();
             hasEmployeeMetricsOnSelected.current = true;
         }
-
-        if (isFinancialListFiltersReady && isFinancialProfitListFiltersReady) {
-            getFinancialMetrics();
-            getCompletedReports();
-        }
-    }, [selectedFilters]);
-
-    useEffect(() => {
-        if (!hasInitialized.current) return;
-
-        if (isFinancialListFiltersReady) {
-            if (hasCalledListOnSelected.current) {
-                hasCalledListOnSelected.current = false;
-                return;
-            }
-            getFinancialList();
-        }
-    }, [
-        financialListFilters.report_month,
-        financialListFilters.period,
-        financialListFilters.type,
-    ]);
-
-    useEffect(() => {
-        if (!hasInitialized.current) return;
-
-        if (isFinancialProfitListFiltersReady) {
-            if (hasCalledProfitListOnSelected.current) {
-                hasCalledProfitListOnSelected.current = false;
-                return;
-            }
-            getFinancialProfitList();
-        }
-    }, [
-        financialProfitListFilters.report_month,
-        financialProfitListFilters.period,
-        financialProfitListFilters.type,
-    ]);
+    }, [selectedFilters]); // Отчетный месяц, отчетный период
 
     useEffect(() => {
         if (!hasInitialized.current) return;
@@ -543,20 +554,55 @@ const Indicators = () => {
     useEffect(() => {
         if (!hasInitialized.current) return;
 
-        if (isFunnelMetricsFiltersReady) {
-            if (hasCalledFunnelMetricsOnSelected.current) {
-                hasCalledFunnelMetricsOnSelected.current = false;
+        if (isFinancialListFiltersReady) {
+            if (hasCalledListOnSelected.current) {
+                hasCalledListOnSelected.current = false;
                 return;
             }
-            getFunnelMetrics();
+            getFinancialList();
         }
-    }, [funnelMetricsFilters]);
+    }, [financialListFilters.type]);
+
+    useEffect(() => {
+        if (!hasInitialized.current) return;
+
+        if (isFinancialProfitListFiltersReady) {
+            if (hasCalledProfitListOnSelected.current) {
+                hasCalledProfitListOnSelected.current = false;
+                return;
+            }
+            getFinancialProfitList();
+        }
+    }, [financialProfitListFilters.type]);
+
+    useEffect(() => {
+        if (!hasInitialized.current) return;
+
+        if (
+            selectedReportMonth?.report_month &&
+            selectedReportMonth.report_month.length > 0 &&
+            selectedReportMonth.report_month[0] !== ""
+        ) {
+            getProjectManagerReports(); // Отчёты руководителей проектов
+        }
+    }, [
+        selectedReportMonth.report_month,
+        mainFilters.contragent_id,
+        mainFilters.project_id,
+    ]);
+
+    useEffect(() => {
+        getFilterOptions();
+        getContragents();
+        getProjects();
+    }, []);
 
     return (
         <div className="flex flex-col justify-between gap-6 mb-8">
             {isLoading && <Loader transparent={true} />}
 
-            <section className="flex items-center justify-between gap-6">
+            {/* ФИЛЬТРЫ */}
+            <section className="filters flex items-center justify-between gap-6">
                 <div className="flex items-center gap-8">
                     <div className="flex flex-col">
                         <span className="block mb-2 text-gray-400">
@@ -564,6 +610,7 @@ const Indicators = () => {
                         </span>
                         <select
                             className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
+                            value={selectedFilters?.report_month?.[0] ?? ""}
                             onChange={(e) => {
                                 const selectedValue = Array.from(
                                     e.target.selectedOptions
@@ -593,6 +640,7 @@ const Indicators = () => {
                         </span>
                         <select
                             className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
+                            value={selectedFilters?.period?.[0] ?? ""}
                             onChange={(e) => {
                                 const selectedValue = Array.from(
                                     e.target.selectedOptions
@@ -618,324 +666,199 @@ const Indicators = () => {
                         <span className="block mb-2 text-gray-400">
                             Фильтры
                         </span>
-                        <select
-                            className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
-                            onChange={(evt) =>
-                                setFunnelMetricsFilters((prev) => ({
-                                    ...prev,
-                                    contragent_id: [evt.target.value],
-                                }))
-                            }
-                        >
-                            <option value="">Заказчик</option>
-                            {contragents.length > 0 &&
-                                contragents.map((type) => (
-                                    <option key={type.id} value={type.id}>
-                                        {type.program_name}
-                                    </option>
-                                ))}
-                        </select>
-                    </div>
 
-                    <div className="flex flex-col">
-                        <select
-                            className="border-2 h-[32px] p-1 border-gray-300 min-w-full max-w-[140px] cursor-pointer"
-                            onChange={(evt) =>
-                                setFunnelMetricsFilters((prev) => ({
-                                    ...prev,
-                                    report_type_id: [evt.target.value],
-                                }))
-                            }
-                        >
-                            <option value="">Тип отчёта</option>
-                            {reportTypes.length > 0 &&
-                                reportTypes.map((type) => (
-                                    <option key={type.id} value={type.id}>
-                                        {type.name}
-                                    </option>
-                                ))}
-                        </select>
+                        <div className="grid grid-cols-2 gap-5">
+                            <CreatableSelect
+                                isClearable
+                                options={
+                                    filteredContragents.length > 0 &&
+                                    filteredContragents.map((item) => ({
+                                        value: item.id,
+                                        label: item.program_name,
+                                    }))
+                                }
+                                className="executor-block__name-field border-2 border-gray-300 w-[240px]"
+                                placeholder="Заказчик"
+                                noOptionsMessage={() => "Совпадений нет"}
+                                isValidNewOption={() => false}
+                                value={
+                                    contragents
+                                        .map((item) => ({
+                                            value: item.id,
+                                            label: item.program_name,
+                                        }))
+                                        .find(
+                                            (opt) =>
+                                                opt.value ===
+                                                mainFilters.contragent_id?.[0]
+                                        ) || null
+                                }
+                                onChange={(selectedOption) => {
+                                    const newValue =
+                                        selectedOption?.value || "";
+
+                                    setMainFilters((prev) => ({
+                                        ...prev,
+                                        contragent_id: [newValue],
+                                    }));
+
+                                    if (newValue != "") {
+                                        const selectedContragentProjects =
+                                            contragents.find(
+                                                (item) => item.id === +newValue
+                                            ).project_ids;
+
+                                        if (
+                                            selectedContragentProjects.length >
+                                            0
+                                        ) {
+                                            setFilteredProjects(
+                                                projects.filter((item) =>
+                                                    selectedContragentProjects.includes(
+                                                        item.id
+                                                    )
+                                                )
+                                            );
+                                        } else {
+                                            setFilteredProjects(projects);
+                                        }
+                                    } else {
+                                        setFilteredProjects(projects);
+                                    }
+                                }}
+                            />
+
+                            <CreatableSelect
+                                isClearable
+                                options={
+                                    filteredProjects.length > 0 &&
+                                    filteredProjects.map((item) => ({
+                                        value: item.id,
+                                        label: item.name,
+                                    }))
+                                }
+                                className="executor-block__name-field border-2 border-gray-300 w-[240px]"
+                                placeholder="Проект"
+                                noOptionsMessage={() => "Совпадений нет"}
+                                isValidNewOption={() => false}
+                                value={
+                                    filteredProjects
+                                        .map((item) => ({
+                                            value: item.id,
+                                            label: item.name,
+                                        }))
+                                        .find(
+                                            (opt) =>
+                                                opt.value ===
+                                                mainFilters.project_id?.[0]
+                                        ) || null
+                                }
+                                onChange={(selectedOption) => {
+                                    const newValue =
+                                        selectedOption?.value || "";
+
+                                    setMainFilters((prev) => ({
+                                        ...prev,
+                                        project_id: [newValue],
+                                    }));
+
+                                    if (newValue != "") {
+                                        setFilteredContragents(
+                                            contragents.filter((item) =>
+                                                item.project_ids.includes(
+                                                    newValue
+                                                )
+                                            )
+                                        );
+                                    } else {
+                                        setFilteredContragents(contragents);
+                                    }
+                                }}
+                            />
+                        </div>
                     </div>
 
                     <button
                         type="button"
-                        className="border rounded-lg py-1 px-5 h-[32px]"
-                        // onClick={() => setSelectedFilters([])}
+                        className="border rounded-lg py-1 px-5 h-[32px] mb-2"
+                        onClick={() => {
+                            setMainFilters((prev) => {
+                                const { project_id, contragent_id, ...rest } =
+                                    prev;
+                                return rest;
+                            });
+                            setFilteredProjects(projects);
+                            setFilteredContragents(contragents);
+                        }}
                     >
                         Очистить
                     </button>
                 </div>
             </section>
 
-            <div className="grid grid-cols-3 gap-7 justify-between items-start">
-                <section className="flex flex-col gap-4">
-                    {/* ФИНАНСОВЫЕ ПОКАЗАТЕЛИ */}
-                    <div className="flex flex-col gap-8 border border-gray-300 p-2">
-                        <div className="p-4">
+            <section className="flex flex-col gap-5">
+                <section className="flex flex-col gap-8 border border-gray-300 p-4">
+                    <h2 className="mb-2 text-2xl font-semibold tracking-tight text-balance">
+                        Ключевые финансовые показатели
+                    </h2>
+
+                    <div className="grid grid-cols-2 gap-10">
+                        <div>
                             <FinancialMetrics
                                 financialMetrics={financialMetrics}
                             />
 
-                            <Bar
-                                data={financialMetricsData}
-                                options={verticalOptions}
-                            />
-                        </div>
-
-                        <div className="p-4">
-                            <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
-                                <select
-                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                                    onChange={(evt) =>
-                                        setFinancialListFilters((prev) => ({
-                                            ...prev,
-                                            type: [evt.target.value],
-                                        }))
-                                    }
-                                >
-                                    <option value="project">Проект</option>
-                                    <option value="customer">Заказчик</option>
-                                </select>
-
-                                <select
-                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                                    onChange={(evt) =>
-                                        setFinancialListFilters((prev) => ({
-                                            ...prev,
-                                            metric: [evt.target.value],
-                                        }))
-                                    }
-                                >
-                                    <option value="revenue">
-                                        Выручка, млн руб.
-                                    </option>
-                                    <option value="receipts">
-                                        Поступления, млн руб.
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div className="h-[214px] overflow-x-hidden overflow-y-auto">
+                            <div className="h-[320px]">
                                 <Bar
-                                    data={financialListData}
-                                    options={horizontalOptions}
+                                    data={financialMetricsData}
+                                    options={verticalOptions}
+                                    height={320}
                                 />
                             </div>
                         </div>
-                    </div>
 
-                    <div className="flex flex-col gap-2 border border-gray-300 p-5">
-                        <EmployeeMetrics {...employeeMetrics} />
-
-                        <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
-                            <div className="flex items-center gap-3">
-                                <select
-                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] w-full"
-                                    value={chartView}
-                                    onChange={(evt) => {
-                                        setChartView(evt.target.value);
-
-                                        setEmployeeFilters((prev) => ({
-                                            ...prev,
-                                            view_type: [evt.target.value],
-                                        }));
-                                    }}
-                                >
-                                    <option value="headcount">Структура</option>
-                                    <option value="turnover">
-                                        Пришли / ушли
-                                    </option>
-                                </select>
-                                <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                    ?
-                                </span>
-                            </div>
-
-                            {chartView == "headcount" && (
-                                <div className="flex items-center gap-3">
-                                    <select
-                                        className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] w-full"
-                                        onChange={(evt) =>
-                                            setEmployeeFilters((prev) => ({
-                                                ...prev,
-                                                metric_type: [evt.target.value],
-                                            }))
-                                        }
-                                    >
-                                        <option value="headcount">
-                                            Численность, чел
-                                        </option>
-                                        <option value="gross_salary">
-                                            ФОТ gross, млн руб.
-                                        </option>
-                                        <option value="average_salary">
-                                            Средняя зп, тыс. руб.
-                                        </option>
-                                    </select>
-
-                                    <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                        ?
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-
-                        {chartView == "headcount" ? (
-                            <Bar
-                                data={EmployeeMetricsData}
-                                options={horizontalOptions}
-                            />
-                        ) : (
-                            <div className="flex flex-col gap-7 max-h-[340px] overflow-x-hidden overflow-y-auto">
-                                <div>
-                                    <div className="mb-3 font-medium">
-                                        Новые сотрудники (
-                                        {employeeMetrics.hired_employees
-                                            ?.length || 0}
-                                        )
-                                    </div>
-
-                                    <ul className="flex flex-col gap-2">
-                                        {employeeMetrics.hired_employees
-                                            ?.length > 0 &&
-                                            employeeMetrics.hired_employees.map(
-                                                (item) => (
-                                                    <EmployeeItem
-                                                        key={item.id}
-                                                        {...item}
-                                                    />
-                                                )
-                                            )}
-                                    </ul>
-                                </div>
-
-                                <div>
-                                    <div className="mb-3 font-medium">
-                                        Ушедшие сотрудники (
-                                        {employeeMetrics.dismissed_employees
-                                            ?.length || 0}
-                                        )
-                                    </div>
-
-                                    <ul className="flex flex-col gap-2">
-                                        {employeeMetrics.dismissed_employees
-                                            ?.length > 0 &&
-                                            employeeMetrics.dismissed_employees.map(
-                                                (item) => (
-                                                    <EmployeeItem
-                                                        key={item.id}
-                                                        {...item}
-                                                    />
-                                                )
-                                            )}
-                                    </ul>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </section>
-
-                <section className="flex flex-col gap-4">
-                    {/* ФИНАНСОВЫЕ ПОКАЗАТЕЛИ */}
-                    <div className="flex flex-col gap-8 border border-gray-300 p-2">
-                        <div className="p-4">
+                        <div>
                             <GrossMetrics financialMetrics={financialMetrics} />
 
-                            <Bar
-                                data={grossMetricsData}
-                                options={verticalOptions2}
-                            />
-                        </div>
-
-                        <div className="p-4">
-                            <div className="grid grid-cols-2 items-center justify-between gap-5 mb-5">
-                                <select
-                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                                    onChange={(evt) =>
-                                        setFinancialProfitListFilters(
-                                            (prev) => ({
-                                                ...prev,
-                                                type: [evt.target.value],
-                                            })
-                                        )
-                                    }
-                                >
-                                    <option value="project">Проект</option>
-                                    <option value="customer">Заказчик</option>
-                                </select>
-
-                                <select
-                                    className="border-2 h-[30px] p-1 border-gray-300 min-w-[140px] cursor-pointer"
-                                    onChange={(evt) =>
-                                        setFinancialProfitListFilters(
-                                            (prev) => ({
-                                                ...prev,
-                                                metric: [evt.target.value],
-                                            })
-                                        )
-                                    }
-                                >
-                                    <option value="gross_profit">
-                                        Валовая прибыль, млн руб.
-                                    </option>
-                                    <option value="gross_margin">
-                                        Валовая рентабельность
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div className="h-[214px] overflow-x-hidden overflow-y-auto">
+                            <div className="h-[320px]">
                                 <Bar
-                                    data={financialProfitListData}
-                                    options={horizontalOptions}
+                                    data={grossMetricsData}
+                                    options={verticalOptions2}
+                                    height={320}
                                 />
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-3 border border-gray-300 py-3 px-2">
-                        <div className="flex items-center gap-2 font-medium pl-3">
-                            Завершённые отчёты (
-                            {completedReports.items?.length || 0})
-                            <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                ?
-                            </span>
-                        </div>
-
-                        <ul className="max-h-[300px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
-                            {completedReports.items?.length > 0 &&
-                                completedReports.items.map((report) => (
-                                    <CompletedReportItem
-                                        key={report.id}
-                                        {...report}
-                                    />
-                                ))}
-                        </ul>
-                    </div>
+                    <FinancialIndicators
+                        financialList={financialList}
+                        financialProfitList={financialProfitList}
+                        setFinancialListFilters={setFinancialListFilters}
+                        setFinancialProfitListFilters={
+                            setFinancialProfitListFilters
+                        }
+                    />
                 </section>
 
-                <section className="flex flex-col gap-4">
-                    <div className="flex flex-col border border-gray-300 p-2">
-                        <FunnelMetrics funnelMetrics={funnelMetrics.metrics} />
+                <EmployeesStats
+                    employeeMetrics={employeeMetrics}
+                    setEmployeeFilters={setEmployeeFilters}
+                />
 
-                        <ul className="max-h-[300px] overflow-x-hidden overflow-y-auto p-4 flex flex-col gap-3">
-                            {funnelMetrics
-                                .sales_funnel_projects_with_stage_changes
-                                ?.length > 0 &&
-                                funnelMetrics.sales_funnel_projects_with_stage_changes.map(
-                                    (project) => (
-                                        <FunnelProjectItem
-                                            key={project.id}
-                                            {...project}
-                                        />
-                                    )
-                                )}
-                        </ul>
-                    </div>
+                <section className="grid grid-cols-2 gap-4">
+                    <ManagerReports selectedFilters={selectedFilters} />
 
-                    <ManagerReportsEditor />
+                    <Sales funnelMetrics={funnelMetrics} />
                 </section>
-            </div>
+
+                <section className="grid grid-cols-2 gap-4">
+                    <ProjectManagerReports
+                        projectManagerReports={projectManagerReports}
+                    />
+
+                    <CompletedReportsList completedReports={completedReports} />
+                </section>
+            </section>
         </div>
     );
 };

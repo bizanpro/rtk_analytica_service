@@ -301,6 +301,10 @@ const SupplierCard = () => {
         }
     }, [mode]);
 
+    useEffect(() => {
+        console.log(selectedManagerReports);
+    }, [selectedManagerReports]);
+
     return (
         <main className="page">
             <div className="pt-8 pb-15">
@@ -652,6 +656,7 @@ const SupplierCard = () => {
                                             managerReports={
                                                 selectedManagerReports
                                             }
+                                            mode={"read"}
                                         />
                                     )}
                                 </div>

@@ -6,7 +6,7 @@ const ReferenceBooks = () => {
     const [booksItems, setBooksItems] = useState([]);
 
     useEffect(() => {
-        getData(`${import.meta.env.VITE_API_URL}/dictionaries`, {
+        getData(`${import.meta.env.VITE_API_URL}dictionaries`, {
             Accept: "application/json",
         }).then((response) => {
             if (response.status == 200) {

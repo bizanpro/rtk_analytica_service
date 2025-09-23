@@ -1,18 +1,18 @@
 import { useState, useEffect, useMemo } from "react";
+
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
+import { sortDateList } from "../../utils/sortDateList";
 
 import ReportItem from "./ReportItem";
 import ManagementItem from "./ManagementItem";
 import ManagementReportEditor from "./ManagementReportEditor";
 import ReportRateEditor from "./ReportRateEditor";
 import ReportWindow from "../ReportWindow/ReportWindow";
+import TheadSortButton from "../TheadSortButton/TheadSortButton";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-import { format, parseISO } from "date-fns";
-import { ru } from "date-fns/locale";
 
 const Reports = () => {
     const REPORTS_URL = `${import.meta.env.VITE_API_URL}reports`;
@@ -36,12 +36,17 @@ const Reports = () => {
             { label: "Оценка", key: "score" },
             { label: "Отвественный", key: "physical_person" },
             { label: "Статус", key: "status" },
-            { label: "Дата утверждения", key: "approval_date" },
+            {
+                label: "Дата утверждения",
+                key: "approval_date",
+                is_sortable: true,
+            },
             { label: "Дата изменения", key: "updated_at" },
         ],
     ];
 
     const FILTER_LABELS = [
+        { key: "projects", label: "Проект" },
         { key: "contragents", label: "Заказчик" },
         { key: "industries", label: "Отрасль" },
         { key: "creditors", label: "Банк" },
@@ -54,16 +59,19 @@ const Reports = () => {
 
     const [activeTab, setActiveTab] = useState("projects");
     const [isLoading, setIsLoading] = useState(true);
-    // const [mode, setMode] = useState("read");
+
+    const [sortBy, setSortBy] = useState({ key: "", action: "" });
 
     const [reportsList, setReportsList] = useState([]);
     const [managementList, setManagementList] = useState([]);
+    const [sortedManagementList, setSortedManagementList] = useState([]);
 
-    const [managementEditorState, setManagementEditorState] = useState(false); // Редактор оценки
-    const [rateEditorState, setRateEditorState] = useState(false); // Редактор отчёта менеджмента
+    const [managementEditorState, setManagementEditorState] = useState(false); // Редактор отчёта менеджмента
+    const [rateEditorState, setRateEditorState] = useState(false); // Редактор оценки
     const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
 
     const [reportData, setReportData] = useState({});
+    const [reportName, setReportName] = useState("");
     const [contracts, setContracts] = useState([]);
     const [reportId, setReportId] = useState(null);
 
@@ -72,10 +80,10 @@ const Reports = () => {
     const [filteredAvailableMonths, setFilteredAvailableMonths] = useState([]);
     const [filterOptionsList, setFilterOptionsList] = useState({}); // Список доступных параметров фильтров
 
-    const [selectedProjectsFilters, setSelectedProjectsFilters] = useState({}); // Выбранные параметры фильтров во вкладке проектов
-    const [selectedManagementFilters, setSelectedManagementFilters] = useState(
-        {}
-    ); // Выбранные параметры фильтров во вкладке Сотрудника
+    const [selectedProjectsFilters, setSelectedProjectsFilters] = useState({}); // Выбранные параметры фильтров во вкладке отчетов проектов
+    const [selectedManagementFilters, setSelectedManagementFilters] = useState({
+        report_month: [""],
+    }); // Выбранные параметры фильтров во вкладке отчетов сотрудника
 
     const [selectedManagementReport, setSelectedManagementReport] =
         useState("default"); // Выбранный отчет
@@ -95,7 +103,7 @@ const Reports = () => {
     });
 
     const filteredReports = useMemo(() => {
-        const result = managementList.filter((report) => {
+        const result = sortedManagementList.filter((report) => {
             return (
                 (selectedManagementReport &&
                 selectedManagementReport !== "default"
@@ -106,22 +114,28 @@ const Reports = () => {
                     : true)
             );
         });
+
         return result;
-    }, [managementList, selectedManagementReport, selectedPhysicalPerson]);
+    }, [
+        sortedManagementList,
+        selectedManagementReport,
+        selectedPhysicalPerson,
+    ]); // Фильтрованный список отчетов
 
     // Заполняем селектор отчетов Сотрудника
     const managementReportsOptions = useMemo(() => {
-        const allReports = managementList.flatMap((item) => item.name);
+        const allReports = sortedManagementList.flatMap((item) => item.name);
         return Array.from(new Set(allReports));
-    }, [managementList]);
+    }, [sortedManagementList]);
 
     // Заполняем селектор ответственных
     const physicalPersonOptions = useMemo(() => {
-        const allReports = managementList.flatMap(
-            (item) => item?.physical_person?.name
+        const allReports = sortedManagementList.flatMap((item) =>
+            item?.physical_person ? [item.physical_person.name] : []
         );
+
         return Array.from(new Set(allReports));
-    }, [managementList]);
+    }, [sortedManagementList]);
 
     // Обработка фильтров
     const handleFilterChange = (filterKey, value, section) => {
@@ -163,22 +177,25 @@ const Reports = () => {
             .finally(() => setIsLoading(false));
     };
 
+    // Фильтрация доступных отчётных месяцев
     const filterAvailableMonths = () => {
         if (selectedManagementReport === "default") {
             setFilteredAvailableMonths(availableMonths);
         } else {
-            const targetReport = managementList.find(
-                (item) => item.name === selectedManagementReport
+            const availableReports = filteredReports.filter(
+                (item) => item?.report_month
             );
 
-            const selectedMonth = format(
-                parseISO(targetReport?.report_month),
-                "yyyy-MM",
-                { locale: ru }
-            );
+            const monthsLabels = [
+                ...new Set(
+                    availableReports.map(({ report_month }) => report_month)
+                ),
+            ];
 
             setFilteredAvailableMonths(
-                availableMonths.filter((item) => item.value === selectedMonth)
+                availableMonths.filter((item) =>
+                    monthsLabels.includes(item.label)
+                )
             );
         }
     };
@@ -216,10 +233,11 @@ const Reports = () => {
             });
         });
 
-        getData(`${MANAGEMENT_URL}/?${queryParams.toString()}`)
+        getData(`${MANAGEMENT_URL}?${queryParams.toString()}`)
             .then((response) => {
                 if (response.status === 200) {
                     setManagementList(response.data);
+                    setSortedManagementList(response.data);
                 }
             })
             .finally(() => setIsLoading(false));
@@ -242,13 +260,22 @@ const Reports = () => {
         getContracts(reportData.contragent?.id);
         setReportId(reportData.id);
 
-        if (reportData.id) {
+        setReportName(
+            `${reportData?.project?.name} / ${reportData?.report_period_code}`
+        );
+
+        if (
+            reportData.id &&
+            `${reportData?.project?.name} / ${reportData?.report_period_code}` !=
+                ""
+        ) {
             setReportWindowsState(true);
         }
     };
 
     // Открытие окна редактора оценки отчета
     const openRateReportEditor = (props) => {
+        closeManagementReportEditor();
         setReportData(props);
         setRateEditorState(true);
     };
@@ -261,6 +288,7 @@ const Reports = () => {
 
     // Открытие окна редактора отчета менеджмента
     const openManagementReportEditor = (props) => {
+        closeRateReportEditor();
         setManagementReportData(props);
         setManagementEditorState(true);
     };
@@ -271,6 +299,7 @@ const Reports = () => {
         setManagementEditorState(false);
     };
 
+    // Обработчик открытия отчета руководителя с учетов выставленной оценки
     const managementReportEditorHandler = (reportData, rate) => {
         switch (rate) {
             case 0: {
@@ -278,7 +307,7 @@ const Reports = () => {
                     ...reportData,
                     general_assessment: 0,
                 };
-                openManagementReportEditor(newReportData);
+                openRateReportEditor(newReportData);
                 break;
             }
 
@@ -287,7 +316,7 @@ const Reports = () => {
                     ...reportData,
                     general_assessment: 1,
                 };
-                openManagementReportEditor(newReportData);
+                openRateReportEditor(newReportData);
                 break;
             }
 
@@ -323,7 +352,7 @@ const Reports = () => {
         postData(
             "PATCH",
             `${import.meta.env.VITE_API_URL}management-reports/${
-                extendReportData.id
+                extendReportData.real_id
             }`,
             extendReportData
         )
@@ -393,7 +422,7 @@ const Reports = () => {
             "PATCH",
             `${
                 import.meta.env.VITE_API_URL
-            }management-reports/project-manager/${report.id}`,
+            }management-reports/project-manager/${report.real_id}`,
             report
         )
             .then((response) => {
@@ -459,6 +488,14 @@ const Reports = () => {
             }
         });
     };
+
+    const handleListSort = () => {
+        setSortedManagementList(sortDateList(managementList, sortBy));
+    };
+
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
 
     useEffect(() => {
         setManagementEditorState(false);
@@ -537,56 +574,51 @@ const Reports = () => {
                         {activeTab === "projects" && (
                             <>
                                 <div className="flex items-center gap-5">
-                                    {Object.entries(filterOptionsList).map(
-                                        ([filterKey, filterValues], index) => {
-                                            const filterLabel =
-                                                FILTER_LABELS.find(
-                                                    (item) =>
-                                                        item.key === filterKey
-                                                )?.label || filterKey;
+                                    {FILTER_LABELS.map(({ key, label }) => {
+                                        const filterValues =
+                                            filterOptionsList[key];
+                                        if (!filterValues) return null;
 
-                                            return (
-                                                <select
-                                                    key={index}
-                                                    className="p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                                    value={
-                                                        selectedProjectsFilters[
-                                                            filterKey
-                                                        ] || ""
-                                                    }
-                                                    onChange={(e) => {
-                                                        const selectedValue =
-                                                            Array.from(
-                                                                e.target
-                                                                    .selectedOptions
-                                                            ).map(
-                                                                (option) =>
-                                                                    option.value
-                                                            );
-                                                        handleFilterChange(
-                                                            filterKey,
-                                                            selectedValue,
-                                                            "projects"
+                                        return (
+                                            <select
+                                                key={key}
+                                                className="p-1 border border-gray-300 min-w-[110px] max-w-[180px]"
+                                                value={
+                                                    selectedProjectsFilters[
+                                                        key
+                                                    ] || ""
+                                                }
+                                                onChange={(e) => {
+                                                    const selectedValue =
+                                                        Array.from(
+                                                            e.target
+                                                                .selectedOptions
+                                                        ).map(
+                                                            (option) =>
+                                                                option.value
                                                         );
-                                                    }}
-                                                >
-                                                    <option value="">
-                                                        {filterLabel}
+
+                                                    handleFilterChange(
+                                                        key,
+                                                        selectedValue,
+                                                        "projects"
+                                                    );
+                                                }}
+                                            >
+                                                <option value="">
+                                                    {label}
+                                                </option>
+                                                {filterValues.map((item) => (
+                                                    <option
+                                                        key={item.id}
+                                                        value={item.id}
+                                                    >
+                                                        {item.name}
                                                     </option>
-                                                    {filterValues.map(
-                                                        (item) => (
-                                                            <option
-                                                                key={item.id}
-                                                                value={item.id}
-                                                            >
-                                                                {item.name}
-                                                            </option>
-                                                        )
-                                                    )}
-                                                </select>
-                                            );
-                                        }
-                                    )}
+                                                ))}
+                                            </select>
+                                        );
+                                    })}
                                 </div>
 
                                 {Object.entries(filterOptionsList).length >
@@ -597,6 +629,7 @@ const Reports = () => {
                                         onClick={() =>
                                             setSelectedProjectsFilters([])
                                         }
+                                        title="Очистить фильтр"
                                     >
                                         Очистить
                                     </button>
@@ -615,6 +648,7 @@ const Reports = () => {
                                                 evt.target.value
                                             )
                                         }
+                                        value={selectedManagementReport}
                                     >
                                         <option value="default">Отчёт</option>
                                         {managementReportsOptions.length > 0 &&
@@ -629,6 +663,7 @@ const Reports = () => {
                                                 )
                                             )}
                                     </select>
+
                                     <select
                                         className={
                                             "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
@@ -637,12 +672,17 @@ const Reports = () => {
                                             const selectedValue = Array.from(
                                                 e.target.selectedOptions
                                             ).map((option) => option.value);
+
                                             handleFilterChange(
                                                 "report_month",
                                                 selectedValue,
                                                 "management"
                                             );
                                         }}
+                                        value={
+                                            selectedManagementFilters
+                                                .report_month[0]
+                                        }
                                     >
                                         <option value="">Отчётный месяц</option>
                                         {filteredAvailableMonths.length > 0 &&
@@ -667,13 +707,16 @@ const Reports = () => {
                                                 evt.target.value
                                             )
                                         }
+                                        value={selectedPhysicalPerson}
                                     >
-                                        <option value="">Ответственный</option>
+                                        <option value="default">
+                                            Ответственный
+                                        </option>
                                         {physicalPersonOptions.length > 0 &&
                                             physicalPersonOptions.map(
-                                                (item) => (
+                                                (item, index) => (
                                                     <option
-                                                        key={item}
+                                                        key={`${item}_${index}`}
                                                         value={item}
                                                     >
                                                         {item}
@@ -685,6 +728,18 @@ const Reports = () => {
                                     <button
                                         type="button"
                                         className="border rounded-lg py-1 px-5"
+                                        onClick={() => {
+                                            setSelectedPhysicalPerson(
+                                                "default"
+                                            );
+                                            setSelectedManagementReport(
+                                                "default"
+                                            );
+                                            setSelectedManagementFilters({
+                                                report_month: [""],
+                                            });
+                                        }}
+                                        title="Очистить фильтр"
                                     >
                                         Очистить
                                     </button>
@@ -699,13 +754,22 @@ const Reports = () => {
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
                                 {COLUMNS[activeTab === "projects" ? 0 : 1].map(
-                                    ({ label, key }) => (
+                                    ({ label, key, is_sortable }) => (
                                         <th
                                             className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
                                             rowSpan="2"
                                             key={key}
                                         >
-                                            {label}
+                                            {is_sortable ? (
+                                                <TheadSortButton
+                                                    label={label}
+                                                    value={key}
+                                                    sortBy={sortBy}
+                                                    setSortBy={setSortBy}
+                                                />
+                                            ) : (
+                                                label
+                                            )}
                                         </th>
                                     )
                                 )}
@@ -727,6 +791,7 @@ const Reports = () => {
                                         columns={COLUMNS[0]}
                                         props={item}
                                         openReportEditor={openReportEditor}
+                                        reportId={reportId}
                                     />
                                 ))
                             ) : (
@@ -736,6 +801,8 @@ const Reports = () => {
                                         key={item.id}
                                         columns={COLUMNS[1]}
                                         props={item}
+                                        selectedRateReport={reportData}
+                                        selectedReport={managementReportData}
                                         openManagementReportEditor={
                                             openManagementReportEditor
                                         }
@@ -753,16 +820,25 @@ const Reports = () => {
 
                     {activeTab === "projects" && reportWindowsState && (
                         <div
-                            className="bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%] p-3"
-                            style={{ minHeight: "calc(100vh - 10%)" }}
+                            className="fixed w-[100vw] h-[100vh] inset-0 z-2"
+                            onClick={() => {
+                                setReportWindowsState(false);
+                            }}
                         >
-                            <ReportWindow
-                                reportWindowsState={setReportWindowsState}
-                                contracts={contracts}
-                                reportId={reportId}
-                                setReportId={setReportId}
-                                mode={"read"}
-                            />
+                            <div
+                                className="bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%] p-3"
+                                style={{ minHeight: "calc(100vh - 10%)" }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <ReportWindow
+                                    reportWindowsState={setReportWindowsState}
+                                    contracts={contracts}
+                                    reportId={reportId}
+                                    setReportId={setReportId}
+                                    reportName={reportName}
+                                    mode={"read"}
+                                />
+                            </div>
                         </div>
                     )}
 
@@ -770,36 +846,58 @@ const Reports = () => {
                         <>
                             {rateEditorState && (
                                 <div
-                                    className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
-                                    style={{ minHeight: "calc(100vh - 10%)" }}
+                                    className="fixed w-[100vw] h-[100vh] inset-0 z-2"
+                                    onClick={() => {
+                                        closeRateReportEditor();
+                                    }}
                                 >
-                                    <ReportRateEditor
-                                        reportData={reportData}
-                                        closeEditor={closeRateReportEditor}
-                                        updateReportDetails={
-                                            updateReportDetails
-                                        }
-                                    />
+                                    <div
+                                        className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
+                                        style={{
+                                            minHeight: "calc(100vh - 10%)",
+                                        }}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <ReportRateEditor
+                                            reportData={reportData}
+                                            closeEditor={closeRateReportEditor}
+                                            updateReportDetails={
+                                                updateReportDetails
+                                            }
+                                            mode={"edit"}
+                                        />
+                                    </div>
                                 </div>
                             )}
 
                             {managementEditorState && (
                                 <div
-                                    className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
-                                    style={{ minHeight: "calc(100vh - 10%)" }}
+                                    className="fixed w-[100vw] h-[100vh] inset-0 z-2"
+                                    onClick={() => {
+                                        closeManagementReportEditor();
+                                    }}
                                 >
-                                    <ManagementReportEditor
-                                        managementReportData={
-                                            managementReportData
-                                        }
-                                        setManagementReportData={
-                                            setManagementReportData
-                                        }
-                                        updateReport={updateReport}
-                                        closeManagementReportEditor={
-                                            closeManagementReportEditor
-                                        }
-                                    />
+                                    <div
+                                        className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
+                                        style={{
+                                            minHeight: "calc(100vh - 10%)",
+                                        }}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <ManagementReportEditor
+                                            managementReportData={
+                                                managementReportData
+                                            }
+                                            setManagementReportData={
+                                                setManagementReportData
+                                            }
+                                            updateReport={updateReport}
+                                            closeManagementReportEditor={
+                                                closeManagementReportEditor
+                                            }
+                                            mode={"edit"}
+                                        />
+                                    </div>
                                 </div>
                             )}
                         </>

@@ -75,7 +75,7 @@ const EmptyExecutorBlock = ({
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }responsible-persons/creditor/?project_id=${projectId}&creditor_id=${
+            }responsible-persons/creditor?project_id=${projectId}&creditor_id=${
                 newContact.creditor_id
             }`
         ).then((response) => {
@@ -90,7 +90,7 @@ const EmptyExecutorBlock = ({
         getData(
             `${
                 import.meta.env.VITE_API_URL
-            }responsible-persons/contragent/?project_id=${projectId}`
+            }responsible-persons/contragent?project_id=${projectId}`
         ).then((response) => {
             if (response.status == 200) {
                 setContactsList(response.data.data);
@@ -99,15 +99,28 @@ const EmptyExecutorBlock = ({
     };
 
     useEffect(() => {
-        setAllContacts(
-            contactsList?.map((person) => ({
-                value: person.full_name,
-                label: person.full_name,
-                email: person.email,
-                phone: person.phone,
-                position: person.position,
-            }))
-        );
+        if (type === "creditor") {
+            setAllContacts(
+                contactsList?.map((person) => ({
+                    value: person.full_name,
+                    label: person.full_name,
+                    email: person.email,
+                    phone: person.phone,
+                    position: person.position,
+                    creditor_id: person.creditor.id,
+                }))
+            );
+        } else {
+            setAllContacts(
+                contactsList?.map((person) => ({
+                    value: person.full_name,
+                    label: person.full_name,
+                    email: person.email,
+                    phone: person.phone,
+                    position: person.position,
+                }))
+            );
+        }
     }, [contactsList]);
 
     useEffect(() => {
@@ -149,6 +162,8 @@ const EmptyExecutorBlock = ({
                                     creditor_id: e.target.value,
                                 })
                             }
+                            value={newContact.creditor_id}
+                            disabled={isReadonly}
                         >
                             <option value="">Выберите банк</option>
                             {banks?.map((bank) => (
@@ -157,6 +172,7 @@ const EmptyExecutorBlock = ({
                                 </option>
                             ))}
                         </select>
+
                         {errors.creditor_id && (
                             <p className="message message-error">
                                 Выберите банк

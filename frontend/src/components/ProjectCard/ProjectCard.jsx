@@ -127,7 +127,7 @@ const ProjectCard = () => {
 
     // Получение заказчика
     const fetchContragents = () => {
-        getData(`${import.meta.env.VITE_API_URL}contragents/?all=true`, {
+        getData(`${import.meta.env.VITE_API_URL}contragents?all=true`, {
             Accept: "application/json",
         }).then((response) => {
             if (response?.status == 200) {
@@ -1361,6 +1361,7 @@ const ProjectCard = () => {
                     contracts={contracts}
                     updateReport={updateReport}
                     reportId={reportId}
+                                                projectId={projectId}
                     setReportId={setReportId}
                     mode={mode}
                 />
@@ -1450,6 +1451,7 @@ const ProjectCard = () => {
                             {activeReportTab === "managementReports" && (
                                 <ManagementReportsTabMobile
                                     managementReports={managementReports}
+                                            mode={"read"}
                                 />
                             )}
                         </div>

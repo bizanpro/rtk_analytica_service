@@ -11,8 +11,10 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
 
     // Преобразуем входящую строку в объект
     const period = useMemo(() => {
-        const [from = "", to = ""] = value.split(" - ");
-        return { date_from: from, date_to: to };
+        if (value) {
+            const [from = "", to = ""] = value.split(" - ");
+            return { date_from: from, date_to: to };
+        }
     }, [value]);
 
     const handleChange = (field, val) => {
@@ -27,8 +29,8 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
         onChange?.(newValue);
 
         if (
-            newPeriod.date_from.length === 10 &&
-            newPeriod.date_to.length === 10 &&
+            newPeriod?.date_from?.length === 10 &&
+            newPeriod?.date_to?.length === 10 &&
             isValidDateFormat(newPeriod.date_from) &&
             isValidDateFormat(newPeriod.date_to)
         ) {
@@ -106,6 +108,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     disabled={mode === "read"}
                 />
             </div>
+
 
             {errorMessage !== "" && (
                 <span className="text-red-400 top-[100%] text-sm">

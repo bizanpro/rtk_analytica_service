@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 import handleStatus from "../../utils/handleStatus";
+import { sortList } from "../../utils/sortList";
 
 import ProjectItem from "./ProjectItem";
 import Popup from "../Popup/Popup";
 import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
+import TheadSortButton from "../TheadSortButton/TheadSortButton";
 import OverlayTransparent from "../Overlay/OverlayTransparent";
 
 import "./Projects.scss";
@@ -17,56 +19,79 @@ const Projects = () => {
     const navigate = useNavigate();
 
     const [mode, setMode] = useState("edit");
+
+    const [sortBy, setSortBy] = useState({ key: "", action: "" });
+
     const [isLoading, setIsLoading] = useState(true);
+    const [sortedList, setSortedList] = useState([]);
+
     const [popupState, setPopupState] = useState(false);
 
     const [list, setList] = useState([]);
+
 
     const [newProjectName, setNewProjectName] = useState("");
     const [openFilter, setOpenFilter] = useState("");
 
     // Заполняем параметры фильтров
     const nameOptions = useMemo(() => {
-        const allNames = list
+        const allNames = sortedList
             .map((item) => item.name)
             .filter((name) => name !== null);
 
         return Array.from(new Set(allNames));
-    }, [list]);
+    }, [sortedList]);
+
+    // Заполняем селектор заказчиков
+    const contragentOptions = useMemo(() => {
+        const allNames = sortedList
+            .map((item) => item.contragent)
+            .filter(
+                (contragent) => contragent !== null && contragent !== undefined
+            );
+
+        return Array.from(new Set(allNames));
+    }, [sortedList]);
 
     const statusOptions = useMemo(() => {
         const allNames = list.map((item) => handleStatus(item.status));
 
         return Array.from(new Set(allNames));
-    }, [list]);
+    }, [sortedList]);
 
+
+    // Заполняем селектор заказчиков
     const contragentOptions = useMemo(() => {
-        const allNames = list.map((item) => item.contragent);
+        const allNames = sortedList
+            .map((item) => item.contragent)
+            .filter(
+                (contragent) => contragent !== null && contragent !== undefined
+            );
 
         return Array.from(new Set(allNames));
-    }, [list]);
+    }, [sortedList]);
 
     const sectorOptions = useMemo(() => {
-        const allSectors = list
+        const allSectors = sortedList
             .map((item) => item.industries.main?.name)
             .filter((name) => name !== null && name !== undefined);
 
         return Array.from(new Set(allSectors));
-    }, [list]);
+    }, [sortedList]);
 
     const bankOptions = useMemo(() => {
-        const allBanks = list.flatMap((item) =>
+        const allBanks = sortedList.flatMap((item) =>
             item.creditors?.map((bank) => bank.name)
         );
         return Array.from(new Set(allBanks));
-    }, [list]);
+    }, [sortedList]);
 
     const projectManagerOptions = useMemo(() => {
-        const allPM = list
-            .map((item) => item.manager)
+        const allPM = sortedList
+            .map((item) => item.project_manager)
             .filter((manager) => manager !== null && manager !== undefined);
         return Array.from(new Set(allPM));
-    }, [list]);
+    }, [sortedList]);
 
     const COLUMNS = [
         {
@@ -110,6 +135,10 @@ const Projects = () => {
         { label: "Последние отчёты", key: "latest_reports" },
     ];
 
+    const handleListSort = () => {
+        setSortedList(sortList(list, sortBy));
+    };
+
     const handleProjectsNameChange = (e) => {
         setNewProjectName(e.target.value);
     };
@@ -129,6 +158,7 @@ const Projects = () => {
         getData(URL, { Accept: "application/json" })
             .then((response) => {
                 setList(response.data);
+                setSortedList(response.data);
             })
             .finally(() => setIsLoading(false));
     };
@@ -152,6 +182,10 @@ const Projects = () => {
             }
         });
     };
+
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
 
     useEffect(() => {
         getProjects();

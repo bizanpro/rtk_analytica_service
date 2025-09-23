@@ -1,9 +1,4 @@
-const ReportItem = ({
-    columns,
-    props,
-    openReportEditor,
-    // openSubReportEditor,
-}) => {
+const ReportItem = ({ columns, props, openReportEditor, reportId }) => {
     return (
         <tr
             className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
@@ -65,7 +60,7 @@ const ReportItem = ({
                                 {value?.name?.toString() || "—"}
                                 <br />
                                 <span className="text-gray-400 text-sm">
-                                    {value?.industry?.name}
+                                    {value.industry?.main?.name}
                                 </span>
                             </td>
                         );
@@ -97,8 +92,14 @@ const ReportItem = ({
                                 className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-lg"
                                 key={key}
                             >
-                                {value?.toString() || "—"}
-                                <br />
+                                <div
+                                    className={`${
+                                        reportId == props.id && "font-semibold"
+                                    }`}
+                                >
+                                    {value?.toString() || "—"}
+                                </div>
+
                                 <span className="text-base">
                                     {props?.report_period?.toString()}
                                 </span>

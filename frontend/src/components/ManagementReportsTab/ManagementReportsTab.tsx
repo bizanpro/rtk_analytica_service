@@ -9,15 +9,13 @@ import "./ManagementReports.scss";
 
 const URL = `${import.meta.env.VITE_API_URL}projects`;
 
-interface ManagementReportsTabProps {
-    projectId: number;
-    setManagementReports: React.Dispatch<React.SetStateAction<any[]>>;
-}
-
 const ManagementReportsTab = ({
     projectId,
-    setManagementReports,
-}: ManagementReportsTabProps) => {
+    mode,
+}: {
+    projectId: number;
+    mode: string;
+}) => {
     const [list, setList] = useState([]);
     const [rateEditorState, setRateEditorState] = useState(false); // Редактор оценки отчёта
     const [reportData, setReportData] = useState({});
@@ -115,41 +113,12 @@ const ManagementReportsTab = ({
     }, []);
 
     return !rateEditorState ? (
-        <ul className="reports__list">
-            <li
-                className="management-reports__item"
-                // onClick={() => openEditor(reportData)}
-            >
-                <div className="management-reports__item__col">
-                    <p>Март 2025</p>
-                </div>
-
-                <div className="management-reports__item__col">
-                    <p>Прохоров Евгений Петрович</p>
-                </div>
-
-                <div
-                    className={`reports__list-item__status status reports__list-item__status_completed completed`}
-                >
-                    Утверждён
-                </div>
-
-                <div className="management-reports__item__col">
-                    <nav className={`rate-switch rate-switch_green`}>
-                        <button
-                            type="button"
-                            className="rate-switch__button"
-                        ></button>
-                        <button
-                            type="button"
-                            className="rate-switch__button"
-                        ></button>
-                        <button
-                            type="button"
-                            className="rate-switch__button"
-                        ></button>
-                    </nav>
-                </div>
+        <ul className="grid gap-3">
+            <li className="grid items-center grid-cols-[20%_65px_20%_1fr] gap-4 mb-2 text-gray-400">
+                <span>Месяц</span>
+                <span>Оценка</span>
+                <span>Статус</span>
+                <span>Отвественный</span>
             </li>
 
             {list.length > 0 &&
@@ -165,6 +134,7 @@ const ManagementReportsTab = ({
             reportData={reportData}
             closeEditor={closeRateReportEditor}
             updateReportDetails={updateReportDetails}
+            mode={mode}
         />
     );
 };

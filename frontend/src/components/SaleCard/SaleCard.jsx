@@ -88,7 +88,7 @@ const SaleCard = () => {
 
     // Получение заказчика
     const fetchContragents = () => {
-        getData(`${import.meta.env.VITE_API_URL}contragents/?all=true`, {
+        getData(`${import.meta.env.VITE_API_URL}contragents?all=true`, {
             Accept: "application/json",
         }).then((response) => {
             if (response?.status == 200) {
@@ -346,7 +346,7 @@ const SaleCard = () => {
     };
 
     // Обновляем детализацию этапа продажи
-    const updateStageDetails = (nextStage = false) => {
+    const updateStageDetails = (nextStage = false, stage_status) => {
         const activeStageData = saleStages.stages.find(
             (item) => item.id === stageMetrics.stage_id
         );
@@ -356,7 +356,7 @@ const SaleCard = () => {
 
         let newDate = "";
 
-        if (activeStageData.stage_date) {
+        if (activeStageData?.stage_date) {
             newDate = new Date(activeStageData.stage_date).toLocaleDateString(
                 "ru-RU"
             );
@@ -389,7 +389,7 @@ const SaleCard = () => {
                     fetchServices();
 
                     if (nextStage) {
-                        requestNextStage(nextStage, newDate);
+                        requestNextStage(nextStage, newDate, stage_status);
                     } else {
                         toast.success(response.message, {
                             type: "success",
@@ -438,51 +438,47 @@ const SaleCard = () => {
 
     // Валидация полей стоимости этапа перед сохранением
     const handleSaveDetails = () => {
-        const activeStageData = saleStages.stages.find(
-            (item) => item.id === stageMetrics.stage_id
-        );
+        // const activeStageData = saleStages.stages.find(
+        //     (item) => item.id === stageMetrics.stage_id
+        // );
 
-        if (
-            activeStageData.name.toLowerCase() !== "получен запрос" &&
-            activeStageData.name.toLowerCase() !== "проект отложен" &&
-            activeStageData.name.toLowerCase() !== "получен отказ" &&
-            activeStageData.name.toLowerCase() !== "подготовка кп"
-        ) {
-            if (
-                metrics.metrics?.length > 0 &&
-                metrics.metrics?.every(
-                    (item) =>
-                        item.current_value !== null && item.current_value !== ""
-                )
-            ) {
-                updateStageDetails();
-            } else {
-                toast.error("Заполните все поля стоимости предложения", {
-                    containerId: "projectCard",
-                    isLoading: false,
-                    autoClose: 2000,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    draggable: true,
-                    position:
-                        window.innerWidth >= 1440
-                            ? "bottom-right"
-                            : "top-right",
-                });
-            }
-        } else {
-            updateStageDetails();
-        }
+        // if (
+        //     activeStageData.name.toLowerCase() !== "получен запрос" &&
+        //     activeStageData.name.toLowerCase() !== "проект отложен" &&
+        //     activeStageData.name.toLowerCase() !== "получен отказ" &&
+        //     activeStageData.name.toLowerCase() !== "подготовка кп"
+        // ) {
+        //     if (
+        //         metrics.metrics?.length > 0 &&
+        //         metrics.metrics?.every(
+        //             (item) =>
+        //                 item.current_value !== null && item.current_value !== ""
+        //         )
+        //     ) {
+        //         updateStageDetails();
+        //     } else {
+        //         toast.error("Заполните все поля стоимости предложения", {
+        //             containerId: "projectCard",
+        //             isLoading: false,
+        //             autoClose: 2000,
+        //             pauseOnFocusLoss: false,
+        //             pauseOnHover: false,
+        //             position: "top-center",
+        //         });
+        //     }
+        // } else {
+        updateStageDetails();
+        // }
     };
 
     // Запрос следующего этапа в воронке продаж
-    const requestNextStage = (stage_id, stage_date) => {
+    const requestNextStage = (stage_id, stage_date, stage_status) => {
         postData(
             "POST",
             `${
                 import.meta.env.VITE_API_URL
             }sales-funnel-projects/${saleId}/stages`,
-            { stage_id, stage_date }
+            { stage_id, stage_date, status: stage_status }
         )
             .then((response) => {
                 if (response?.ok) {
@@ -519,38 +515,34 @@ const SaleCard = () => {
     };
 
     // Валидируем поля стоимости предложения перед запросом следующего этапа
-    const handleNextStage = (stage_id, name) => {
-        if (
-            name.toLowerCase() !== "получен запрос" &&
-            name.toLowerCase() !== "проект отложен" &&
-            name.toLowerCase() !== "получен отказ" &&
-            name.toLowerCase() !== "подготовка кп"
-        ) {
-            if (
-                metrics.metrics?.length > 0 &&
-                metrics.metrics?.every(
-                    (item) =>
-                        item.current_value !== null && item.current_value !== ""
-                )
-            ) {
-                updateStageDetails(stage_id);
-            } else {
-                toast.error("Заполните все поля стоимости предложения", {
-                    containerId: "projectCard",
-                    isLoading: false,
-                    autoClose: 2000,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    draggable: true,
-                    position:
-                        window.innerWidth >= 1440
-                            ? "bottom-right"
-                            : "top-right",
-                });
-            }
-        } else {
-            updateStageDetails(stage_id);
-        }
+    const handleNextStage = (stage_id, name, stage_status) => {
+        //     if (
+        //         name.toLowerCase() !== "получен запрос" &&
+        //         name.toLowerCase() !== "проект отложен" &&
+        //         name.toLowerCase() !== "получен отказ" &&
+        //         name.toLowerCase() !== "подготовка кп"
+        //     ) {
+        //         if (
+        //             metrics.metrics?.length > 0 &&
+        //             metrics.metrics?.every(
+        //                 (item) =>
+        //                     item.current_value !== null && item.current_value !== ""
+        //             )
+        //         ) {
+        //             updateStageDetails(stage_id, stage_status);
+        //         } else {
+        //             toast.error("Заполните все поля стоимости предложения", {
+        //                 containerId: "projectCard",
+        //                 isLoading: false,
+        //                 autoClose: 2000,
+        //                 pauseOnFocusLoss: false,
+        //                 pauseOnHover: false,
+        //                 position: "top-center",
+        //             });
+        //         }
+        //     } else {
+        updateStageDetails(stage_id, stage_status);
+        // }
     };
 
     // Получение проекта
@@ -1294,55 +1286,32 @@ const SaleCard = () => {
                                             </span>
                                         </div>
 
-                                        <div className="border-2 border-gray-300 py-5 px-4 h-full overflow-x-hidden overflow-y-auto">
-                                            <ul className="grid gap-3">
-                                                <li className="grid items-center grid-cols-[1fr_28%_25%] gap-3 mb-2 text-gray-400">
-                                                    <span className="flex items-center gap-2">
-                                                        Этап
-                                                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                            ?
-                                                        </span>
-                                                    </span>
-                                                    <span className="flex items-center gap-2">
-                                                        Дата
-                                                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                            ?
-                                                        </span>
-                                                    </span>
-                                                    <span className="flex items-center gap-2">
-                                                        Статус
-                                                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
-                                                            ?
-                                                        </span>
-                                                    </span>
-                                                </li>
-
-                                                {saleStages.stages?.length >
-                                                    0 &&
-                                                    services.length > 0 && (
-                                                        <SaleFunnelStages
-                                                            saleStages={
-                                                                saleStages
-                                                            }
-                                                            handleNextStage={
-                                                                handleNextStage
-                                                            }
-                                                            getStageDetails={
-                                                                getStageDetails
-                                                            }
-                                                            activeStage={
-                                                                activeStage
-                                                            }
-                                                            setActiveStage={
-                                                                setActiveStage
-                                                            }
-                                                            handleActiveStageDate={
-                                                                handleActiveStageDate
-                                                            }
-                                                            mode={mode}
-                                                        />
-                                                    )}
-                                            </ul>
+                                        <div className="border-2 border-gray-300 p-3 h-full overflow-x-hidden overflow-y-auto">
+                                            {saleStages.stages?.length > 0 &&
+                                                services.length > 0 && (
+                                                    <SaleFunnelStages
+                                                        saleId={saleId}
+                                                        saleStages={saleStages}
+                                                        handleNextStage={
+                                                            handleNextStage
+                                                        }
+                                                        getStageDetails={
+                                                            getStageDetails
+                                                        }
+                                                        activeStage={
+                                                            activeStage
+                                                        }
+                                                        setActiveStage={
+                                                            setActiveStage
+                                                        }
+                                                        handleActiveStageDate={
+                                                            handleActiveStageDate
+                                                        }
+                                                        getStages={getStages}
+                                                        requestNextStage={requestNextStage}
+                                                        mode={mode}
+                                                    />
+                                                )}
                                         </div>
                                     </div>
                                 </div>

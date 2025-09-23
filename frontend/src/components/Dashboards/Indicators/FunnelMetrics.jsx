@@ -2,8 +2,8 @@ import CountUp from "react-countup";
 
 const FunnelMetrics = ({ funnelMetrics }) => {
     return (
-        <div className="flex items-center gap-2 mb-3 p-4 border-b border-gray-300">
-            <div className="grid items-center grid-cols-2 justify-between gap-5 border-r border-gray-300">
+        <div className="flex items-center gap-2 mb-3 py-2">
+            <div className="grid items-center grid-cols-2 justify-between gap-8 border-r border-gray-300 pr-[20px]">
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 font-medium">
                         Запрос
@@ -22,7 +22,6 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                                 }
                                 duration={1}
                                 separator=" "
-                                decimals={2}
                             />
                         </strong>
                     </div>
@@ -43,14 +42,13 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                                 end={funnelMetrics?.proposal_sent?.value || 0}
                                 duration={1}
                                 separator=" "
-                                decimals={2}
                             />
                         </strong>
                     </div>
                 </div>
             </div>
 
-            <div className="flex items-center justify-between gap-3 flex-grow">
+            <div className="flex items-center gap-8 flex-grow pl-[20px]">
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 font-medium">
                         Согласие
@@ -67,7 +65,6 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                                 end={funnelMetrics?.agreement?.value || 0}
                                 duration={1}
                                 separator=" "
-                                decimals={2}
                             />
                         </strong>
                     </div>
@@ -88,7 +85,6 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                                 end={funnelMetrics?.rejected?.value || 0}
                                 duration={1}
                                 separator=" "
-                                decimals={2}
                             />
                         </strong>
                     </div>
@@ -109,7 +105,6 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                                 end={funnelMetrics?.postponed?.value || 0}
                                 duration={1}
                                 separator=" "
-                                decimals={2}
                             />
                         </strong>
                     </div>

@@ -10,8 +10,8 @@ import Employees from "./Employees/Employees";
 import EmployeeCard from "./Employees/EmployeeCard";
 import ReferenceBooks from "./ReferenceBooks/ReferenceBooks";
 import SingleBook from "./ReferenceBooks/SingleBook";
-import Customers from "./Customers/Customers";
-import CustomerCard from "./CustomerCard/CustomerCard";
+import Contragents from "./Contragents/Contragents";
+import ContragentCard from "./ContragentCard/ContragentCard";
 import Suppliers from "./Suppliers/Suppliers";
 import SupplierCard from "./SupplierCard/SupplierCard";
 import Reports from "./Reports/Reports";
@@ -35,10 +35,10 @@ function App() {
                     />
                     <Route path="projects/new" element={<ProjectCard />} />
 
-                    <Route path="contragents" element={<Customers />} />
+                    <Route path="contragents" element={<Contragents />} />
                     <Route
                         path="contragents/:contragentId"
-                        element={<CustomerCard />}
+                        element={<ContragentCard />}
                     />
 
                     <Route path="reports" element={<Reports />} />

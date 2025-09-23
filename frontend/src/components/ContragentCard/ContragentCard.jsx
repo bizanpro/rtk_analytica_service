@@ -8,22 +8,22 @@ import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 import { ToastContainer, toast } from "react-toastify";
 
-import CustomerProjectItem from "./CustomerProjectItem";
+import ContragentProjectItem from "./ContragentProjectItem";
 import FilledExecutorBlock from "../ExecutorBlock/FilledExecutorBlock";
 import ReportWindow from "../ReportWindow/ReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
-import CustomerStatisticBlock from "./CustomerStatisticBlock";
-import CustomerManagementReportsTab from "./CustomerManagementReportsTab";
+import ContragentStatisticBlock from "./ContragentStatisticBlock";
+import ContragentManagementReportsTab from "./ContragentManagementReportsTab";
 
 import "react-toastify/dist/ReactToastify.css";
 
-const CustomerCard = () => {
+const ContragentCard = () => {
     const URL = `${import.meta.env.VITE_API_URL}contragents`;
     const { contragentId } = useParams();
     const navigate = useNavigate();
 
-    const [customerData, setEmployeeData] = useState({});
-    const [formFields, setFormFields] = useState({});
+    const [contagentData, setContragentData] = useState({});
+    const [contragentDataCustom, setContragentDataCustom] = useState({});
     const [mode, setMode] = useState("read");
     const [activeReportTab, setActiveReportTab] = useState("projectReports");
 
@@ -45,8 +45,11 @@ const CustomerCard = () => {
     let query;
 
     const handleInputChange = (e, name) => {
-        setFormFields((prev) => ({ ...prev, [name]: e.target.value }));
-        setEmployeeData((prev) => ({ ...prev, [name]: e.target.value }));
+        setContragentDataCustom((prev) => ({
+            ...prev,
+            [name]: e.target.value,
+        }));
+        setContragentData((prev) => ({ ...prev, [name]: e.target.value }));
     };
 
     // Получение данных заказчика и его проекты
@@ -56,7 +59,7 @@ const CustomerCard = () => {
         })
             .then((response) => {
                 if (response.status == 200) {
-                    setEmployeeData(response.data);
+                    setContragentData(response.data);
                     setProjects(response.data.projects);
                 }
             })
@@ -162,7 +165,7 @@ const CustomerCard = () => {
             position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
-        postData("PATCH", `${URL}/${contragentId}`, formFields)
+        postData("PATCH", `${URL}/${contragentId}`, contragentDataCustom)
             .then((response) => {
                 if (response?.ok && showMessage) {
                     toast.update(query, {
@@ -267,24 +270,24 @@ const CustomerCard = () => {
                             <div className="flex items-center gap-10">
                                 <div className="flex items-center gap-3">
                                     <div className="text-3xl font-medium w-full">
-                                        {customerData?.program_name}
+                                        {contagentData?.program_name}
                                     </div>
 
                                     <span
                                         className={`
                                             whitespace-nowrap 
                                                 ${
-                                                    customerData?.status ===
+                                                    contagentData?.status ===
                                                     "active"
                                                         ? "text-green-500"
-                                                        : customerData?.status ===
+                                                        : contagentData?.status ===
                                                           "completed"
                                                         ? "text-black"
                                                         : "text-gray-300"
                                                 }
                                         `}
                                     >
-                                        {handleStatus(customerData?.status)}
+                                        {handleStatus(contagentData?.status)}
                                     </span>
                                 </div>
                             </div>
@@ -349,7 +352,7 @@ const CustomerCard = () => {
                                             )
                                         }
                                         value={
-                                            customerData?.head_office_address ||
+                                            contagentData?.head_office_address ||
                                             ""
                                         }
                                         disabled={mode == "read"}
@@ -366,7 +369,7 @@ const CustomerCard = () => {
                                             type="text"
                                             placeholder="Введите адрес сайта компании"
                                             value={
-                                                customerData?.company_website
+                                                contagentData?.company_website
                                             }
                                             onChange={(e) =>
                                                 handleInputChange(
@@ -418,7 +421,7 @@ const CustomerCard = () => {
                                     type="text"
                                     disabled={mode == "read"}
                                     value={
-                                        customerData?.description_short || ""
+                                        contagentData?.description_short || ""
                                     }
                                     onChange={(e) =>
                                         handleInputChange(
@@ -445,7 +448,7 @@ const CustomerCard = () => {
 
                                         {projects.length > 0 &&
                                             projects.map((project) => (
-                                                <CustomerProjectItem
+                                                <ContragentProjectItem
                                                     key={project.id}
                                                     {...project}
                                                     setActiveProject={
@@ -469,7 +472,7 @@ const CustomerCard = () => {
 
                         <div className="flex flex-col">
                             <div ref={block3Ref}>
-                                <CustomerStatisticBlock
+                                <ContragentStatisticBlock
                                     contragentId={contragentId}
                                     activeProject={activeProject}
                                 />
@@ -574,10 +577,11 @@ const CustomerCard = () => {
 
                                     {activeReportTab ===
                                         "managementReports" && (
-                                        <CustomerManagementReportsTab
+                                        <ContragentManagementReportsTab
                                             managerReports={
                                                 selectedManagerReports
                                             }
+                                            mode={"read"}
                                         />
                                     )}
                                 </div>
@@ -590,4 +594,4 @@ const CustomerCard = () => {
     );
 };
 
-export default CustomerCard;
+export default ContragentCard;

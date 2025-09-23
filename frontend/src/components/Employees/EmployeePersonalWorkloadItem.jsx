@@ -21,29 +21,41 @@ const EmployeePersonalWorkloadItem = ({ props, mode, setWorkloads }) => {
                     min="0"
                     defaultValue={props?.load_percentage}
                     onChange={(evt) => {
-                        const value = parseInt(evt.target.value, 10);
-                        if (value >= 0 && value <= 100) {
-                            setWorkloads((prev) => {
-                                const updated = [...prev];
-                                const index = updated.findIndex(
-                                    (item) => item.report_id === props.report_id
-                                );
+                        const raw = evt.target.value;
+                        if (raw === "") return;
 
-                                if (index !== -1) {
-                                    updated[index] = {
-                                        ...updated[index],
-                                        load_percentage: value,
-                                    };
-                                } else {
-                                    updated.push({
-                                        report_id: props.report_id,
-                                        load_percentage: value,
-                                    });
-                                }
+                        let value = parseInt(raw, 10);
 
-                                return updated;
-                            });
+                        if (value > 100) {
+                            value = 100;
+                            evt.target.value = 100;
                         }
+
+                        if (value < 0) {
+                            value = 0;
+                            evt.target.value = 0;
+                        }
+
+                        setWorkloads((prev) => {
+                            const updated = [...prev];
+                            const index = updated.findIndex(
+                                (item) => item.report_id === props.report_id
+                            );
+
+                            if (index !== -1) {
+                                updated[index] = {
+                                    ...updated[index],
+                                    load_percentage: value,
+                                };
+                            } else {
+                                updated.push({
+                                    report_id: props.report_id,
+                                    load_percentage: value,
+                                });
+                            }
+
+                            return updated;
+                        });
                     }}
                     disabled={mode == "read"}
                 />

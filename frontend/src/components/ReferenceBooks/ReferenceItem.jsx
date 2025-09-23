@@ -205,14 +205,17 @@ const ReferenceItem = ({
                                     disabled={mode == "read"}
                                 >
                                     {bookId === "management-report-types" ? (
-                                        positions.map((position) => (
-                                            <option
-                                                value={position.id}
-                                                key={position.id}
-                                            >
-                                                {position.name}
-                                            </option>
-                                        ))
+                                        <>
+                                            <option value=""></option>
+                                            {positions.map((position) => (
+                                                <option
+                                                    value={position.id}
+                                                    key={position.id}
+                                                >
+                                                    {position.name}
+                                                </option>
+                                            ))}
+                                        </>
                                     ) : (
                                         <>
                                             <option value="">Тип</option>

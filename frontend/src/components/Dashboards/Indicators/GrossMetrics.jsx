@@ -1,6 +1,10 @@
+import CountUp from "react-countup";
+
+import getColorBySign from "../../../utils/getColorBySign";
+
 const GrossMetrics = ({ financialMetrics }) => {
     return (
-        <div className="grid items-stretch grid-cols-3 gap-3 mb-3">
+        <div className="grid items-stretch grid-cols-3 gap-3 mb-5 h-[90px]">
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 font-medium">
                     Валовая прибыль
@@ -13,17 +17,37 @@ const GrossMetrics = ({ financialMetrics }) => {
                     title={`${financialMetrics.gross_profit?.value} ${financialMetrics.gross_profit?.label}`}
                 >
                     <strong className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">
-                        {financialMetrics.gross_profit?.value}
+                        <CountUp
+                            end={parseFloat(
+                                (
+                                    financialMetrics.gross_profit?.value || "0"
+                                ).replace(",", ".")
+                            )}
+                            duration={1}
+                            separator=" "
+                            decimals={1}
+                            decimal=","
+                        />
                     </strong>
                     <small className="text-sm">
                         {financialMetrics.gross_profit?.label}
                     </small>
                 </div>
-                <div className="text-green-400">
-                    {financialMetrics.gross_profit?.change_percent > 0 &&
-                        `+${financialMetrics.gross_profit?.change_percent}%`}
-                </div>
+
+                {financialMetrics.gross_profit &&
+                    financialMetrics.gross_profit?.change_percent != "" && (
+                        <div
+                            className={`flex gap-1 ${getColorBySign(
+                                financialMetrics.gross_profit?.change_percent.toString(),
+                                "text-green-400",
+                                "text-red-400"
+                            )}`}
+                        >
+                            {`${financialMetrics.gross_profit?.change_percent}%`}
+                        </div>
+                    )}
             </div>
+
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 font-medium">
                     Валовая рентабельность
@@ -36,16 +60,31 @@ const GrossMetrics = ({ financialMetrics }) => {
                         className="font-normal text-3xl max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap"
                         title={`${financialMetrics.gross_margin?.value} ${financialMetrics.gross_margin?.label}`}
                     >
-                        {financialMetrics.gross_margin?.value}
+                        <CountUp
+                            end={financialMetrics.gross_margin?.value || "0"}
+                            duration={1}
+                            separator=" "
+                            decimals={1}
+                            decimal=","
+                        />
                     </strong>
                     <small className="text-sm">
                         {financialMetrics.gross_margin?.label}
                     </small>
                 </div>
-                <div className="text-green-400">
-                    {financialMetrics.gross_margin?.change_percent > 0 &&
-                        `+${financialMetrics.gross_margin?.change_percent} п.п.`}
-                </div>
+
+                {financialMetrics.gross_margin &&
+                    financialMetrics.gross_margin?.change_percent != "" && (
+                        <div
+                            className={`flex gap-1 ${getColorBySign(
+                                financialMetrics.gross_margin?.change_percent.toString(),
+                                "text-green-400",
+                                "text-red-400"
+                            )}`}
+                        >
+                            {`${financialMetrics.gross_margin?.change_percent} п.п.`}
+                        </div>
+                    )}
             </div>
         </div>
     );

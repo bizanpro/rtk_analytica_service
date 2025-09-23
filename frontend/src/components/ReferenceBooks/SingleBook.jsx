@@ -1,10 +1,9 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 
-// import Select from "../Select";
 import Popup from "../Popup/Popup";
 import ReferenceItem from "./ReferenceItem";
 import ReferenceItemExtended from "./ReferenceItemExtended";
@@ -227,20 +226,11 @@ const SingleBook = () => {
             value = e.target.value;
         }
 
-        if (bookId === "roles" && name === "is_project_report_responsible") {
-            setBooksItems(
-                booksItems.map((item) => ({
-                    ...item,
-                    is_project_report_responsible: item.id === id,
-                }))
-            );
-        } else {
-            setBooksItems((prevBooksItems) =>
-                prevBooksItems.map((item) =>
-                    item.id === id ? { ...item, [name]: value } : item
-                )
-            );
-        }
+        setBooksItems((prevBooksItems) =>
+            prevBooksItems.map((item) =>
+                item.id === id ? { ...item, [name]: value } : item
+            )
+        );
     };
 
     // Закрытие попапа
@@ -348,6 +338,20 @@ const SingleBook = () => {
                                 : item
                         )
                     );
+                    setRefBooksItems((booksItems) =>
+                        booksItems.map((item) =>
+                            item.id === data.contragent_id
+                                ? {
+                                      ...item,
+                                      contacts: [
+                                          ...(item.contacts || []),
+                                          response,
+                                      ],
+                                  }
+                                : item
+                        )
+                    );
+
                     toast("Контакт добавлен", {
                         type: "success",
                         containerId: "singleBook",
@@ -421,10 +425,7 @@ const SingleBook = () => {
                                 ? "bottom-right"
                                 : "top-right",
                     });
-
-                    if (bookId === "roles") {
-                        getBooks();
-                    }
+                    getBooks();
                 } else {
                     toast.dismiss(query);
                     toast.error("Ошибка обновления записи", {
@@ -721,7 +722,13 @@ const SingleBook = () => {
             Accept: "application/json",
         }).then((response) => {
             if (response.status == 200) {
-                setPositions(response.data.data);
+                if (response.data.data?.length > 0) {
+                    setPositions(
+                        response.data.data.filter(
+                            (item) => item.type === "one_to_one"
+                        )
+                    );
+                }
             }
         });
     };
@@ -745,7 +752,7 @@ const SingleBook = () => {
         setIsLoading(true);
 
         const url =
-            bookId == "working-hours" ? `${URL}/?year=${currentYear}` : URL;
+            bookId == "working-hours" ? `${URL}?year=${currentYear}` : URL;
 
         getData(url, {
             Accept: "application/json",

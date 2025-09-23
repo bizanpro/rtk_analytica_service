@@ -3,18 +3,27 @@ import { useEffect, useState, useMemo } from "react";
 import getData from "../../utils/getData";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
-import { createDebounce } from "../../utils/debounce";
+// import { createDebounce } from "../../utils/debounce";
+import { sortList } from "../../utils/sortList";
 
-import ProjectItem from "./CustomerItem";
+import ContragentItem from "./ContragentItem";
+import TheadSortButton from "../TheadSortButton/TheadSortButton";
 import Select from "../Select";
-import Search from "../Search/Search";
+import CreatableSelect from "react-select/creatable";
+// import Search from "../Search/Search";
 
-const Customers = () => {
+const Contragents = () => {
     const [list, setList] = useState([]);
+    const [sortedList, setSortedList] = useState([]);
+
+    const [sortBy, setSortBy] = useState({ key: "", action: "" });
+
     const [selectedName, setSelectedName] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
+
     const [isLoading, setIsLoading] = useState(true);
     const [isFiltering, setIsFiltering] = useState(false);
+
     const [page, setPage] = useState(1);
     const [meta, setMeta] = useState({
         current_page: 1,
@@ -24,17 +33,33 @@ const Customers = () => {
     const URL = `${import.meta.env.VITE_API_URL}contragents`;
 
     const COLUMNS = [
-        { label: "Наименование", key: "program_name" },
-        { label: "Кол-во проектов, всего", key: "projects_total_count" },
-        { label: "Кол-во активных проектов", key: "projects_active_count" },
-        { label: "Бюджет проектов, млрд руб.", key: "projects_total_budget" },
-        { label: "Выручка, млн руб.", key: "revenue_total" },
-        { label: "Получено оплат, млн руб.", key: "income_total" },
-        { label: "Статус", key: "status" },
+        { label: "Наименование", key: "program_name", is_sortable: false },
+        {
+            label: "Кол-во проектов, всего",
+            key: "projects_total_count",
+            is_sortable: true,
+        },
+        {
+            label: "Кол-во активных проектов",
+            key: "projects_active_count",
+            is_sortable: true,
+        },
+        {
+            label: "Бюджет проектов, млрд руб.",
+            key: "projects_total_budget",
+            is_sortable: true,
+        },
+        { label: "Выручка, млн руб.", key: "revenue_total", is_sortable: true },
+        {
+            label: "Получено оплат, млн руб.",
+            key: "income_total",
+            is_sortable: true,
+        },
+        { label: "Статус", key: "status", is_sortable: false },
     ];
 
-    const filteredCustomers = useMemo(() => {
-        return list.filter((customer) => {
+    const filteredContragents = useMemo(() => {
+        return sortedList.filter((customer) => {
             const matchName =
                 selectedName && selectedName !== "default"
                     ? customer.program_name === selectedName
@@ -47,35 +72,45 @@ const Customers = () => {
 
             return matchName && matchStatus;
         });
-    }, [list, selectedName, selectedStatus]);
+    }, [sortedList, selectedName, selectedStatus]);
 
-    const handleSearch = (event) => {
-        const searchQuery = event.value.toLowerCase();
-
-        setIsLoading(true);
-        getData(`${URL}/?page=${page}&active=true&search=${searchQuery}`, {
-            Accept: "application/json",
-        })
-            .then((response) => {
-                setList(response.data.data);
-            })
-            .finally(() => setIsLoading(false));
+    const handleListSort = () => {
+        setSortedList(sortList(list, sortBy));
     };
 
-    const debounce = createDebounce(handleSearch, 300, true);
+    // const handleSearch = (event) => {
+    //     const searchQuery = event.value.toLowerCase();
+
+    //     setIsLoading(true);
+    //     getData(
+    //         `${URL}?page=${page}&active=true&has_projects=true&scope=registry&search=${searchQuery}`,
+    //         {
+    //             Accept: "application/json",
+    //         }
+    //     )
+    //         .then((response) => {
+    //             setList(response.data.data);
+    //         })
+    //         .finally(() => setIsLoading(false));
+    // };
+
+    // const debounce = createDebounce(handleSearch, 300, true);
 
     // Заполняем селектор заказчиков
     const nameOptions = useMemo(() => {
-        const allNames = list
-            .map((item) => item.program_name)
+        const allNames = sortedList
+            .map((item) => ({
+                value: item.id,
+                label: item.program_name,
+            }))
             .filter((program_name) => program_name !== null);
 
         return Array.from(new Set(allNames));
-    }, [list]);
+    }, [sortedList]);
 
     // Заполняем селектор статусов
     const statusOptions = useMemo(() => {
-        const allStatuses = list
+        const allStatuses = sortedList
             .map((item) => item.status)
             .filter((status) => status !== null);
 
@@ -85,25 +120,33 @@ const Customers = () => {
             value: status,
             label: handleStatus(status),
         }));
-    }, [list]);
+    }, [sortedList]);
 
     useEffect(() => {
         setIsLoading(true);
-        getData(`${URL}/?page=${page}&active=true`, {
-            Accept: "application/json",
-        })
+        getData(
+            `${URL}?page=${page}&active=true&has_projects=true&scope=registry`,
+            {
+                Accept: "application/json",
+            }
+        )
             .then((response) => {
                 setList((prev) => [...prev, ...response.data.data]);
+                setSortedList((prev) => [...prev, ...response.data.data]);
                 setMeta(response.data.meta);
             })
             .finally(() => setIsLoading(false));
     }, [page]);
 
     useEffect(() => {
-        selectedName === "default" && selectedStatus === "default"
+        selectedName === null && selectedStatus === "default"
             ? setIsFiltering(false)
             : setIsFiltering(true);
     }, [selectedName, selectedStatus]);
+
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
 
     const loaderRef = useInfiniteScroll({
         isLoading,
@@ -118,18 +161,36 @@ const Customers = () => {
                 <div className="flex justify-between items-center gap-6 mb-8">
                     <h1 className="text-3xl font-medium">
                         Реестр заказчиков{" "}
-                        {filteredCustomers.length > 0 &&
-                            `(${filteredCustomers.length})`}
+                        {filteredContragents.length > 0 &&
+                            `(${filteredContragents.length})`}
                     </h1>
 
                     <div className="flex items-center gap-6">
-                        <Search
+                        {/* <Search
                             onSearch={debounce}
                             className="search-fullpage"
                             placeholder="Поиск заказчика"
-                        />
+                        /> */}
 
                         {nameOptions.length > 0 && (
+                            <CreatableSelect
+                                isClearable
+                                options={nameOptions}
+                                className="p-1 border border-gray-300 w-[300px] executor-block__name-field"
+                                placeholder="Заказчик"
+                                noOptionsMessage={() => "Совпадений нет"}
+                                isValidNewOption={() => false}
+                                onChange={(selectedOption) => {
+                                    if (selectedOption) {
+                                        setSelectedName(selectedOption.label);
+                                    } else {
+                                        setSelectedName(null);
+                                    }
+                                }}
+                            />
+                        )}
+
+                        {/* {nameOptions.length > 0 && (
                             <Select
                                 className={
                                     "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
@@ -140,12 +201,12 @@ const Customers = () => {
                                     setSelectedName(evt.target.value);
                                 }}
                             />
-                        )}
+                        )} */}
 
                         {statusOptions.length > 0 && (
                             <select
                                 className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                    "p-1 border border-gray-300 w-[150px] h-[48px]"
                                 }
                                 onChange={(evt) =>
                                     setSelectedStatus(evt.target.value)
@@ -166,22 +227,31 @@ const Customers = () => {
                     <table className="table-auto w-full border-collapse border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
-                                {COLUMNS.map(({ label, key }) => (
+                                {COLUMNS.map(({ label, key, is_sortable }) => (
                                     <th
-                                        className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
+                                        className="text-base px-4 py-2 min-w-[180px] max-w-[230px] thead__item"
                                         rowSpan="2"
                                         key={key}
                                     >
-                                        {label}
+                                        {is_sortable ? (
+                                            <TheadSortButton
+                                                label={label}
+                                                value={key}
+                                                sortBy={sortBy}
+                                                setSortBy={setSortBy}
+                                            />
+                                        ) : (
+                                            label
+                                        )}
                                     </th>
                                 ))}
                             </tr>
                         </thead>
 
                         <tbody>
-                            {filteredCustomers.length > 0 &&
-                                filteredCustomers.map((item) => (
-                                    <ProjectItem
+                            {filteredContragents.length > 0 &&
+                                filteredContragents.map((item) => (
+                                    <ContragentItem
                                         key={item.id}
                                         props={item}
                                         columns={COLUMNS}
@@ -198,4 +268,4 @@ const Customers = () => {
     );
 };
 
-export default Customers;
+export default Contragents;

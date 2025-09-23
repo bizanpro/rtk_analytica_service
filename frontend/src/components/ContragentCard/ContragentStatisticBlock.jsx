@@ -4,7 +4,7 @@ import getData from "../../utils/getData";
 
 import Loader from "../Loader";
 
-const CustomerStatisticBlock = ({ contragentId, activeProject }) => {
+const ContragentStatisticBlock = ({ contragentId, activeProject }) => {
     const [period, setPeriod] = useState("current_year");
     const [revenue, setRevenue] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -13,10 +13,10 @@ const CustomerStatisticBlock = ({ contragentId, activeProject }) => {
         activeProject != null
             ? `${
                   import.meta.env.VITE_API_URL
-              }projects/${activeProject}/revenue/?period=${period}`
+              }projects/${activeProject}/revenue?period=${period}`
             : `${
                   import.meta.env.VITE_API_URL
-              }contragents/${contragentId}/financial-metrics/?period=${period}`;
+              }contragents/${contragentId}/financial-metrics?period=${period}`;
 
     const getRevenue = () => {
         setIsDataLoaded(false);
@@ -202,6 +202,43 @@ const CustomerStatisticBlock = ({ contragentId, activeProject }) => {
 
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-gray-400">
+                        ФОТ
+                        <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
+                            ?
+                        </span>
+                    </div>
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            (revenue.fot?.value ?? 0).toLocaleString("de-DE") +
+                            " " +
+                            revenue.fot?.label
+                        }
+                    >
+                        <strong className="font-normal text-3xl max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
+                            {revenue.fot?.value ?? 0}
+                        </strong>
+                        <small className="text-xl"> {revenue.fot?.label}</small>
+                    </div>
+
+                    <div
+                        className="flex items-center flex-grow gap-2"
+                        title={
+                            revenue.fot_percentage?.value +
+                            " " +
+                            revenue.fot_percentage?.label
+                        }
+                    >
+                        <i className="text-xl">
+                            {revenue.fot_percentage?.value}
+                            {revenue.fot_percentage?.label}
+                        </i>
+                        <i className="text-sm">от выручки</i>
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2 text-gray-400">
                         Подрячики
                         <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                             ?
@@ -242,7 +279,7 @@ const CustomerStatisticBlock = ({ contragentId, activeProject }) => {
                         <i className="text-sm">от выручки</i>
                     </div>
                 </div>
-
+{/* 
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 text-gray-400">
                         Валовая рент.
@@ -284,10 +321,10 @@ const CustomerStatisticBlock = ({ contragentId, activeProject }) => {
                         </i>
                         <i className="text-sm">от выручки</i>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );
 };
 
-export default CustomerStatisticBlock;
+export default ContragentStatisticBlock;

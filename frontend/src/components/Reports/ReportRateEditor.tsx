@@ -6,6 +6,7 @@ type Props = {
     closeEditor: () => void;
     updateReportDetails?: (report: object, action: string) => void;
     reportData: object;
+    mode: string;
 };
 
 const RATE_LABELS = [
@@ -19,6 +20,7 @@ const ReportRateEditor = ({
     closeEditor,
     updateReportDetails,
     reportData,
+    mode,
 }: Props) => {
     const [reportRateData, setReportRateData] = useState<object>(reportData);
 
@@ -36,7 +38,11 @@ const ReportRateEditor = ({
     }, [reportData]);
 
     return (
-        <div className="p-5 h-full flex flex-col border-2 border-gray-300">
+        <div
+            className={`min-h-full flex flex-col ${
+                mode === "read" ? "p-2" : "border-2 border-gray-300 px-4 py-3"
+            }`}
+        >
             <div className="flex items-start gap-2 justify-between mb-3">
                 <div className="flex items-start gap-5 flex-grow">
                     <div>
@@ -94,6 +100,7 @@ const ReportRateEditor = ({
                             name={"general_assessment"}
                             rateHandler={rateHandler}
                             reportRateData={reportRateData}
+                            mode={mode}
                         />
                     </div>
                 </div>
@@ -107,6 +114,7 @@ const ReportRateEditor = ({
                                 name={item.key}
                                 rateHandler={rateHandler}
                                 reportRateData={reportRateData}
+                                mode={mode}
                             />
                         </div>
                     ))}
@@ -123,37 +131,42 @@ const ReportRateEditor = ({
                     </div>
 
                     <textarea
-                        className="w-full border-2 border-gray-300 p-5 flex-grow max-h-[300px]"
+                        className="w-full border-2 border-gray-300 p-5 flex-grow h-full max-h-[350px] resize-none"
                         placeholder="Описание"
                         value={reportRateData.general_summary || ""}
                         onChange={(evt) =>
                             rateHandler("general_summary", evt.target.value)
                         }
+                        disabled={mode === "read"}
                     ></textarea>
                 </div>
             </div>
 
-            <div className="mt-5 pb-5 grid grid-cols-2 items-center gap-6 shrink-0">
-                <button
-                    type="button"
-                    className="border rounded-lg py-2 px-5 bg-black text-white"
-                    onClick={() =>
-                        updateReportDetails(reportRateData, "approve")
-                    }
-                    title="Сохранить и утвердить"
-                >
-                    Сохранить и утвердить
-                </button>
+            {mode === "edit" && (
+                <div className="mt-5 pb-5 grid grid-cols-2 items-center gap-6 shrink-0">
+                    <button
+                        type="button"
+                        className="border rounded-lg py-2 px-5 bg-black text-white"
+                        onClick={() =>
+                            updateReportDetails(reportRateData, "approve")
+                        }
+                        title="Сохранить и утвердить"
+                    >
+                        Сохранить и утвердить
+                    </button>
 
-                <button
-                    type="button"
-                    className="border rounded-lg py-2 px-5"
-                    onClick={() => updateReportDetails(reportRateData, "save")}
-                    title="Сохранить без утверждения"
-                >
-                    Сохранить без утверждения
-                </button>
-            </div>
+                    <button
+                        type="button"
+                        className="border rounded-lg py-2 px-5"
+                        onClick={() =>
+                            updateReportDetails(reportRateData, "save")
+                        }
+                        title="Сохранить без утверждения"
+                    >
+                        Сохранить без утверждения
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

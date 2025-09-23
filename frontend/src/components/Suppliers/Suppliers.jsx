@@ -25,7 +25,7 @@ const Suppliers = () => {
         last_page: 1,
     });
 
-    const URL = `${import.meta.env.VITE_API_URL}suppliers/?active=true`;
+    const URL = `${import.meta.env.VITE_API_URL}suppliers?active=true`;
 
     const filteredList = useMemo(() => {
         return list.filter((customer) => {
