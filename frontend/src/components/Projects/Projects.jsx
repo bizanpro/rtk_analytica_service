@@ -194,7 +194,7 @@ const Projects = () => {
     return (
         <main className="page projects">
             <div className="container projects__container">
-                <section className="projects__header flex justify-between items-center">
+                <section className="registry__header flex justify-between items-center">
                     <h1 className="title">
                         Реестр проектов
                         {filteredProjects.length > 0 && (

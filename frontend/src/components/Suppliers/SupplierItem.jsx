@@ -10,33 +10,36 @@ const SupplierItem = ({ props, columns }) => {
 
     return (
         <tr
-            className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
+            className="registry-table__item transition text-base text-left cursor-pointer"
             onClick={handleRowClick}
         >
             {columns.map(({ key }) => {
                 const value = props[key];
 
+                let statusClass;
+
+                if (key === "status") {
+                    if (value === "completed") {
+                        statusClass = "registry-table__item-status_completed";
+                    } else if (value === "active") {
+                        statusClass = "registry-table__item-status_active";
+                    }
+                }
+
                 if (Array.isArray(value) && value !== null) {
                     if (value?.length > 0) {
                         return (
                             <td
-                                className="border-b border-gray-300 py-2.5 min-w-[180px] max-w-[200px]"
+                                className="min-w-[130px] max-w-[300px]"
                                 key={key}
                             >
                                 <table className="w-full">
                                     <tbody>
                                         {value?.map((item, index) => (
                                             <tr key={`${key}_${index}`}>
-                                                <td
-                                                    className={`px-4 ${
-                                                        index !==
-                                                        value?.length - 1
-                                                            ? "pb-1"
-                                                            : "pt-1"
-                                                    }`}
-                                                >
+                                                <td className="flex items-center gap-[5px] flex-wrap">
                                                     {key === "roles" ? (
-                                                        <div className="border border-gray-300 py-1 px-3 w-fit rounded">
+                                                        <div className="p-[3px_8px] border-[#E4E7EC] border rounded-[99px]">
                                                             {item?.toString()}
                                                         </div>
                                                     ) : (
@@ -51,53 +54,22 @@ const SupplierItem = ({ props, columns }) => {
                         );
                     } else {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[130px] max-w-[130px]" key={key}>
                                 —
                             </td>
                         );
                     }
                 } else if (typeof value === "object" && value !== null) {
-                    if (key === "role") {
+                    if (key === "total_receipts") {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
-                                {Array.isArray(value) && value.length > 0 ? (
-                                    value.map((item, index) => (
-                                        <div
-                                            key={`${key}_${index}`}
-                                            className="border border-gray-200 px-2 rounded-md w-max mb-1"
-                                        >
-                                            {item?.name || "—"}
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="border border-gray-200 px-2 rounded-md w-max">
-                                        {value?.name || "—"}
-                                    </div>
-                                )}
-                            </td>
-                        );
-                    } else if (key === "total_receipts") {
-                        return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[130px]" key={key}>
                                 {value?.value || "—"}
                             </td>
                         );
                     } else {
                         return Object.entries(value).map(
                             ([subKey, subValue]) => (
-                                <td
-                                    className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                    key={subKey}
-                                >
+                                <td className="w-[130px]" key={subKey}>
                                     {subValue?.toString()}
                                 </td>
                             )
@@ -106,31 +78,39 @@ const SupplierItem = ({ props, columns }) => {
                 } else {
                     if (key === "status") {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[110px]" key={key}>
                                 <div
-                                    className={`rounded px-3 py-1 text-center
-                                            ${
-                                                handleStatus(
-                                                    value?.toString()
-                                                ) === "Активный"
-                                                    ? "bg-green-400"
-                                                    : "bg-gray-200"
-                                            }
-                                        `}
+                                    className={`registry-table__item-status ${statusClass}`}
                                 >
                                     {handleStatus(value?.toString()) || "—"}
                                 </div>
                             </td>
                         );
-                    } else {
+                    } else if (key === "program_name") {
                         return (
                             <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
+                                className="min-w-[130px] max-w-[300px]"
+                                key={value?.main?.id}
                             >
+                                <div className="hidden-group">
+                                    <div
+                                        className="visible-text text-blue"
+                                        style={{ maxWidth: "300px" }}
+                                    >
+                                        <div className="w-full">
+                                            {value?.toString() || "—"}
+                                        </div>
+                                    </div>
+
+                                    <div className="hidden-text">
+                                        {value?.toString() || "—"}
+                                    </div>
+                                </div>
+                            </td>
+                        );
+                    } else {
+                        return (
+                            <td className="w-[130px]" key={key}>
                                 {value?.toString() || "—"}
                             </td>
                         );

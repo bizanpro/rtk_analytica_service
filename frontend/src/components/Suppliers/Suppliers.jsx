@@ -8,11 +8,17 @@ import SupplierItem from "./SupplierItem";
 import CreatableSelect from "react-select/creatable";
 
 const Suppliers = () => {
+    const [sortBy, setSortBy] = useState({ key: "", action: "" });
+
     const [list, setList] = useState([]);
+    const [sortedList, setSortedList] = useState([]);
+
     const [selectedName, setSelectedName] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState("default");
+
     const [isLoading, setIsLoading] = useState(true);
     const [isFiltering, setIsFiltering] = useState(false);
+
     const [page, setPage] = useState(1);
     const [meta, setMeta] = useState({
         current_page: 1,
@@ -20,15 +26,6 @@ const Suppliers = () => {
     });
 
     const URL = `${import.meta.env.VITE_API_URL}suppliers/?active=true`;
-
-    const COLUMNS = [
-        { label: "Наименование", key: "program_name" },
-        { label: "Кол-во проектов, всего", key: "projects_total_count" },
-        { label: "Кол-во активных проектов", key: "projects_active_count" },
-        { label: "Роли", key: "roles" },
-        { label: "Оплачено услуг, млн руб.", key: "total_receipts" },
-        { label: "Статус", key: "status" },
-    ];
 
     const filteredList = useMemo(() => {
         return list.filter((customer) => {
@@ -70,6 +67,21 @@ const Suppliers = () => {
         }));
     }, [list]);
 
+    const COLUMNS = [
+        {
+            label: "Наименование",
+            key: "program_name",
+            filter: "selectedNames",
+            options: nameOptions,
+            is_sortable: true,
+        },
+        { label: "Кол-во проектов, всего", key: "projects_total_count" },
+        { label: "Кол-во активных проектов", key: "projects_active_count" },
+        { label: "Роли", key: "roles" },
+        { label: "Оплачено услуг, млн руб.", key: "total_receipts" },
+        { label: "Статус", key: "status" },
+    ];
+
     useEffect(() => {
         setIsLoading(true);
         getData(`${URL}&page=${page}`, { Accept: "application/json" })
@@ -93,15 +105,49 @@ const Suppliers = () => {
         isFiltering,
     });
 
-    return (
-        <main className="page">
-            <div className="container py-8">
-                <div className="flex justify-between items-center gap-6 mb-8">
-                    <h1 className="text-3xl font-medium">
-                        Реестр подрядчиков{" "}
-                        {filteredList.length > 0 && `(${filteredList.length})`}
-                    </h1>
+    const handleListSort = () => {
+        // setSortedList(sortList(list, sortBy));
+    };
 
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
+
+    // {
+    //     COLUMNS.map(({ label, key, is_sortable }) => (
+    //         <th
+    //             className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
+    //             rowSpan="2"
+    //             key={key}
+    //         >
+    //             {label}
+    //             {is_sortable ? (
+    //                 <TheadSortButton
+    //                     label={label}
+    //                     value={key}
+    //                     sortBy={sortBy}
+    //                     setSortBy={setSortBy}
+    //                 />
+    //             ) : (
+    //                 label
+    //             )}
+    //         </th>
+    //     ));
+    // }
+
+    return (
+        <main className="page suppliers">
+            <div className="container suppliers__container">
+                <section className="registry__header projects__header flex justify-between items-center">
+                    <h1 className="title">
+                        Реестр подрядчиков
+                        {filteredList.length > 0 && (
+                            <span>{filteredList.length}</span>
+                        )}
+                    </h1>
+                </section>
+
+                <div className="flex justify-between items-center gap-6 mb-8">
                     <div className="flex items-center gap-6">
                         <CreatableSelect
                             isClearable
