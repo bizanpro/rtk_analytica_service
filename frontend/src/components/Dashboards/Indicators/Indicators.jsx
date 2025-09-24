@@ -458,7 +458,12 @@ const Indicators = () => {
 
     // Ключевые финансовые показатели - правый блок
     const getFinancialProfitList = () => {
-        const queryString = buildQueryParams(financialProfitListFilters);
+        const query = {
+            ...financialProfitListFilters,
+            ...mainFilters,
+        };
+
+        const queryString = buildQueryParams(query);
 
         getData(
             `${
