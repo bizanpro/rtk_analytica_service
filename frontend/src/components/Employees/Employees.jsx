@@ -89,11 +89,7 @@ const Employees = () => {
             (response) => {
                 if (response.status == 200) {
                     if (response.data.data.length > 0) {
-                        setDepartments(
-                            response.data.data.filter(
-                                (item) => item.employee_count > 0
-                            )
-                        );
+                        setDepartments(response.data.data);
                     }
                 }
             }
