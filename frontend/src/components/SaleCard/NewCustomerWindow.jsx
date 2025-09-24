@@ -26,7 +26,7 @@ const NewCustomerWindow = ({
                         }}
                         checked={customerType === "new"}
                     />
-                    <label htmlFor="new_customer">Новый</label>
+                    <label htmlFor="new_customer">Ввести вручную</label>
                 </div>
 
                 <div>
@@ -37,7 +37,7 @@ const NewCustomerWindow = ({
                         onChange={() => setCustomerType("exist")}
                         checked={customerType === "exist"}
                     />
-                    <label htmlFor="exist_customer">Существующий</label>
+                    <label htmlFor="exist_customer">Выбрать из существующих</label>
                 </div>
             </nav>
 

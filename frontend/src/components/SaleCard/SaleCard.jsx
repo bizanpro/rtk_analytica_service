@@ -578,7 +578,7 @@ const SaleCard = () => {
                 pauseOnHover: false,
                 position: "top-center",
             });
-            console.error("Ошибка при обновлении проекта:", error);
+
             throw error;
         }
     };
@@ -1260,7 +1260,9 @@ const SaleCard = () => {
                                                             handleActiveStageDate
                                                         }
                                                         getStages={getStages}
-                                                        requestNextStage={requestNextStage}
+                                                        requestNextStage={
+                                                            requestNextStage
+                                                        }
                                                         mode={mode}
                                                     />
                                                 )}
