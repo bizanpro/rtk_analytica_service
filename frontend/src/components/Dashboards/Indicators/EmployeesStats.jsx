@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import EmployeeMetrics from "./EmployeeMetrics";
 import EmployeeItem from "./EmployeeItem";
 
