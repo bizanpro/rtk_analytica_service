@@ -5,7 +5,7 @@ const EmployeeWorkloadItem = ({
     role,
 }) => {
     return (
-        <li className="grid items-stretch grid-cols-[28%_25%_25%_1fr] gap-2">
+        <li className="grid items-stretch grid-cols-[26%_22%_28%_1fr] gap-2">
             <div className="flex flex-col justify-start gap-2 min-w-[140px]">
                 <div className="text-lg">{project?.name}</div>
 

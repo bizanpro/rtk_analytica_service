@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import CreatableSelect from "react-select/creatable";
+
 const NewCustomerWindow = ({
     setAddCustomer,
     contragents,
@@ -10,6 +12,22 @@ const NewCustomerWindow = ({
 }) => {
     const [customerType, setCustomerType] = useState("new");
     const [programName, setProgramName] = useState("");
+
+    {
+        /* <select
+                        className="w-full h-[21px]"
+                        value={projectData?.contragent_id || ""}
+                        onChange={(e) => handleInputChange(e, "contragent_id")}
+                    >
+                        <option value="">Выберите заказчика</option>
+                        {contragents.length > 0 &&
+                            contragents.map((item) => (
+                                <option value={item.id} key={item.id}>
+                                    {item.program_name}
+                                </option>
+                            ))}
+                    </select> */
+    }
 
     return (
         <div className="flex flex-col gap-3">
@@ -37,7 +55,9 @@ const NewCustomerWindow = ({
                         onChange={() => setCustomerType("exist")}
                         checked={customerType === "exist"}
                     />
-                    <label htmlFor="exist_customer">Выбрать из существующих</label>
+                    <label htmlFor="exist_customer">
+                        Выбрать из существующих
+                    </label>
                 </div>
             </nav>
 
@@ -51,19 +71,39 @@ const NewCustomerWindow = ({
                         onChange={(e) => setProgramName(e.target.value)}
                     />
                 ) : (
-                    <select
-                        className="w-full h-[21px]"
-                        value={projectData?.contragent_id || ""}
-                        onChange={(e) => handleInputChange(e, "contragent_id")}
-                    >
-                        <option value="">Выберите заказчика</option>
-                        {contragents.length > 0 &&
-                            contragents.map((item) => (
-                                <option value={item.id} key={item.id}>
-                                    {item.program_name}
-                                </option>
-                            ))}
-                    </select>
+                    <CreatableSelect
+                        isClearable
+                        options={
+                            contragents.length > 0 &&
+                            contragents.map((item) => ({
+                                value: item.id,
+                                label: item.program_name,
+                            }))
+                        }
+                        className="w-full executor-block__name-field"
+                        placeholder="Выберите заказчика"
+                        noOptionsMessage={() => "Совпадений нет"}
+                        isValidNewOption={() => false}
+                        value={
+                            (contragents.length > 0 &&
+                                contragents
+                                    .map((item) => ({
+                                        value: item.id,
+                                        label: item.program_name,
+                                    }))
+                                    .find(
+                                        (option) =>
+                                            option.value ===
+                                            projectData?.contragent_id
+                                    )) ||
+                            null
+                        }
+                        onChange={(selectedOption) => {
+                            const newValue = selectedOption?.value || null;
+
+                            handleInputChange(newValue, "contragent_id");
+                        }}
+                    />
                 )}
             </div>
 

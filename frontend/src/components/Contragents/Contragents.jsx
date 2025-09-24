@@ -8,7 +8,7 @@ import { sortList } from "../../utils/sortList";
 
 import ContragentItem from "./ContragentItem";
 import TheadSortButton from "../TheadSortButton/TheadSortButton";
-import Select from "../Select";
+// import Select from "../Select";
 import CreatableSelect from "react-select/creatable";
 // import Search from "../Search/Search";
 

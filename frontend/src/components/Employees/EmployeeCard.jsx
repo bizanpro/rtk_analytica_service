@@ -794,6 +794,13 @@ const EmployeeCard = () => {
                                 </div>
                                 <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
                                     <ul className="grid gap-5">
+                                        <li className="grid items-stretch grid-cols-[26%_22%_28%_1fr] gap-2 text-gray-400">
+                                            <span>Проект</span>
+                                            <span>Отчёт</span>
+                                            <span>Период выполн.</span>
+                                            <span>Роль</span>
+                                        </li>
+
                                         {workload.length > 0 &&
                                             workload.map((item, index) => (
                                                 <EmployeeWorkloadItem

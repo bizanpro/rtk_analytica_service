@@ -20,7 +20,7 @@ const Employees = () => {
     const [selectedType, setSelectedType] = useState("default");
     const [selectedStatus, setSelectedStatus] = useState("default");
     const [selectedName, setSelectedName] = useState(null);
-    const [selectedDepartment, setSelectedDepartment] = useState(null);
+    const [selectedDepartments, setSelectedDepartments] = useState(null);
 
     const COLUMNS = [
         { label: "ФИО", key: "name" },
@@ -45,8 +45,8 @@ const Employees = () => {
                 (selectedName !== null
                     ? employee.name === selectedName
                     : true) &&
-                (selectedDepartment !== null
-                    ? employee.department_id === selectedDepartment
+                (selectedDepartments && selectedDepartments.length > 0
+                    ? selectedDepartments.includes(employee.department_id)
                     : true)
             );
         });
@@ -57,7 +57,7 @@ const Employees = () => {
         selectedType,
         selectedStatus,
         selectedName,
-        selectedDepartment,
+        selectedDepartments,
     ]);
 
     // Заполняем селектор сотрудников
@@ -89,11 +89,7 @@ const Employees = () => {
             (response) => {
                 if (response.status == 200) {
                     if (response.data.data.length > 0) {
-                        setDepartments(
-                            response.data.data.filter(
-                                (item) => item.employee_count > 0
-                            )
-                        );
+                        setDepartments(response.data.data);
                     }
                 }
             }
@@ -145,6 +141,7 @@ const Employees = () => {
                         {departments.length > 0 && (
                             <CreatableSelect
                                 isClearable
+                                isMulti
                                 options={departments.map((item) => ({
                                     value: item.id,
                                     label: item.name,
@@ -153,13 +150,18 @@ const Employees = () => {
                                 placeholder="Подразделение"
                                 noOptionsMessage={() => "Совпадений нет"}
                                 isValidNewOption={() => false}
-                                onChange={(selectedOption) => {
-                                    if (selectedOption) {
-                                        setSelectedDepartment(
-                                            selectedOption.value
+                                onChange={(selectedOptions) => {
+                                    if (
+                                        selectedOptions &&
+                                        selectedOptions.length > 0
+                                    ) {
+                                        setSelectedDepartments(
+                                            selectedOptions.map(
+                                                (option) => option.value
+                                            )
                                         );
                                     } else {
-                                        setSelectedDepartment(null);
+                                        setSelectedDepartments([]);
                                     }
                                 }}
                             />
