@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import getData from "../../utils/getData";
 import formatMoney from "../../utils/formatMoney";
 import parseDate from "../../utils/parseDate";
+import buildQueryParams from "../../utils/buildQueryParams";
 
 import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
@@ -27,10 +28,12 @@ const isValidDate = (str) => {
 };
 
 const ReportWindow = ({
+    reportName,
     reportWindowsState,
     setReportWindowsState,
     contracts,
     reportId,
+    projectId,
     updateReport,
     sendReport,
     setReportId,
@@ -49,10 +52,14 @@ const ReportWindow = ({
         responsible_persons: [],
         contragents: [],
         show_cost: true,
+        regularity: "",
     });
 
-    const [teammates, setTeammates] = useState([]);
-    const [contractors, setContractors] = useState([]);
+    const [preFillReportData, setPreFillReportData] = useState({});
+
+    const [teammates, setTeammates] = useState([]); // Члены команды
+    const [contractors, setContractors] = useState([]); // Подрядчики
+
     const [reportTypes, setReportTypes] = useState([]);
     const [physicalPersons, setPhysicalPersons] = useState([]);
     const [roles, setRoles] = useState([]);
@@ -63,6 +70,7 @@ const ReportWindow = ({
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [saveBeforeClose, setSaveBeforeClose] = useState(false);
+    const [isAutoPrefill, setIsAutoPrefill] = useState(!reportId); // Нужно ли предзаполнять отчет
 
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -438,13 +446,125 @@ const ReportWindow = ({
         }));
     };
 
+    // Получение данных для предзаполнения отчета
+    const handleReportPrefillUrl = () => {
+        const selectedType = reportTypes.find(
+            (type) => type.id === +reportData.report_type_id
+        );
+
+        if (selectedType) {
+            if (
+                selectedType.is_regular &&
+                reportData.regularity != "" &&
+                reportData.regularity != "one_time"
+            ) {
+                const queryString = buildQueryParams({
+                    regularity: [reportData.regularity],
+                });
+
+                getReportPrefill(
+                    `${
+                        import.meta.env.VITE_API_URL
+                    }reports/prefill/${projectId}/${
+                        selectedType.id
+                    }?${queryString}`
+                );
+            } else if (
+                !selectedType.is_regular &&
+                reportData.regularity != "" &&
+                reportData.regularity == "one_time"
+            ) {
+                getReportPrefill(
+                    `${
+                        import.meta.env.VITE_API_URL
+                    }reports/prefill/${projectId}/${selectedType.id}`
+                );
+            }
+        }
+    };
+
+    // Получение данных отчета для автоподстановки
+    const getReportPrefill = (url) => {
+        getData(url).then((response) => {
+            if (response.status == 200 && response.data.has_prefill_data) {
+                setPreFillReportData(response.data.data);
+
+                setIsAutoPrefill(false);
+            }
+        });
+    };
+
+    const handleReportPrefill = () => {
+        let result;
+
+        const selectedType = reportTypes.find(
+            (type) => type.id === +reportData.report_type_id
+        );
+
+        if (selectedType) {
+            if (
+                selectedType.is_regular &&
+                reportData.regularity != "" &&
+                reportData.regularity != "one_time"
+            ) {
+                result = confirm(
+                    `Вам доступно автозаполнение отчета. Будут заполнены следующие поля:\n- Отчетный период\n- Бюджет проекта\n- Период реализации\n- Договор\n- Стоимость услуг\n- Период выполнения\n- Команда проекта\n- Подрядчики`
+                );
+            } else if (
+                !selectedType.is_regular &&
+                reportData.regularity != "" &&
+                reportData.regularity == "one_time"
+            ) {
+                result = confirm(
+                    `Вам доступно автозаполнение отчета. Будут заполнены следующие поля:\n- Договор\n- Стоимость услуг\n- Команда проекта\n- Подрядчики`
+                );
+            }
+        }
+
+        if (result) {
+            setPrefillData();
+        }
+    };
+
+    const setPrefillData = () => {
+        // Добавляем основные данные
+        setReportData((prev) => ({
+            ...prev,
+            ...preFillReportData,
+        }));
+
+        // Добавляем членов команды
+        if (
+            preFillReportData.team_members &&
+            preFillReportData.team_members.length > 0
+        ) {
+            setTeammates(preFillReportData.team_members);
+
+            setReportData((prev) => ({
+                ...prev,
+                responsible_persons: preFillReportData.team_members,
+            }));
+        }
+
+        // Добавляем подрядчиков
+        if (
+            preFillReportData.contragents &&
+            preFillReportData.contragents.length > 0
+        ) {
+            setContractors(preFillReportData.contragents);
+        }
+    };
+
     // Получение данных отчета
     const fetchReportData = () => {
         getData(`${import.meta.env.VITE_API_URL}reports/${reportId}`).then(
             (response) => {
                 setReportData(response.data);
+
                 setTeammates(response.data.responsible_persons);
+
                 setContractors(response.data.contragents);
+
                 setIsLoading(false);
             }
         );
@@ -532,6 +652,13 @@ const ReportWindow = ({
         }
     }, [reportWindowsState]);
 
+    // События для возможной подстановки данных для НОВОГО отчета
+    // useEffect(() => {
+    //     if (isAutoPrefill) {
+    //         handleReportPrefillUrl();
+    //     }
+    // }, [reportData.report_type_id, reportData.regularity]);
+
     return !saveBeforeClose ? (
         <div
             className={`bottom-sheet bottom-sheet_desk ${
@@ -546,6 +673,11 @@ const ReportWindow = ({
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="bottom-sheet__icon"></div>
+
+                {/* <div className="text-2xl w-full">
+                    {reportName ? reportName : reportData.report_period_code}
+                </div>
+                */}
 
                 <div className="bottom-sheet__body">
                     {reportWindowsState && (
@@ -563,6 +695,20 @@ const ReportWindow = ({
                                 </div>
 
                                 <div className="report-window__body">
+                                    {Object.keys(preFillReportData).length >
+                                        0 && (
+                                        <button
+                                            type="button"
+                                            className="action-button"
+                                            title="Доступно автозаполнение"
+                                            onClick={() =>
+                                                handleReportPrefill()
+                                            }
+                                        >
+                                            Доступно автозаполнение
+                                        </button>
+                                    )}
+
                                     <div className="report-window__field">
                                         <label className="form-label">
                                             Тип отчёта
@@ -591,6 +737,55 @@ const ReportWindow = ({
                                                         {type.name}
                                                     </option>
                                                 ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="report-window__field">
+                                        <label className="form-label">
+                                            Регулярность
+                                        </label>
+
+                                        <select
+                                            className="form-select"
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    e,
+                                                    "regularity"
+                                                )
+                                            }
+                                            value={reportData.regularity || ""}
+                                            disabled={
+                                                mode === "read" ||
+                                                reportData.is_regular === false
+                                            }
+                                        >
+                                            <option value="">
+                                                Выбрать из списка
+                                            </option>
+                                            {regularityOptions.length > 0 &&
+                                                regularityOptions.map(
+                                                    (item) => {
+                                                        if (
+                                                            item.alias ===
+                                                                "one_time" &&
+                                                            reportData.is_regular ===
+                                                                true
+                                                        ) {
+                                                            return null;
+                                                        }
+
+                                                        return (
+                                                            <option
+                                                                value={
+                                                                    item.alias
+                                                                }
+                                                                key={item.alias}
+                                                            >
+                                                                {item.name}
+                                                            </option>
+                                                        );
+                                                    }
+                                                )}
                                         </select>
                                     </div>
 
@@ -733,56 +928,6 @@ const ReportWindow = ({
                                                 }
                                             />
                                         </div>
-                                    </div>
-
-                                    <div className="report-window__field">
-                                        <label className="form-label">
-                                            Регулярность
-                                        </label>
-
-                                        <select
-                                            className="form-select"
-                                            onChange={(e) =>
-                                                handleInputChange(
-                                                    e,
-                                                    "regularity"
-                                                )
-                                            }
-                                            value={reportData.regularity || ""}
-                                            disabled={
-                                                mode === "read" ||
-                                                reportData.is_regular === false
-                                            }
-                                        >
-                                            <option value="">
-                                                Выбрать из списка
-                                            </option>
-                                            {regularityOptions.length > 0 &&
-                                                regularityOptions.map(
-                                                    (item) => {
-                                                        const value =
-                                                            item?.toLowerCase();
-
-                                                        if (
-                                                            value ===
-                                                                "единоразовый" &&
-                                                            reportData.is_regular ===
-                                                                true
-                                                        ) {
-                                                            return null;
-                                                        }
-
-                                                        return (
-                                                            <option
-                                                                value={value}
-                                                                key={item}
-                                                            >
-                                                                {item}
-                                                            </option>
-                                                        );
-                                                    }
-                                                )}
-                                        </select>
                                     </div>
 
                                     <div className="report-window__fields">
