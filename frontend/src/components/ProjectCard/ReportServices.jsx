@@ -5,26 +5,24 @@ const ReportServices = ({ services }) => {
                 services.map((service, index) => (
                     <li
                         key={index}
-                        className="grid grid-cols-[10%_25%_25%_28%] items-center gap-5"
+                        className="project-card__services-list__item"
                     >
-                        <div className="text-lg">{service.name}</div>
-                        <div className="text-lg">
+                        <div className="project-card__services-list__item-name">
+                            {service.name}
+                        </div>
+                        <div className="project-card__services-list__item-status">
+                            <div> {service.status}</div>
+                        </div>
+                        <div className="project-card__services-list__item-period">
+                            {service.regularity}
+                        </div>
+
+                        <div className="project-card__services-list__item-cost">
                             {service.cost !== "-" ? (
                                 <>{service.cost} млн руб.</>
                             ) : (
                                 "-"
                             )}
-                        </div>
-                        <div className="text-lg">{service.regularity}</div>
-                        <div>
-                            <div className="bg-gray-200 py-1 px-3 text-center rounded-md">
-                                {service.status}
-                            </div>
-
-                            <div className="project-card__services-list__item-cost">
-                                <div>{service.cost}</div>
-                                <div>млн руб.</div>
-                            </div>
                         </div>
                     </li>
                 ))

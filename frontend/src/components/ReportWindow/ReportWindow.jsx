@@ -761,7 +761,7 @@ const ReportWindow = ({
                                                 regularityOptions.map(
                                                     (item) => {
                                                         const value =
-                                                            item.toLowerCase();
+                                                            item?.toLowerCase();
 
                                                         if (
                                                             value ===

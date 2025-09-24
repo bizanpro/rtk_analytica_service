@@ -63,7 +63,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     }}
                     lazy={true}
                     autofix={true}
-                    value={period.date_from}
+                    value={period?.date_from}
                     onAccept={(val, maskRef) => {
                         if (maskRef.el.input?.matches(":focus")) {
                             handleChange("date_from", val);
@@ -93,7 +93,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     }}
                     lazy={true}
                     autofix={true}
-                    value={period.date_to}
+                    value={period?.date_to}
                     onAccept={(val, maskRef) => {
                         if (maskRef.el.input?.matches(":focus")) {
                             handleChange("date_to", val);
@@ -108,7 +108,6 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                     disabled={mode === "read"}
                 />
             </div>
-
 
             {errorMessage !== "" && (
                 <span className="text-red-400 top-[100%] text-sm">

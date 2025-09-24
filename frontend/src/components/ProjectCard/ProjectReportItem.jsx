@@ -70,25 +70,6 @@ const ProjectReportItem = ({
                     </svg>
                 </button>
             )}
-            <div className="flex gap-3 items-center">
-                <div className="flex flex-col flex-grow">
-                    <div className="text-lg">{days}</div>
-                    <span className="text-sm">{execution_period}</span>
-                </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-2">
-                {mode === "edit" && (
-                    <button
-                        className="delete-icon flex-none w-[20px] h-[20px]"
-                        title="Удалить отчёт"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            deleteReport(id);
-                        }}
-                    ></button>
-                )}
-            </div>
         </li>
     );
 };

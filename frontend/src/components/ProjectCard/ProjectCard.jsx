@@ -1361,7 +1361,7 @@ const ProjectCard = () => {
                     contracts={contracts}
                     updateReport={updateReport}
                     reportId={reportId}
-                                                projectId={projectId}
+                    projectId={projectId}
                     setReportId={setReportId}
                     mode={mode}
                 />
@@ -1451,7 +1451,7 @@ const ProjectCard = () => {
                             {activeReportTab === "managementReports" && (
                                 <ManagementReportsTabMobile
                                     managementReports={managementReports}
-                                            mode={"read"}
+                                    mode={"read"}
                                 />
                             )}
                         </div>
