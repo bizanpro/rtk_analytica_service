@@ -71,8 +71,13 @@ const SaleCard = () => {
 
     // Обработка ввода данных проекта
     const handleInputChange = useCallback((e, name) => {
-        setFormFields((prev) => ({ ...prev, [name]: e.target.value }));
-        setProjectData((prev) => ({ ...prev, [name]: e.target.value }));
+        if (name == "contragent_id") {
+            setFormFields((prev) => ({ ...prev, [name]: e }));
+            setProjectData((prev) => ({ ...prev, [name]: e }));
+        } else {
+            setFormFields((prev) => ({ ...prev, [name]: e.target.value }));
+            setProjectData((prev) => ({ ...prev, [name]: e.target.value }));
+        }
     }, []);
 
     // Получение отраслей
