@@ -1,18 +1,27 @@
 import { useEffect, useState, useMemo } from "react";
 
 import getData from "../../utils/getData";
-import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
+import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
+import { sortList } from "../../utils/sortList";
 
 import SupplierItem from "./SupplierItem";
 import CreatableSelect from "react-select/creatable";
+import TheadSortButton from "../TheadSortButton/TheadSortButton";
 
 const Suppliers = () => {
     const [list, setList] = useState([]);
+    const [sortedList, setSortedList] = useState([]);
+
+    const [sortBy, setSortBy] = useState({ key: "", action: "" });
+
     const [selectedName, setSelectedName] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState("default");
+
     const [isLoading, setIsLoading] = useState(true);
+
     const [isFiltering, setIsFiltering] = useState(false);
+
     const [page, setPage] = useState(1);
     const [meta, setMeta] = useState({
         current_page: 1,
@@ -23,15 +32,27 @@ const Suppliers = () => {
 
     const COLUMNS = [
         { label: "Наименование", key: "program_name" },
-        { label: "Кол-во проектов, всего", key: "projects_total_count" },
-        { label: "Кол-во активных проектов", key: "projects_active_count" },
+        {
+            label: "Кол-во проектов, всего",
+            key: "projects_total_count",
+            is_sortable: true,
+        },
+        {
+            label: "Кол-во активных проектов",
+            key: "projects_active_count",
+            is_sortable: true,
+        },
         { label: "Роли", key: "roles" },
-        { label: "Оплачено услуг, млн руб.", key: "total_receipts" },
+        {
+            label: "Оплачено услуг, млн руб.",
+            key: "total_receipts",
+            is_sortable: true,
+        },
         { label: "Статус", key: "status" },
     ];
 
     const filteredList = useMemo(() => {
-        return list.filter((customer) => {
+        return sortedList.filter((customer) => {
             const matchName =
                 selectedName !== null
                     ? customer.program_name === selectedName
@@ -44,7 +65,7 @@ const Suppliers = () => {
 
             return matchName && matchStatus;
         });
-    }, [list, selectedName, selectedStatus]);
+    }, [sortedList, selectedName, selectedStatus]);
 
     // Заполняем селектор заказчиков
     const nameOptions = useMemo(() => {
@@ -75,6 +96,7 @@ const Suppliers = () => {
         getData(`${URL}&page=${page}`, { Accept: "application/json" })
             .then((response) => {
                 setList((prev) => [...prev, ...response.data.data]);
+                setSortedList((prev) => [...prev, ...response.data.data]);
                 setMeta(response.data.meta);
             })
             .finally(() => setIsLoading(false));
@@ -92,6 +114,14 @@ const Suppliers = () => {
         setPage,
         isFiltering,
     });
+
+    const handleListSort = () => {
+        setSortedList(sortList(list, sortBy));
+    };
+
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
 
     return (
         <main className="page">
@@ -143,13 +173,22 @@ const Suppliers = () => {
                     <table className="table-auto w-full border-collapse border-gray-300 text-sm">
                         <thead className="text-gray-400 text-left">
                             <tr className="border-b border-gray-300">
-                                {COLUMNS.map(({ label, key }) => (
+                                {COLUMNS.map(({ label, key, is_sortable }) => (
                                     <th
                                         className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
                                         rowSpan="2"
                                         key={key}
                                     >
-                                        {label}
+                                        {is_sortable ? (
+                                            <TheadSortButton
+                                                label={label}
+                                                value={key}
+                                                sortBy={sortBy}
+                                                setSortBy={setSortBy}
+                                            />
+                                        ) : (
+                                            label
+                                        )}
                                     </th>
                                 ))}
                             </tr>

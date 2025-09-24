@@ -1,6 +1,10 @@
 export const sortList = (list, sortBy) => {
     const getValue = (item) => {
-        const raw = item?.[sortBy.key];
+        let raw = item?.[sortBy.key];
+
+        if (raw && typeof raw === "object") {
+            raw = raw.value;
+        }
 
         if (raw === null || raw === undefined) return NaN;
 
