@@ -15,8 +15,6 @@ const Suppliers = () => {
     const [list, setList] = useState([]);
     const [sortedList, setSortedList] = useState([]);
 
-    const [sortBy, setSortBy] = useState({ key: "", action: "" });
-
     const [selectedName, setSelectedName] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState("default");
 
@@ -31,27 +29,6 @@ const Suppliers = () => {
     });
 
     const URL = `${import.meta.env.VITE_API_URL}suppliers?active=true`;
-
-    const COLUMNS = [
-        { label: "Наименование", key: "program_name" },
-        {
-            label: "Кол-во проектов, всего",
-            key: "projects_total_count",
-            is_sortable: true,
-        },
-        {
-            label: "Кол-во активных проектов",
-            key: "projects_active_count",
-            is_sortable: true,
-        },
-        { label: "Роли", key: "roles" },
-        {
-            label: "Оплачено услуг, млн руб.",
-            key: "total_receipts",
-            is_sortable: true,
-        },
-        { label: "Статус", key: "status" },
-    ];
 
     const filteredList = useMemo(() => {
         return sortedList.filter((customer) => {
@@ -99,15 +76,25 @@ const Suppliers = () => {
             key: "program_name",
             filter: "selectedNames",
             options: nameOptions,
+        },
+        {
+            label: "Кол-во проектов, всего",
+            key: "projects_total_count",
             is_sortable: true,
         },
-        { label: "Кол-во проектов, всего", key: "projects_total_count" },
-        { label: "Кол-во активных проектов", key: "projects_active_count" },
+        {
+            label: "Кол-во активных проектов",
+            key: "projects_active_count",
+            is_sortable: true,
+        },
         { label: "Роли", key: "roles" },
-        { label: "Оплачено услуг, млн руб.", key: "total_receipts" },
+        {
+            label: "Оплачено услуг, млн руб.",
+            key: "total_receipts",
+            is_sortable: true,
+        },
         { label: "Статус", key: "status" },
     ];
-
     useEffect(() => {
         setIsLoading(true);
         getData(`${URL}&page=${page}`, { Accept: "application/json" })
