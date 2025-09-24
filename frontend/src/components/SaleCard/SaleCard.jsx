@@ -626,7 +626,7 @@ const SaleCard = () => {
                 position:
                     window.innerWidth >= 1440 ? "bottom-right" : "top-right",
             });
-            console.error("Ошибка при обновлении проекта:", error);
+
             throw error;
         }
     };
@@ -1308,7 +1308,9 @@ const SaleCard = () => {
                                                             handleActiveStageDate
                                                         }
                                                         getStages={getStages}
-                                                        requestNextStage={requestNextStage}
+                                                        requestNextStage={
+                                                            requestNextStage
+                                                        }
                                                         mode={mode}
                                                     />
                                                 )}

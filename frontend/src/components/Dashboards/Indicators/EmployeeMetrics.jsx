@@ -34,11 +34,18 @@ const EmployeeMetrics = ({
                         {total_active_employees?.label}
                     </small>
                 </div>
-                <div className="text-green-400">
-                    {total_active_employees?.change_percent > 0 &&
-                        `+${total_active_employees?.change_percent}%`}
+                <div
+                    className={`${
+                        total_active_employees?.change_percent > 0
+                            ? "text-green-400"
+                            : "text-red-400"
+                    }`}
+                >
+                    {total_active_employees?.change_percent &&
+                        total_active_employees?.change_percent + "%"}
                 </div>
             </div>
+
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 font-medium">
                     ФОТ gross
@@ -64,11 +71,18 @@ const EmployeeMetrics = ({
                     <small className="text-sm">{gross_salary?.label}</small>
                 </div>
 
-                <div className="text-red-400">
-                    {gross_salary?.change_percent > 0 &&
+                <div
+                    className={`${
+                        gross_salary?.change_percent > 0
+                            ? "text-green-400"
+                            : "text-red-400"
+                    }`}
+                >
+                    {gross_salary?.change_percent &&
                         gross_salary?.change_percent + "%"}
                 </div>
             </div>
+
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 font-medium">
                     Средняя з/п
@@ -94,8 +108,14 @@ const EmployeeMetrics = ({
                     <small className="text-sm">{average_salary?.label}</small>
                 </div>
 
-                <div className="text-red-400">
-                    {average_salary?.change_percent > 0 &&
+                <div
+                    className={`${
+                        average_salary?.change_percent > 0
+                            ? "text-green-400"
+                            : "text-red-400"
+                    }`}
+                >
+                    {average_salary?.change_percent &&
                         average_salary?.change_percent + "%"}
                 </div>
             </div>
