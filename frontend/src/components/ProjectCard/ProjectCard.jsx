@@ -80,9 +80,10 @@ const ProjectCard = () => {
         statRef.current?.refreshRevenue();
     };
 
+    // Список банков для табов
     const matchedBanks = banks.filter((bank) =>
-        projectData.creditors?.some(
-            (selectedBank) => selectedBank.id === bank.id
+        projectData.creditor_responsible_persons?.some(
+            (item) => item.creditor_id === bank.id
         )
     );
 
