@@ -266,8 +266,9 @@ const SupplierCard = () => {
 
     const block1Ref = useRef(null);
     const block2Ref = useRef(null);
+    const block3Ref = useRef(null);
 
-    useOutsideClick([block1Ref, block2Ref], () => {
+    useOutsideClick([block1Ref, block2Ref, block3Ref], () => {
         setActiveProject(null);
         setSelectedReports(reports);
         setSelectedManagerReports(managerReports);
@@ -278,10 +279,6 @@ const SupplierCard = () => {
             setAddRespPerson(false);
         }
     }, [mode]);
-
-    useEffect(() => {
-        console.log(selectedManagerReports);
-    }, [selectedManagerReports]);
 
     return (
         <main className="page">
@@ -529,9 +526,12 @@ const SupplierCard = () => {
                                     Взаиморасчёты
                                 </span>
 
-                                <SupplierStatisticBlock
-                                    supplierId={supplierId}
-                                />
+                                <div ref={block3Ref}>
+                                    <SupplierStatisticBlock
+                                        supplierId={supplierId}
+                                        activeProject={activeProject}
+                                    />
+                                </div>
                             </div>
 
                             <div className="flex flex-col gap-2 flex-grow">
