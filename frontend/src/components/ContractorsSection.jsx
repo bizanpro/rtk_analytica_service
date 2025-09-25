@@ -55,6 +55,10 @@ const ContractorsSection = ({
         }
     }, [person?.contragent_id, isMounted]);
 
+    useEffect(() => {
+        console.log(person);
+    }, [person]);
+
     return (
         <div className="flex items-center gap-3">
             <div className="flex flex-col gap-1 flex-grow">
@@ -101,9 +105,10 @@ const ContractorsSection = ({
                                         null
                                     }
                                     onChange={(selectedOption) => {
-                                        handleContragentChange(
-                                            selectedOption.value
-                                        );
+                                        const newValue =
+                                            selectedOption?.value || "";
+
+                                        handleContragentChange(newValue);
                                     }}
                                     isDisabled={mode == "read"}
                                 />
@@ -143,66 +148,79 @@ const ContractorsSection = ({
                     <div className="flex flex-col gap-2 justify-between">
                         <span className="text-gray-400"></span>
                         <div className="border-2 border-gray-300">
-                            <CreatableSelect
-                                isClearable
-                                options={
-                                    localContracts.length > 0 &&
-                                    localContracts.map((item) => ({
-                                        value: item.id,
-                                        label: item.contract_name,
-                                    }))
-                                }
-                                className="w-full executor-block__name-field"
-                                placeholder="Выберите договор"
-                                noOptionsMessage={() => "Совпадений нет"}
-                                isValidNewOption={() => false}
-                                value={
-                                    localContracts
-                                        ?.map((item) => ({
+                            {person?.contract_id ? (
+                                <CreatableSelect
+                                    isClearable
+                                    options={
+                                        localContracts.length > 0 &&
+                                        localContracts.map((item) => ({
                                             value: item.id,
                                             label: item.contract_name,
                                         }))
-                                        .find(
-                                            (option) =>
-                                                option.value ===
-                                                person?.contract_id
-                                        ) || null
-                                }
-                                onChange={(selectedOption) => {
-                                    const newValue =
-                                        selectedOption?.value || "";
+                                    }
+                                    className="w-full executor-block__name-field"
+                                    placeholder="Выберите договор"
+                                    noOptionsMessage={() => "Совпадений нет"}
+                                    isValidNewOption={() => false}
+                                    value={
+                                        (localContracts.length > 0 &&
+                                            localContracts
+                                                ?.map((item) => ({
+                                                    value: item.id,
+                                                    label: item.contract_name,
+                                                }))
+                                                .find(
+                                                    (option) =>
+                                                        option.value ===
+                                                        person?.contract_id
+                                                )) ||
+                                        null
+                                    }
+                                    onChange={(selectedOption) => {
+                                        const newValue =
+                                            selectedOption?.value || "";
 
-                                    handleContractorChange(
-                                        index,
-                                        "contract_id",
-                                        Number(newValue)
-                                    );
-                                }}
-                                isDisabled={mode === "read"}
-                            />
+                                        handleContractorChange(
+                                            index,
+                                            "contract_id",
+                                            Number(newValue)
+                                        );
+                                    }}
+                                    isDisabled={
+                                        mode === "read" ||
+                                        localContracts.length == 0
+                                    }
+                                />
+                            ) : (
+                                <CreatableSelect
+                                    isClearable
+                                    options={
+                                        localContracts.length > 0 &&
+                                        localContracts.map((item) => ({
+                                            value: item.id,
+                                            label: item.contract_name,
+                                        }))
+                                    }
+                                    className="w-full executor-block__name-field"
+                                    placeholder="Выберите договор"
+                                    noOptionsMessage={() => "Совпадений нет"}
+                                    isValidNewOption={() => false}
+                                    onChange={(selectedOption) => {
+                                        const newValue =
+                                            selectedOption?.value || "";
 
-                            {/* <select
-                                className="w-full h-full"
-                                value={person?.contract_id}
-                                onChange={(e) =>
-                                    handleContractorChange(
-                                        index,
-                                        "contract_id",
-                                        Number(e.target.value)
-                                    )
-                                }
-                                disabled={mode === "read"}
-                            >
-                                <option value="0">Выберите договор</option>
-                                {localContracts?.map((contract) => (
-                                    <option
-                                        value={contract.id}
-                                        key={contract.id}
-                                    >
-                                        {contract.contract_name}
-                                    </option>
-                                ))}
-                            </select> */}
+                                        handleContractorChange(
+                                            index,
+                                            "contract_id",
+                                            Number(newValue)
+                                        );
+                                    }}
+                                    isDisabled={
+                                        mode === "read" ||
+                                        localContracts.length == 0
+                                    }
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
