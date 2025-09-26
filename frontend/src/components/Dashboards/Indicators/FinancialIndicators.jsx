@@ -144,7 +144,7 @@ const FinancialIndicators = ({
                 clip: true,
                 formatter: (value) => {
                     return typeof value === "number"
-                        ? value.toFixed(1).toString().replace(".", ",")
+                        ? value.toFixed(2).toString().replace(".", ",")
                         : value;
                 },
             },
@@ -209,7 +209,7 @@ const FinancialIndicators = ({
                 clip: true,
                 formatter: (value) => {
                     return typeof value === "number"
-                        ? value.toFixed(1).toString().replace(".", ",")
+                        ? value.toFixed(2).toString().replace(".", ",")
                         : value;
                 },
             },
