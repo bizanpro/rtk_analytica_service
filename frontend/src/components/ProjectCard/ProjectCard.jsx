@@ -956,6 +956,7 @@ const ProjectCard = () => {
                                         <span className="text-gray-400">
                                             Ключевые лица Заказчика
                                         </span>
+                                        
                                         {mode == "edit" && (
                                             <button
                                                 type="button"
