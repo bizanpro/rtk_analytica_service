@@ -13,7 +13,7 @@ const SupplierStatisticBlock = ({ supplierId, activeProject }) => {
         activeProject != null
             ? `${
                   import.meta.env.VITE_API_URL
-              }projects/${activeProject}/revenue?period=${period}`
+              }contragents/${supplierId}/projects/${activeProject}/supplier-metrics/?period=${period}`
             : `${
                   import.meta.env.VITE_API_URL
               }contragents/${supplierId}/supplier-metrics?period=${period}`;
