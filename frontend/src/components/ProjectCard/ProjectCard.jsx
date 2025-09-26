@@ -50,6 +50,10 @@ const ProjectCard = () => {
     const [activeReportTab, setActiveReportTab] = useState("projectReports"); // Активная вкладка в истории проекта
     const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
 
+    const [canChangeContragent, setCanChangeContragent] = useState(true); // Возможность изменить заказчика
+    const contragentRef = useRef(null);
+    const [contragentMenuOpen, setContragentMenuOpen] = useState(false);
+
     const [industries, setIndustries] = useState([]);
     const [contragents, setContragents] = useState([]);
     const [banks, setBanks] = useState([]);
@@ -286,29 +290,45 @@ const ProjectCard = () => {
                         import.meta.env.VITE_API_URL
                     }responsible-persons/contragent`,
                     data
-                ).then((response) => {
-                    if (response?.ok) {
-                        setAddCustomer(false);
+                )
+                    .then((response) => {
+                        if (response?.ok) {
+                            setAddCustomer(false);
 
-                        if (response?.responsible_person) {
-                            setCustomers((prevCustomer) => [
-                                ...prevCustomer,
-                                response.responsible_person?.contragent_contact,
-                            ]);
+                            if (response?.responsible_person) {
+                                setCustomers((prevCustomer) => [
+                                    ...prevCustomer,
+                                    response.responsible_person
+                                        ?.contragent_contact,
+                                ]);
+                            }
+
+                            toast.update(query, {
+                                render: response.message,
+                                type: "success",
+                                containerId: "projectCard",
+                                isLoading: false,
+                                autoClose: 1200,
+                                pauseOnFocusLoss: false,
+                                pauseOnHover: false,
+                                position: "top-center",
+                            });
                         }
-
-                        toast.update(query, {
-                            render: response.message,
-                            type: "success",
-                            containerId: "projectCard",
-                            isLoading: false,
-                            autoClose: 1200,
-                            pauseOnFocusLoss: false,
-                            pauseOnHover: false,
-                            position: "top-center",
-                        });
-                    }
-                });
+                    })
+                    .catch((error) => {
+                        toast.dismiss(query);
+                        toast.error(
+                            error.message || "Ошибка добавления ключевого лица",
+                            {
+                                containerId: "projectCard",
+                                isLoading: false,
+                                autoClose: 5000,
+                                pauseOnFocusLoss: false,
+                                pauseOnHover: false,
+                                position: "top-center",
+                            }
+                        );
+                    });
             } else {
                 alert("Необходимо назначить заказчика");
             }
@@ -569,6 +589,14 @@ const ProjectCard = () => {
     }, [searchParams]);
 
     useEffect(() => {
+        if (customers.length > 0 || reports.length > 0) {
+            setCanChangeContragent(false);
+        } else {
+            setCanChangeContragent(true);
+        }
+    }, [customers, reports]);
+
+    useEffect(() => {
         setAddLender(false);
         setAddCustomer(false);
         setReportWindowsState(false);
@@ -677,7 +705,7 @@ const ProjectCard = () => {
                                             </span>
                                             <div className="border-2 border-gray-300">
                                                 <CreatableSelect
-                                                    isClearable
+                                                    ref={contragentRef}
                                                     options={
                                                         contragents.length >
                                                             0 &&
@@ -736,6 +764,31 @@ const ProjectCard = () => {
                                                         );
                                                     }}
                                                     isDisabled={mode == "read"}
+                                                    menuIsOpen={
+                                                        contragentMenuOpen
+                                                    }
+                                                    onMenuOpen={() => {
+                                                        if (
+                                                            !canChangeContragent
+                                                        ) {
+                                                            alert(
+                                                                "Перед тем, как изменить заказчика, вы должны удалить всех ключевых лиц заказчика и все созданные отчеты проекта."
+                                                            );
+                                                            contragentRef.current?.blur();
+                                                            setContragentMenuOpen(
+                                                                false
+                                                            );
+                                                        } else {
+                                                            setContragentMenuOpen(
+                                                                true
+                                                            );
+                                                        }
+                                                    }}
+                                                    onMenuClose={() =>
+                                                        setContragentMenuOpen(
+                                                            false
+                                                        )
+                                                    }
                                                 />
                                             </div>
                                         </div>
@@ -956,7 +1009,7 @@ const ProjectCard = () => {
                                         <span className="text-gray-400">
                                             Ключевые лица Заказчика
                                         </span>
-                                        
+
                                         {mode == "edit" && (
                                             <button
                                                 type="button"
