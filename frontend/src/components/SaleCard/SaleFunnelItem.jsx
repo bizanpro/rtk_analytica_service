@@ -68,7 +68,7 @@ const SaleFunnelItem = ({
                                     if (confirm("Вы уверены?")) {
                                         requestNextStage(
                                             stage.next_possible_stages[1].id,
-                                            stage.name,
+                                            stage.stage_date,
                                             "rejected"
                                         );
                                     }
@@ -98,7 +98,7 @@ const SaleFunnelItem = ({
                                 if (stage.next_possible_stages[2]?.selected) {
                                     requestNextStage(
                                         stage.next_possible_stages[2].id,
-                                        stage.name,
+                                        stage.stage_date,
                                         "postponed"
                                     );
                                 } else {
@@ -124,7 +124,7 @@ const SaleFunnelItem = ({
                                 if (stage.next_possible_stages[0]?.selected) {
                                     requestNextStage(
                                         stage.next_possible_stages[0].id,
-                                        stage.name,
+                                        stage.stage_date,
                                         "success"
                                     );
                                 } else {
