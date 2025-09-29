@@ -31,7 +31,6 @@ const ExecutorBlock = ({ contanct, deleteBlock, mode, banks, type }) => {
                             type="text"
                             placeholder="ФИО"
                             value={full_name}
-                            // disabled={mode == "read"}
                             readOnly
                         />
                     </div>
@@ -43,11 +42,7 @@ const ExecutorBlock = ({ contanct, deleteBlock, mode, banks, type }) => {
                             type="tel"
                             inputMode="tel"
                             value={phone}
-                            // onAccept={(el) => {
-                            //     setFormFields({ ...formFields, ["phone"]: el });
-                            // }}
                             placeholder="+7 999 999 99 99"
-                            // disabled={mode == "read"}
                             readOnly
                         />
                     </div>
@@ -65,7 +60,6 @@ const ExecutorBlock = ({ contanct, deleteBlock, mode, banks, type }) => {
                             type="text"
                             placeholder="Должность"
                             value={position}
-                            // disabled={mode == "read"}
                             readOnly
                         />
                     </div>
@@ -75,7 +69,6 @@ const ExecutorBlock = ({ contanct, deleteBlock, mode, banks, type }) => {
                             type="email"
                             placeholder="mail@mail.ru"
                             value={email}
-                            // disabled={mode == "read"}
                             readOnly
                         />
                     </div>
@@ -89,12 +82,7 @@ const ExecutorBlock = ({ contanct, deleteBlock, mode, banks, type }) => {
                                 : "border-transparent"
                         }`}
                     >
-                        <select
-                            className="w-full"
-                            value={creditor_id}
-                            // disabled={mode === "read"}
-                            disabled
-                        >
+                        <select className="w-full" value={creditor_id} disabled>
                             {banks?.map((bank) => (
                                 <option value={bank.id} key={bank.id}>
                                     {bank.name}
@@ -107,11 +95,6 @@ const ExecutorBlock = ({ contanct, deleteBlock, mode, banks, type }) => {
 
             {mode === "edit" ? (
                 <div className="flex gap-[10px] items-center">
-                    {/* <button
-                        title="Обновить исполнителя"
-                    >
-                        <span className="update-icon"></span>
-                    </button> */}
                     <button
                         className="delete-button"
                         title="Удалить исполнителя"
