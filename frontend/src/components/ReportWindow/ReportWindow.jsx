@@ -70,7 +70,7 @@ const ReportWindow = ({
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [saveBeforeClose, setSaveBeforeClose] = useState(false);
-    const [isAutoPrefill, setIsAutoPrefill] = useState(!reportId); // Нужно ли предзаполнять отчет
+    const [isAutoPrefill, setIsAutoPrefill] = useState(false); // Нужно ли предзаполнять отчет
 
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -553,6 +553,8 @@ const ReportWindow = ({
         ) {
             setContractors(preFillReportData.contragents);
         }
+
+        setPreFillReportData({})
     };
 
     // Получение данных отчета
@@ -646,18 +648,24 @@ const ReportWindow = ({
         }
     }, [isDataLoaded, reportId, reportWindowsState]);
 
+    // События для возможной подстановки данных для НОВОГО отчета
+    useEffect(() => {
+        if (isAutoPrefill) {
+            handleReportPrefillUrl();
+        }
+    }, [reportData.report_type_id, reportData.regularity]);
+
+    useEffect(() => {
+        if (isDataLoaded) {
+            setIsAutoPrefill(!reportId);
+        }
+    }, [isDataLoaded]);
+
     useEffect(() => {
         if (reportWindowsState) {
             fetchEditorData();
         }
     }, [reportWindowsState]);
-
-    // События для возможной подстановки данных для НОВОГО отчета
-    // useEffect(() => {
-    //     if (isAutoPrefill) {
-    //         handleReportPrefillUrl();
-    //     }
-    // }, [reportData.report_type_id, reportData.regularity]);
 
     return !saveBeforeClose ? (
         <div
