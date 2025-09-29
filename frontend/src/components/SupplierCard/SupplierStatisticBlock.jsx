@@ -4,19 +4,24 @@ import getData from "../../utils/getData";
 
 import Loader from "../Loader";
 
-const SupplierStatisticBlock = ({ supplierId }) => {
+const SupplierStatisticBlock = ({ supplierId, activeProject }) => {
     const [period, setPeriod] = useState("current_year");
     const [revenue, setRevenue] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
+    const URL =
+        activeProject != null
+            ? `${
+                  import.meta.env.VITE_API_URL
+              }contragents/${supplierId}/projects/${activeProject}/supplier-metrics/?period=${period}`
+            : `${
+                  import.meta.env.VITE_API_URL
+              }contragents/${supplierId}/supplier-metrics?period=${period}`;
+
     const getRevenue = () => {
         setIsDataLoaded(false);
 
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }contragents/${supplierId}/supplier-metrics?period=${period}`
-        )
+        getData(URL)
             .then((response) => {
                 if (response.status == 200) {
                     setRevenue(response.data);
@@ -27,7 +32,7 @@ const SupplierStatisticBlock = ({ supplierId }) => {
 
     useEffect(() => {
         getRevenue();
-    }, [period]);
+    }, [period, activeProject]);
 
     return (
         <div className="border-2 border-gray-300 p-5 mb-5 relative">

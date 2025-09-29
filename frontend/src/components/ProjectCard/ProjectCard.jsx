@@ -66,6 +66,10 @@ const ProjectCard = () => {
 
     const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
 
+    const [canChangeContragent, setCanChangeContragent] = useState(true); // Возможность изменить заказчика
+    const contragentRef = useRef(null);
+    const [contragentMenuOpen, setContragentMenuOpen] = useState(false);
+
     const [industries, setIndustries] = useState([]); // Отрасль
     const [otherIndustries, setOtherIndustries] = useState({ others: [] }); // Дополнительная отрасль
     const [contragents, setContragents] = useState([]); // Заказчик
@@ -91,9 +95,10 @@ const ProjectCard = () => {
     const [period, setPeriod] = useState("current_year"); // Период ОСВ
 
     // Закрепленные за карточкой банки для отображения вкладок
+    // Список банков для табов
     const matchedBanks = banks.filter((bank) =>
-        projectData.creditors?.some(
-            (selectedBank) => selectedBank.id === bank.id
+        projectData.creditor_responsible_persons?.some(
+            (item) => item.creditor_id === bank.id
         )
     );
 
@@ -328,8 +333,11 @@ const ProjectCard = () => {
                             if (response?.responsible_person) {
                                 setCustomers((prevCustomer) => [
                                     ...prevCustomer,
-                                    response.responsible_person
-                                        ?.contragent_contact,
+                                    {
+                                        ...response.responsible_person
+                                            ?.contragent_contact,
+                                        id: response.responsible_person?.id,
+                                    },
                                 ]);
                             }
 
@@ -732,6 +740,38 @@ const ProjectCard = () => {
             openReportEditor(report);
         }
     }, [searchParams]);
+
+    useEffect(() => {
+        if (customers.length > 0 || reports.length > 0) {
+            setCanChangeContragent(false);
+        } else {
+            setCanChangeContragent(true);
+        }
+    }, [customers, reports]);
+
+    useEffect(() => {
+        if (customers.length > 0 || reports.length > 0) {
+            setCanChangeContragent(false);
+        } else {
+            setCanChangeContragent(true);
+        }
+    }, [customers, reports]);
+
+    useEffect(() => {
+        if (customers.length > 0 || reports.length > 0) {
+            setCanChangeContragent(false);
+        } else {
+            setCanChangeContragent(true);
+        }
+    }, [customers, reports]);
+
+    useEffect(() => {
+        if (customers.length > 0 || reports.length > 0) {
+            setCanChangeContragent(false);
+        } else {
+            setCanChangeContragent(true);
+        }
+    }, [customers, reports]);
 
     useEffect(() => {
         setProjectDataCustom((prev) => ({

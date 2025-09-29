@@ -55,6 +55,10 @@ const ContractorsSection = ({
         }
     }, [person?.contragent_id, isMounted]);
 
+    useEffect(() => {
+        console.log(person);
+    }, [person]);
+
     return (
         <li className="person-block">
             <div className="person-block__header">

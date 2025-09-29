@@ -177,7 +177,6 @@ const SaleFunnelStages = ({
                             handleNextStage={handleNextStage}
                             handleActiveStageDate={handleActiveStageDate}
                             requestNextStage={requestNextStage}
-                            mode={mode}
                         />
                     );
                 })}

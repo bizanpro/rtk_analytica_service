@@ -3,9 +3,10 @@ async function postData(method = "POST", url = "", data = {}) {
         const response = await fetch(url, {
             method,
             body: JSON.stringify(data),
-            headers: new Headers({
+            headers: {
                 "Content-Type": "application/json",
-            }),
+                Accept: "application/json",
+            },
         });
 
         const responseData = await response.json().catch(() => ({}));

@@ -9,6 +9,7 @@ async function getData(url = "", options = {}) {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                Accept: "application/json",
                 ...headers,
             },
         });

@@ -29,7 +29,7 @@ const FinancialMetrics = ({ financialMetrics }) => {
                             )}
                             duration={1}
                             separator=" "
-                            decimals={1}
+                            decimals={2}
                             decimal=","
                         />
                     </strong>
@@ -76,7 +76,7 @@ const FinancialMetrics = ({ financialMetrics }) => {
                             )}
                             duration={1}
                             separator=" "
-                            decimals={1}
+                            decimals={2}
                             decimal=","
                         />
                     </strong>
@@ -124,7 +124,7 @@ const FinancialMetrics = ({ financialMetrics }) => {
                             )}
                             duration={1}
                             separator=" "
-                            decimals={1}
+                            decimals={2}
                             decimal=","
                         />
                     </strong>
