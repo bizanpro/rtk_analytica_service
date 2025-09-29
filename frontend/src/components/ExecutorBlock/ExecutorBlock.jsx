@@ -2,6 +2,7 @@ import { IMaskInput } from "react-imask";
 
 const ExecutorBlock = ({ contanct, deleteBlock, mode, banks, type }) => {
     const { id, full_name, phone, position, email, creditor_id } = contanct;
+
     const PhoneMask = "+{7}(000) 000 00 00";
 
     return (

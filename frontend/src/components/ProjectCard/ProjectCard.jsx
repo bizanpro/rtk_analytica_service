@@ -298,8 +298,11 @@ const ProjectCard = () => {
                             if (response?.responsible_person) {
                                 setCustomers((prevCustomer) => [
                                     ...prevCustomer,
-                                    response.responsible_person
-                                        ?.contragent_contact,
+                                    {
+                                        ...response.responsible_person
+                                            ?.contragent_contact,
+                                        id: response.responsible_person?.id,
+                                    },
                                 ]);
                             }
 
