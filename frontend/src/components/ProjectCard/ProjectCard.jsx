@@ -1,10 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
-import {
-    useParams,
-    useLocation,
-    useSearchParams,
-    useNavigate,
-} from "react-router-dom";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
@@ -45,7 +40,6 @@ const ProjectCard = () => {
     let query;
 
     const URL = `${import.meta.env.VITE_API_URL}projects`;
-    // const location = useLocation();
     const { projectId } = useParams();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -61,8 +55,6 @@ const ProjectCard = () => {
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [firstInit, setFirstInit] = useState(true);
-
-    const [isAvailableToSave, setIsAvailableToSave] = useState(true); // Можно сохранять изменения
 
     const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
 
@@ -95,7 +87,6 @@ const ProjectCard = () => {
     const [period, setPeriod] = useState("current_year"); // Период ОСВ
 
     // Закрепленные за карточкой банки для отображения вкладок
-    // Список банков для табов
     const matchedBanks = banks.filter((bank) =>
         projectData.creditor_responsible_persons?.some(
             (item) => item.creditor_id === bank.id
@@ -261,7 +252,7 @@ const ProjectCard = () => {
     // Отправляем контакт кредитора или заказчика
     const sendExecutor = (type, data) => {
         query = toast.loading("Выполняется отправка", {
-            containerId: "projectCard",
+            containerId: "toastContainer",
             draggable: true,
             position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
@@ -284,7 +275,7 @@ const ProjectCard = () => {
                                 response.message ||
                                 "Ошибка прикрепления исполнителя",
                             type: "success",
-                            containerId: "projectCard",
+                            containerId: "toastContainer",
                             isLoading: false,
                             autoClose: 1200,
                             pauseOnFocusLoss: false,
@@ -302,7 +293,7 @@ const ProjectCard = () => {
                     toast.error(
                         error.message || "Ошибка прикрепления исполнителя",
                         {
-                            containerId: "projectCard",
+                            containerId: "toastContainer",
                             isLoading: false,
                             autoClose: 3500,
                             pauseOnFocusLoss: false,
@@ -346,7 +337,7 @@ const ProjectCard = () => {
                                     response.message ||
                                     "Ошибка прикрепления исполнителя",
                                 type: "success",
-                                containerId: "projectCard",
+                                containerId: "toastContainer",
                                 isLoading: false,
                                 autoClose: 1200,
                                 pauseOnFocusLoss: false,
@@ -364,7 +355,7 @@ const ProjectCard = () => {
                         toast.error(
                             error.message || "Ошибка прикрепления исполнителя",
                             {
-                                containerId: "projectCard",
+                                containerId: "toastContainer",
                                 isLoading: false,
                                 autoClose: 3500,
                                 pauseOnFocusLoss: false,
@@ -386,7 +377,7 @@ const ProjectCard = () => {
     // Удаление контакта кредитора и заказчика
     const deleteContact = () => {
         query = toast.loading("Удаление", {
-            containerId: "projectCard",
+            containerId: "toastContainer",
             draggable: true,
             position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
@@ -403,7 +394,7 @@ const ProjectCard = () => {
                     toast.update(query, {
                         render: response.message,
                         type: "success",
-                        containerId: "projectCard",
+                        containerId: "toastContainer",
                         isLoading: false,
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
@@ -442,7 +433,7 @@ const ProjectCard = () => {
             .catch((error) => {
                 toast.dismiss(query);
                 toast.error(error.message || "Ошибка удаления контакта", {
-                    containerId: "projectCard",
+                    containerId: "toastContainer",
                     isLoading: false,
                     autoClose: 3500,
                     pauseOnFocusLoss: false,
@@ -456,6 +447,7 @@ const ProjectCard = () => {
             });
     };
 
+    // Удаление контакта кредитора и заказчика - открываем попап
     const openExecutorDeletePopup = (id, type) => {
         setDeleteExecutor({
             id: id,
@@ -468,7 +460,7 @@ const ProjectCard = () => {
     const updateProject = async (id, showMessage = true) => {
         if (projectData?.contragent_id && projectData?.industries.main) {
             query = toast.loading("Обновление", {
-                containerId: "projectCard",
+                containerId: "toastContainer",
                 draggable: true,
                 position:
                     window.innerWidth >= 1440 ? "bottom-right" : "top-right",
@@ -484,7 +476,7 @@ const ProjectCard = () => {
                     toast.update(query, {
                         render: "Проект успешно обновлен",
                         type: "success",
-                        containerId: "projectCard",
+                        containerId: "toastContainer",
                         isLoading: false,
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
@@ -500,7 +492,7 @@ const ProjectCard = () => {
             } catch (error) {
                 toast.dismiss(query);
                 toast.error(error.message || "Ошибка обновления проекта", {
-                    containerId: "projectCard",
+                    containerId: "toastContainer",
                     isLoading: false,
                     autoClose: 3500,
                     pauseOnFocusLoss: false,
@@ -514,7 +506,7 @@ const ProjectCard = () => {
             }
         } else {
             toast.error("Необходимо назначить заказчика и отрасль", {
-                containerId: "projectCard",
+                containerId: "toastContainer",
                 isLoading: false,
                 autoClose: 1500,
                 pauseOnFocusLoss: false,
@@ -550,7 +542,7 @@ const ProjectCard = () => {
         data.project_id = projectId;
 
         query = toast.loading("Выполняется отправка", {
-            containerId: "projectCard",
+            containerId: "toastContainer",
             position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
@@ -560,7 +552,7 @@ const ProjectCard = () => {
                     toast.update(query, {
                         render: response.message,
                         type: "success",
-                        containerId: "projectCard",
+                        containerId: "toastContainer",
                         isLoading: false,
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
@@ -571,10 +563,12 @@ const ProjectCard = () => {
                                 ? "bottom-right"
                                 : "top-right",
                     });
+
                     setReports((prevReports) => [
                         ...prevReports,
                         response.data,
                     ]);
+
                     getProject(projectId);
                 } else {
                     toast.dismiss(query);
@@ -588,7 +582,7 @@ const ProjectCard = () => {
                             window.innerWidth >= 1440
                                 ? "bottom-right"
                                 : "top-right",
-                        containerId: "projectCard",
+                        containerId: "toastContainer",
                     });
                 }
 
@@ -598,7 +592,7 @@ const ProjectCard = () => {
             .catch((error) => {
                 toast.dismiss(query);
                 toast.error(error.message || "Ошибка при отправке отчёта", {
-                    containerId: "projectCard",
+                    containerId: "toastContainer",
                     isLoading: false,
                     autoClose: 5000,
                     pauseOnFocusLoss: false,
@@ -628,7 +622,7 @@ const ProjectCard = () => {
         data.project_id = projectId;
 
         query = toast.loading("Обновление", {
-            containerId: "projectCard",
+            containerId: "toastContainer",
             draggable: true,
             position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
@@ -643,7 +637,7 @@ const ProjectCard = () => {
                     toast.update(query, {
                         render: response.message,
                         type: "success",
-                        containerId: "projectCard",
+                        containerId: "toastContainer",
                         isLoading: false,
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
@@ -664,7 +658,7 @@ const ProjectCard = () => {
             .catch((error) => {
                 toast.dismiss(query);
                 toast.error(error.message || "Ошибка обновления отчета", {
-                    containerId: "projectCard",
+                    containerId: "toastContainer",
                     isLoading: false,
                     autoClose: 5000,
                     pauseOnFocusLoss: false,
@@ -689,7 +683,7 @@ const ProjectCard = () => {
             .catch((error) => {
                 toast.dismiss(query);
                 toast.error(error.message || "Ошибка удаления отчёта", {
-                    containerId: "projectCard",
+                    containerId: "toastContainer",
                     isLoading: false,
                     autoClose: 3500,
                     pauseOnFocusLoss: false,
@@ -750,30 +744,6 @@ const ProjectCard = () => {
     }, [customers, reports]);
 
     useEffect(() => {
-        if (customers.length > 0 || reports.length > 0) {
-            setCanChangeContragent(false);
-        } else {
-            setCanChangeContragent(true);
-        }
-    }, [customers, reports]);
-
-    useEffect(() => {
-        if (customers.length > 0 || reports.length > 0) {
-            setCanChangeContragent(false);
-        } else {
-            setCanChangeContragent(true);
-        }
-    }, [customers, reports]);
-
-    useEffect(() => {
-        if (customers.length > 0 || reports.length > 0) {
-            setCanChangeContragent(false);
-        } else {
-            setCanChangeContragent(true);
-        }
-    }, [customers, reports]);
-
-    useEffect(() => {
         setProjectDataCustom((prev) => ({
             ...prev,
             industries: {
@@ -803,7 +773,7 @@ const ProjectCard = () => {
         <main className="page">
             <section className="card project-card">
                 <div className="container card__container project-card__container">
-                    <ToastContainer containerId="projectCard" />
+                    <ToastContainer containerId="toastContainer" />
 
                     <div className="card__wrapper project-card__wrapper">
                         <section className="card__main-content project-card__main-content">
@@ -859,6 +829,7 @@ const ProjectCard = () => {
                                     </div>
 
                                     <CreatableSelect
+                                        ref={contragentRef}
                                         options={
                                             contragents.length > 0 &&
                                             contragents.map((item) => ({
@@ -900,6 +871,21 @@ const ProjectCard = () => {
                                             }));
                                         }}
                                         isDisabled={mode == "read"}
+                                        menuIsOpen={contragentMenuOpen}
+                                        onMenuOpen={() => {
+                                            if (!canChangeContragent) {
+                                                alert(
+                                                    "Перед тем, как изменить заказчика, вы должны удалить всех ключевых лиц заказчика и все созданные отчеты проекта."
+                                                );
+                                                contragentRef.current?.blur();
+                                                setContragentMenuOpen(false);
+                                            } else {
+                                                setContragentMenuOpen(true);
+                                            }
+                                        }}
+                                        onMenuClose={() =>
+                                            setContragentMenuOpen(false)
+                                        }
                                         styles={{
                                             input: (base) => ({
                                                 ...base,
@@ -1581,10 +1567,7 @@ const ProjectCard = () => {
             </div>
 
             {mode === "edit" && (
-                <BottomNavCard
-                    update={() => updateProject(projectId)}
-                    isAvailableToSave={isAvailableToSave}
-                >
+                <BottomNavCard update={() => updateProject(projectId)}>
                     <button
                         type="button"
                         className="button-add"

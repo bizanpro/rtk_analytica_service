@@ -1,6 +1,6 @@
 import "./BottomNav.scss";
 
-const BottomNavCard = ({ children, update, isAvailableToSave }) => {
+const BottomNavCard = ({ children, update }) => {
     return (
         <nav className="bottom-nav">
             <div className="container bottom-nav__container">
@@ -31,7 +31,6 @@ const BottomNavCard = ({ children, update, isAvailableToSave }) => {
                     className="action-button"
                     title="Сохранить изменения"
                     onClick={update}
-                    disabled={!isAvailableToSave}
                 >
                     Сохранить
                 </button>
