@@ -24,7 +24,7 @@ function AutoResizeTextarea({
     return (
         <textarea
             ref={textareaRef}
-            className={`border-2 border-gray-300 py-3 px-5 resize-none ${
+            className={`border-2 border-gray-300 py-4 px-5 resize-none ${
                 className || ""
             }`}
             disabled={disabled}

@@ -4,6 +4,7 @@ import getData from "../../utils/getData";
 import formatMoney from "../../utils/formatMoney";
 import parseDate from "../../utils/parseDate";
 import buildQueryParams from "../../utils/buildQueryParams";
+import CreatableSelect from "react-select/creatable";
 
 import TeammatesSection from "../TeammatesSection";
 import ContractorsSection from "../ContractorsSection";
@@ -196,7 +197,8 @@ const ProjectReportWindow = ({
             name === "approval_date" ||
             name === "report_period" ||
             name === "implementation_period" ||
-            name === "execution_period"
+            name === "execution_period" ||
+            name === "contract_id"
         ) {
             value = e;
         } else if (name === "report_type_id") {
@@ -518,11 +520,8 @@ const ProjectReportWindow = ({
             getData(`${import.meta.env.VITE_API_URL}reports/${reportId}`).then(
                 (response) => {
                     setReportData(response.data);
-
                     setTeammates(response.data.responsible_persons);
-
                     setContractors(response.data.contragents);
-
                     setIsLoading(false);
                 }
             );
@@ -764,26 +763,40 @@ const ProjectReportWindow = ({
             <div className="grid gap-3 grid-cols-1">
                 <div className="flex flex-col gap-2 justify-start">
                     <span className="text-gray-400">Договор</span>
-                    <div className="border-2 border-gray-300 p-1 h-[32px]">
-                        <select
-                            className="w-full h-full"
-                            onChange={(e) =>
-                                handleInputChange(e, "contract_id")
+                    <div className="border-2 border-gray-300 h-[42px]">
+                        <CreatableSelect
+                            options={
+                                contracts.length > 0 &&
+                                contracts.map((item) => ({
+                                    value: item.id,
+                                    label: item.contract_name,
+                                }))
                             }
-                            value={reportData.contract_id || ""}
-                            disabled={mode === "read"}
-                        >
-                            <option value="">Выбрать договор</option>
-                            {contracts.length > 0 &&
-                                contracts.map((contract) => (
-                                    <option
-                                        value={contract.id}
-                                        key={contract.id}
-                                    >
-                                        {contract.contract_name}
-                                    </option>
-                                ))}
-                        </select>
+                            className="w-full executor-block__name-field"
+                            placeholder="Выберите договор"
+                            noOptionsMessage={() => "Совпадений нет"}
+                            isValidNewOption={() => false}
+                            value={
+                                (contracts.length > 0 &&
+                                    contracts
+                                        ?.map((item) => ({
+                                            value: item.id,
+                                            label: item.contract_name,
+                                        }))
+                                        .find(
+                                            (option) =>
+                                                option.value ===
+                                                reportData.contract_id
+                                        )) ||
+                                null
+                            }
+                            onChange={(selectedOption) => {
+                                const newValue = selectedOption?.value || "";
+
+                                handleInputChange(newValue, "contract_id");
+                            }}
+                            isDisabled={mode === "read"}
+                        />
                     </div>
                 </div>
             </div>

@@ -7,6 +7,7 @@ import parseFormattedMoney from "../../utils/parseFormattedMoney";
 
 import Select from "react-select";
 import MultiSelect from "../MultiSelect/MultiSelect";
+import AutoResizeTextarea from "../AutoResizeTextarea";
 
 import NewCustomerWindow from "./NewCustomerWindow";
 import SaleServiceItem from "./SaleServiceItem";
@@ -1047,43 +1048,30 @@ const SaleCard = () => {
                                         <span className="flex items-center gap-2 text-gray-400">
                                             Местоположение
                                         </span>
-                                        <div className="border-2 border-gray-300 p-5">
-                                            <input
-                                                type="text"
-                                                className="w-full"
-                                                placeholder="Заполните местоположение"
-                                                defaultValue={
-                                                    projectData.location || ""
-                                                }
-                                                onChange={(e) => {
-                                                    handleInputChange(
-                                                        e,
-                                                        "location"
-                                                    );
-                                                }}
-                                                disabled={mode == "read"}
-                                            />
-                                        </div>
+
+                                        <AutoResizeTextarea
+                                            disabled={mode === "read"}
+                                            value={projectData?.location || ""}
+                                            onChange={(e) =>
+                                                handleInputChange(e, "location")
+                                            }
+                                            placeholder="Введите местоположение"
+                                        />
                                     </div>
 
                                     <div className="flex flex-col gap-2 flex-shrink-0 flex-grow">
                                         <span className="flex items-center gap-2 text-gray-400">
                                             ТЭП
                                         </span>
-                                        <div className="border-2 border-gray-300 p-5">
-                                            <input
-                                                type="text"
-                                                className="w-full"
-                                                placeholder="Заполните ТЭП"
-                                                defaultValue={
-                                                    projectData.tep || ""
-                                                }
-                                                onChange={(e) => {
-                                                    handleInputChange(e, "tep");
-                                                }}
-                                                disabled={mode == "read"}
-                                            />
-                                        </div>
+                                        
+                                        <AutoResizeTextarea
+                                            disabled={mode === "read"}
+                                            value={projectData?.tep || ""}
+                                            onChange={(e) =>
+                                                handleInputChange(e, "tep")
+                                            }
+                                            placeholder="Введите ТЭП"
+                                        />
                                     </div>
 
                                     <div className="flex flex-col gap-2">
