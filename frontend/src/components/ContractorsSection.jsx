@@ -55,10 +55,6 @@ const ContractorsSection = ({
         }
     }, [person?.contragent_id, isMounted]);
 
-    useEffect(() => {
-        console.log(person);
-    }, [person]);
-
     return (
         <li className="person-block">
             <div className="person-block__header">
@@ -145,25 +141,72 @@ const ContractorsSection = ({
                     ))}
                 </select>
 
-                <select
-                    className="form-select"
-                    value={person?.contract_id}
-                    onChange={(e) =>
-                        handleContractorChange(
-                            index,
-                            "contract_id",
-                            Number(e.target.value)
-                        )
-                    }
-                    disabled={mode === "read" ? true : false}
-                >
-                    <option value="0">Выберите договор</option>
-                    {localContracts?.map((contract) => (
-                        <option value={contract.id} key={contract.id}>
-                            {contract.contract_name}
-                        </option>
-                    ))}
-                </select>
+                {person?.contract_id ? (
+                    <CreatableSelect
+                        options={
+                            localContracts.length > 0 &&
+                            localContracts.map((item) => ({
+                                value: item.id,
+                                label: item.contract_name,
+                            }))
+                        }
+                        className="form-select-extend"
+                        placeholder="Выберите договор"
+                        noOptionsMessage={() => "Совпадений нет"}
+                        isValidNewOption={() => false}
+                        value={
+                            (localContracts.length > 0 &&
+                                localContracts
+                                    ?.map((item) => ({
+                                        value: item.id,
+                                        label: item.contract_name,
+                                    }))
+                                    .find(
+                                        (option) =>
+                                            option.value === person?.contract_id
+                                    )) ||
+                            null
+                        }
+                        onChange={(selectedOption) => {
+                            const newValue = selectedOption?.value || "";
+
+                            handleContractorChange(
+                                index,
+                                "contract_id",
+                                Number(newValue)
+                            );
+                        }}
+                        isDisabled={
+                            mode === "read" || localContracts.length == 0
+                        }
+                    />
+                ) : (
+                    <CreatableSelect
+                        options={
+                            localContracts.length > 0 &&
+                            localContracts.map((item) => ({
+                                value: item.id,
+                                label: item.contract_name,
+                            }))
+                        }
+                        className="form-select-extend"
+                        placeholder="Выберите договор"
+                        noOptionsMessage={() => "Совпадений нет"}
+                        isValidNewOption={() => false}
+                        onChange={(selectedOption) => {
+                            const newValue = selectedOption?.value || "";
+
+                            handleContractorChange(
+                                index,
+                                "contract_id",
+                                Number(newValue)
+                            );
+                        }}
+                        isDisabled={
+                            mode === "read" || localContracts.length == 0
+                        }
+                    />
+                )}
             </div>
         </li>
     );

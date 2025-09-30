@@ -554,7 +554,7 @@ const ReportWindow = ({
             setContractors(preFillReportData.contragents);
         }
 
-        setPreFillReportData({})
+        setPreFillReportData({});
     };
 
     // Получение данных отчета
@@ -627,8 +627,14 @@ const ReportWindow = ({
                 show_cost: selectedType.show_cost,
                 is_regular: selectedType.is_regular,
                 ...(selectedType.is_regular === false && {
-                    regularity: "единоразовый",
+                    regularity: "one_time",
                 }),
+            }));
+        } else {
+            setReportData((prev) => ({
+                ...prev,
+                regularity: "",
+                is_regular: true,
             }));
         }
     }, [reportData.report_type_id]);
