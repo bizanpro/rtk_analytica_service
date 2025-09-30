@@ -98,6 +98,7 @@ const EmployeesStats = ({ employeeMetrics, setEmployeeFilters }) => {
                 backgroundColor: "black",
                 borderRadius: 2,
                 categoryPercentage: 0.3,
+                barThickness: 30,
             },
         ],
     };
@@ -139,14 +140,17 @@ const EmployeesStats = ({ employeeMetrics, setEmployeeFilters }) => {
                             </span>
                         </div>
 
-                        <div className="h-[250px] overflow-x-hidden overflow-y-auto">
+                        <div className="h-[300px] overflow-x-hidden overflow-y-auto">
                             <div
                                 style={{
-                                    height: `${Math.max(
-                                        250,
+                                    height:
                                         (EmployeeMetricsData.labels?.length ||
-                                            0) * 40
-                                    )}px`,
+                                            0) > 5
+                                            ? `${
+                                                  EmployeeMetricsData.labels
+                                                      .length * 60
+                                              }px`
+                                            : "300px",
                                 }}
                             >
                                 <Bar
