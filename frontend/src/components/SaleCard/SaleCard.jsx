@@ -30,8 +30,12 @@ const SaleCard = () => {
     const [isFirstInit, setIsFirstInit] = useState(true);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
-    const [projectData, setProjectData] = useState({});
-    const [formFields, setFormFields] = useState({});
+    const [projectData, setProjectData] = useState({
+        industries: { main: null, others: [] },
+    });
+    const [formFields, setFormFields] = useState({
+        industries: { main: null, others: [] },
+    });
 
     const [addCustomer, setAddCustomer] = useState(false);
     const [addServices, setAddServices] = useState(false);
@@ -523,6 +527,11 @@ const SaleCard = () => {
             });
             setProjectData(response.data);
 
+            setFormFields((prev) => ({
+                ...prev,
+                industries: response.data?.industries,
+            }));
+
             await Promise.all([
                 fetchIndustries(),
                 fetchContragents(),
@@ -649,6 +658,33 @@ const SaleCard = () => {
             getStageDetails(activeStage);
         }
     }, [saleStages]);
+
+    useEffect(() => {
+        const machedIndustry = projectData.industries.others.find(
+            (item) => item === projectData.industries.main
+        );
+
+        if (machedIndustry) {
+            setFormFields({
+                ...formFields,
+                industries: {
+                    ...formFields.industries,
+                    others: formFields.industries.others.filter(
+                        (item) => item !== machedIndustry
+                    ),
+                },
+            });
+            setProjectData({
+                ...projectData,
+                industries: {
+                    ...projectData.industries,
+                    others: projectData.industries.others.filter(
+                        (item) => item !== machedIndustry
+                    ),
+                },
+            });
+        }
+    }, [projectData.industries.main]);
 
     return (
         <main className="page">
@@ -850,12 +886,18 @@ const SaleCard = () => {
                                                     closeMenuOnSelect={false}
                                                     isMulti
                                                     name="colors"
-                                                    options={industries.map(
-                                                        (industry) => ({
+                                                    options={industries
+                                                        .filter(
+                                                            (industry) =>
+                                                                industry.id !==
+                                                                formFields
+                                                                    ?.industries
+                                                                    ?.main
+                                                        )
+                                                        .map((industry) => ({
                                                             value: industry.id,
                                                             label: industry.name,
-                                                        })
-                                                    )}
+                                                        }))}
                                                     value={industries
                                                         .filter((industry) =>
                                                             projectData?.industries?.others?.includes(
@@ -1063,7 +1105,7 @@ const SaleCard = () => {
                                         <span className="flex items-center gap-2 text-gray-400">
                                             ТЭП
                                         </span>
-                                        
+
                                         <AutoResizeTextarea
                                             disabled={mode === "read"}
                                             value={projectData?.tep || ""}
