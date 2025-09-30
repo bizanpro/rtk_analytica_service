@@ -688,11 +688,6 @@ const ReportWindow = ({
             >
                 <div className="bottom-sheet__icon"></div>
 
-                {/* <div className="text-2xl w-full">
-                    {reportName ? reportName : reportData.report_period_code}
-                </div>
-                */}
-
                 <div className="bottom-sheet__body">
                     {reportWindowsState && (
                         <div className="report-window">
@@ -703,8 +698,11 @@ const ReportWindow = ({
                             <div className="report-window__wrapper">
                                 <div className="report-window__header">
                                     <div className="report-window__name">
-                                        {reportData.report_period_code ||
-                                            "Создать отчёт"}
+                                        {reportId
+                                            ? reportName
+                                                ? reportName
+                                                : reportData.report_period_code
+                                            : "Создать отчёт"}
                                     </div>
                                 </div>
 
