@@ -109,6 +109,7 @@ const SaleFunnelItem = ({
                     stage.next_possible_stages.length > 0 &&
                     stage.name.toLowerCase() !== "отказ от участия" &&
                     stage.name.toLowerCase() !== "получен отказ" &&
+                    stage.name.toLowerCase() !== "проект отложен" &&
                     stage.name.toLowerCase() !== "договор заключён" && (
                         <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 pr-8">
                             <button
@@ -170,6 +171,7 @@ const SaleFunnelItem = ({
                     stage.next_possible_stages.length == 0 &&
                     stage.name.toLowerCase() !== "отказ от участия" &&
                     stage.name.toLowerCase() !== "получен отказ" &&
+                    stage.name.toLowerCase() !== "проект отложен" &&
                     stage.name.toLowerCase() !== "договор заключён" && (
                         <div className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 pr-8">
                             <div

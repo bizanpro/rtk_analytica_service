@@ -186,7 +186,10 @@ const SaleFunnelStages = ({
             ]?.name?.toLowerCase() === "отказ от участия" ||
             saleStages.stages[
                 saleStages.stages.length - 1
-            ]?.name?.toLowerCase() === "получен отказ" ? (
+            ]?.name?.toLowerCase() === "получен отказ" ||
+            saleStages.stages[
+                saleStages.stages.length - 1
+            ]?.name?.toLowerCase() === "проект отложен" ? (
                 <button
                     type="button"
                     className="text-lg italic w-fit px-5.5"
