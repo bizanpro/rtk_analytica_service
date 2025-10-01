@@ -1339,11 +1339,7 @@ const ProjectCard = () => {
                                                             ? false
                                                             : true
                                                     }
-                                                    title={
-                                                        projectData.contragent_id
-                                                            ? "Создать отчёт"
-                                                            : "Необходимо назначить заказчика"
-                                                    }
+                                                    title="Создать отчёт"
                                                 >
                                                     Создать отчёт
                                                 </button>
@@ -1365,11 +1361,7 @@ const ProjectCard = () => {
                                                 ? false
                                                 : true
                                         }
-                                        title={
-                                            projectData.contragent_id
-                                                ? "Создать отчёт"
-                                                : "Необходимо назначить заказчика"
-                                        }
+                                        title="Создать отчёт"
                                     >
                                         Создать отчёт
                                     </button>
@@ -1576,11 +1568,7 @@ const ProjectCard = () => {
                             setReportWindowsState(true);
                         }}
                         disabled={projectData.contragent_id ? false : true}
-                        title={
-                            projectData.contragent_id
-                                ? "Создать отчёт"
-                                : "Необходимо назначить заказчика"
-                        }
+                        title="Создать отчёт"
                     >
                         Отчёт
                         <span>
