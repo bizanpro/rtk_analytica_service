@@ -228,7 +228,7 @@ const SupplierCard = () => {
                     setAddRespPerson(false);
 
                     toast.update(query, {
-                        render: response.message,
+                        render: response.message || "Ключевое лицо добавлено",
                         type: "success",
                         containerId: "supplier",
                         isLoading: false,
@@ -273,6 +273,15 @@ const SupplierCard = () => {
                 setResponsiblePersons(
                     responsiblePersons.filter((item) => item.id !== id)
                 );
+
+                toast.success("Ключевое лицо удалено", {
+                    containerId: "supplier",
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
             }
         });
     };

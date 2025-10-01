@@ -134,7 +134,7 @@ const SalesItem = ({ props, columns, deleteProject }) => {
                                 className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
                                 key={key}
                             >
-                                {format(parseISO(value), "d.MM.yyyy", {
+                                {format(parseISO(value), "dd.MM.yyyy", {
                                     locale: ru,
                                 }) || "—"}
                             </td>

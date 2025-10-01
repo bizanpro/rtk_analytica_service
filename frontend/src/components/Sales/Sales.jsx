@@ -37,7 +37,7 @@ const Sales = () => {
         { label: "Тип услуг", key: "services" },
         {
             label: "Стоимость, млн руб.",
-            key: "contragent.projects_total_budget",
+            key: "costs",
         },
         { label: "Дата запроса", key: "request_date" },
         { label: "Источник", key: "request_source" },

@@ -37,8 +37,8 @@ const EmployeeMetrics = ({
                 <div
                     className={`${
                         total_active_employees?.change_percent > 0
-                            ? "text-green-400"
-                            : "text-red-400"
+                            ? "text-red-400"
+                            : "text-green-400"
                     }`}
                 >
                     {total_active_employees?.change_percent &&
@@ -74,8 +74,8 @@ const EmployeeMetrics = ({
                 <div
                     className={`${
                         gross_salary?.change_percent > 0
-                            ? "text-green-400"
-                            : "text-red-400"
+                            ? "text-red-400"
+                            : "text-green-400"
                     }`}
                 >
                     {gross_salary?.change_percent &&
@@ -111,8 +111,8 @@ const EmployeeMetrics = ({
                 <div
                     className={`${
                         average_salary?.change_percent > 0
-                            ? "text-green-400"
-                            : "text-red-400"
+                            ? "text-red-400"
+                            : "text-green-400"
                     }`}
                 >
                     {average_salary?.change_percent &&
