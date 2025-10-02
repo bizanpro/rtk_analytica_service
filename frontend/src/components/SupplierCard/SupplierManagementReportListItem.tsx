@@ -50,16 +50,23 @@ const SupplierManagementReportListItem = ({
 
             <div>{reportData.status}</div>
 
-            <div
-                className="text-lg overflow-hidden text-ellipsis"
-                style={{
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    display: "-webkit-box",
-                }}
-                title={reportData.physical_person?.name}
-            >
-                {reportData.physical_person?.name}
+            <div className="text-lg" title={reportData.physical_person?.name}>
+                <div
+                    className="overflow-hidden text-ellipsis"
+                    style={{
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        display: "-webkit-box",
+                    }}
+                >
+                    {reportData.physical_person?.name}
+                </div>
+
+                {reportData?.physical_person?.roles?.map((item) => (
+                    <div className="text-sm" key={item.id}>
+                        {item.name}
+                    </div>
+                ))}
             </div>
         </li>
     );

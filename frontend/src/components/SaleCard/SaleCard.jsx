@@ -396,7 +396,6 @@ const SaleCard = () => {
             .then((response) => {
                 if (response.ok) {
                     getStages();
-                    fetchServices();
 
                     if (nextStage) {
                         requestNextStage(nextStage, newDate, stage_status);
@@ -414,6 +413,7 @@ const SaleCard = () => {
                                     ? "bottom-right"
                                     : "top-right",
                         });
+                        fetchServices();
                     }
                 } else {
                     toast.error(response.data.error || "Ошибка запроса", {
@@ -507,6 +507,7 @@ const SaleCard = () => {
                                 : "top-right",
                     });
                     getStages();
+                    fetchServices();
                 }
             })
             .catch((response) => {
@@ -1348,6 +1349,9 @@ const SaleCard = () => {
                                                         getStages={getStages}
                                                         requestNextStage={
                                                             requestNextStage
+                                                        }
+                                                        fetchServices={
+                                                            fetchServices
                                                         }
                                                         mode={mode}
                                                     />
