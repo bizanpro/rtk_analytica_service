@@ -11,6 +11,7 @@ const MultiSelectField = ({
     fieldName,
     selectedValues,
     onChange,
+    isDisabled,
 }) => {
     const [isActiveSelect, setIsActiveSelect] = useState("");
 
@@ -32,10 +33,10 @@ const MultiSelectField = ({
                 title="Выбрать из списка"
                 className="form-multiselect__field"
                 onClick={() => {
-                    if (mode === "read") return;
+                    if (isDisabled) return;
                     setIsActiveSelect(target);
                 }}
-                disabled={mode === "read"}
+                disabled={isDisabled}
             >
                 {placeholder}
             </button>

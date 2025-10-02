@@ -52,6 +52,7 @@ const ProjectCard = () => {
 
     const [activeReportTab, setActiveReportTab] = useState("projectReports"); // Активная вкладка отчетов
     const [activeWindow, setActiveWindow] = useState(""); // Активное окно на мобилке (Отчеты или ОСВ)
+    const [availableToChange, setAvailableToChange] = useState(false); // Можем ли мы вносить изменения в проект (до закрепления заказчика)
 
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [firstInit, setFirstInit] = useState(true);
@@ -88,7 +89,7 @@ const ProjectCard = () => {
 
     // Закрепленные за карточкой банки для отображения вкладок
     const matchedBanks = banks.filter((bank) =>
-        projectData.creditor_responsible_persons?.some(
+        projectData?.creditor_responsible_persons?.some(
             (item) => item.creditor_id === bank.id
         )
     );
@@ -127,7 +128,14 @@ const ProjectCard = () => {
             Accept: "application/json",
         }).then((response) => {
             if (response?.status == 200) {
-                setContragents(response.data);
+                if (response.data.length > 0) {
+                    setContragents(
+                        response.data.map((item) => ({
+                            value: item.id,
+                            label: item.program_name,
+                        }))
+                    );
+                }
             }
         });
     };
@@ -201,6 +209,7 @@ const ProjectCard = () => {
             });
 
             setProjectData(response.data);
+            setProjectDataCustom(response.data);
             setOtherIndustries({ others: response.data.industries.others });
 
             // Получаем кредиторов
@@ -246,6 +255,75 @@ const ProjectCard = () => {
                     },
                 });
             }
+        }
+    };
+
+    // Обновление проекта
+    const updateProject = async (id, showMessage = true) => {
+        if (projectDataCustom?.contragent_id) {
+            query = toast.loading("Обновление", {
+                containerId: "toastContainer",
+                draggable: true,
+                position:
+                    window.innerWidth >= 1440 ? "bottom-right" : "top-right",
+            });
+
+            postData("PATCH", `${URL}/${id}`, projectDataCustom)
+                .then((response) => {
+                    if (response?.ok) {
+                        setProjectData((prev) => ({
+                            ...prev,
+                            ...response,
+                        }));
+                        setProjectDataCustom((prev) => ({
+                            ...prev,
+                            ...response,
+                        }));
+
+                        if (showMessage) {
+                            toast.update(query, {
+                                render: "Проект успешно обновлен",
+                                type: "success",
+                                containerId: "toastContainer",
+                                isLoading: false,
+                                autoClose: 1000,
+                                pauseOnFocusLoss: false,
+                                pauseOnHover: false,
+                                draggable: true,
+                                position:
+                                    window.innerWidth >= 1440
+                                        ? "bottom-right"
+                                        : "top-right",
+                            });
+                        }
+                    }
+                })
+                .catch((error) => {
+                    toast.dismiss(query);
+                    toast.error(error.message || "Ошибка обновления проекта", {
+                        containerId: "toastContainer",
+                        isLoading: false,
+                        autoClose: 3500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
+                    });
+                });
+        } else {
+            toast.error("Необходимо назначить заказчика", {
+                containerId: "toastContainer",
+                isLoading: false,
+                autoClose: 1500,
+                pauseOnFocusLoss: false,
+                pauseOnHover: false,
+                draggable: true,
+                position:
+                    window.innerWidth >= 1440 ? "bottom-right" : "top-right",
+            });
         }
     };
 
@@ -456,68 +534,6 @@ const ProjectCard = () => {
         });
     };
 
-    // Обновление проекта
-    const updateProject = async (id, showMessage = true) => {
-        if (projectData?.contragent_id && projectData?.industries.main) {
-            query = toast.loading("Обновление", {
-                containerId: "toastContainer",
-                draggable: true,
-                position:
-                    window.innerWidth >= 1440 ? "bottom-right" : "top-right",
-            });
-
-            try {
-                const response = await postData(
-                    "PATCH",
-                    `${URL}/${id}`,
-                    projectDataCustom
-                );
-                if (response?.ok && showMessage) {
-                    toast.update(query, {
-                        render: "Проект успешно обновлен",
-                        type: "success",
-                        containerId: "toastContainer",
-                        isLoading: false,
-                        autoClose: 1200,
-                        pauseOnFocusLoss: false,
-                        pauseOnHover: false,
-                        draggable: true,
-                        position:
-                            window.innerWidth >= 1440
-                                ? "bottom-right"
-                                : "top-right",
-                    });
-                }
-                return response;
-            } catch (error) {
-                toast.dismiss(query);
-                toast.error(error.message || "Ошибка обновления проекта", {
-                    containerId: "toastContainer",
-                    isLoading: false,
-                    autoClose: 3500,
-                    pauseOnFocusLoss: false,
-                    pauseOnHover: false,
-                    draggable: true,
-                    position:
-                        window.innerWidth >= 1440
-                            ? "bottom-right"
-                            : "top-right",
-                });
-            }
-        } else {
-            toast.error("Необходимо назначить заказчика и отрасль", {
-                containerId: "toastContainer",
-                isLoading: false,
-                autoClose: 1500,
-                pauseOnFocusLoss: false,
-                pauseOnHover: false,
-                draggable: true,
-                position:
-                    window.innerWidth >= 1440 ? "bottom-right" : "top-right",
-            });
-        }
-    };
-
     // Открытие окна редактирования отчёта
     const openReportEditor = (id) => {
         setReportId(id);
@@ -717,7 +733,7 @@ const ProjectCard = () => {
                 creditors: projectData.creditors.map((bank) => bank.id),
             }));
         }
-    }, [projectData.creditors]);
+    }, [projectData?.creditors]);
 
     useEffect(() => {
         if (projectData.contragent_id) {
@@ -725,7 +741,7 @@ const ProjectCard = () => {
         } else {
             setReportWindowsState(false);
         }
-    }, [projectData.contragent_id]);
+    }, [projectData?.contragent_id]);
 
     useEffect(() => {
         const report = searchParams.get("report");
@@ -768,6 +784,14 @@ const ProjectCard = () => {
             setActiveWindow("");
         }
     }, [width]);
+
+    useEffect(() => {
+        if (projectData?.contragent_id) {
+            setAvailableToChange(true);
+        } else {
+            setAvailableToChange(false);
+        }
+    }, [projectData?.contragent_id]);
 
     return (
         <main className="page">
@@ -830,13 +854,7 @@ const ProjectCard = () => {
 
                                     <CreatableSelect
                                         ref={contragentRef}
-                                        options={
-                                            contragents.length > 0 &&
-                                            contragents.map((item) => ({
-                                                value: item.id,
-                                                label: item.program_name,
-                                            }))
-                                        }
+                                        options={contragents}
                                         className="form-select-extend"
                                         placeholder="Выбрать из списка"
                                         noOptionsMessage={() =>
@@ -845,16 +863,11 @@ const ProjectCard = () => {
                                         isValidNewOption={() => false}
                                         value={
                                             (contragents.length > 0 &&
-                                                contragents
-                                                    .map((item) => ({
-                                                        value: item.id,
-                                                        label: item.program_name,
-                                                    }))
-                                                    .find(
-                                                        (option) =>
-                                                            option.value ===
-                                                            projectData?.contragent_id
-                                                    )) ||
+                                                contragents.find(
+                                                    (option) =>
+                                                        option.value ===
+                                                        projectDataCustom?.contragent_id
+                                                )) ||
                                             null
                                         }
                                         onChange={(selectedOption) => {
@@ -865,10 +878,10 @@ const ProjectCard = () => {
                                                 ...prev,
                                                 contragent_id: newValue,
                                             }));
-                                            setProjectData((prev) => ({
-                                                ...prev,
-                                                contragent_id: newValue,
-                                            }));
+                                            // setProjectData((prev) => ({
+                                            //     ...prev,
+                                            //     contragent_id: newValue,
+                                            // }));
                                         }}
                                         isDisabled={mode == "read"}
                                         menuIsOpen={contragentMenuOpen}
@@ -925,7 +938,9 @@ const ProjectCard = () => {
                                                 },
                                             });
                                         }}
-                                        disabled={mode == "read"}
+                                        disabled={
+                                            mode == "read" || !availableToChange
+                                        }
                                     >
                                         <option value="">
                                             Выбрать из списка
@@ -977,6 +992,9 @@ const ProjectCard = () => {
                                                 value: industry.id,
                                                 label: industry.name,
                                             }))}
+                                        isDisabled={
+                                            mode == "read" || !availableToChange
+                                        }
                                     />
                                 </div>
 
@@ -993,10 +1011,12 @@ const ProjectCard = () => {
                                         placeholder="Например: создание производства заготовки с микрокристаллической структурой..."
                                         type="text"
                                         name="description"
-                                        disabled={mode == "read"}
                                         value={projectData?.description || ""}
                                         onChange={(e) =>
                                             handleInputChange(e, "description")
+                                        }
+                                        disabled={
+                                            mode == "read" || !availableToChange
                                         }
                                     />
                                 </div>
@@ -1009,12 +1029,14 @@ const ProjectCard = () => {
 
                                     <AutoResizeTextarea
                                         className="form-textarea"
-                                        disabled={mode === "read"}
                                         value={projectData?.location || ""}
                                         onChange={(e) =>
                                             handleInputChange(e, "location")
                                         }
                                         placeholder="Страна, город, область..."
+                                        disabled={
+                                            mode == "read" || !availableToChange
+                                        }
                                     />
                                 </div>
 
@@ -1026,12 +1048,14 @@ const ProjectCard = () => {
 
                                     <AutoResizeTextarea
                                         className="form-textarea"
-                                        disabled={mode === "read"}
                                         value={projectData?.tep || ""}
                                         onChange={(e) =>
                                             handleInputChange(e, "tep")
                                         }
                                         placeholder="Заполните ТЭП"
+                                        disabled={
+                                            mode == "read" || !availableToChange
+                                        }
                                     />
                                 </div>
                             </section>
@@ -1071,7 +1095,7 @@ const ProjectCard = () => {
                                     )}
                                 </ul>
 
-                                {mode === "edit" && (
+                                {mode == "edit" && availableToChange && (
                                     <button
                                         type="button"
                                         className="button-add"
@@ -1187,7 +1211,7 @@ const ProjectCard = () => {
                                     )}
                                 </ul>
 
-                                {mode === "edit" && (
+                                {mode == "edit" && availableToChange && (
                                     <button
                                         type="button"
                                         className="button-add"
@@ -1322,7 +1346,7 @@ const ProjectCard = () => {
                                         )}
                                     </div>
 
-                                    {mode == "edit" && (
+                                    {mode == "edit" && availableToChange && (
                                         <div className="reports__footer">
                                             {activeReportTab ==
                                                 "projectReports" && (
@@ -1334,11 +1358,6 @@ const ProjectCard = () => {
                                                             true
                                                         )
                                                     }
-                                                    disabled={
-                                                        projectData.contragent_id
-                                                            ? false
-                                                            : true
-                                                    }
                                                     title="Создать отчёт"
                                                 >
                                                     Создать отчёт
@@ -1349,17 +1368,13 @@ const ProjectCard = () => {
                                 </div>
                             ) : (
                                 mode == "edit" &&
+                                availableToChange &&
                                 activeReportTab == "projectReports" && (
                                     <button
                                         type="button"
                                         className="reports__add-btn"
                                         onClick={() =>
                                             setReportWindowsState(true)
-                                        }
-                                        disabled={
-                                            projectData.contragent_id
-                                                ? false
-                                                : true
                                         }
                                         title="Создать отчёт"
                                     >
@@ -1558,36 +1573,33 @@ const ProjectCard = () => {
                 </button>
             </div>
 
-            {mode === "edit" && (
-                <BottomNavCard update={() => updateProject(projectId)}>
-                    <button
-                        type="button"
-                        className="button-add"
-                        onClick={() => {
-                            setActiveWindow("");
-                            setReportWindowsState(true);
-                        }}
-                        disabled={projectData.contragent_id ? false : true}
-                        title="Создать отчёт"
-                    >
-                        Отчёт
-                        <span>
-                            <svg
-                                width="13"
-                                height="12"
-                                viewBox="0 0 13 12"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M7.5 5H12.5V7H7.5V12H5.5V7H0.5V5H5.5V0H7.5V5Z"
-                                    fill="currentColor"
-                                />
-                            </svg>
-                        </span>
-                    </button>
-                </BottomNavCard>
-            )}
+            <BottomNavCard update={() => updateProject(projectId)}>
+                <button
+                    type="button"
+                    className="button-add"
+                    onClick={() => {
+                        setActiveWindow("");
+                        setReportWindowsState(true);
+                    }}
+                    title="Создать отчёт"
+                >
+                    Отчёт
+                    <span>
+                        <svg
+                            width="13"
+                            height="12"
+                            viewBox="0 0 13 12"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M7.5 5H12.5V7H7.5V12H5.5V7H0.5V5H5.5V0H7.5V5Z"
+                                fill="currentColor"
+                            />
+                        </svg>
+                    </span>
+                </button>
+            </BottomNavCard>
         </main>
     );
 };
