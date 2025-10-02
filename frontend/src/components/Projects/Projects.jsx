@@ -10,6 +10,7 @@ import ProjectItem from "./ProjectItem";
 import Popup from "../Popup/Popup";
 import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
 import TheadSortButton from "../TheadSortButton/TheadSortButton";
+import FilterButton from "../FilterButton";
 import OverlayTransparent from "../Overlay/OverlayTransparent";
 
 import "./Projects.scss";
@@ -19,77 +20,68 @@ const Projects = () => {
     const navigate = useNavigate();
 
     const [mode, setMode] = useState("edit");
-
     const [sortBy, setSortBy] = useState({ key: "", action: "" });
 
     const [isLoading, setIsLoading] = useState(true);
-    const [sortedList, setSortedList] = useState([]);
-
     const [popupState, setPopupState] = useState(false);
 
     const [list, setList] = useState([]);
+    const [sortedList, setSortedList] = useState([]);
 
     const [newProjectName, setNewProjectName] = useState("");
     const [openFilter, setOpenFilter] = useState("");
 
     // Заполняем параметры фильтров
     const nameOptions = useMemo(() => {
-        const allNames = sortedList
+        const allNames = list
             .map((item) => item.name)
             .filter((name) => name !== null);
 
         return Array.from(new Set(allNames));
-    }, [sortedList]);
+    }, [list]);
 
     // Заполняем селектор заказчиков
     const contragentOptions = useMemo(() => {
-        const allNames = sortedList
+        const allNames = list
             .map((item) => item.contragent)
             .filter(
                 (contragent) => contragent !== null && contragent !== undefined
             );
 
         return Array.from(new Set(allNames));
-    }, [sortedList]);
+    }, [list]);
 
+    // Заполняем селектор cтатусов
     const statusOptions = useMemo(() => {
         const allNames = list.map((item) => handleStatus(item.status));
 
         return Array.from(new Set(allNames));
-    }, [sortedList]);
+    }, [list]);
 
-    // Заполняем селектор заказчиков
-    // const contragentOptions = useMemo(() => {
-    //     const allNames = sortedList
-    //         .map((item) => item.contragent)
-    //         .filter(
-    //             (contragent) => contragent !== null && contragent !== undefined
-    //         );
-
-    //     return Array.from(new Set(allNames));
-    // }, [sortedList]);
-
+    // Заполняем селектор отраслей
     const sectorOptions = useMemo(() => {
-        const allSectors = sortedList
+        const allSectors = list
             .map((item) => item.industries.main?.name)
             .filter((name) => name !== null && name !== undefined);
 
         return Array.from(new Set(allSectors));
-    }, [sortedList]);
+    }, [list]);
 
+    // Заполняем селектор банков
     const bankOptions = useMemo(() => {
-        const allBanks = sortedList.flatMap((item) =>
+        const allBanks = list.flatMap((item) =>
             item.creditors?.map((bank) => bank.name)
         );
         return Array.from(new Set(allBanks));
-    }, [sortedList]);
+    }, [list]);
 
+    // Заполняем селектор руководителей проекта
     const projectManagerOptions = useMemo(() => {
-        const allPM = sortedList
+        const allPM = list
             .map((item) => item.project_manager)
             .filter((manager) => manager !== null && manager !== undefined);
         return Array.from(new Set(allPM));
-    }, [sortedList]);
+    }, [list]);
 
     const COLUMNS = [
         {
@@ -122,7 +114,7 @@ const Projects = () => {
             filter: "selectedBanks",
             options: bankOptions,
         },
-        { label: "Бюджет", key: "project_budget" },
+        { label: "Бюджет", key: "project_budget", is_sortable: true },
         { label: "Срок", key: "implementation_period" },
         {
             label: "Руководитель проекта",
@@ -199,7 +191,7 @@ const Projects = () => {
     });
 
     const filteredProjects = useMemo(() => {
-        return list.filter((project) => {
+        return sortedList.filter((project) => {
             return (
                 (filters.selectedSectors.length === 0 ||
                     filters.selectedSectors.includes(
@@ -221,7 +213,7 @@ const Projects = () => {
                     filters.selectedContagents.includes(project.contragent))
             );
         });
-    }, [list, filters]);
+    }, [sortedList, filters]);
 
     return (
         <main className="page projects">
@@ -258,34 +250,6 @@ const Projects = () => {
                                 </div>
                             </button>
                         )}
-
-                        {/* <nav className="switch">
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="read_mode"
-                                    onChange={() => {
-                                        setMode("read");
-                                    }}
-                                    checked={mode === "read"}
-                                />
-                                <label htmlFor="read_mode">Чтение</label>
-                            </div>
-
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="edit_mode"
-                                    onChange={() => setMode("edit")}
-                                    checked={mode === "edit"}
-                                />
-                                <label htmlFor="edit_mode">
-                                    Редактирование
-                                </label>
-                            </div>
-                        </nav> */}
                     </div>
                 </section>
 
@@ -301,20 +265,22 @@ const Projects = () => {
                         <thead className="registry-table__thead">
                             <tr>
                                 {COLUMNS.map(
-                                    ({ label, key, filter, options }) => {
+                                    ({
+                                        label,
+                                        key,
+                                        filter,
+                                        options,
+                                        is_sortable,
+                                    }) => {
                                         return (
                                             <th
-                                                className={`min-w-[125px] ${
-                                                    filter
-                                                        ? "registry-table__thead-filter-item"
-                                                        : ""
-                                                }`}
+                                                className="min-w-[125px]"
                                                 rowSpan="2"
                                                 key={key}
                                             >
-                                                {filter ? (
-                                                    <>
-                                                        <div className="registry-table__thead-item">
+                                                <div className="registry-table__thead-item">
+                                                    {filter ? (
+                                                        <>
                                                             <div className="registry-table__thead-label">
                                                                 {label}
                                                             </div>
@@ -357,84 +323,84 @@ const Projects = () => {
                                                                         val !==
                                                                         undefined
                                                                 ) && (
-                                                                    <button
-                                                                        className={`filter-button ${
-                                                                            openFilter ===
-                                                                            key
-                                                                                ? "active"
-                                                                                : ""
-                                                                        }`}
-                                                                        title={`Открыть фильтр ${label}`}
-                                                                        onClick={() =>
-                                                                            setOpenFilter(
-                                                                                key
-                                                                            )
+                                                                    <FilterButton
+                                                                        label={
+                                                                            label
                                                                         }
-                                                                    >
-                                                                        <svg
-                                                                            width="16"
-                                                                            height="16"
-                                                                            viewBox="0 0 16 16"
-                                                                            fill="none"
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                        >
-                                                                            <path
-                                                                                d="M2 5.093l4.8 3.429v6l2.4-1.286V8.522L14 5.093V2.522H2v2.571z"
-                                                                                fill="currentColor"
-                                                                            />
-                                                                        </svg>
-                                                                    </button>
+                                                                        key={
+                                                                            key
+                                                                        }
+                                                                        filterKey={
+                                                                            key
+                                                                        }
+                                                                        openFilter={
+                                                                            openFilter
+                                                                        }
+                                                                        setOpenFilter={
+                                                                            setOpenFilter
+                                                                        }
+                                                                    />
                                                                 )}
-                                                        </div>
 
-                                                        {openFilter === key && (
-                                                            <MultiSelectWithSearch
-                                                                options={
-                                                                    options.length >
-                                                                    0
-                                                                        ? options.map(
-                                                                              (
-                                                                                  name
-                                                                              ) => ({
-                                                                                  value: name,
-                                                                                  label: name,
-                                                                              })
-                                                                          )
-                                                                        : []
-                                                                }
-                                                                selectedValues={
-                                                                    filters[
+                                                            {openFilter ===
+                                                                key && (
+                                                                <MultiSelectWithSearch
+                                                                    options={
+                                                                        options.length >
+                                                                        0
+                                                                            ? options.map(
+                                                                                  (
+                                                                                      name
+                                                                                  ) => ({
+                                                                                      value: name,
+                                                                                      label: name,
+                                                                                  })
+                                                                              )
+                                                                            : []
+                                                                    }
+                                                                    selectedValues={
+                                                                        filters[
+                                                                            filter
+                                                                        ]
+                                                                    }
+                                                                    onChange={(
+                                                                        updated
+                                                                    ) =>
+                                                                        setFilters(
+                                                                            (
+                                                                                prev
+                                                                            ) => ({
+                                                                                ...prev,
+                                                                                ...updated,
+                                                                            })
+                                                                        )
+                                                                    }
+                                                                    fieldName={
                                                                         filter
-                                                                    ]
-                                                                }
-                                                                onChange={(
-                                                                    updated
-                                                                ) =>
-                                                                    setFilters(
-                                                                        (
-                                                                            prev
-                                                                        ) => ({
-                                                                            ...prev,
-                                                                            ...updated,
-                                                                        })
-                                                                    )
-                                                                }
-                                                                fieldName={
-                                                                    filter
-                                                                }
-                                                                close={
-                                                                    setOpenFilter
-                                                                }
-                                                            />
-                                                        )}
-                                                    </>
-                                                ) : (
-                                                    <div className="registry-table__thead-item">
+                                                                    }
+                                                                    close={
+                                                                        setOpenFilter
+                                                                    }
+                                                                />
+                                                            )}
+                                                        </>
+                                                    ) : (
                                                         <div className="registry-table__thead-label">
                                                             {label}
                                                         </div>
-                                                    </div>
-                                                )}
+                                                    )}
+
+                                                    {is_sortable && (
+                                                        <TheadSortButton
+                                                            label={label}
+                                                            value={key}
+                                                            sortBy={sortBy}
+                                                            setSortBy={
+                                                                setSortBy
+                                                            }
+                                                        />
+                                                    )}
+                                                </div>
                                             </th>
                                         );
                                     }

@@ -1,0 +1,66 @@
+.thead__item-sort-btn {
+    width: 16px;
+    flex: 0 0 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    padding: 3.5px;
+
+    div {
+        display: block;
+        position: relative;
+        background: var(--color-black);
+        height: 1.5px;
+        width: 9px;
+        transition: all var(--trans);
+
+        &::before,
+        &::after {
+            content: "";
+            position: absolute;
+            background: var(--color-black);
+            height: 1.5px;
+            width: 9px;
+            left: 0;
+            transition: all var(--trans);
+        }
+
+        &::before {
+            top: 3px;
+        }
+
+        &::after {
+            bottom: 3px;
+        }
+    }
+
+    &_ascending {
+        div {
+            width: 7px;
+
+            &::before {
+                top: 4px;
+                 width: 5px;
+            }
+
+            &::after {
+                bottom: 4px;
+            }
+        }
+    }
+
+    &_descending {
+        div {
+            width: 7px;
+
+            &::before {
+                top: 4px;
+            }
+
+            &::after {
+                bottom: 4px;
+                width: 5px;
+            }
+        }
+    }
+}
