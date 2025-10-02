@@ -94,6 +94,17 @@ const ManagementItem = ({
                                     }}
                                 >
                                     {value?.name?.toString() || "—"}
+
+                                    {props?.physical_person?.roles?.map(
+                                        (item) => (
+                                            <div
+                                                className="text-sm"
+                                                key={item.id}
+                                            >
+                                                {item.name}
+                                            </div>
+                                        )
+                                    )}
                                 </button>
                             </td>
                         );
