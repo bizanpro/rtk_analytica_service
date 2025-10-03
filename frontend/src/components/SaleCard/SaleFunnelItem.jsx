@@ -21,7 +21,7 @@ const SaleFunnelItem = ({
                     if (confirm("Вы уверены?")) {
                         requestNextStage(
                             next_possible_stages.id,
-                            stage.stage_date,
+                            // stage.stage_date,
                             action
                         );
                     }
@@ -29,7 +29,7 @@ const SaleFunnelItem = ({
                 } else {
                     requestNextStage(
                         next_possible_stages.id,
-                        stage.stage_date,
+                        // stage.stage_date,
                         action
                     );
                 }
