@@ -803,10 +803,25 @@ const ProjectCard = () => {
                                 <input
                                     type="text"
                                     name="name"
-                                    value={projectData?.name}
-                                    onChange={(e) =>
-                                        handleInputChange(e, "name")
+                                    value={projectDataCustom?.name}
+                                    onChange={
+                                        (e) =>
+                                            setProjectDataCustom((prev) => ({
+                                                ...prev,
+                                                name: e.target.value,
+                                            }))
+                                        // handleInputChange(e, "name")
                                     }
+                                    onBlur={() => {
+                                        if (
+                                            projectData?.name !=
+                                            projectDataCustom?.name
+                                        ) {
+                                            updateProject(projectId, true, {
+                                                name: projectDataCustom.name,
+                                            });
+                                        }
+                                    }}
                                     disabled={mode == "read"}
                                 />
 
@@ -1025,15 +1040,30 @@ const ProjectCard = () => {
                                         placeholder="Например: создание производства заготовки с микрокристаллической структурой..."
                                         type="text"
                                         name="description"
-                                        value={projectData?.description || ""}
-                                        onChange={(e) =>
-                                            handleInputChange(e, "description")
+                                        value={
+                                            projectDataCustom?.description || ""
+                                        }
+                                        onChange={
+                                            (e) =>
+                                                setProjectDataCustom(
+                                                    (prev) => ({
+                                                        ...prev,
+                                                        description:
+                                                            e.target.value,
+                                                    })
+                                                )
+                                            // handleInputChange(e, "description")
                                         }
                                         onBlur={() => {
-                                            updateProject(projectId, true, {
-                                                description:
-                                                    projectDataCustom.description,
-                                            });
+                                            if (
+                                                projectData?.description !=
+                                                projectDataCustom?.description
+                                            ) {
+                                                updateProject(projectId, true, {
+                                                    description:
+                                                        projectDataCustom.description,
+                                                });
+                                            }
                                         }}
                                         disabled={
                                             mode == "read" || !availableToChange
@@ -1049,11 +1079,27 @@ const ProjectCard = () => {
 
                                     <AutoResizeTextarea
                                         className="form-textarea"
-                                        value={projectData?.location || ""}
-                                        onChange={(e) =>
-                                            handleInputChange(e, "location")
+                                        value={
+                                            projectDataCustom?.location || ""
                                         }
-                                        onBlur={() => updateProject(projectId)}
+                                        onChange={(e) =>
+                                            // handleInputChange(e, "location")
+                                            setProjectDataCustom((prev) => ({
+                                                ...prev,
+                                                location: e.target.value,
+                                            }))
+                                        }
+                                        onBlur={() => {
+                                            if (
+                                                projectData?.location !=
+                                                projectDataCustom?.location
+                                            ) {
+                                                updateProject(projectId, true, {
+                                                    location:
+                                                        projectDataCustom.location,
+                                                });
+                                            }
+                                        }}
                                         placeholder="Страна, город, область..."
                                         disabled={
                                             mode == "read" || !availableToChange
@@ -1069,11 +1115,24 @@ const ProjectCard = () => {
 
                                     <AutoResizeTextarea
                                         className="form-textarea"
-                                        value={projectData?.tep || ""}
+                                        value={projectDataCustom?.tep || ""}
                                         onChange={(e) =>
-                                            handleInputChange(e, "tep")
+                                            // handleInputChange(e, "tep")
+                                            setProjectDataCustom((prev) => ({
+                                                ...prev,
+                                                tep: e.target.value,
+                                            }))
                                         }
-                                        onBlur={() => updateProject(projectId)}
+                                        onBlur={() => {
+                                            if (
+                                                projectData?.tep !=
+                                                projectDataCustom?.tep
+                                            ) {
+                                                updateProject(projectId, true, {
+                                                    tep: projectDataCustom.tep,
+                                                });
+                                            }
+                                        }}
                                         placeholder="Заполните ТЭП"
                                         disabled={
                                             mode == "read" || !availableToChange
