@@ -789,10 +789,6 @@ const ProjectCard = () => {
         }
     }, [width]);
 
-    useEffect(() => {
-        console.log(matchedBanks);
-    }, [matchedBanks]);
-
     return (
         <main className="page">
             <section className="card project-card">

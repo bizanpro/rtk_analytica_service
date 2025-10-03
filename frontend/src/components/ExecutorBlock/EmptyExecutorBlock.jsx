@@ -166,7 +166,7 @@ const EmptyExecutorBlock = ({
                                 })
                             }
                             value={newContact.creditor_id}
-                            disabled={isReadonly}
+                            // disabled={isReadonly}
                         >
                             <option value="">Выберите банк</option>
                             {banks?.map((bank) => (
