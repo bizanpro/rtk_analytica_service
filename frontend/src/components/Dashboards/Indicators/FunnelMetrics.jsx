@@ -6,7 +6,7 @@ const FunnelMetrics = ({ funnelMetrics }) => {
             <div className="grid items-center grid-cols-2 justify-between gap-8 border-r border-gray-300 pr-[20px]">
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 font-medium">
-                        Запрос
+                        {funnelMetrics?.request_received?.label}
                         <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                             ?
                         </span>
@@ -28,7 +28,7 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 font-medium">
-                        КП
+                        {funnelMetrics?.proposal_sent?.label}
                         <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                             ?
                         </span>
@@ -51,7 +51,7 @@ const FunnelMetrics = ({ funnelMetrics }) => {
             <div className="flex items-center gap-8 flex-grow pl-[20px]">
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 font-medium">
-                        Согласие
+                        {funnelMetrics?.agreement?.label}
                         <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                             ?
                         </span>
@@ -71,7 +71,7 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 font-medium">
-                        Отказ
+                        {funnelMetrics?.rejected?.label}
                         <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                             ?
                         </span>
@@ -91,7 +91,7 @@ const FunnelMetrics = ({ funnelMetrics }) => {
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2 font-medium">
-                        Отложен
+                        {funnelMetrics?.postponed?.label}
                         <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px]">
                             ?
                         </span>
