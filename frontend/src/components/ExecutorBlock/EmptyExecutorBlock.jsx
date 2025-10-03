@@ -136,9 +136,12 @@ const EmptyExecutorBlock = ({
 
     useEffect(() => {
         setIsFilled(
-            Object.values(newContact).every(
-                (value) => value && value.trim() !== ""
-            )
+            Object.values(newContact).every((value) => {
+                if (typeof value === "string") {
+                    return value.trim() !== "";
+                }
+                return value !== null && value !== undefined;
+            })
         );
     }, [newContact]);
 
@@ -305,13 +308,27 @@ const EmptyExecutorBlock = ({
                         selectedContact={newContact}
                         onChange={(selected) => {
                             if (selected) {
-                                setNewContact({
-                                    ...newContact,
-                                    full_name: selected.value,
-                                    phone: selected.phone || "",
-                                    email: selected.email || "",
-                                    position: selected.position || "",
-                                });
+                                {
+                                    type === "creditor"
+                                        ? setNewContact({
+                                              ...newContact,
+                                              full_name: selected.value,
+                                              phone: selected.phone || "",
+                                              email: selected.email || "",
+                                              position: selected.position || "",
+                                              creditor_id:
+                                                  type === "creditor"
+                                                      ? selected?.creditor_id
+                                                      : "",
+                                          })
+                                        : setNewContact({
+                                              ...newContact,
+                                              full_name: selected.value,
+                                              phone: selected.phone || "",
+                                              email: selected.email || "",
+                                              position: selected.position || "",
+                                          });
+                                }
 
                                 setIsReadonly(true);
                                 setActiveTab("create");

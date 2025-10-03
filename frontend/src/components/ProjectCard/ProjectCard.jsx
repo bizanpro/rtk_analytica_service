@@ -89,9 +89,7 @@ const ProjectCard = () => {
 
     // Закрепленные за карточкой банки для отображения вкладок
     const matchedBanks = banks.filter((bank) =>
-        projectData?.creditor_responsible_persons?.some(
-            (item) => item.creditor_id === bank.id
-        )
+        creditors?.some((item) => item.creditor_id === bank.id)
     );
 
     // Фильтр кредиторов
@@ -106,10 +104,10 @@ const ProjectCard = () => {
     };
 
     // Обработка ввода данных проекта
-    const handleInputChange = useCallback((e, name) => {
-        setProjectDataCustom((prev) => ({ ...prev, [name]: e.target.value }));
-        setProjectData((prev) => ({ ...prev, [name]: e.target.value }));
-    }, []);
+    // const handleInputChange = useCallback((e, name) => {
+    //     setProjectDataCustom((prev) => ({ ...prev, [name]: e.target.value }));
+    //     setProjectData((prev) => ({ ...prev, [name]: e.target.value }));
+    // }, []);
 
     // Получение отраслей
     const fetchIndustries = () => {
@@ -790,6 +788,10 @@ const ProjectCard = () => {
             setActiveWindow("");
         }
     }, [width]);
+
+    useEffect(() => {
+        console.log(matchedBanks);
+    }, [matchedBanks]);
 
     return (
         <main className="page">
