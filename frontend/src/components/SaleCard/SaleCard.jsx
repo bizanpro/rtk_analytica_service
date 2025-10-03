@@ -318,6 +318,59 @@ const SaleCard = () => {
         }
     };
 
+    // Закрепляем дату за этапом
+    const setDate = (date) => {
+        const newDate = new Date(date).toLocaleDateString("ru-RU");
+
+        const [day, month, year] = newDate.split(".");
+        const formattedDate = `${year}-${month}-${day}`;
+
+        postData(
+            "PATCH",
+            `${
+                import.meta.env.VITE_API_URL
+            }sales-funnel-projects/${saleId}/stages/${
+                stageMetrics.stage_id
+            }/date`,
+            { stage_date: formattedDate }
+        )
+            .then((response) => {
+                if (response.ok) {
+                    toast.success(
+                        response.message || "Дата этапа успешно обновлена",
+                        {
+                            containerId: "projectCard",
+                            isLoading: false,
+                            autoClose: 1200,
+                            pauseOnFocusLoss: false,
+                            pauseOnHover: false,
+                            position: "top-center",
+                        }
+                    );
+                } else {
+                    toast.error(response.error || "Ошибка запроса", {
+                        containerId: "projectCard",
+                        isLoading: false,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                }
+            })
+            .catch((response) => {
+                toast.error(response.error || "Ошибка запроса", {
+                    containerId: "projectCard",
+                    isLoading: false,
+                    autoClose: 2000,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                });
+            });
+    };
+
+    // Обработка даты у этапа
     const handleActiveStageDate = (date, stageId) => {
         setSaleStages((prev) => {
             const updatedStages = prev.stages.map((stage) => {
@@ -332,31 +385,32 @@ const SaleCard = () => {
 
             return { ...prev, stages: updatedStages };
         });
+        setDate(date);
     };
 
     // Обновляем детализацию этапа продажи
     const updateStageDetails = (nextStage = false, stage_status) => {
-        const activeStageData = saleStages.stages.find(
-            (item) => item.id === stageMetrics.stage_id
-        );
+        // const activeStageData = saleStages.stages.find(
+        //     (item) => item.id === stageMetrics.stage_id
+        // );
 
         let stageMetricsData = stageMetrics;
         stageMetricsData = metrics;
 
-        let newDate = "";
+        // let newDate = "";
 
-        if (activeStageData?.stage_date) {
-            newDate = new Date(activeStageData.stage_date).toLocaleDateString(
-                "ru-RU"
-            );
+        // if (activeStageData?.stage_date) {
+        //     newDate = new Date(activeStageData.stage_date).toLocaleDateString(
+        //         "ru-RU"
+        //     );
 
-            const [day, month, year] = newDate.split(".");
-            const formattedDate = `${year}-${month}-${day}`;
+        //     const [day, month, year] = newDate.split(".");
+        //     const formattedDate = `${year}-${month}-${day}`;
 
-            stageMetricsData.stage_date = formattedDate;
-        } else {
-            stageMetricsData.stage_date = "";
-        }
+        //     stageMetricsData.stage_date = formattedDate;
+        // } else {
+        //     stageMetricsData.stage_date = "";
+        // }
 
         stageMetricsData.metrics = stageMetricsData.metrics.map((item) => ({
             ...item,
@@ -377,7 +431,7 @@ const SaleCard = () => {
                     getStages();
 
                     if (nextStage) {
-                        requestNextStage(nextStage, newDate, stage_status);
+                        requestNextStage(nextStage, stage_status);
                     } else {
                         toast.success(response.message, {
                             type: "success",
@@ -450,13 +504,13 @@ const SaleCard = () => {
     };
 
     // Запрос следующего этапа в воронке продаж
-    const requestNextStage = (stage_id, stage_date, stage_status) => {
+    const requestNextStage = (stage_id, stage_status) => {
         postData(
             "POST",
             `${
                 import.meta.env.VITE_API_URL
             }sales-funnel-projects/${saleId}/stages`,
-            { stage_id, stage_date, status: stage_status }
+            { stage_id, status: stage_status }
         )
             .then((response) => {
                 if (response?.ok) {
