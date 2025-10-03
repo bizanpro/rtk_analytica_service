@@ -264,7 +264,7 @@ const ProjectCard = () => {
         showMessage = true,
         data = projectDataCustom
     ) => {
-        if (projectDataCustom?.contragent_id) {
+        if (projectDataCustom?.contragent_id || data?.contragent_id) {
             query = toast.loading("Обновление", {
                 containerId: "toastContainer",
                 draggable: true,
@@ -931,10 +931,16 @@ const ProjectCard = () => {
                                                     main: +evt.target.value,
                                                 },
                                             });
-                                            setProjectData({
-                                                ...projectData,
+                                            // setProjectData({
+                                            //     ...projectData,
+                                            //     industries: {
+                                            //         ...projectData.industries,
+                                            //         main: +evt.target.value,
+                                            //     },
+                                            // });
+                                            updateProject(projectId, true, {
                                                 industries: {
-                                                    ...projectData.industries,
+                                                    ...projectDataCustom.industries,
                                                     main: +evt.target.value,
                                                 },
                                             });
@@ -976,12 +982,19 @@ const ProjectCard = () => {
                                         target={"other_industries"}
                                         fieldName={"others"}
                                         selectedValues={otherIndustries.others}
-                                        onChange={(updated) =>
+                                        onChange={(updated) => {
                                             setOtherIndustries((prev) => ({
                                                 ...prev,
                                                 ...updated,
-                                            }))
-                                        }
+                                            }));
+
+                                            updateProject(projectId, true, {
+                                                industries: {
+                                                    ...projectDataCustom.industries,
+                                                    others: updated.others,
+                                                },
+                                            });
+                                        }}
                                         options={industries
                                             .filter(
                                                 (industry) =>
@@ -1016,7 +1029,12 @@ const ProjectCard = () => {
                                         onChange={(e) =>
                                             handleInputChange(e, "description")
                                         }
-                                        onBlur={() => updateProject(projectId)}
+                                        onBlur={() => {
+                                            updateProject(projectId, true, {
+                                                description:
+                                                    projectDataCustom.description,
+                                            });
+                                        }}
                                         disabled={
                                             mode == "read" || !availableToChange
                                         }
