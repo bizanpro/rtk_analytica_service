@@ -259,7 +259,11 @@ const ProjectCard = () => {
     };
 
     // Обновление проекта
-    const updateProject = async (id, showMessage = true) => {
+    const updateProject = async (
+        id,
+        showMessage = true,
+        data = projectDataCustom
+    ) => {
         if (projectDataCustom?.contragent_id) {
             query = toast.loading("Обновление", {
                 containerId: "toastContainer",
@@ -268,7 +272,7 @@ const ProjectCard = () => {
                     window.innerWidth >= 1440 ? "bottom-right" : "top-right",
             });
 
-            postData("PATCH", `${URL}/${id}`, projectDataCustom)
+            postData("PATCH", `${URL}/${id}`, data)
                 .then((response) => {
                     if (response?.ok) {
                         setProjectData((prev) => ({
@@ -736,14 +740,6 @@ const ProjectCard = () => {
     }, [projectData?.creditors]);
 
     useEffect(() => {
-        if (projectData.contragent_id) {
-            fetchContracts();
-        } else {
-            setReportWindowsState(false);
-        }
-    }, [projectData?.contragent_id]);
-
-    useEffect(() => {
         const report = searchParams.get("report");
 
         if (report !== null && report !== "undefined") {
@@ -775,6 +771,16 @@ const ProjectCard = () => {
         }
     }, []);
 
+    useEffect(() => {
+        if (projectData?.contragent_id) {
+            setAvailableToChange(true);
+            fetchContracts();
+        } else {
+            setReportWindowsState(false);
+            setAvailableToChange(false);
+        }
+    }, [projectData?.contragent_id]);
+
     useBodyScrollLock(activeWindow); // Блокируем экран при открытии попапа
     useBodyScrollLock(reportWindowsState); // Блокируем экран при открытии редактора отчета
     const width = useWindowWidth(); // Снимаем блокировку на десктопе
@@ -784,14 +790,6 @@ const ProjectCard = () => {
             setActiveWindow("");
         }
     }, [width]);
-
-    useEffect(() => {
-        if (projectData?.contragent_id) {
-            setAvailableToChange(true);
-        } else {
-            setAvailableToChange(false);
-        }
-    }, [projectData?.contragent_id]);
 
     return (
         <main className="page">
@@ -882,6 +880,9 @@ const ProjectCard = () => {
                                             //     ...prev,
                                             //     contragent_id: newValue,
                                             // }));
+                                            updateProject(projectId, true, {
+                                                contragent_id: newValue,
+                                            });
                                         }}
                                         isDisabled={mode == "read"}
                                         menuIsOpen={contragentMenuOpen}
@@ -1015,6 +1016,7 @@ const ProjectCard = () => {
                                         onChange={(e) =>
                                             handleInputChange(e, "description")
                                         }
+                                        onBlur={() => updateProject(projectId)}
                                         disabled={
                                             mode == "read" || !availableToChange
                                         }
@@ -1033,6 +1035,7 @@ const ProjectCard = () => {
                                         onChange={(e) =>
                                             handleInputChange(e, "location")
                                         }
+                                        onBlur={() => updateProject(projectId)}
                                         placeholder="Страна, город, область..."
                                         disabled={
                                             mode == "read" || !availableToChange
@@ -1052,6 +1055,7 @@ const ProjectCard = () => {
                                         onChange={(e) =>
                                             handleInputChange(e, "tep")
                                         }
+                                        onBlur={() => updateProject(projectId)}
                                         placeholder="Заполните ТЭП"
                                         disabled={
                                             mode == "read" || !availableToChange

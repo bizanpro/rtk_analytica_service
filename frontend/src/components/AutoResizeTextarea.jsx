@@ -3,6 +3,7 @@ import { useRef, useEffect } from "react";
 function AutoResizeTextarea({
     value,
     onChange,
+    onBlur,
     disabled,
     placeholder,
     className,
@@ -30,6 +31,7 @@ function AutoResizeTextarea({
             disabled={disabled}
             value={value}
             onChange={onChange}
+            onBlur={onBlur}
             rows={1}
             style={{ overflow: "hidden" }}
             placeholder={placeholder}
