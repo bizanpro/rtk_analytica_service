@@ -5,8 +5,10 @@ import ReportRateEditor from "../ReportRateEditor/ReportRateEditor";
 
 const ManagementReportsTab = ({
     managementReports,
+    mode,
 }: {
     managementReports: [];
+    mode: string;
 }) => {
     const [rateEditorState, setRateEditorState] = useState(false); // Редактор оценки отчёта
     const [reportData, setReportData] = useState({});
@@ -23,21 +25,25 @@ const ManagementReportsTab = ({
         setRateEditorState(false);
     };
 
-    return !rateEditorState ? (
-        <ul className="reports__list">
-            {managementReports.length > 0 &&
-                managementReports.map((item) => (
-                    <ManagementReportListItem
-                        openEditor={openRateReportEditor}
-                        reportData={item}
-                    />
-                ))}
-        </ul>
-    ) : (
-        <ReportRateEditor
-            reportData={reportData}
-            closeEditor={closeRateReportEditor}
-        />
+    return (
+        <>
+            <ul className="reports__list">
+                {managementReports.length > 0 &&
+                    managementReports.map((item) => (
+                        <ManagementReportListItem
+                            openEditor={openRateReportEditor}
+                            reportData={item}
+                        />
+                    ))}
+            </ul>
+
+            <ReportRateEditor
+                rateEditorState={rateEditorState}
+                reportData={reportData}
+                closeEditor={closeRateReportEditor}
+                mode={mode}
+            />
+        </>
     );
 };
 

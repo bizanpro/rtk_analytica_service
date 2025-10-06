@@ -1444,6 +1444,10 @@ const ProjectCard = () => {
                                                 setManagementReports={
                                                     setManagementReports
                                                 }
+                                                activeWindow={activeWindow}
+                                                setActiveWindow={
+                                                    setActiveWindow
+                                                }
                                                 mode={"read"}
                                             />
                                         )}
@@ -1586,6 +1590,8 @@ const ProjectCard = () => {
 
                             {activeReportTab === "managementReports" && (
                                 <ManagementReportsTabMobile
+                                    activeWindow={activeWindow}
+                                    setActiveWindow={setActiveWindow}
                                     managementReports={managementReports}
                                     mode={"read"}
                                 />

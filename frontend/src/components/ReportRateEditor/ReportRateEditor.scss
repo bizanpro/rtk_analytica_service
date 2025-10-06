@@ -16,6 +16,20 @@
         }
     }
 
+    &_read-mode {
+        .report-window__body {
+            padding: 18px 20px 30px !important;
+
+            @media (min-width: $media-xxl) {
+                padding: 18px 20px 35px !important;
+            }
+        }
+
+        .bottom-nav {
+            display: none;
+        }
+    }
+
     .misc-list {
         margin-top: 10px;
     }

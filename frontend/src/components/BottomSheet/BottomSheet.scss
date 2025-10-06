@@ -51,8 +51,12 @@
         opacity: 1;
         pointer-events: all;
 
-        .bottom-sheet__wrapper {
+        > .bottom-sheet__wrapper {
             transform: translate3d(0, 0, 0);
+
+            .bottom-sheet__wrapper {
+                transform: translate3d(0, -40px, 0);
+            }
         }
     }
 

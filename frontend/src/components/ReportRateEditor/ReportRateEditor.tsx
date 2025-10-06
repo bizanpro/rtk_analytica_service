@@ -7,6 +7,7 @@ import "./ReportRateEditor.scss";
 type Props = {
     closeEditor: () => void;
     updateReportDetails?: (report: object, action: string) => void;
+    rateEditorState: boolean;
     reportData: object;
     mode: string;
 };
@@ -21,13 +22,11 @@ const RATE_LABELS = [
 const ReportRateEditor = ({
     closeEditor,
     updateReportDetails,
+    rateEditorState,
     reportData,
     mode,
 }: Props) => {
     const [reportRateData, setReportRateData] = useState<object>(reportData);
-
-    console.log(mode);
-    
 
     const rateHandler = (name: string, value: string | number) => {
         setReportRateData((prev) => ({
@@ -43,7 +42,12 @@ const ReportRateEditor = ({
     }, [reportData]);
 
     return (
-        <div className="bottom-sheet bottom-sheet_desk active">
+        <div
+            className={`bottom-sheet bottom-sheet_desk ${
+                rateEditorState ? "active" : ""
+            }`}
+            onClick={() => closeEditor()}
+        >
             <div
                 className="bottom-sheet__wrapper"
                 onClick={(e) => e.stopPropagation()}
@@ -51,7 +55,11 @@ const ReportRateEditor = ({
                 <div className="bottom-sheet__icon"></div>
 
                 <div className="bottom-sheet__body">
-                    <div className="report-window report-rate-editor">
+                    <div
+                        className={`report-window report-rate-editor ${
+                            mode === "read" && "report-rate-editor_read-mode"
+                        }`}
+                    >
                         <div className="report-window__wrapper">
                             <div className="report-window__header">
                                 <div>
