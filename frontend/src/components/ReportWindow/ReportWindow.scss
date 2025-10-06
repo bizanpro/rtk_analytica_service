@@ -36,6 +36,32 @@
         }
     }
 
+    &__close-btn {
+        position: relative;
+        width: 24px;
+        flex: 0 0 24px;
+        height: 24px;
+
+        &::before,
+        &::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            height: 2.5px;
+            width: 15px;
+            background: var(--color-black);
+        }
+
+        &::before {
+            transform: translate(-50%, -50%) rotate(135deg);
+        }
+
+        &::after {
+            transform: translate(-50%, -50%) rotate(-135deg);
+        }
+    }
+
     &__name {
         font-weight: 600;
         font-size: 20px;

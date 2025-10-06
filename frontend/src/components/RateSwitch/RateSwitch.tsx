@@ -9,7 +9,12 @@ interface RateSwitchProps {
     mode: string;
 }
 
-const RateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
+const RateSwitch = ({
+    name,
+    reportRateData,
+    rateHandler,
+    mode,
+}: RateSwitchProps) => {
     const [currentRateClass, setCurrentRateClass] = useState("");
 
     const handleRateClass = () => {

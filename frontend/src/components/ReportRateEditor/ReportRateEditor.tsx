@@ -26,6 +26,9 @@ const ReportRateEditor = ({
 }: Props) => {
     const [reportRateData, setReportRateData] = useState<object>(reportData);
 
+    console.log(mode);
+    
+
     const rateHandler = (name: string, value: string | number) => {
         setReportRateData((prev) => ({
             ...prev,
@@ -51,32 +54,33 @@ const ReportRateEditor = ({
                     <div className="report-window report-rate-editor">
                         <div className="report-window__wrapper">
                             <div className="report-window__header">
-                                <div className="report-window__name">
-                                    {reportRateData.name}
-                                </div>
+                                <div>
+                                    <div className="report-window__name">
+                                        {reportRateData.name}
+                                    </div>
 
-                                <ul className="flex items-center gap-2">
-                                    {reportRateData.misc?.length > 0 &&
-                                        reportRateData.misc?.map(
-                                            (item, index) => (
-                                                <li
-                                                    className="border rounded-3xl border-gray-300 text-gray-300 py-1.5 px-4 w-fit text-sm"
-                                                    key={index}
-                                                >
-                                                    {item}
-                                                </li>
-                                            )
-                                        )}
-                                </ul>
+                                    {reportRateData.misc?.length > 0 && (
+                                        <ul className="misc-list">
+                                            {reportRateData.misc?.map(
+                                                (item, index) => (
+                                                    <li
+                                                        className="misc-list__item"
+                                                        key={index}
+                                                    >
+                                                        {item}
+                                                    </li>
+                                                )
+                                            )}
+                                        </ul>
+                                    )}
+                                </div>
 
                                 <button
                                     type="button"
                                     onClick={closeEditor}
-                                    className="border rounded-[50%] flex items-center justify-center w-[20px] h-[20px] leading-4 mt-2"
+                                    className="report-window__close-btn"
                                     title="Закрыть отчёт"
-                                >
-                                    x
-                                </button>
+                                ></button>
                             </div>
 
                             <div className="report-window__body">
@@ -85,7 +89,7 @@ const ReportRateEditor = ({
                                         Ответственный
                                     </label>
 
-                                    <div className="form-field">
+                                    <div className="form-field form-field__text">
                                         {reportRateData.physical_person?.name}
                                     </div>
                                 </div>
@@ -93,9 +97,21 @@ const ReportRateEditor = ({
                                 <div className="report-window__field">
                                     <label className="form-label">Статус</label>
 
-                                    <div className="form-field form-field_status">
-                                        {reportRateData.status}
-                                    </div>
+                                    {reportRateData.status && (
+                                        <div
+                                            className={`form-field form-field__status ${
+                                                reportRateData.status.toLowerCase() ===
+                                                    "утверждён" ||
+                                                reportRateData.status.toLowerCase() ===
+                                                    "в процессе"
+                                                    ? "form-field__status_green"
+                                                    : ""
+                                            }`}
+                                        >
+                                            <span></span>
+                                            {reportRateData.status}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="report-window__block">
@@ -141,8 +157,9 @@ const ReportRateEditor = ({
                                     </b>
 
                                     <textarea
-                                        className="form-textarea"
+                                        className="form-textarea h-[150px]"
                                         placeholder="Описание"
+                                        style={{ resize: "none" }}
                                         value={
                                             reportRateData.general_summary || ""
                                         }
