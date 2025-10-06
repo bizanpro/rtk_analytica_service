@@ -23,18 +23,18 @@ import ManagementReportsTab from "../ManagementReportsTab/ManagementReportsTab";
 import ManagementReportsTabMobile from "../ManagementReportsTab/ManagementReportsTabMobile";
 import Hint from "../Hint/Hint";
 import CreatableSelect from "react-select/creatable";
+import CustomSelect from "../CustomSelect/CustomSelect";
 import MultiSelectField from "../MultiSelect/MultiSelectField";
 import BottomSheet from "../BottomSheet/BottomSheet";
 import BottomNavCard from "../BottomNav/BottomNavCard";
 import Popup from "../Popup/Popup.jsx";
 
+import "../../styles/card.scss";
 import "./ProjectCard.scss";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-import "../../styles/card.scss";
 
 const ProjectCard = () => {
     let query;
@@ -985,6 +985,29 @@ const ProjectCard = () => {
                                         />
                                     </div>
 
+                                    {/* <CustomSelect
+                                        type={"checkbox"}
+                                        placeholder={`${
+                                            mode === "read"
+                                                ? "Нет данных"
+                                                : "Выбрать из списка"
+                                        }`}
+                                        options={industries
+                                            .filter(
+                                                (industry) =>
+                                                    industry.id !==
+                                                    projectDataCustom
+                                                        ?.industries?.main
+                                            )
+                                            .map((industry) => ({
+                                                value: industry.id,
+                                                label: industry.name,
+                                            }))}
+                                        selectedValues={otherIndustries.others}
+                                        mode={mode}
+                                        isDisabled={mode == "read"}
+                                    /> */}
+
                                     <MultiSelectField
                                         mode={mode}
                                         placeholder={`${
@@ -1421,6 +1444,7 @@ const ProjectCard = () => {
                                                 setManagementReports={
                                                     setManagementReports
                                                 }
+                                                mode={"read"}
                                             />
                                         )}
                                     </div>
