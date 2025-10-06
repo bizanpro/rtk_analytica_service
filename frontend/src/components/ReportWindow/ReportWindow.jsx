@@ -28,6 +28,34 @@ const isValidDate = (str) => {
     return regex.test(str);
 };
 
+const handleStatusClass = (status) => {
+    switch (status?.toLowerCase()) {
+        case "в работе":
+            return "form-field__status_green";
+
+        case "в процессе":
+            return "form-field__status_green";
+
+        case "завершен":
+            return "form-field__status_green";
+
+        case "завершён":
+            return "form-field__status_green";
+
+        case "запланирован":
+            return "";
+
+        case "отменен":
+            return "form-field__status_red";
+
+        case "отменён":
+            return "form-field__status_red";
+
+        default:
+            return "";
+    }
+};
+
 const ReportWindow = ({
     reportName,
     reportWindowsState,
@@ -982,33 +1010,43 @@ const ReportWindow = ({
                                                     Статус
                                                 </label>
 
-                                                <select
-                                                    className="form-select"
-                                                    value={
-                                                        reportData?.report_status_id
-                                                    }
-                                                    onChange={(e) =>
-                                                        handleInputChange(
-                                                            e,
-                                                            "report_status_id"
-                                                        )
-                                                    }
-                                                    disabled
+                                                <div
+                                                    className={`form-field form-field__status ${handleStatusClass(
+                                                        reportData.report_status
+                                                    )}`}
                                                 >
-                                                    <option value=""></option>
-                                                    {reportStatuses.map(
-                                                        (status) => (
-                                                            <option
-                                                                value={
-                                                                    status.id
-                                                                }
-                                                                key={status.id}
-                                                            >
-                                                                {status.name}
-                                                            </option>
-                                                        )
-                                                    )}
-                                                </select>
+                                                    <span></span>
+                                                    <select
+                                                        value={
+                                                            reportData?.report_status_id
+                                                        }
+                                                        onChange={(e) =>
+                                                            handleInputChange(
+                                                                e,
+                                                                "report_status_id"
+                                                            )
+                                                        }
+                                                        disabled
+                                                    >
+                                                        <option value=""></option>
+                                                        {reportStatuses.map(
+                                                            (status) => (
+                                                                <option
+                                                                    value={
+                                                                        status.id
+                                                                    }
+                                                                    key={
+                                                                        status.id
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        status.name
+                                                                    }
+                                                                </option>
+                                                            )
+                                                        )}
+                                                    </select>
+                                                </div>
                                             </div>
 
                                             <div>

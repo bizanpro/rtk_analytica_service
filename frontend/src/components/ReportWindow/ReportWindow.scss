@@ -76,6 +76,10 @@
         @media (min-width: $media-xxl) {
             padding: 18px 30px 100px;
         }
+
+        .form-field__status {
+            background: var(--color-gray-20);
+        }
     }
 
     &__fields {

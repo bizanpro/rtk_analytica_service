@@ -71,6 +71,10 @@
         &__status_green span {
             background: var(--color-green-80);
         }
+
+        &__status_red span {
+            background: var(--color-red-70);
+        }
     }
 
     &-multiselect {
