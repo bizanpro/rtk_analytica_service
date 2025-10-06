@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import handleStatusString from "../../../utils/handleStatusString";
 
-import ReportRateEditor from "../../Reports/ReportRateEditor";
+import ReportRateEditor from "../../ReportRateEditor/ReportRateEditor";
 
 const ProjectManagerReports = ({ projectManagerReports }) => {
     const [rateEditorState, setRateEditorState] = useState(false);

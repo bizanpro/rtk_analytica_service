@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import ContragentManagementReportListItem from "./ContragentManagementReportListItem";
-import ReportRateEditor from "../Reports/ReportRateEditor";
+import ReportRateEditor from "../ReportRateEditor/ReportRateEditor";
 
 const ContragentManagementReportsTab = ({
     managerReports,

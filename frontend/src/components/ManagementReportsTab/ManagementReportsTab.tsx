@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import getData from "../../utils/getData";
 
 import ManagementReportListItem from "./ManagementReportListItem";
-import ReportRateEditor from "../Reports/ReportRateEditor";
+import ReportRateEditor from "../ReportRateEditor/ReportRateEditor";
 
 import "./ManagementReports.scss";
 

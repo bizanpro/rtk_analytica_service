@@ -1,0 +1,14 @@
+.report-rate-editor {
+    &__rate-block {
+        display: grid;
+        gap: 10px;
+    }
+
+    .report-window__subtitle {
+        margin-bottom: 10px;
+    }
+
+    .bottom-nav .container {
+        grid-template-columns: 1fr;
+    }
+}

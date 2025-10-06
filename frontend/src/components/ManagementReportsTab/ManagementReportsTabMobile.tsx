@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import ManagementReportListItem from "./ManagementReportListItem";
-import ReportRateEditor from "../Reports/ReportRateEditor";
+import ReportRateEditor from "../ReportRateEditor/ReportRateEditor";
 
 const ManagementReportsTab = ({
     managementReports,

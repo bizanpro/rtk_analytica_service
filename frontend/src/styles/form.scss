@@ -39,6 +39,13 @@
         &_error {
             border: 1px solid var(--color-red-60);
         }
+
+        &_static {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
     }
 
     &-multiselect {

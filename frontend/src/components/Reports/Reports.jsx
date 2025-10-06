@@ -7,7 +7,7 @@ import { sortDateList } from "../../utils/sortDateList";
 import ReportItem from "./ReportItem";
 import ManagementItem from "./ManagementItem";
 import ManagementReportEditor from "./ManagementReportEditor";
-import ReportRateEditor from "./ReportRateEditor";
+import ReportRateEditor from "../ReportRateEditor/ReportRateEditor";
 import ReportWindow from "../ReportWindow/ReportWindow";
 import TheadSortButton from "../TheadSortButton/TheadSortButton";
 
