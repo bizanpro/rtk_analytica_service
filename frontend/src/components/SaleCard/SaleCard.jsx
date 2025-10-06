@@ -306,7 +306,7 @@ const SaleCard = () => {
     // Получаем детализацию выбранного этапа
     const getStageDetails = (stageId) => {
         const stageData = saleStages.stages?.find(
-            (item) => item.id === stageId
+            (item) => item.instance_id === stageId
         );
 
         if (stageData) {
@@ -390,27 +390,8 @@ const SaleCard = () => {
 
     // Обновляем детализацию этапа продажи
     const updateStageDetails = (nextStage = false, stage_status) => {
-        // const activeStageData = saleStages.stages.find(
-        //     (item) => item.id === stageMetrics.stage_id
-        // );
-
         let stageMetricsData = stageMetrics;
         stageMetricsData = metrics;
-
-        // let newDate = "";
-
-        // if (activeStageData?.stage_date) {
-        //     newDate = new Date(activeStageData.stage_date).toLocaleDateString(
-        //         "ru-RU"
-        //     );
-
-        //     const [day, month, year] = newDate.split(".");
-        //     const formattedDate = `${year}-${month}-${day}`;
-
-        //     stageMetricsData.stage_date = formattedDate;
-        // } else {
-        //     stageMetricsData.stage_date = "";
-        // }
 
         stageMetricsData.metrics = stageMetricsData.metrics.map((item) => ({
             ...item,
@@ -470,7 +451,7 @@ const SaleCard = () => {
     // Валидация полей стоимости этапа перед сохранением
     const handleSaveDetails = () => {
         const activeStageData = saleStages.stages.find(
-            (item) => item.id === stageMetrics.stage_id
+            (item) => item.instance_id === stageMetrics.instance_id
         );
 
         if (
@@ -702,9 +683,11 @@ const SaleCard = () => {
 
     useEffect(() => {
         if (saleStages.stages && saleStages.stages.length > 0 && isFirstInit) {
-            setActiveStage(saleStages.stages[saleStages.stages?.length - 1].id);
+            setActiveStage(
+                saleStages.stages[saleStages.stages?.length - 1].instance_id
+            );
             getStageDetails(
-                saleStages.stages[saleStages.stages?.length - 1].id
+                saleStages.stages[saleStages.stages?.length - 1].instance_id
             );
             setIsFirstInit(false);
         }
