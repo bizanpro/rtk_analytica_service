@@ -411,8 +411,11 @@ const SaleCard = () => {
 
     // Обновляем детализацию этапа продажи
     const updateStageDetails = (nextStage = false, stage_status) => {
-        let stageMetricsData = stageMetrics;
-        stageMetricsData = metrics;
+        // let stageMetricsData = stageMetrics;
+
+        let stageMetricsData = metrics;
+
+        stageMetricsData.stage_instance_id = stageMetrics.instance_id;
 
         stageMetricsData.metrics = stageMetricsData.metrics.map((item) => ({
             ...item,
@@ -424,7 +427,7 @@ const SaleCard = () => {
             `${
                 import.meta.env.VITE_API_URL
             }sales-funnel-projects/${saleId}/stages/${
-                stageMetrics.instance_id
+                stageMetrics.stage_id
             }/metrics`,
             stageMetricsData
         )
