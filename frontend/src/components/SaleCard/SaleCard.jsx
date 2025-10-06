@@ -424,7 +424,7 @@ const SaleCard = () => {
             `${
                 import.meta.env.VITE_API_URL
             }sales-funnel-projects/${saleId}/stages/${
-                stageMetrics.stage_id
+                stageMetrics.instance_id
             }/metrics`,
             stageMetricsData
         )
