@@ -149,7 +149,7 @@ const SaleFunnelStages = ({
                     return stage.name.toLowerCase() ==
                         "воронка возобновлена" ? (
                         <div
-                            key={stage.id}
+                            key={stage.instance_id}
                             className="text-gray-400 px-5.5 flex items-center gap-2 mb-2"
                         >
                             {stage.name}
@@ -169,7 +169,7 @@ const SaleFunnelStages = ({
                         </div>
                     ) : (
                         <SaleFunnelItem
-                            key={stage.id}
+                            key={stage.instance_id}
                             stage={stage}
                             getStageDetails={getStageDetails}
                             activeStage={activeStage}

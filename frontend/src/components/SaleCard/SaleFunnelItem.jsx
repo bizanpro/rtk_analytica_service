@@ -70,16 +70,16 @@ const SaleFunnelItem = ({
             <li
                 className="grid items-center grid-cols-[1fr_31%_18%] gap-5 mb-2 text-lg cursor-pointer"
                 onClick={() => {
-                    if (activeStage != stage.id) {
-                        setActiveStage(stage.id);
-                        getStageDetails(stage.id);
+                    if (activeStage != stage.instance_id) {
+                        setActiveStage(stage.instance_id);
+                        getStageDetails(stage.instance_id);
                     }
                 }}
             >
                 <div className="flex items-center gap-3">
                     <div
                         className={`w-[10px] h-[10px] flex-[0_0_10px] rounded-[50%] transition ${
-                            activeStage === stage.id ? "bg-gray-400" : ""
+                            activeStage === stage.instance_id ? "bg-gray-400" : ""
                         }`}
                     ></div>
 
