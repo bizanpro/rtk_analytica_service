@@ -19,7 +19,7 @@ const Suppliers = () => {
 
     const [isLoading, setIsLoading] = useState(true);
 
-    // const [isFiltering, setIsFiltering] = useState(false);
+    const [isFiltering, setIsFiltering] = useState(false);
 
     const [page, setPage] = useState(1);
     const [meta, setMeta] = useState({
@@ -117,7 +117,7 @@ const Suppliers = () => {
         isLoading,
         meta,
         setPage,
-        // isFiltering,
+        isFiltering,
     });
 
     const [filters, setFilters] = useState({
@@ -127,14 +127,24 @@ const Suppliers = () => {
     });
 
     const filteredList = useMemo(() => {
-        console.log(filters);
+        const allEmpty = Object.values(filters).every(
+            (arr) => arr.length === 0
+        );
+
+        if (allEmpty) {
+            setIsFiltering(false);
+        } else {
+            setIsFiltering(true);
+        }
 
         return sortedList.filter((item) => {
             return (
                 (filters.selectedNames.length === 0 ||
                     filters.selectedNames.includes(item.program_name)) &&
                 (filters.selectedRoles.length === 0 ||
-                    filters.selectedRoles.includes(item.roles)) &&
+                    item.roles.some((role) =>
+                        filters.selectedRoles.includes(role)
+                    )) &&
                 (filters.selectedStatuses.length === 0 ||
                     filters.selectedStatuses.includes(
                         handleStatus(item.status)
