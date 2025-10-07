@@ -7,9 +7,13 @@ import buildQueryParams from "../../utils/buildQueryParams";
 
 import SalesItem from "./SalesItem";
 import Popup from "../Popup/Popup";
-import Select from "../Select";
+// import Select from "../Select";
 
 import DatePicker from "react-datepicker";
+
+import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
+import FilterButton from "../FilterButton";
+import OverlayTransparent from "../Overlay/OverlayTransparent";
 
 const formatDate = (date) => {
     return date.toISOString().split("T")[0];
@@ -19,52 +23,21 @@ const Sales = () => {
     const URL = `${import.meta.env.VITE_API_URL}sales-funnel-projects`;
     const navigate = useNavigate();
 
+    const [mode, setMode] = useState("edit");
+
     const [isLoading, setIsLoading] = useState(true);
     const [popupState, setPopupState] = useState(false);
+
     const [list, setList] = useState([]);
 
     const [newProjectName, setNewProjectName] = useState("");
+    const [openFilter, setOpenFilter] = useState("");
+
     const [selectedCustomer, setSelectedCustomer] = useState("");
     const [selectedBank, setSelectedBank] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("");
 
     const [dateRange, setDateRange] = useState([null, null]);
-
-    const COLUMNS = [
-        { label: "Проект", key: "name" },
-        { label: "Заказчик", key: "contragent" },
-        { label: "Банк", key: "creditors" },
-        { label: "Тип услуг", key: "services" },
-        {
-            label: "Стоимость, млн руб.",
-            key: "costs",
-        },
-        { label: "Дата запроса", key: "request_date" },
-        { label: "Источник", key: "request_source" },
-        { label: "Дата статуса", key: "status_date" },
-        { label: "Статус", key: "last_service_last_stage" },
-    ];
-
-    const filteredProjects = useMemo(() => {
-        const result = list.filter((project) => {
-            return (
-                (selectedCustomer && selectedCustomer !== "default"
-                    ? project?.contragent?.program_name === selectedCustomer
-                    : true) &&
-                (selectedBank && selectedBank !== "default"
-                    ? Array.isArray(project.creditors)
-                        ? project.creditors?.some(
-                              (bank) => bank?.name === selectedBank
-                          )
-                        : false
-                    : true) &&
-                (selectedStatus && selectedStatus !== "default"
-                    ? project.last_service_last_stage === selectedStatus
-                    : true)
-            );
-        });
-        return result;
-    }, [list, selectedCustomer, selectedBank, selectedStatus, dateRange]);
 
     // Заполняем селектор заказчиков
     const customerOptions = useMemo(() => {
@@ -92,6 +65,42 @@ const Sales = () => {
             );
         return Array.from(new Set(allPM));
     }, [list]);
+
+    const COLUMNS = [
+        { label: "Проект", key: "name" },
+        { label: "Заказчик", key: "contragent" },
+        { label: "Банк", key: "creditors" },
+        { label: "Тип услуг", key: "services" },
+        {
+            label: "Стоим. млн руб.",
+            key: "costs",
+        },
+        { label: "Дата запроса", key: "request_date" },
+        { label: "Источник", key: "request_source" },
+        { label: "Дата статуса", key: "status_date" },
+        { label: "Статус", key: "last_service_last_stage" },
+    ];
+
+    // const filteredProjects = useMemo(() => {
+    //     const result = list.filter((project) => {
+    //         return (
+    //             (selectedCustomer && selectedCustomer !== "default"
+    //                 ? project?.contragent?.program_name === selectedCustomer
+    //                 : true) &&
+    //             (selectedBank && selectedBank !== "default"
+    //                 ? Array.isArray(project.creditors)
+    //                     ? project.creditors?.some(
+    //                           (bank) => bank?.name === selectedBank
+    //                       )
+    //                     : false
+    //                 : true) &&
+    //             (selectedStatus && selectedStatus !== "default"
+    //                 ? project.last_service_last_stage === selectedStatus
+    //                 : true)
+    //         );
+    //     });
+    //     return result;
+    // }, [list, selectedCustomer, selectedBank, selectedStatus, dateRange]);
 
     // Получение реестра
     const getList = (query = "") => {
@@ -140,17 +149,78 @@ const Sales = () => {
         getList();
     }, []);
 
+    const [filters, setFilters] = useState({
+        selectedNames: [],
+        selectedStatuses: [],
+        selectedContagents: [],
+        selectedSectors: [],
+        selectedBanks: [],
+        selectedManagers: [],
+    });
+
+    const filteredProjects = useMemo(() => {
+        return list.filter((project) => {
+            return (
+                (filters.selectedSectors.length === 0 ||
+                    filters.selectedSectors.includes(
+                        project.industries?.main?.name
+                    )) &&
+                (filters.selectedBanks.length === 0 ||
+                    project.creditors?.some((c) =>
+                        filters.selectedBanks.includes(c.name)
+                    )) &&
+                (filters.selectedManagers.length === 0 ||
+                    filters.selectedManagers.includes(project.manager)) &&
+                (filters.selectedNames.length === 0 ||
+                    filters.selectedNames.includes(project.name)) &&
+                (filters.selectedStatuses.length === 0 ||
+                    filters.selectedStatuses.includes(
+                        handleStatus(project.status)
+                    )) &&
+                (filters.selectedContagents.length === 0 ||
+                    filters.selectedContagents.includes(project.contragent))
+            );
+        });
+    }, [list, filters]);
+
     return (
-        <main className="page">
-            <div className="container py-8">
-                <div className="flex justify-between items-center gap-6 mb-8">
-                    <h1 className="text-3xl font-medium">
-                        Реестр проектов в воронке продаж{" "}
-                        {filteredProjects.length > 0 &&
-                            `(${filteredProjects.length})`}
+        <main className="page projects">
+            <div className="container registry__container">
+                <section className="registry__header flex justify-between items-center">
+                    <h1 className="title">
+                        Реестр проектов в воронке продаж
+                        {filteredProjects.length > 0 && (
+                            <span>{filteredProjects.length}</span>
+                        )}
                     </h1>
 
                     <div className="flex items-center gap-6">
+                        {mode === "edit" && (
+                            <button
+                                type="button"
+                                className="button-active"
+                                onClick={openPopup}
+                            >
+                                <span>Создать проект</span>
+                                <div className="button-active__icon">
+                                    <svg
+                                        width="12"
+                                        height="13"
+                                        viewBox="0 0 12 13"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M6.75 5.75h3.75v1.5H6.75V11h-1.5V7.25H1.5v-1.5h3.75V2h1.5v3.75z"
+                                            fill="#fff"
+                                        />
+                                    </svg>
+                                </div>
+                            </button>
+                        )}
+                    </div>
+
+                    {/* <div className="flex items-center gap-6">
                         {customerOptions.length > 0 && (
                             <Select
                                 className={
@@ -219,34 +289,148 @@ const Sales = () => {
                             selectsRange={true}
                             isClearable={true}
                         />
+                    </div> */}
+                </section>
 
-                        <button
-                            type="button"
-                            className="p-1 px-4 text-gray-900 rounded-lg bg-gray-100 group text-lg"
-                            onClick={openPopup}
-                        >
-                            Создать
-                        </button>
-                    </div>
-                </div>
+                <section className="registry__table-section w-full">
+                    {openFilter !== "" && (
+                        <OverlayTransparent
+                            state={true}
+                            toggleMenu={() => setOpenFilter("")}
+                        />
+                    )}
 
-                <div className="overflow-x-auto w-full pb-5">
-                    <table className="table-auto w-full border-collapse border-gray-300 text-sm">
-                        <thead className="text-gray-400 text-left">
-                            <tr className="border-b border-gray-300">
-                                {COLUMNS.map(({ label, key }) => (
-                                    <th
-                                        className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
-                                        rowSpan="2"
-                                        key={key}
-                                    >
-                                        {label}
-                                    </th>
-                                ))}
+                    <table className="registry-table table-auto w-full border-collapse">
+                        <thead className="registry-table__thead">
+                            <tr>
+                                {COLUMNS.map(
+                                    ({ label, key, filter, options }) => {
+                                        return (
+                                            <th
+                                                className="min-w-[125px]"
+                                                rowSpan="2"
+                                                key={key}
+                                            >
+                                                <div className="registry-table__thead-item">
+                                                    {filter ? (
+                                                        <>
+                                                            <div className="registry-table__thead-label">
+                                                                {label}
+                                                            </div>
+
+                                                            {filters[filter]
+                                                                .length > 0 && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        setFilters(
+                                                                            (
+                                                                                prev
+                                                                            ) => ({
+                                                                                ...prev,
+                                                                                [filter]:
+                                                                                    [],
+                                                                            })
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <svg
+                                                                        width="16"
+                                                                        height="16"
+                                                                        viewBox="0 0 16 16"
+                                                                        fill="none"
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                    >
+                                                                        <path
+                                                                            d="M9.06 8l3.713 3.712-1.06 1.06L8 9.06l-3.712 3.713-1.061-1.06L6.939 8 3.227 4.287l1.06-1.06L8 6.939l3.712-3.712 1.061 1.06L9.061 8z"
+                                                                            fill="#000"
+                                                                        />
+                                                                    </svg>
+                                                                </button>
+                                                            )}
+
+                                                            {options.length >
+                                                                0 &&
+                                                                options.some(
+                                                                    (val) =>
+                                                                        val !==
+                                                                        undefined
+                                                                ) && (
+                                                                    <FilterButton
+                                                                        label={
+                                                                            label
+                                                                        }
+                                                                        key={
+                                                                            key
+                                                                        }
+                                                                        filterKey={
+                                                                            key
+                                                                        }
+                                                                        openFilter={
+                                                                            openFilter
+                                                                        }
+                                                                        setOpenFilter={
+                                                                            setOpenFilter
+                                                                        }
+                                                                    />
+                                                                )}
+
+                                                            {openFilter ===
+                                                                key && (
+                                                                <MultiSelectWithSearch
+                                                                    options={
+                                                                        options.length >
+                                                                        0
+                                                                            ? options.map(
+                                                                                  (
+                                                                                      name
+                                                                                  ) => ({
+                                                                                      value: name,
+                                                                                      label: name,
+                                                                                  })
+                                                                              )
+                                                                            : []
+                                                                    }
+                                                                    selectedValues={
+                                                                        filters[
+                                                                            filter
+                                                                        ]
+                                                                    }
+                                                                    onChange={(
+                                                                        updated
+                                                                    ) =>
+                                                                        setFilters(
+                                                                            (
+                                                                                prev
+                                                                            ) => ({
+                                                                                ...prev,
+                                                                                ...updated,
+                                                                            })
+                                                                        )
+                                                                    }
+                                                                    fieldName={
+                                                                        filter
+                                                                    }
+                                                                    close={
+                                                                        setOpenFilter
+                                                                    }
+                                                                />
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <div className="registry-table__thead-label">
+                                                            {label}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </th>
+                                        );
+                                    }
+                                )}
                             </tr>
                         </thead>
 
-                        <tbody>
+                        <tbody className="registry-table__tbody">
                             {isLoading ? (
                                 <tr>
                                     <td className="text-base px-4 py-2">
@@ -260,53 +444,54 @@ const Sales = () => {
                                         key={item.id}
                                         props={item}
                                         columns={COLUMNS}
+                                        mode={mode}
                                         deleteProject={deleteProject}
                                     />
                                 ))
                             )}
                         </tbody>
                     </table>
-                </div>
+                </section>
 
                 {popupState && (
                     <Popup
                         onClick={closePopup}
                         title="Создать проект в воронке"
                     >
-                        <div className="min-w-[280px]">
-                            <div className="action-form__body">
-                                <label
-                                    htmlFor="project_name"
-                                    className="block mb-3"
-                                >
-                                    Введите наименование проекта
-                                </label>
-                                <input
-                                    type="text"
-                                    name="project_name"
-                                    id="project_name"
-                                    className="border-2 border-gray-300 p-3 w-full"
-                                    value={newProjectName}
-                                    onChange={(e) =>
-                                        handleProjectsNameChange(e)
-                                    }
-                                />
-                            </div>
-                            <div className="action-form__footer mt-5 flex items-center gap-6 justify-between">
+                        <div className="action-form__body">
+                            <label
+                                htmlFor="project_name"
+                                className="form-label"
+                            >
+                                Название проекта <span>*</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="project_name"
+                                id="project_name"
+                                className="form-field w-full"
+                                value={newProjectName}
+                                onChange={(e) => handleProjectsNameChange(e)}
+                            />
+                        </div>
+
+                        <div className="action-form__footer">
+                            <div className="max-w-[280px]">
                                 <button
                                     type="button"
-                                    className="rounded-lg py-2 px-5 bg-black text-white flex-[1_1_50%]"
-                                    onClick={createProject}
+                                    onClick={() => setPopupState(false)}
+                                    className="cancel-button flex-[1_0_auto]"
                                 >
-                                    Создать
+                                    Отменить
                                 </button>
 
                                 <button
                                     type="button"
-                                    onClick={() => setPopupState(false)}
-                                    className="border rounded-lg py-2 px-5 flex-[1_1_50%]"
+                                    className="action-button flex-[1_0_auto]"
+                                    onClick={createProject}
+                                    disabled={newProjectName.length < 2}
                                 >
-                                    Отменить
+                                    Создать проект
                                 </button>
                             </div>
                         </div>

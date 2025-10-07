@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { ru } from "date-fns/locale";
 
-const SalesItem = ({ props, columns, deleteProject }) => {
+const SalesItem = ({ props, columns, deleteProject, mode }) => {
     const navigate = useNavigate();
 
     const handleRowClick = () => {
@@ -18,7 +18,7 @@ const SalesItem = ({ props, columns, deleteProject }) => {
 
     return (
         <tr
-            className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
+            className="registry-table__item transition text-base text-left cursor-pointer"
             onClick={handleRowClick}
         >
             {columns.map(({ key }) => {
@@ -29,23 +29,13 @@ const SalesItem = ({ props, columns, deleteProject }) => {
                 if (Array.isArray(value) && value !== null) {
                     if (value?.length > 0) {
                         return (
-                            <td
-                                className="border-b border-gray-300 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[130px] max-w-[130px]" key={key}>
                                 <table className="w-full">
                                     <tbody>
                                         {key === "services"
                                             ? value.map((item, index) => (
                                                   <tr key={`${key}_${index}`}>
-                                                      <td
-                                                          className={`px-4 ${
-                                                              index !==
-                                                              value.length - 1
-                                                                  ? "pb-1"
-                                                                  : "pt-1"
-                                                          }`}
-                                                      >
+                                                      <td className="registry-table__item-last-report w-full">
                                                           {item?.name?.toString()}
                                                       </td>
                                                   </tr>
@@ -53,7 +43,7 @@ const SalesItem = ({ props, columns, deleteProject }) => {
                                             : value.map((item, index) => (
                                                   <tr key={`${key}_${index}`}>
                                                       <td
-                                                          className={`px-4 ${
+                                                          className={`w-[100px] ${
                                                               index !==
                                                               value.length - 1
                                                                   ? "pb-1"
@@ -72,10 +62,7 @@ const SalesItem = ({ props, columns, deleteProject }) => {
                         );
                     } else {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[130px] max-w-[130px]" key={key}>
                                 —
                             </td>
                         );
@@ -83,29 +70,31 @@ const SalesItem = ({ props, columns, deleteProject }) => {
                 } else if (typeof value === "object" && value !== null) {
                     if (key === "contragent") {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
-                                {value?.program_name?.toString() || "—"}
+                            <td className="w-[130px]" key={key}>
+                                <div className="hidden-group">
+                                    <div className="visible-text">
+                                        <div>
+                                            {value?.program_name.toString() ||
+                                                "—"}
+                                        </div>
+                                    </div>
+
+                                    <div className="hidden-text">
+                                        {value?.program_name.toString() || "—"}
+                                    </div>
+                                </div>
                             </td>
                         );
                     } else if (key === "request_source") {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[130px]" key={key}>
                                 {value?.name?.toString() || "—"}
                             </td>
                         );
                     } else {
                         return Object.entries(value).map(
                             ([subKey, subValue]) => (
-                                <td
-                                    className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                    key={subKey}
-                                >
+                                <td className="w-[130px]" key={key}>
                                     {subValue?.toString() || "—"}
                                 </td>
                             )
@@ -114,12 +103,17 @@ const SalesItem = ({ props, columns, deleteProject }) => {
                 } else {
                     if (key === "name") {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
-                                {value?.toString() || "—"}
-                                <br />
+                            <td className="w-[130px]" key={key}>
+                                <div className="hidden-group">
+                                    <div className="visible-text">
+                                        <div>{value?.toString() || "—"}</div>
+                                    </div>
+
+                                    <div className="hidden-text">
+                                        {value?.toString() || "—"}
+                                    </div>
+                                </div>
+
                                 <span className="text-gray-400 text-sm">
                                     {props?.industry?.name}
                                 </span>
@@ -130,10 +124,7 @@ const SalesItem = ({ props, columns, deleteProject }) => {
                         value !== null
                     ) {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[130px]" key={key}>
                                 {format(parseISO(value), "dd.MM.yyyy", {
                                     locale: ru,
                                 }) || "—"}
@@ -141,10 +132,7 @@ const SalesItem = ({ props, columns, deleteProject }) => {
                         );
                     } else {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[130px]" key={key}>
                                 {value?.toString() || "—"}
                             </td>
                         );
@@ -153,14 +141,29 @@ const SalesItem = ({ props, columns, deleteProject }) => {
             })}
 
             <td className="w-[24px] h-[20px]">
-                <button
-                    className="delete-icon flex-none w-[20px] h-[20px]"
-                    title="Удалить проект"
-                    onClick={(e) => {
-                        deleteProject(props.id);
-                        e.stopPropagation();
-                    }}
-                ></button>
+                {mode === "edit" && (
+                    <button
+                        className="delete-button"
+                        title="Удалить проект"
+                        onClick={(e) => {
+                            deleteProject(props.id);
+                            e.stopPropagation();
+                        }}
+                    >
+                        <svg
+                            width="20"
+                            height="21"
+                            viewBox="0 0 20 21"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M5.833 8v9.166h8.333V8h1.667v10c0 .46-.373.833-.833.833H5A.833.833 0 014.166 18V8h1.667zm3.333 0v7.5H7.5V8h1.666zM12.5 8v7.5h-1.667V8H12.5zm0-5.833c.358 0 .677.229.79.57l.643 1.929h2.733v1.667H3.333V4.666h2.733l.643-1.93a.833.833 0 01.79-.57h5zm-.601 1.666H8.1l-.278.833h4.354l-.277-.833z"
+                                fill="currentColor"
+                            />
+                        </svg>
+                    </button>
+                )}
             </td>
         </tr>
     );
