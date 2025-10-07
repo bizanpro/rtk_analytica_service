@@ -1,5 +1,23 @@
 @use "./media-breakpoints" as *;
 
+.registry {
+    &__container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    &__table-section {
+        flex-grow: 1;
+        overflow-x: auto;
+        padding-bottom: 40px;
+
+        @media (min-width: $media-xxl) {
+            overflow-x: hidden;
+        }
+    }
+}
+
 .registry-table {
     &__thead {
         font-weight: 600;
@@ -107,6 +125,11 @@
                     opacity: 1;
                     max-height: fit-content;
                 }
+
+                .visible-text {
+                    opacity: 0;
+                    visibility: hidden;
+                }
             }
 
             .visible-text {
@@ -115,6 +138,7 @@
                 -webkit-line-clamp: 2;
                 overflow: hidden;
                 max-width: 125px;
+                transition: opacity var(--trans);
             }
 
             .hidden-text {

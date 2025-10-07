@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
@@ -208,46 +208,29 @@ const EmployeeCard = () => {
             position: "top-center",
         });
 
-            postData(
-                "PATCH",
-                `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
-                employeeData
-            )
-                .then((response) => {
-                    if (response?.ok) {
-                        toast.update(query, {
-                            render: "Успешно обновлено!",
-                            type: "success",
-                            containerId: "employee",
-                            isLoading: false,
-                            autoClose: 1200,
-                            pauseOnFocusLoss: false,
-                            pauseOnHover: false,
-                            draggable: true,
-                            position:
-                                window.innerWidth >= 1440
-                                    ? "bottom-right"
-                                    : "top-right",
-                        });
-                    } else {
-                        toast.error("Ошибка обновления", {
-                            isLoading: false,
-                            autoClose: 1500,
-                            pauseOnFocusLoss: false,
-                            pauseOnHover: false,
-                            draggable: true,
-                            position:
-                                window.innerWidth >= 1440
-                                    ? "bottom-right"
-                                    : "top-right",
-                            containerId: "employee",
-                        });
-                    }
-                })
-                .catch((error) => {
-                    toast.dismiss(query);
-                    toast.error(error.message || "Ошибка обновления данных", {
+        postData(
+            "PATCH",
+            `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
+            employeeData
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    toast.update(query, {
+                        render: "Успешно обновлено!",
+                        type: "success",
                         containerId: "employee",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        draggable: true,
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
+                    });
+                } else {
+                    toast.error("Ошибка обновления", {
                         isLoading: false,
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
@@ -257,8 +240,25 @@ const EmployeeCard = () => {
                             window.innerWidth >= 1440
                                 ? "bottom-right"
                                 : "top-right",
+                        containerId: "employee",
                     });
+                }
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка обновления данных", {
+                    containerId: "employee",
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    draggable: true,
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
+            });
         // } else {
         //     toast.error("Необходимо выбрать должность", {
         //         containerId: "employee",

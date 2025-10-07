@@ -13,8 +13,6 @@ import TheadSortButton from "../TheadSortButton/TheadSortButton";
 import FilterButton from "../FilterButton";
 import OverlayTransparent from "../Overlay/OverlayTransparent";
 
-import "./Projects.scss";
-
 const Projects = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
     const navigate = useNavigate();
@@ -217,7 +215,7 @@ const Projects = () => {
 
     return (
         <main className="page projects">
-            <div className="container projects__container">
+            <div className="container registry__container">
                 <section className="registry__header flex justify-between items-center">
                     <h1 className="title">
                         Реестр проектов
@@ -253,7 +251,7 @@ const Projects = () => {
                     </div>
                 </section>
 
-                <section className="projects__table w-full">
+                <section className="registry__table-section w-full">
                     {openFilter !== "" && (
                         <OverlayTransparent
                             state={true}

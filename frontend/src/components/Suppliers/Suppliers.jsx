@@ -6,8 +6,10 @@ import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import { sortList } from "../../utils/sortList";
 
 import SupplierItem from "./SupplierItem";
-import CreatableSelect from "react-select/creatable";
+import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
 import TheadSortButton from "../TheadSortButton/TheadSortButton";
+import FilterButton from "../FilterButton";
+import OverlayTransparent from "../Overlay/OverlayTransparent";
 
 const Suppliers = () => {
     const [sortBy, setSortBy] = useState({ key: "", action: "" });
@@ -15,12 +17,9 @@ const Suppliers = () => {
     const [list, setList] = useState([]);
     const [sortedList, setSortedList] = useState([]);
 
-    const [selectedName, setSelectedName] = useState(null);
-    const [selectedStatus, setSelectedStatus] = useState("default");
-
     const [isLoading, setIsLoading] = useState(true);
 
-    const [isFiltering, setIsFiltering] = useState(false);
+    // const [isFiltering, setIsFiltering] = useState(false);
 
     const [page, setPage] = useState(1);
     const [meta, setMeta] = useState({
@@ -28,30 +27,15 @@ const Suppliers = () => {
         last_page: 1,
     });
 
+    const [openFilter, setOpenFilter] = useState("");
+
     const URL = `${import.meta.env.VITE_API_URL}suppliers?active=true`;
-
-    const filteredList = useMemo(() => {
-        return sortedList.filter((customer) => {
-            const matchName =
-                selectedName !== null
-                    ? customer.program_name === selectedName
-                    : true;
-
-            const matchStatus =
-                selectedStatus && selectedStatus !== "default"
-                    ? customer.status === selectedStatus
-                    : true;
-
-            return matchName && matchStatus;
-        });
-    }, [sortedList, selectedName, selectedStatus]);
 
     // Заполняем селектор заказчиков
     const nameOptions = useMemo(() => {
-        const allNames = list.map((item) => ({
-            value: item.id,
-            label: item.program_name,
-        }));
+        const allNames = list
+            .map((item) => item.program_name)
+            .filter((program_name) => program_name !== null);
 
         return Array.from(new Set(allNames));
     }, [list]);
@@ -59,42 +43,65 @@ const Suppliers = () => {
     // Заполняем селектор статусов
     const statusOptions = useMemo(() => {
         const allStatuses = list
-            .map((item) => item.status)
+            .map((item) => handleStatus(item.status))
             .filter((status) => status !== null);
 
-        const uniqueStatuses = Array.from(new Set(allStatuses));
+        return Array.from(new Set(allStatuses));
+    }, [list]);
 
-        return uniqueStatuses.map((status) => ({
-            value: status,
-            label: handleStatus(status),
-        }));
+    // Заполняем селектор ролей
+    const roleOptions = useMemo(() => {
+        const allRoles = list
+            .flatMap((item) => item.roles)
+            .filter((role) => role !== null);
+
+        return Array.from(new Set(allRoles));
     }, [list]);
 
     const COLUMNS = [
         {
-            label: "Наименование",
+            label: "Наименование подрядчиков",
             key: "program_name",
             filter: "selectedNames",
             options: nameOptions,
         },
         {
-            label: "Кол-во проектов, всего",
+            label: "Проектов всего",
             key: "projects_total_count",
             is_sortable: true,
         },
         {
-            label: "Кол-во активных проектов",
+            label: "Активные проекты",
             key: "projects_active_count",
             is_sortable: true,
         },
-        { label: "Роли", key: "roles" },
+        {
+            label: "Роли",
+            key: "roles",
+            filter: "selectedRoles",
+            options: roleOptions,
+        },
         {
             label: "Оплачено услуг, млн руб.",
             key: "total_receipts",
             is_sortable: true,
         },
-        { label: "Статус", key: "status" },
+        {
+            label: "Статус",
+            key: "status",
+            filter: "selectedStatuses",
+            options: statusOptions,
+        },
     ];
+
+    const handleListSort = () => {
+        setSortedList(sortList(list, sortBy));
+    };
+
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
+
     useEffect(() => {
         setIsLoading(true);
         getData(`${URL}&page=${page}`, { Accept: "application/json" })
@@ -106,30 +113,39 @@ const Suppliers = () => {
             .finally(() => setIsLoading(false));
     }, [page]);
 
-    useEffect(() => {
-        selectedName === "default" && selectedStatus === "default"
-            ? setIsFiltering(false)
-            : setIsFiltering(true);
-    }, [selectedName, selectedStatus]);
-
     const loaderRef = useInfiniteScroll({
         isLoading,
         meta,
         setPage,
-        isFiltering,
+        // isFiltering,
     });
 
-    const handleListSort = () => {
-        setSortedList(sortList(list, sortBy));
-    };
+    const [filters, setFilters] = useState({
+        selectedNames: [],
+        selectedRoles: [],
+        selectedStatuses: [],
+    });
 
-    useEffect(() => {
-        handleListSort();
-    }, [sortBy]);
+    const filteredList = useMemo(() => {
+        console.log(filters);
+
+        return sortedList.filter((item) => {
+            return (
+                (filters.selectedNames.length === 0 ||
+                    filters.selectedNames.includes(item.program_name)) &&
+                (filters.selectedRoles.length === 0 ||
+                    filters.selectedRoles.includes(item.roles)) &&
+                (filters.selectedStatuses.length === 0 ||
+                    filters.selectedStatuses.includes(
+                        handleStatus(item.status)
+                    ))
+            );
+        });
+    }, [sortedList, filters]);
 
     return (
         <main className="page suppliers">
-            <div className="container suppliers__container">
+            <div className="container registry__container">
                 <section className="registry__header projects__header flex justify-between items-center">
                     <h1 className="title">
                         Реестр подрядчиков
@@ -139,84 +155,183 @@ const Suppliers = () => {
                     </h1>
                 </section>
 
-                <div className="flex justify-between items-center gap-6 mb-8">
-                    <div className="flex items-center gap-6">
-                        <CreatableSelect
-                            isClearable
-                            options={nameOptions}
-                            className="p-1 border border-gray-300 min-w-[250px] max-w-[300px] executor-block__name-field"
-                            placeholder="Подрядчик"
-                            noOptionsMessage={() => "Совпадений нет"}
-                            isValidNewOption={() => false}
-                            onChange={(selectedOption) => {
-                                if (selectedOption) {
-                                    setSelectedName(selectedOption.label);
-                                } else {
-                                    setSelectedName(null);
-                                }
-                            }}
+                <section className="registry__table-section w-full">
+                    {openFilter !== "" && (
+                        <OverlayTransparent
+                            state={true}
+                            toggleMenu={() => setOpenFilter("")}
                         />
+                    )}
 
-                        {statusOptions.length > 0 && (
-                            <select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px] h-[48px]"
-                                }
-                                onChange={(evt) =>
-                                    setSelectedStatus(evt.target.value)
-                                }
-                            >
-                                <option value="default">Статус</option>
-                                {statusOptions.map((status, index) => (
-                                    <option value={status.value} key={index}>
-                                        {status.label}
-                                    </option>
-                                ))}
-                            </select>
-                        )}
-                    </div>
-                </div>
+                    <table className="registry-table table-auto w-full border-collapse">
+                        <thead className="registry-table__thead">
+                            <tr>
+                                {COLUMNS.map(
+                                    ({
+                                        label,
+                                        key,
+                                        filter,
+                                        options,
+                                        is_sortable,
+                                    }) => {
+                                        return (
+                                            <th
+                                                className="min-w-[125px]"
+                                                rowSpan="2"
+                                                key={key}
+                                            >
+                                                <div className="registry-table__thead-item">
+                                                    {filter ? (
+                                                        <>
+                                                            <div className="registry-table__thead-label">
+                                                                {label}
+                                                            </div>
 
-                <div className="overflow-x-auto w-full pb-5">
-                    <table className="table-auto w-full border-collapse border-gray-300 text-sm">
-                        <thead className="text-gray-400 text-left">
-                            <tr className="border-b border-gray-300">
-                                {COLUMNS.map(({ label, key, is_sortable }) => (
-                                    <th
-                                        className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
-                                        rowSpan="2"
-                                        key={key}
-                                    >
-                                        {is_sortable ? (
-                                            <TheadSortButton
-                                                label={label}
-                                                value={key}
-                                                sortBy={sortBy}
-                                                setSortBy={setSortBy}
-                                            />
-                                        ) : (
-                                            label
-                                        )}
-                                    </th>
-                                ))}
+                                                            {filters[filter]
+                                                                .length > 0 && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        setFilters(
+                                                                            (
+                                                                                prev
+                                                                            ) => ({
+                                                                                ...prev,
+                                                                                [filter]:
+                                                                                    [],
+                                                                            })
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <svg
+                                                                        width="16"
+                                                                        height="16"
+                                                                        viewBox="0 0 16 16"
+                                                                        fill="none"
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                    >
+                                                                        <path
+                                                                            d="M9.06 8l3.713 3.712-1.06 1.06L8 9.06l-3.712 3.713-1.061-1.06L6.939 8 3.227 4.287l1.06-1.06L8 6.939l3.712-3.712 1.061 1.06L9.061 8z"
+                                                                            fill="#000"
+                                                                        />
+                                                                    </svg>
+                                                                </button>
+                                                            )}
+
+                                                            {options.length >
+                                                                0 &&
+                                                                options.some(
+                                                                    (val) =>
+                                                                        val !==
+                                                                        undefined
+                                                                ) && (
+                                                                    <FilterButton
+                                                                        label={
+                                                                            label
+                                                                        }
+                                                                        key={
+                                                                            key
+                                                                        }
+                                                                        filterKey={
+                                                                            key
+                                                                        }
+                                                                        openFilter={
+                                                                            openFilter
+                                                                        }
+                                                                        setOpenFilter={
+                                                                            setOpenFilter
+                                                                        }
+                                                                    />
+                                                                )}
+
+                                                            {openFilter ===
+                                                                key && (
+                                                                <MultiSelectWithSearch
+                                                                    options={
+                                                                        options.length >
+                                                                        0
+                                                                            ? options.map(
+                                                                                  (
+                                                                                      name
+                                                                                  ) => ({
+                                                                                      value: name,
+                                                                                      label: name,
+                                                                                  })
+                                                                              )
+                                                                            : []
+                                                                    }
+                                                                    selectedValues={
+                                                                        filters[
+                                                                            filter
+                                                                        ]
+                                                                    }
+                                                                    onChange={(
+                                                                        updated
+                                                                    ) =>
+                                                                        setFilters(
+                                                                            (
+                                                                                prev
+                                                                            ) => ({
+                                                                                ...prev,
+                                                                                ...updated,
+                                                                            })
+                                                                        )
+                                                                    }
+                                                                    fieldName={
+                                                                        filter
+                                                                    }
+                                                                    close={
+                                                                        setOpenFilter
+                                                                    }
+                                                                />
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <div className="registry-table__thead-label">
+                                                            {label}
+                                                        </div>
+                                                    )}
+
+                                                    {is_sortable && (
+                                                        <TheadSortButton
+                                                            label={label}
+                                                            value={key}
+                                                            sortBy={sortBy}
+                                                            setSortBy={
+                                                                setSortBy
+                                                            }
+                                                        />
+                                                    )}
+                                                </div>
+                                            </th>
+                                        );
+                                    }
+                                )}
                             </tr>
                         </thead>
 
-                        <tbody>
-                            {filteredList.length > 0 &&
+                        <tbody className="registry-table__tbody">
+                            {isLoading ? (
+                                <tr>
+                                    <td className="text-base px-4 py-2">
+                                        Загрузка...
+                                    </td>
+                                </tr>
+                            ) : (
+                                filteredList.length > 0 &&
                                 filteredList.map((item) => (
                                     <SupplierItem
                                         key={item.id}
                                         props={item}
                                         columns={COLUMNS}
                                     />
-                                ))}
+                                ))
+                            )}
                         </tbody>
                     </table>
 
                     <div ref={loaderRef} className="h-4" />
-                    {isLoading && <div className="mt-4">Загрузка...</div>}
-                </div>
+                </section>
             </div>
         </main>
     );

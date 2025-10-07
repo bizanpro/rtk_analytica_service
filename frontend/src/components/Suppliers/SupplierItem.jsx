@@ -30,7 +30,7 @@ const SupplierItem = ({ props, columns }) => {
                     if (value?.length > 0) {
                         return (
                             <td
-                                className="min-w-[130px] max-w-[300px]"
+                                className="min-w-[130px] max-w-[280px]"
                                 key={key}
                             >
                                 <table className="w-full">
@@ -62,14 +62,14 @@ const SupplierItem = ({ props, columns }) => {
                 } else if (typeof value === "object" && value !== null) {
                     if (key === "total_receipts") {
                         return (
-                            <td className="w-[130px]" key={key}>
+                            <td className="w-[210px]" key={key}>
                                 {value?.value || "—"}
                             </td>
                         );
                     } else {
                         return Object.entries(value).map(
                             ([subKey, subValue]) => (
-                                <td className="w-[130px]" key={subKey}>
+                                <td className="w-[210px]" key={subKey}>
                                     {subValue?.toString()}
                                 </td>
                             )
@@ -89,13 +89,13 @@ const SupplierItem = ({ props, columns }) => {
                     } else if (key === "program_name") {
                         return (
                             <td
-                                className="min-w-[130px] max-w-[300px]"
+                                className="min-w-[130px] max-w-[280px]"
                                 key={value?.main?.id}
                             >
                                 <div className="hidden-group">
                                     <div
                                         className="visible-text text-blue"
-                                        style={{ maxWidth: "300px" }}
+                                        style={{ maxWidth: "280px" }}
                                     >
                                         <div className="w-full">
                                             {value?.toString() || "—"}

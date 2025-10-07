@@ -7,7 +7,7 @@ import Header from "./Header/Header";
 import Projects from "./Projects/Projects";
 import ProjectCard from "./ProjectCard/ProjectCard";
 import Employees from "./Employees/Employees";
-import EmployeeCard from "./Employees/EmployeeCard";
+import EmployeeCard from "./EmployeeCard/EmployeeCard";
 import ReferenceBooks from "./ReferenceBooks/ReferenceBooks";
 import SingleBook from "./ReferenceBooks/SingleBook";
 import Contragents from "./Contragents/Contragents";
