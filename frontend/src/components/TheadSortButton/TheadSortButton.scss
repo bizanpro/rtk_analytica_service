@@ -9,7 +9,7 @@
     div {
         display: block;
         position: relative;
-        background: var(--color-black);
+        background: var(--color-gray-50);
         height: 1.5px;
         width: 9px;
         transition: all var(--trans);
@@ -18,7 +18,7 @@
         &::after {
             content: "";
             position: absolute;
-            background: var(--color-black);
+            background: var(--color-gray-50);
             height: 1.5px;
             width: 9px;
             left: 0;
