@@ -18,10 +18,10 @@
 
     &_read-mode {
         .report-window__body {
-            padding: 18px 20px 30px !important;
+            padding: 18px 20px 0px !important;
 
             @media (min-width: $media-xxl) {
-                padding: 18px 20px 35px !important;
+                padding: 18px 20px 0 !important;
             }
         }
 

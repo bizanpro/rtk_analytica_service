@@ -112,7 +112,7 @@ const ReportRateEditor = ({
                                                     "утверждён" ||
                                                 reportRateData.status.toLowerCase() ===
                                                     "в процессе"
-                                                    ? "form-field__status_green"
+                                                    ? "form-field__status_completed"
                                                     : ""
                                             }`}
                                         >

@@ -31,25 +31,25 @@ const isValidDate = (str) => {
 const handleStatusClass = (status) => {
     switch (status?.toLowerCase()) {
         case "в работе":
-            return "form-field__status_green";
+            return "form-field__status_progress";
 
         case "в процессе":
-            return "form-field__status_green";
+            return "form-field__status_progress";
 
         case "завершен":
-            return "form-field__status_green";
+            return "form-field__status_completed";
 
         case "завершён":
-            return "form-field__status_green";
+            return "form-field__status_completed";
+
+        case "отменен":
+            return "form-field__status_cancel";
+
+        case "отменён":
+            return "form-field__status_cancel";
 
         case "запланирован":
             return "";
-
-        case "отменен":
-            return "form-field__status_red";
-
-        case "отменён":
-            return "form-field__status_red";
 
         default:
             return "";
@@ -1049,7 +1049,7 @@ const ReportWindow = ({
                                                 </div>
                                             </div>
 
-                                            <div>
+                                            <div className="relative">
                                                 <label className="form-label">
                                                     Дата утверждения
                                                 </label>
@@ -1072,7 +1072,7 @@ const ReportWindow = ({
                                                 />
 
                                                 {errorMessage !== "" && (
-                                                    <span className="text-red-400 absolute top-[100%] text-sm">
+                                                    <span className="text-red-400 absolute top-[105%] left-0 text-sm">
                                                         {errorMessage}
                                                     </span>
                                                 )}

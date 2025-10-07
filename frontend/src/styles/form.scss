@@ -68,11 +68,19 @@
             }
         }
 
-        &__status_green span {
-            background: var(--color-green-80);
+        &__status_completed span {
+            background: var(--color-green-60);
         }
 
-        &__status_red span {
+        &__status_static span {
+            background: var(--color-orange-50);
+        }
+
+        &__status_progress span {
+            background: var(--color-purple-70);
+        }
+
+        &__status_cancel span {
             background: var(--color-red-70);
         }
     }

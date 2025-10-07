@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 
 import getData from "../../utils/getData";
@@ -24,7 +24,6 @@ import ManagementReportsTabMobile from "../ManagementReportsTab/ManagementReport
 import Hint from "../Hint/Hint";
 import CreatableSelect from "react-select/creatable";
 import CustomSelect from "../CustomSelect/CustomSelect";
-import MultiSelectField from "../MultiSelect/MultiSelectField";
 import BottomSheet from "../BottomSheet/BottomSheet";
 import BottomNavCard from "../BottomNav/BottomNavCard";
 import Popup from "../Popup/Popup.jsx";
@@ -64,7 +63,7 @@ const ProjectCard = () => {
     const [contragentMenuOpen, setContragentMenuOpen] = useState(false);
 
     const [industries, setIndustries] = useState([]); // Отрасль
-    const [otherIndustries, setOtherIndustries] = useState({ others: [] }); // Дополнительная отрасль
+    const [otherIndustries, setOtherIndustries] = useState([]); // Дополнительная отрасль
     const [contragents, setContragents] = useState([]); // Заказчик
     const [banks, setBanks] = useState([]); // Банки
     const [contracts, setContracts] = useState([]); // Договора
@@ -102,12 +101,6 @@ const ProjectCard = () => {
                   )
               );
     };
-
-    // Обработка ввода данных проекта
-    // const handleInputChange = useCallback((e, name) => {
-    //     setProjectDataCustom((prev) => ({ ...prev, [name]: e.target.value }));
-    //     setProjectData((prev) => ({ ...prev, [name]: e.target.value }));
-    // }, []);
 
     // Получение отраслей
     const fetchIndustries = () => {
@@ -208,7 +201,7 @@ const ProjectCard = () => {
 
             setProjectData(response.data);
             setProjectDataCustom(response.data);
-            setOtherIndustries({ others: response.data.industries.others });
+            setOtherIndustries(response.data.industries.others);
 
             // Получаем кредиторов
             setCreditors(
@@ -758,7 +751,7 @@ const ProjectCard = () => {
             ...prev,
             industries: {
                 ...projectData.industries,
-                others: otherIndustries.others,
+                others: otherIndustries,
             },
         }));
     }, [otherIndustries]);
@@ -802,13 +795,11 @@ const ProjectCard = () => {
                                     type="text"
                                     name="name"
                                     value={projectDataCustom?.name}
-                                    onChange={
-                                        (e) =>
-                                            setProjectDataCustom((prev) => ({
-                                                ...prev,
-                                                name: e.target.value,
-                                            }))
-                                        // handleInputChange(e, "name")
+                                    onChange={(e) =>
+                                        setProjectDataCustom((prev) => ({
+                                            ...prev,
+                                            name: e.target.value,
+                                        }))
                                     }
                                     onBlur={() => {
                                         if (
@@ -944,13 +935,7 @@ const ProjectCard = () => {
                                                     main: +evt.target.value,
                                                 },
                                             });
-                                            // setProjectData({
-                                            //     ...projectData,
-                                            //     industries: {
-                                            //         ...projectData.industries,
-                                            //         main: +evt.target.value,
-                                            //     },
-                                            // });
+
                                             updateProject(projectId, true, {
                                                 industries: {
                                                     ...projectDataCustom.industries,
@@ -985,7 +970,7 @@ const ProjectCard = () => {
                                         />
                                     </div>
 
-                                    {/* <CustomSelect
+                                    <CustomSelect
                                         type={"checkbox"}
                                         placeholder={`${
                                             mode === "read"
@@ -1003,48 +988,24 @@ const ProjectCard = () => {
                                                 value: industry.id,
                                                 label: industry.name,
                                             }))}
-                                        selectedValues={otherIndustries.others}
-                                        mode={mode}
-                                        isDisabled={mode == "read"}
-                                    /> */}
-
-                                    <MultiSelectField
-                                        mode={mode}
-                                        placeholder={`${
-                                            mode === "read"
-                                                ? "Нет данных"
-                                                : "Выбрать из списка"
-                                        }`}
-                                        target={"other_industries"}
+                                        selectedValues={otherIndustries}
                                         fieldName={"others"}
-                                        selectedValues={otherIndustries.others}
-                                        onChange={(updated) => {
-                                            setOtherIndustries((prev) => ({
-                                                ...prev,
-                                                ...updated,
-                                            }));
+                                        onChange={(values) => {
+                                            const newArray = values.map(
+                                                (item) => item.value
+                                            );
+
+                                            setOtherIndustries(newArray);
 
                                             updateProject(projectId, true, {
                                                 industries: {
                                                     ...projectDataCustom.industries,
-                                                    others: updated.others,
+                                                    others: newArray,
                                                 },
                                             });
                                         }}
-                                        options={industries
-                                            .filter(
-                                                (industry) =>
-                                                    industry.id !==
-                                                    projectDataCustom
-                                                        ?.industries?.main
-                                            )
-                                            .map((industry) => ({
-                                                value: industry.id,
-                                                label: industry.name,
-                                            }))}
-                                        isDisabled={
-                                            mode == "read" || !availableToChange
-                                        }
+                                        mode={mode}
+                                        isDisabled={mode == "read"}
                                     />
                                 </div>
 
@@ -1064,16 +1025,11 @@ const ProjectCard = () => {
                                         value={
                                             projectDataCustom?.description || ""
                                         }
-                                        onChange={
-                                            (e) =>
-                                                setProjectDataCustom(
-                                                    (prev) => ({
-                                                        ...prev,
-                                                        description:
-                                                            e.target.value,
-                                                    })
-                                                )
-                                            // handleInputChange(e, "description")
+                                        onChange={(e) =>
+                                            setProjectDataCustom((prev) => ({
+                                                ...prev,
+                                                description: e.target.value,
+                                            }))
                                         }
                                         onBlur={() => {
                                             if (
@@ -1104,7 +1060,6 @@ const ProjectCard = () => {
                                             projectDataCustom?.location || ""
                                         }
                                         onChange={(e) =>
-                                            // handleInputChange(e, "location")
                                             setProjectDataCustom((prev) => ({
                                                 ...prev,
                                                 location: e.target.value,
@@ -1138,7 +1093,6 @@ const ProjectCard = () => {
                                         className="form-textarea"
                                         value={projectDataCustom?.tep || ""}
                                         onChange={(e) =>
-                                            // handleInputChange(e, "tep")
                                             setProjectDataCustom((prev) => ({
                                                 ...prev,
                                                 tep: e.target.value,

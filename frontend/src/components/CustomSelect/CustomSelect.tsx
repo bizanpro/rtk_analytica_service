@@ -1,6 +1,8 @@
 import CreatableSelect from "react-select/creatable";
 import { components } from "react-select";
 
+import "./CustomSelect.scss";
+
 type OptionType = {
     value: string;
     label: string;
@@ -10,7 +12,9 @@ interface CustomSelectProps {
     type: string;
     placeholder: string;
     mode: string;
+    fieldName: string;
     options: OptionType[];
+    onChange: void;
     selectedValues: number[];
     isDisabled: boolean;
 }
@@ -19,26 +23,38 @@ const CustomSelect = ({
     type,
     placeholder,
     mode,
+    fieldName,
     options,
     selectedValues,
+    onChange,
     isDisabled,
 }: CustomSelectProps) => {
     const MultiValue = () => null;
 
-    const selectedItems = selectedValues.map((item) =>
-        options.find((option) => option.value === item)
-    );
+    let selectedItems = [];
+
+    if (selectedValues.length > 0) {
+        selectedItems = selectedValues
+            .map((item) => options.find((option) => option.value === item))
+            .filter((option) => option !== undefined);
+    }
 
     const Option = (props) => {
         return (
             <components.Option {...props}>
-                <input
-                    type="checkbox"
-                    checked={props.isSelected}
-                    onChange={() => null}
-                    style={{ marginRight: "8px" }}
-                />
-                <label>{props.label}</label>
+                <label
+                    className="custom-select__item form-checkbox"
+                    htmlFor={props.id}
+                >
+                    <input
+                        type="checkbox"
+                        id={props.id}
+                        checked={props.isSelected}
+                        onChange={() => null}
+                    />
+                    <span className="checkbox"></span>
+                    <span>{props.label}</span>
+                </label>
             </components.Option>
         );
     };
@@ -49,26 +65,22 @@ const CustomSelect = ({
                 isClearable={false}
                 isMulti
                 options={options}
-                className="form-select-extend"
+                className="custom-select form-select-extend"
                 placeholder={placeholder}
                 noOptionsMessage={() => "Совпадений нет"}
                 isValidNewOption={() => false}
-                // value={otherIndustries.others || null}
-                onChange={(selectedOption) => {
-                    console.log(selectedOption);
-
-                    // const newValue =
-                    //     selectedOption?.value || null;
-                }}
+                value={selectedItems || null}
+                onChange={onChange}
                 isDisabled={isDisabled}
                 closeMenuOnSelect={false}
                 hideSelectedOptions={false}
                 components={{ Option, MultiValue }}
+                // menuIsOpen={true}
             />
 
-            {selectedValues.length > 0 && (
+            {selectedItems.length > 0 && (
                 <ul className="form-multiselect__list">
-                    {selectedValues.map((item) => (
+                    {selectedItems.map((item) => (
                         <li
                             className="form-multiselect__item"
                             key={item?.value}
@@ -79,15 +91,14 @@ const CustomSelect = ({
                                 <button
                                     type="button"
                                     title={`Удалить ${item?.label} из списка`}
-                                    // onClick={() =>
-                                    // onChange({
-                                    //     [fieldName]: selectedValues.filter(
-                                    //         (selectedValue) =>
-                                    //             selectedValue !==
-                                    //             item?.value
-                                    //     ),
-                                    // })
-                                    // }
+                                    onClick={() => {
+                                        const updated = selectedItems.filter(
+                                            (selectedItem) =>
+                                                selectedItem?.value !==
+                                                item?.value
+                                        );
+                                        onChange(updated);
+                                    }}
                                 >
                                     <svg
                                         width="12"
