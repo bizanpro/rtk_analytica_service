@@ -1,25 +1,22 @@
 import { useEffect, useState, useMemo } from "react";
 
 import getData from "../../utils/getData";
-import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import handleStatus from "../../utils/handleStatus";
-// import { createDebounce } from "../../utils/debounce";
+import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import { sortList } from "../../utils/sortList";
 
 import ContragentItem from "./ContragentItem";
+
+import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
 import TheadSortButton from "../TheadSortButton/TheadSortButton";
-// import Select from "../Select";
-import CreatableSelect from "react-select/creatable";
-// import Search from "../Search/Search";
+import FilterButton from "../FilterButton";
+import OverlayTransparent from "../Overlay/OverlayTransparent";
 
 const Contragents = () => {
-    const [list, setList] = useState([]);
-    const [sortedList, setSortedList] = useState([]);
-
     const [sortBy, setSortBy] = useState({ key: "", action: "" });
 
-    const [selectedName, setSelectedName] = useState("default");
-    const [selectedStatus, setSelectedStatus] = useState("default");
+    const [list, setList] = useState([]);
+    const [sortedList, setSortedList] = useState([]);
 
     const [isLoading, setIsLoading] = useState(true);
     const [isFiltering, setIsFiltering] = useState(false);
@@ -30,17 +27,42 @@ const Contragents = () => {
         last_page: 1,
     });
 
+    const [openFilter, setOpenFilter] = useState("");
+
     const URL = `${import.meta.env.VITE_API_URL}contragents`;
 
+    // Заполняем селектор заказчиков
+    const nameOptions = useMemo(() => {
+        const allNames = list
+            .map((item) => item.program_name)
+            .filter((program_name) => program_name !== null);
+
+        return Array.from(new Set(allNames));
+    }, [list]);
+
+    // Заполняем селектор статусов
+    const statusOptions = useMemo(() => {
+        const allStatuses = list
+            .map((item) => handleStatus(item.status))
+            .filter((status) => status !== null);
+
+        return Array.from(new Set(allStatuses));
+    }, [list]);
+
     const COLUMNS = [
-        { label: "Наименование", key: "program_name", is_sortable: false },
         {
-            label: "Кол-во проектов, всего",
+            label: "Наименование заказчиков",
+            key: "program_name",
+            filter: "selectedNames",
+            options: nameOptions,
+        },
+        {
+            label: "Проектов всего",
             key: "projects_total_count",
             is_sortable: true,
         },
         {
-            label: "Кол-во активных проектов",
+            label: "Активные проекты",
             key: "projects_active_count",
             is_sortable: true,
         },
@@ -55,72 +77,21 @@ const Contragents = () => {
             key: "income_total",
             is_sortable: true,
         },
-        { label: "Статус", key: "status", is_sortable: false },
+        {
+            label: "Статус",
+            key: "status",
+            filter: "selectedStatuses",
+            options: statusOptions,
+        },
     ];
-
-    const filteredContragents = useMemo(() => {
-        return sortedList.filter((customer) => {
-            const matchName =
-                selectedName && selectedName !== "default"
-                    ? customer.program_name === selectedName
-                    : true;
-
-            const matchStatus =
-                selectedStatus && selectedStatus !== "default"
-                    ? customer.status === selectedStatus
-                    : true;
-
-            return matchName && matchStatus;
-        });
-    }, [sortedList, selectedName, selectedStatus]);
 
     const handleListSort = () => {
         setSortedList(sortList(list, sortBy));
     };
 
-    // const handleSearch = (event) => {
-    //     const searchQuery = event.value.toLowerCase();
-
-    //     setIsLoading(true);
-    //     getData(
-    //         `${URL}?page=${page}&active=true&has_projects=true&scope=registry&search=${searchQuery}`,
-    //         {
-    //             Accept: "application/json",
-    //         }
-    //     )
-    //         .then((response) => {
-    //             setList(response.data.data);
-    //         })
-    //         .finally(() => setIsLoading(false));
-    // };
-
-    // const debounce = createDebounce(handleSearch, 300, true);
-
-    // Заполняем селектор заказчиков
-    const nameOptions = useMemo(() => {
-        const allNames = sortedList
-            .map((item) => ({
-                value: item.id,
-                label: item.program_name,
-            }))
-            .filter((program_name) => program_name !== null);
-
-        return Array.from(new Set(allNames));
-    }, [sortedList]);
-
-    // Заполняем селектор статусов
-    const statusOptions = useMemo(() => {
-        const allStatuses = sortedList
-            .map((item) => item.status)
-            .filter((status) => status !== null);
-
-        const uniqueStatuses = Array.from(new Set(allStatuses));
-
-        return uniqueStatuses.map((status) => ({
-            value: status,
-            label: handleStatus(status),
-        }));
-    }, [sortedList]);
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -138,16 +109,6 @@ const Contragents = () => {
             .finally(() => setIsLoading(false));
     }, [page]);
 
-    useEffect(() => {
-        selectedName === null && selectedStatus === "default"
-            ? setIsFiltering(false)
-            : setIsFiltering(true);
-    }, [selectedName, selectedStatus]);
-
-    useEffect(() => {
-        handleListSort();
-    }, [sortBy]);
-
     const loaderRef = useInfiniteScroll({
         isLoading,
         meta,
@@ -155,114 +116,235 @@ const Contragents = () => {
         isFiltering,
     });
 
+    const [filters, setFilters] = useState({
+        selectedNames: [],
+        selectedStatuses: [],
+    });
+
+    const filteredList = useMemo(() => {
+        const allEmpty = Object.values(filters).every(
+            (arr) => arr.length === 0
+        );
+
+        if (allEmpty) {
+            setIsFiltering(false);
+        } else {
+            setIsFiltering(true);
+        }
+
+        return sortedList.filter((item) => {
+            return (
+                (filters.selectedNames.length === 0 ||
+                    filters.selectedNames.includes(item.program_name)) &&
+                (filters.selectedStatuses.length === 0 ||
+                    filters.selectedStatuses.includes(
+                        handleStatus(item.status)
+                    ))
+            );
+        });
+    }, [sortedList, filters]);
+
     return (
-        <main className="page">
-            <div className="container py-8">
-                <div className="flex justify-between items-center gap-6 mb-8">
-                    <h1 className="text-3xl font-medium">
-                        Реестр заказчиков{" "}
-                        {filteredContragents.length > 0 &&
-                            `(${filteredContragents.length})`}
+        <main className="page contragents">
+            <div className="container registry__container">
+                <section className="registry__header projects__header flex justify-between items-center">
+                    <h1 className="title">
+                        Реестр заказчиков
+                        {filteredList.length > 0 && (
+                            <span>{filteredList.length}</span>
+                        )}
                     </h1>
+                </section>
 
-                    <div className="flex items-center gap-6">
-                        {/* <Search
-                            onSearch={debounce}
-                            className="search-fullpage"
-                            placeholder="Поиск заказчика"
-                        /> */}
+                <section className="registry__table-section w-full">
+                    {openFilter !== "" && (
+                        <OverlayTransparent
+                            state={true}
+                            toggleMenu={() => setOpenFilter("")}
+                        />
+                    )}
 
-                        {nameOptions.length > 0 && (
-                            <CreatableSelect
-                                isClearable
-                                options={nameOptions}
-                                className="p-1 border border-gray-300 w-[300px] executor-block__name-field"
-                                placeholder="Заказчик"
-                                noOptionsMessage={() => "Совпадений нет"}
-                                isValidNewOption={() => false}
-                                onChange={(selectedOption) => {
-                                    if (selectedOption) {
-                                        setSelectedName(selectedOption.label);
-                                    } else {
-                                        setSelectedName(null);
+                    <table className="registry-table table-auto w-full border-collapse">
+                        <thead className="registry-table__thead">
+                            <tr>
+                                {COLUMNS.map(
+                                    ({
+                                        label,
+                                        key,
+                                        filter,
+                                        options,
+                                        is_sortable,
+                                    }) => {
+                                        return (
+                                            <th
+                                                className="min-w-[125px]"
+                                                rowSpan="2"
+                                                key={key}
+                                            >
+                                                <div className="registry-table__thead-item">
+                                                    {filter ? (
+                                                        <>
+                                                            <div
+                                                                className="registry-table__thead-label"
+                                                                style={{
+                                                                    maxWidth:
+                                                                        "200px",
+                                                                }}
+                                                            >
+                                                                {label}
+                                                            </div>
+
+                                                            {filters[filter]
+                                                                .length > 0 && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        setFilters(
+                                                                            (
+                                                                                prev
+                                                                            ) => ({
+                                                                                ...prev,
+                                                                                [filter]:
+                                                                                    [],
+                                                                            })
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <svg
+                                                                        width="16"
+                                                                        height="16"
+                                                                        viewBox="0 0 16 16"
+                                                                        fill="none"
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                    >
+                                                                        <path
+                                                                            d="M9.06 8l3.713 3.712-1.06 1.06L8 9.06l-3.712 3.713-1.061-1.06L6.939 8 3.227 4.287l1.06-1.06L8 6.939l3.712-3.712 1.061 1.06L9.061 8z"
+                                                                            fill="#000"
+                                                                        />
+                                                                    </svg>
+                                                                </button>
+                                                            )}
+
+                                                            {options.length >
+                                                                0 &&
+                                                                options.some(
+                                                                    (val) =>
+                                                                        val !==
+                                                                        undefined
+                                                                ) && (
+                                                                    <FilterButton
+                                                                        label={
+                                                                            label
+                                                                        }
+                                                                        key={
+                                                                            key
+                                                                        }
+                                                                        filterKey={
+                                                                            key
+                                                                        }
+                                                                        openFilter={
+                                                                            openFilter
+                                                                        }
+                                                                        setOpenFilter={
+                                                                            setOpenFilter
+                                                                        }
+                                                                    />
+                                                                )}
+
+                                                            {openFilter ===
+                                                                key && (
+                                                                <MultiSelectWithSearch
+                                                                    options={
+                                                                        options.length >
+                                                                        0
+                                                                            ? options.map(
+                                                                                  (
+                                                                                      name
+                                                                                  ) => ({
+                                                                                      value: name,
+                                                                                      label: name,
+                                                                                  })
+                                                                              )
+                                                                            : []
+                                                                    }
+                                                                    selectedValues={
+                                                                        filters[
+                                                                            filter
+                                                                        ]
+                                                                    }
+                                                                    onChange={(
+                                                                        updated
+                                                                    ) =>
+                                                                        setFilters(
+                                                                            (
+                                                                                prev
+                                                                            ) => ({
+                                                                                ...prev,
+                                                                                ...updated,
+                                                                            })
+                                                                        )
+                                                                    }
+                                                                    fieldName={
+                                                                        filter
+                                                                    }
+                                                                    close={
+                                                                        setOpenFilter
+                                                                    }
+                                                                />
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <div
+                                                            className="registry-table__thead-label"
+                                                            style={{
+                                                                maxWidth:
+                                                                    "200px",
+                                                            }}
+                                                        >
+                                                            {label}
+                                                        </div>
+                                                    )}
+
+                                                    {is_sortable && (
+                                                        <TheadSortButton
+                                                            label={label}
+                                                            value={key}
+                                                            sortBy={sortBy}
+                                                            setSortBy={
+                                                                setSortBy
+                                                            }
+                                                        />
+                                                    )}
+                                                </div>
+                                            </th>
+                                        );
                                     }
-                                }}
-                            />
-                        )}
-
-                        {/* {nameOptions.length > 0 && (
-                            <Select
-                                className={
-                                    "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                }
-                                title={"Заказчик"}
-                                items={nameOptions}
-                                onChange={(evt) => {
-                                    setSelectedName(evt.target.value);
-                                }}
-                            />
-                        )} */}
-
-                        {statusOptions.length > 0 && (
-                            <select
-                                className={
-                                    "p-1 border border-gray-300 w-[150px] h-[48px]"
-                                }
-                                onChange={(evt) =>
-                                    setSelectedStatus(evt.target.value)
-                                }
-                            >
-                                <option value="default">Статус</option>
-                                {statusOptions.map((status, index) => (
-                                    <option value={status.value} key={index}>
-                                        {status.label}
-                                    </option>
-                                ))}
-                            </select>
-                        )}
-                    </div>
-                </div>
-
-                <div className="overflow-x-auto w-full pb-5">
-                    <table className="table-auto w-full border-collapse border-gray-300 text-sm">
-                        <thead className="text-gray-400 text-left">
-                            <tr className="border-b border-gray-300">
-                                {COLUMNS.map(({ label, key, is_sortable }) => (
-                                    <th
-                                        className="text-base px-4 py-2 min-w-[180px] max-w-[230px] thead__item"
-                                        rowSpan="2"
-                                        key={key}
-                                    >
-                                        {is_sortable ? (
-                                            <TheadSortButton
-                                                label={label}
-                                                value={key}
-                                                sortBy={sortBy}
-                                                setSortBy={setSortBy}
-                                            />
-                                        ) : (
-                                            label
-                                        )}
-                                    </th>
-                                ))}
+                                )}
                             </tr>
                         </thead>
 
-                        <tbody>
-                            {filteredContragents.length > 0 &&
-                                filteredContragents.map((item) => (
+                        <tbody className="registry-table__tbody">
+                            {isLoading ? (
+                                <tr>
+                                    <td className="text-base px-4 py-2">
+                                        Загрузка...
+                                    </td>
+                                </tr>
+                            ) : (
+                                filteredList.length > 0 &&
+                                filteredList.map((item) => (
                                     <ContragentItem
                                         key={item.id}
                                         props={item}
                                         columns={COLUMNS}
                                     />
-                                ))}
+                                ))
+                            )}
                         </tbody>
                     </table>
 
                     <div ref={loaderRef} className="h-4" />
-                    {isLoading && <div className="mt-4">Загрузка...</div>}
-                </div>
+                </section>
             </div>
         </main>
     );

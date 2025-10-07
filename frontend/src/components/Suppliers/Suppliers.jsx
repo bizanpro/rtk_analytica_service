@@ -18,7 +18,6 @@ const Suppliers = () => {
     const [sortedList, setSortedList] = useState([]);
 
     const [isLoading, setIsLoading] = useState(true);
-
     const [isFiltering, setIsFiltering] = useState(false);
 
     const [page, setPage] = useState(1);
@@ -193,7 +192,13 @@ const Suppliers = () => {
                                                 <div className="registry-table__thead-item">
                                                     {filter ? (
                                                         <>
-                                                            <div className="registry-table__thead-label">
+                                                            <div
+                                                                className="registry-table__thead-label"
+                                                                style={{
+                                                                    maxWidth:
+                                                                        "200px",
+                                                                }}
+                                                            >
                                                                 {label}
                                                             </div>
 
@@ -297,7 +302,13 @@ const Suppliers = () => {
                                                             )}
                                                         </>
                                                     ) : (
-                                                        <div className="registry-table__thead-label">
+                                                        <div
+                                                            className="registry-table__thead-label"
+                                                            style={{
+                                                                maxWidth:
+                                                                    "200px",
+                                                            }}
+                                                        >
                                                             {label}
                                                         </div>
                                                     )}

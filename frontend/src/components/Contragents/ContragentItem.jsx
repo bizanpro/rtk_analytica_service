@@ -10,31 +10,34 @@ const ContragentItem = ({ props, columns }) => {
 
     return (
         <tr
-            className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
+            className="registry-table__item transition text-base text-left cursor-pointer"
             onClick={handleRowClick}
         >
             {columns.map(({ key }) => {
                 const value = props[key];
 
+                let statusClass;
+
+                if (key === "status") {
+                    if (value === "completed") {
+                        statusClass = "registry-table__item-status_completed";
+                    } else if (value === "active") {
+                        statusClass = "registry-table__item-status_active";
+                    }
+                }
+
                 if (Array.isArray(value) && value !== null) {
                     if (value?.length > 0) {
                         return (
                             <td
-                                className="border-b border-gray-300 py-2.5 min-w-[180px] max-w-[200px]"
+                                className="min-w-[130px] max-w-[280px]"
                                 key={key}
                             >
                                 <table className="w-full">
                                     <tbody>
                                         {value?.map((item, index) => (
                                             <tr key={`${key}_${index}`}>
-                                                <td
-                                                    className={`px-4 ${
-                                                        index !==
-                                                        value?.length - 1
-                                                            ? "pb-1"
-                                                            : "pt-1"
-                                                    }`}
-                                                >
+                                                <td className="flex items-center gap-[5px] flex-wrap">
                                                     {item?.toString()}
                                                 </td>
                                             </tr>
@@ -45,51 +48,53 @@ const ContragentItem = ({ props, columns }) => {
                         );
                     } else {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[130px] max-w-[130px]" key={key}>
                                 —
                             </td>
                         );
                     }
                 } else if (typeof value === "object" && value !== null) {
                     return Object.entries(value).map(([subKey, subValue]) => (
-                        <td
-                            className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                            key={subKey}
-                        >
+                        <td className="w-[210px]" key={subKey}>
                             {subValue?.toString()}
                         </td>
                     ));
                 } else {
                     if (key === "status") {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[110px]" key={key}>
                                 <div
-                                    className={`rounded px-3 py-1 text-center
-                                            ${
-                                                handleStatus(
-                                                    value?.toString()
-                                                ) === "Активный"
-                                                    ? "bg-green-400"
-                                                    : "bg-gray-200"
-                                            }
-                                        `}
+                                    className={`registry-table__item-status ${statusClass}`}
                                 >
                                     {handleStatus(value?.toString()) || "—"}
                                 </div>
                             </td>
                         );
-                    } else {
+                    } else if (key === "program_name") {
                         return (
                             <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
+                                className="min-w-[130px] max-w-[280px]"
+                                key={value?.main?.id}
                             >
+                                <div className="hidden-group">
+                                    <div
+                                        className="visible-text text-blue"
+                                        style={{ maxWidth: "280px" }}
+                                    >
+                                        <div className="w-full">
+                                            {value?.toString() || "—"}
+                                        </div>
+                                    </div>
+
+                                    <div className="hidden-text">
+                                        {value?.toString() || "—"}
+                                    </div>
+                                </div>
+                            </td>
+                        );
+                    } else {
+                        return (
+                            <td className="w-[130px]" key={key}>
                                 {value?.toString() || "—"}
                             </td>
                         );
