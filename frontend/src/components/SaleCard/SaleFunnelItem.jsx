@@ -79,7 +79,9 @@ const SaleFunnelItem = ({
                 <div className="flex items-center gap-3">
                     <div
                         className={`w-[10px] h-[10px] flex-[0_0_10px] rounded-[50%] transition ${
-                            activeStage === stage.instance_id ? "bg-gray-400" : ""
+                            activeStage === stage.instance_id
+                                ? "bg-gray-400"
+                                : ""
                         }`}
                     ></div>
 
@@ -92,7 +94,11 @@ const SaleFunnelItem = ({
                         startDate={stage.stage_date}
                         selected={stage.stage_date || ""}
                         onChange={(date) =>
-                            handleActiveStageDate(date, stage.id)
+                            handleActiveStageDate(
+                                date,
+                                stage.id,
+                                stage.instance_id
+                            )
                         }
                         dateFormat="dd.MM.yyyy"
                         minDate={prevStage}

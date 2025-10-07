@@ -340,7 +340,7 @@ const SaleCard = () => {
     };
 
     // Закрепляем дату за этапом
-    const setDate = (date) => {
+    const setDate = (date, instance_id) => {
         const newDate = new Date(date).toLocaleDateString("ru-RU");
 
         const [day, month, year] = newDate.split(".");
@@ -353,7 +353,7 @@ const SaleCard = () => {
             }sales-funnel-projects/${saleId}/stages/${
                 stageMetrics.stage_id
             }/date`,
-            { stage_date: formattedDate }
+            { stage_date: formattedDate, stage_instance_id: instance_id }
         )
             .then((response) => {
                 if (response.ok) {
@@ -392,7 +392,7 @@ const SaleCard = () => {
     };
 
     // Обработка даты у этапа
-    const handleActiveStageDate = (date, stageId) => {
+    const handleActiveStageDate = (date, stageId, instance_id) => {
         setSaleStages((prev) => {
             const updatedStages = prev.stages.map((stage) => {
                 if (stage.id === stageId) {
@@ -406,7 +406,7 @@ const SaleCard = () => {
 
             return { ...prev, stages: updatedStages };
         });
-        setDate(date);
+        setDate(date, instance_id);
     };
 
     // Обновляем детализацию этапа продажи
