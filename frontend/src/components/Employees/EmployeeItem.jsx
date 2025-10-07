@@ -1,19 +1,19 @@
 import { useNavigate } from "react-router-dom";
 
-const EmployeeItem = ({ data, columns }) => {
+const EmployeeItem = ({ props, columns }) => {
     const navigate = useNavigate();
 
     const handleRowClick = () => {
-        navigate(`/employees/${data.id}`);
+        navigate(`/employees/${props.id}`);
     };
 
     return (
         <tr
-            className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
+            className="registry-table__item transition text-base text-left cursor-pointer"
             onClick={handleRowClick}
         >
             {columns.map(({ key }) => {
-                let value = data[key];
+                let value = props[key];
 
                 if (key === "is_staff") {
                     value = value ? "штатный" : "внештатный";
@@ -74,6 +74,13 @@ const EmployeeItem = ({ data, columns }) => {
                                 key={key}
                             >
                                 {value?.name?.toString() || "—"}
+                            </td>
+                        );
+                    }
+                    if (key === "department") {
+                        return (
+                            <td className="w-[210px]" key={key}>
+                                {value?.name || "—"}
                             </td>
                         );
                     } else {

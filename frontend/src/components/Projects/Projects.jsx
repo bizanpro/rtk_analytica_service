@@ -9,8 +9,9 @@ import { sortList } from "../../utils/sortList";
 import ProjectItem from "./ProjectItem";
 import Popup from "../Popup/Popup";
 
-import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
+
 import TheadSortButton from "../TheadSortButton/TheadSortButton";
+import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
 import FilterButton from "../FilterButton";
 import OverlayTransparent from "../Overlay/OverlayTransparent";
 
