@@ -7,7 +7,9 @@ const SaleFunnelItem = ({
     stage,
     getStageDetails,
     activeStage,
-    prevStage,
+    maxPrevDate,
+    showStageDots,
+    showStageActions,
     isLast,
     setActiveStage,
     handleNextStage,
@@ -19,19 +21,11 @@ const SaleFunnelItem = ({
             if (next_possible_stages?.selected) {
                 if (action === "rejected") {
                     if (confirm("Вы уверены?")) {
-                        requestNextStage(
-                            next_possible_stages.id,
-                            // stage.stage_date,
-                            action
-                        );
+                        requestNextStage(next_possible_stages.id, action);
                     }
                     return;
                 } else {
-                    requestNextStage(
-                        next_possible_stages.id,
-                        // stage.stage_date,
-                        action
-                    );
+                    requestNextStage(next_possible_stages.id, action);
                 }
             } else {
                 if (action === "rejected") {
@@ -62,6 +56,12 @@ const SaleFunnelItem = ({
             });
         }
     };
+
+    const noActionStages =
+        stage.name.toLowerCase() !== "отказ от участия" &&
+        stage.name.toLowerCase() !== "получен отказ" &&
+        stage.name.toLowerCase() !== "проект отложен" &&
+        stage.name.toLowerCase() !== "договор заключён";
 
     return (
         <>
@@ -101,9 +101,8 @@ const SaleFunnelItem = ({
                             )
                         }
                         dateFormat="dd.MM.yyyy"
-                        minDate={prevStage}
+                        minDate={maxPrevDate}
                         disabled={!isLast}
-                        // disabled={mode == "read" || !isLast}
                     />
 
                     <span className="flex items-center justify-center border border-gray-300 p-1 rounded-[50%] w-[20px] h-[20px] flex-[0_0_20px]">
@@ -113,10 +112,8 @@ const SaleFunnelItem = ({
 
                 {stage.hasOwnProperty("next_possible_stages") &&
                     stage.next_possible_stages.length > 0 &&
-                    stage.name.toLowerCase() !== "отказ от участия" &&
-                    stage.name.toLowerCase() !== "получен отказ" &&
-                    stage.name.toLowerCase() !== "проект отложен" &&
-                    stage.name.toLowerCase() !== "договор заключён" && (
+                    showStageActions &&
+                    noActionStages && (
                         <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 pr-8">
                             <button
                                 type="button"
@@ -174,31 +171,28 @@ const SaleFunnelItem = ({
                 {/* Отображаем индикатор примененного действия у этапа, если действия
             ему больше не доступны */}
                 {stage.hasOwnProperty("next_possible_stages") &&
-                    stage.next_possible_stages.length == 0 &&
-                    stage.name.toLowerCase() !== "отказ от участия" &&
-                    stage.name.toLowerCase() !== "получен отказ" &&
-                    stage.name.toLowerCase() !== "проект отложен" &&
-                    stage.name.toLowerCase() !== "договор заключён" && (
+                    showStageDots &&
+                    noActionStages && (
                         <div className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2 pr-8">
                             <div
                                 className={`w-[12px] h-[12px] rounded-[50%] ${
-                                    stage.type === "rejected"
-                                        ? "opacity-100"
-                                        : "opacity-[0.3]"
+                                    !stage.next_possible_stages[1]?.selected
+                                        ? "opacity-[0.3]"
+                                        : ""
                                 } bg-red-400`}
                             ></div>
                             <div
                                 className={`w-[12px] h-[12px] rounded-[50%] ${
-                                    stage.type === "postponed"
-                                        ? "opacity-100"
-                                        : "opacity-[0.3]"
+                                    !stage.next_possible_stages[2]?.selected
+                                        ? "opacity-[0.3]"
+                                        : ""
                                 } bg-yellow-400`}
                             ></div>
                             <div
                                 className={`w-[12px] h-[12px] rounded-[50%] ${
-                                    stage.type === "main"
-                                        ? "opacity-100"
-                                        : "opacity-[0.3]"
+                                    !stage.next_possible_stages[0]?.selected
+                                        ? "opacity-[0.3]"
+                                        : ""
                                 } bg-green-400`}
                             ></div>
                         </div>

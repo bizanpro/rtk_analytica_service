@@ -36,10 +36,10 @@ const FunnelProjectItem = ({
                     {current_stage?.name}
                 </div>
                 <span className="text-gray-400">
-                    {current_stage?.changed_at &&
+                    {current_stage?.stage_date &&
                         format(
-                            parseISO(current_stage?.changed_at),
-                            "d.MM.yyyy",
+                            parseISO(current_stage?.stage_date),
+                            "dd.MM.yyyy",
                             {
                                 locale: ru,
                             }
