@@ -6,7 +6,7 @@ const FunnelProjectItem = ({
     name,
     industry,
     banks,
-    last_fta_value,
+    service_cost,
     current_stage,
 }) => {
     return (
@@ -22,9 +22,8 @@ const FunnelProjectItem = ({
 
             <div className="flex flex-col">
                 <strong className="text-lg font-normal max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
-                    {last_fta_value?.value}
+                    {service_cost}
                 </strong>
-                <span className="text-sm">{last_fta_value?.label}</span>
             </div>
 
             <div className="flex flex-col">
