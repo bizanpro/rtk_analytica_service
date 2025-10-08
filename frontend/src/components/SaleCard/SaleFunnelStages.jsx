@@ -25,16 +25,27 @@ const SaleFunnelStages = ({
     const [resumableStages, setResumableStages] = useState([]);
 
     const openResumableStagesPopup = () => {
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }sales-funnel-projects/${saleId}/resumable-stages`
-        ).then((response) => {
-            if (response?.status == 200) {
-                setResumableStages(response.data.stages);
-                setPopupState(true);
-            }
-        });
+        if (saleStages.stages[saleStages.stages.length - 1]?.stage_date) {
+            getData(
+                `${
+                    import.meta.env.VITE_API_URL
+                }sales-funnel-projects/${saleId}/resumable-stages`
+            ).then((response) => {
+                if (response?.status == 200) {
+                    setResumableStages(response.data.stages);
+                    setPopupState(true);
+                }
+            });
+        } else {
+            toast.error("Необходимо заполнить дату перед возобновлением воронки", {
+                containerId: "toast",
+                isLoading: false,
+                autoClose: 3000,
+                pauseOnFocusLoss: false,
+                pauseOnHover: false,
+                position: "top-center",
+            });
+        }
     };
 
     // Возобновить воронку продаж
