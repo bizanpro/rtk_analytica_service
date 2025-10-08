@@ -113,16 +113,10 @@ const CustomDatePicker = () => {
             />
 
             <div className="actions flex justify-end gap-2 p-2 border-t">
-                <button
-                    className="px-3 py-1 border rounded hover:bg-gray-100"
-                    onClick={handleCancel}
-                >
+                <button className="cancel-button" onClick={handleCancel}>
                     Отменить
                 </button>
-                <button
-                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                    onClick={handleApply}
-                >
+                <button className="action-button" onClick={handleApply}>
                     Применить
                 </button>
             </div>

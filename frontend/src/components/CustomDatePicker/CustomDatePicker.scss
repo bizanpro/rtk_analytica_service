@@ -1,0 +1,15 @@
+@use "../../styles/media-breakpoints" as *;
+
+.custom-datepicker {
+    width: 360px;
+    border-radius: 10px;
+    border: 1px solid var(--color-gray-40);
+    box-shadow: 0px 12px 28px 0px #0020331f;
+    box-shadow: 0px 8px 8px 0px #0020330a;
+    z-index: 2;
+
+    .react-datepicker__month-container,
+    .react-datepicker {
+        width: 100%;
+    }
+}
