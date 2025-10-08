@@ -6,6 +6,7 @@ const MultiSelectWithSearch = ({
     options,
     selectedValues = [],
     onChange,
+    filterNoSearch,
     fieldName,
     close,
 }) => {
@@ -46,15 +47,17 @@ const MultiSelectWithSearch = ({
 
     return (
         <div className="multi-select">
-            <div className="multi-select__search">
-                <input
-                    type="text"
-                    placeholder="Найти в списке"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="form-search"
-                />
-            </div>
+            {!filterNoSearch && (
+                <div className="multi-select__search">
+                    <input
+                        type="text"
+                        placeholder="Найти в списке"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="form-search"
+                    />
+                </div>
+            )}
 
             <div className="multi-select__actions">
                 <button
@@ -90,7 +93,10 @@ const MultiSelectWithSearch = ({
                 )}
             </div>
 
-            <ul className="multi-select__list">
+            <ul
+                className="multi-select__list"
+                style={!filterNoSearch ? {} : { border: "none", padding: "0", minHeight: "55px" }}
+            >
                 {filteredOptions.map((option) => (
                     <li className="multi-select__list-item" key={option.value}>
                         <label className="form-checkbox" htmlFor={option.value}>

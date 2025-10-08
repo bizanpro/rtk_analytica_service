@@ -103,6 +103,7 @@ const Employees = () => {
             label: "Тип",
             key: "is_staff",
             filter: "selectedTypes",
+            filterNoSearch: true,
             options: types
                 .map((item) => item?.label)
                 .filter((item) => item !== null),
@@ -111,6 +112,7 @@ const Employees = () => {
             label: "Статус",
             key: "status",
             filter: "selectedStatuses",
+            filterNoSearch: true,
             options: statuses
                 .map((item) => item?.label)
                 .filter((item) => item !== null),
@@ -193,6 +195,7 @@ const Employees = () => {
                                         filter,
                                         options,
                                         is_sortable,
+                                        filterNoSearch,
                                     }) => {
                                         return (
                                             <th
@@ -290,6 +293,9 @@ const Employees = () => {
                                                                         filters[
                                                                             filter
                                                                         ]
+                                                                    }
+                                                                    filterNoSearch={
+                                                                        filterNoSearch
                                                                     }
                                                                     onChange={(
                                                                         updated
