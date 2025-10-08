@@ -76,8 +76,24 @@ const EmployeeItem = ({ props, columns }) => {
                                 {value?.name?.toString() || "—"}
                             </td>
                         );
-                    }
-                    if (key === "department") {
+                    } else if (key === "name") {
+                        return (
+                            <td className="w-[160px] text-blue" key={key}>
+                                <div className="hidden-group w-[160px]">
+                                    <div
+                                        className="visible-text"
+                                        style={{ maxWidth: "160px" }}
+                                    >
+                                        <div>{value?.toString() || "—"}</div>
+                                    </div>
+
+                                    <div className="hidden-text">
+                                        {value?.toString() || "—"}
+                                    </div>
+                                </div>
+                            </td>
+                        );
+                    } else if (key === "department") {
                         return (
                             <td className="w-[210px]" key={key}>
                                 {value?.name || "—"}
