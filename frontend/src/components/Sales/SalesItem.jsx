@@ -26,6 +26,21 @@ const SalesItem = ({ props, columns, deleteProject, mode }) => {
                     ? getNestedValue(props, key)
                     : props[key];
 
+                let statusClass;
+
+                if (key === "last_service_last_stage") {
+                    if (value.toLowerCase() === "проект отложен") {
+                        statusClass = "registry-table__item-status_completed";
+                    } else if (
+                        value.toLowerCase() === "отказ от участия" ||
+                        value.toLowerCase() === "получен отказ"
+                    ) {
+                        statusClass = "registry-table__item-status_canceled";
+                    } else {
+                        statusClass = "registry-table__item-status_active";
+                    }
+                }
+
                 if (Array.isArray(value) && value !== null) {
                     if (value?.length > 0) {
                         return (
@@ -94,7 +109,7 @@ const SalesItem = ({ props, columns, deleteProject, mode }) => {
                     } else {
                         return Object.entries(value).map(
                             ([subKey, subValue]) => (
-                                <td className="w-[130px]" key={key}>
+                                <td className="w-[130px]" key={subKey}>
                                     {subValue?.toString() || "—"}
                                 </td>
                             )
@@ -117,6 +132,21 @@ const SalesItem = ({ props, columns, deleteProject, mode }) => {
                                 <span className="text-gray-400 text-sm">
                                     {props?.industry?.name}
                                 </span>
+                            </td>
+                        );
+                    } else if (key === "last_service_last_stage") {
+                        return (
+                            <td className="w-[110px]" key={key}>
+                                <div
+                                    className={`max-w-[125px] registry-table__item-status ${statusClass}`}
+                                    style={{
+                                        textOverflow: "ellipsis",
+                                        overflow: "hidden",
+                                        whiteSpace: "nowrap",
+                                    }}
+                                >
+                                    {value?.toString() || "—"}
+                                </div>
                             </td>
                         );
                     } else if (

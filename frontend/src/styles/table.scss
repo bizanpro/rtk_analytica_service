@@ -193,6 +193,16 @@
                 color: var(--color-green-80);
                 background: var(--color-green-30);
             }
+
+            &_canceled {
+                color: var(--color-red-70);
+                background: var(--color-red-30);
+            }
+
+            &_await {
+                color: var(--color-green-80);
+                background: var(--color-green-30);
+            }
         }
 
         &-budget {

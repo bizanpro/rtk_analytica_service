@@ -3,21 +3,17 @@ import { useNavigate } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
-import buildQueryParams from "../../utils/buildQueryParams";
+// import buildQueryParams from "../../utils/buildQueryParams";
 
 import SalesItem from "./SalesItem";
 import Popup from "../Popup/Popup";
 // import Select from "../Select";
 
-import DatePicker from "react-datepicker";
+import CustomDatePicker from "../CustomDatePicker/CustomDatePicker";
 
 import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
 import FilterButton from "../FilterButton";
 import OverlayTransparent from "../Overlay/OverlayTransparent";
-
-const formatDate = (date) => {
-    return date.toISOString().split("T")[0];
-};
 
 const Sales = () => {
     const URL = `${import.meta.env.VITE_API_URL}sales-funnel-projects`;
@@ -30,17 +26,22 @@ const Sales = () => {
 
     const [list, setList] = useState([]);
 
+    const [dateRange, setDateRange] = useState([null, null]);
+
     const [newProjectName, setNewProjectName] = useState("");
     const [openFilter, setOpenFilter] = useState("");
 
-    const [selectedCustomer, setSelectedCustomer] = useState("");
-    const [selectedBank, setSelectedBank] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState("");
+    // Заполняем селектор проектов
+    const nameOptions = useMemo(() => {
+        const allNames = list
+            .map((item) => item.name)
+            .filter((name) => name !== null);
 
-    const [dateRange, setDateRange] = useState([null, null]);
+        return Array.from(new Set(allNames));
+    }, [list]);
 
     // Заполняем селектор заказчиков
-    const customerOptions = useMemo(() => {
+    const contragentOptions = useMemo(() => {
         const allSectors = list
             .map((item) => item?.contragent?.program_name)
             .filter((contragent) => contragent?.program_name !== null);
@@ -56,51 +57,82 @@ const Sales = () => {
         return Array.from(new Set(allBanks));
     }, [list]);
 
-    // // Заполняем селектор статусов
+    // // Заполняем селектор типов услуг
+    const serviceOptions = useMemo(() => {
+        const allServices = list
+            .flatMap((item) => item.services)
+            ?.map((service) => service?.name);
+
+        return Array.from(new Set(allServices));
+    }, [list]);
+
+    // Заполняем селектор статусов
     const statusOptions = useMemo(() => {
-        const allPM = list
+        const allStatuses = list
             .map((item) => item.last_service_last_stage)
             .filter(
                 (last_service_last_stage) => last_service_last_stage !== null
             );
-        return Array.from(new Set(allPM));
+        return Array.from(new Set(allStatuses));
+    }, [list]);
+
+    // Заполняем селектор источников
+    const sourceOptions = useMemo(() => {
+        const allSources = list
+            .flatMap((item) => item.request_source)
+            .map((request_source) => request_source.name);
+        return Array.from(new Set(allSources));
     }, [list]);
 
     const COLUMNS = [
-        { label: "Проект", key: "name" },
-        { label: "Заказчик", key: "contragent" },
-        { label: "Банк", key: "creditors" },
-        { label: "Тип услуг", key: "services" },
+        {
+            label: "Проект",
+            key: "name",
+            filter: "selectedNames",
+            options: nameOptions,
+        },
+        {
+            label: "Заказчик",
+            key: "contragent",
+            filter: "selectedContagents",
+            options: contragentOptions,
+        },
+        {
+            label: "Банк",
+            key: "creditors",
+            filter: "selectedBanks",
+            options: bankOptions,
+        },
+        {
+            label: "Тип услуг",
+            key: "services",
+            filter: "selectedServices",
+            options: serviceOptions,
+        },
         {
             label: "Стоим. млн руб.",
             key: "costs",
         },
-        { label: "Дата запроса", key: "request_date" },
-        { label: "Источник", key: "request_source" },
-        { label: "Дата статуса", key: "status_date" },
-        { label: "Статус", key: "last_service_last_stage" },
+        { label: "Дата запроса", key: "request_date", date: "range" },
+        {
+            label: "Источник",
+            key: "request_source",
+            filter: "selectedSources",
+            options: sourceOptions,
+        },
+        {
+            label: "Дата статуса",
+            key: "status_date",
+            // filter: "selectedBanks",
+            // options: bankOptions,
+        },
+        {
+            label: "Статус",
+            key: "last_service_last_stage",
+            filter: "selectedStatuses",
+            options: statusOptions,
+        },
     ];
-
-    // const filteredProjects = useMemo(() => {
-    //     const result = list.filter((project) => {
-    //         return (
-    //             (selectedCustomer && selectedCustomer !== "default"
-    //                 ? project?.contragent?.program_name === selectedCustomer
-    //                 : true) &&
-    //             (selectedBank && selectedBank !== "default"
-    //                 ? Array.isArray(project.creditors)
-    //                     ? project.creditors?.some(
-    //                           (bank) => bank?.name === selectedBank
-    //                       )
-    //                     : false
-    //                 : true) &&
-    //             (selectedStatus && selectedStatus !== "default"
-    //                 ? project.last_service_last_stage === selectedStatus
-    //                 : true)
-    //         );
-    //     });
-    //     return result;
-    // }, [list, selectedCustomer, selectedBank, selectedStatus, dateRange]);
 
     // Получение реестра
     const getList = (query = "") => {
@@ -151,37 +183,41 @@ const Sales = () => {
 
     const [filters, setFilters] = useState({
         selectedNames: [],
-        selectedStatuses: [],
         selectedContagents: [],
-        selectedSectors: [],
         selectedBanks: [],
-        selectedManagers: [],
+        selectedServices: [],
+        selectedSources: [],
+        selectedStatuses: [],
     });
 
     const filteredProjects = useMemo(() => {
         return list.filter((project) => {
             return (
-                (filters.selectedSectors.length === 0 ||
-                    filters.selectedSectors.includes(
-                        project.industries?.main?.name
+                (filters.selectedNames.length === 0 ||
+                    filters.selectedNames.includes(project.name)) &&
+                (filters.selectedContagents.length === 0 ||
+                    filters.selectedContagents.includes(
+                        project.contragent.program_name
                     )) &&
                 (filters.selectedBanks.length === 0 ||
                     project.creditors?.some((c) =>
                         filters.selectedBanks.includes(c.name)
                     )) &&
-                (filters.selectedManagers.length === 0 ||
-                    filters.selectedManagers.includes(project.manager)) &&
-                (filters.selectedNames.length === 0 ||
-                    filters.selectedNames.includes(project.name)) &&
+                (filters.selectedServices.length === 0 ||
+                    project.services?.some((c) =>
+                        filters.selectedServices.includes(c.name)
+                    )) &&
+                (filters.selectedSources.length === 0 ||
+                    filters.selectedSources.includes(
+                        project.request_source.name
+                    )) &&
                 (filters.selectedStatuses.length === 0 ||
                     filters.selectedStatuses.includes(
-                        handleStatus(project.status)
-                    )) &&
-                (filters.selectedContagents.length === 0 ||
-                    filters.selectedContagents.includes(project.contragent))
+                        project.last_service_last_stage
+                    ))
             );
         });
-    }, [list, filters]);
+    }, [list, filters, dateRange]);
 
     return (
         <main className="page projects">
@@ -219,77 +255,6 @@ const Sales = () => {
                             </button>
                         )}
                     </div>
-
-                    {/* <div className="flex items-center gap-6">
-                        {customerOptions.length > 0 && (
-                            <Select
-                                className={
-                                    "p-1 border border-gray-300 w-[150px]"
-                                }
-                                title={"Заказчик"}
-                                items={customerOptions}
-                                onChange={(evt) => {
-                                    setSelectedCustomer(evt.target.value);
-                                }}
-                            />
-                        )}
-
-                        {bankOptions.length > 0 && (
-                            <Select
-                                className={
-                                    "p-1 border border-gray-300 w-[150px]"
-                                }
-                                title={"Банк"}
-                                items={bankOptions}
-                                onChange={(evt) =>
-                                    setSelectedBank(evt.target.value)
-                                }
-                            />
-                        )}
-
-                        {statusOptions.length > 0 && (
-                            <Select
-                                className={
-                                    "p-1 border border-gray-300 w-[150px]"
-                                }
-                                title={"Статус"}
-                                items={statusOptions}
-                                onChange={(evt) =>
-                                    setSelectedStatus(evt.target.value)
-                                }
-                            />
-                        )}
-
-                        <DatePicker
-                            className="p-1 border border-gray-300 h-[27.5px] w-[195px]"
-                            placeholderText="Период запросов"
-                            startDate={dateRange[0]}
-                            endDate={dateRange[1]}
-                            onChange={(update) => {
-                                const [start, end] = update || [];
-
-                                if (!start && !end) {
-                                    setDateRange([null, null]);
-                                    getList();
-                                    return;
-                                }
-
-                                setDateRange(update);
-
-                                if (start && end) {
-                                    const filters = {
-                                        request_date_from: [formatDate(start)],
-                                        request_date_to: [formatDate(end)],
-                                    };
-                                    const query = buildQueryParams(filters);
-                                    getList(query);
-                                }
-                            }}
-                            dateFormat="dd.MM.yyyy"
-                            selectsRange={true}
-                            isClearable={true}
-                        />
-                    </div> */}
                 </section>
 
                 <section className="registry__table-section w-full">
@@ -304,7 +269,7 @@ const Sales = () => {
                         <thead className="registry-table__thead">
                             <tr>
                                 {COLUMNS.map(
-                                    ({ label, key, filter, options }) => {
+                                    ({ label, key, filter, date, options }) => {
                                         return (
                                             <th
                                                 className="min-w-[125px]"
@@ -312,116 +277,201 @@ const Sales = () => {
                                                 key={key}
                                             >
                                                 <div className="registry-table__thead-item">
-                                                    {filter ? (
-                                                        <>
+                                                    {(() => {
+                                                        if (filter) {
+                                                            return (
+                                                                <>
+                                                                    <div className="registry-table__thead-label">
+                                                                        {label}
+                                                                    </div>
+
+                                                                    {filters[
+                                                                        filter
+                                                                    ].length >
+                                                                        0 && (
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => {
+                                                                                setFilters(
+                                                                                    (
+                                                                                        prev
+                                                                                    ) => ({
+                                                                                        ...prev,
+                                                                                        [filter]:
+                                                                                            [],
+                                                                                    })
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            <svg
+                                                                                width="16"
+                                                                                height="16"
+                                                                                viewBox="0 0 16 16"
+                                                                                fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                            >
+                                                                                <path
+                                                                                    d="M9.06 8l3.713 3.712-1.06 1.06L8 9.06l-3.712 3.713-1.061-1.06L6.939 8 3.227 4.287l1.06-1.06L8 6.939l3.712-3.712 1.061 1.06L9.061 8z"
+                                                                                    fill="#000"
+                                                                                />
+                                                                            </svg>
+                                                                        </button>
+                                                                    )}
+
+                                                                    {options.length >
+                                                                        0 &&
+                                                                        options.some(
+                                                                            (
+                                                                                val
+                                                                            ) =>
+                                                                                val !==
+                                                                                undefined
+                                                                        ) && (
+                                                                            <FilterButton
+                                                                                label={
+                                                                                    label
+                                                                                }
+                                                                                key={
+                                                                                    key
+                                                                                }
+                                                                                filterKey={
+                                                                                    key
+                                                                                }
+                                                                                openFilter={
+                                                                                    openFilter
+                                                                                }
+                                                                                setOpenFilter={
+                                                                                    setOpenFilter
+                                                                                }
+                                                                            />
+                                                                        )}
+
+                                                                    {openFilter ===
+                                                                        key && (
+                                                                        <MultiSelectWithSearch
+                                                                            options={
+                                                                                options.length >
+                                                                                0
+                                                                                    ? options.map(
+                                                                                          (
+                                                                                              name
+                                                                                          ) => ({
+                                                                                              value: name,
+                                                                                              label: name,
+                                                                                          })
+                                                                                      )
+                                                                                    : []
+                                                                            }
+                                                                            selectedValues={
+                                                                                filters[
+                                                                                    filter
+                                                                                ]
+                                                                            }
+                                                                            onChange={(
+                                                                                updated
+                                                                            ) =>
+                                                                                setFilters(
+                                                                                    (
+                                                                                        prev
+                                                                                    ) => ({
+                                                                                        ...prev,
+                                                                                        ...updated,
+                                                                                    })
+                                                                                )
+                                                                            }
+                                                                            fieldName={
+                                                                                filter
+                                                                            }
+                                                                            close={
+                                                                                setOpenFilter
+                                                                            }
+                                                                        />
+                                                                    )}
+                                                                </>
+                                                            );
+                                                        } else if (date) {
+                                                            return (
+                                                                <>
+                                                                    <div className="registry-table__thead-label">
+                                                                        {label}
+                                                                    </div>
+
+                                                                    {filters[
+                                                                        filter
+                                                                    ]?.length >
+                                                                        0 && (
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => {
+                                                                                setFilters(
+                                                                                    (
+                                                                                        prev
+                                                                                    ) => ({
+                                                                                        ...prev,
+                                                                                        [filter]:
+                                                                                            [],
+                                                                                    })
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            <svg
+                                                                                width="16"
+                                                                                height="16"
+                                                                                viewBox="0 0 16 16"
+                                                                                fill="none"
+                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                            >
+                                                                                <path
+                                                                                    d="M9.06 8l3.713 3.712-1.06 1.06L8 9.06l-3.712 3.713-1.061-1.06L6.939 8 3.227 4.287l1.06-1.06L8 6.939l3.712-3.712 1.061 1.06L9.061 8z"
+                                                                                    fill="#000"
+                                                                                />
+                                                                            </svg>
+                                                                        </button>
+                                                                    )}
+
+                                                                    {options &&
+                                                                        options.length >
+                                                                            0 &&
+                                                                        options.some(
+                                                                            (
+                                                                                val
+                                                                            ) =>
+                                                                                val !==
+                                                                                undefined
+                                                                        ) && (
+                                                                            <FilterButton
+                                                                                label={
+                                                                                    label
+                                                                                }
+                                                                                key={
+                                                                                    key
+                                                                                }
+                                                                                filterKey={
+                                                                                    key
+                                                                                }
+                                                                                openFilter={
+                                                                                    openFilter
+                                                                                }
+                                                                                setOpenFilter={
+                                                                                    setOpenFilter
+                                                                                }
+                                                                            />
+                                                                        )}
+
+                                                                    {/* {openFilter ===
+                                                                        key && ( */}
+                                                                        <CustomDatePicker />
+                                                                    {/* )} */}
+                                                                </>
+                                                            );
+                                                        }
+
+                                                        return (
                                                             <div className="registry-table__thead-label">
                                                                 {label}
                                                             </div>
-
-                                                            {filters[filter]
-                                                                .length > 0 && (
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        setFilters(
-                                                                            (
-                                                                                prev
-                                                                            ) => ({
-                                                                                ...prev,
-                                                                                [filter]:
-                                                                                    [],
-                                                                            })
-                                                                        );
-                                                                    }}
-                                                                >
-                                                                    <svg
-                                                                        width="16"
-                                                                        height="16"
-                                                                        viewBox="0 0 16 16"
-                                                                        fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                    >
-                                                                        <path
-                                                                            d="M9.06 8l3.713 3.712-1.06 1.06L8 9.06l-3.712 3.713-1.061-1.06L6.939 8 3.227 4.287l1.06-1.06L8 6.939l3.712-3.712 1.061 1.06L9.061 8z"
-                                                                            fill="#000"
-                                                                        />
-                                                                    </svg>
-                                                                </button>
-                                                            )}
-
-                                                            {options.length >
-                                                                0 &&
-                                                                options.some(
-                                                                    (val) =>
-                                                                        val !==
-                                                                        undefined
-                                                                ) && (
-                                                                    <FilterButton
-                                                                        label={
-                                                                            label
-                                                                        }
-                                                                        key={
-                                                                            key
-                                                                        }
-                                                                        filterKey={
-                                                                            key
-                                                                        }
-                                                                        openFilter={
-                                                                            openFilter
-                                                                        }
-                                                                        setOpenFilter={
-                                                                            setOpenFilter
-                                                                        }
-                                                                    />
-                                                                )}
-
-                                                            {openFilter ===
-                                                                key && (
-                                                                <MultiSelectWithSearch
-                                                                    options={
-                                                                        options.length >
-                                                                        0
-                                                                            ? options.map(
-                                                                                  (
-                                                                                      name
-                                                                                  ) => ({
-                                                                                      value: name,
-                                                                                      label: name,
-                                                                                  })
-                                                                              )
-                                                                            : []
-                                                                    }
-                                                                    selectedValues={
-                                                                        filters[
-                                                                            filter
-                                                                        ]
-                                                                    }
-                                                                    onChange={(
-                                                                        updated
-                                                                    ) =>
-                                                                        setFilters(
-                                                                            (
-                                                                                prev
-                                                                            ) => ({
-                                                                                ...prev,
-                                                                                ...updated,
-                                                                            })
-                                                                        )
-                                                                    }
-                                                                    fieldName={
-                                                                        filter
-                                                                    }
-                                                                    close={
-                                                                        setOpenFilter
-                                                                    }
-                                                                />
-                                                            )}
-                                                        </>
-                                                    ) : (
-                                                        <div className="registry-table__thead-label">
-                                                            {label}
-                                                        </div>
-                                                    )}
+                                                        );
+                                                    })()}
                                                 </div>
                                             </th>
                                         );
