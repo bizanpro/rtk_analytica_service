@@ -5,7 +5,7 @@ import handleStatusString from "../../../utils/handleStatusString";
 const FunnelProjectItem = ({
     name,
     industry,
-    banks,
+    source,
     service_cost,
     current_stage,
 }) => {
@@ -16,9 +16,7 @@ const FunnelProjectItem = ({
                 <span className="text-gray-400">{industry?.name}</span>
             </div>
 
-            <div className="text-lg">
-                {banks.length > 0 ? banks.map((bank) => bank.name + ", ") : "-"}
-            </div>
+            <div className="text-lg">{source}</div>
 
             <div className="flex flex-col">
                 <strong className="text-lg font-normal max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">
