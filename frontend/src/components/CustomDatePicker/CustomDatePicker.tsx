@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-import buildQueryParams from "../../utils/buildQueryParams";
-
 import DatePicker, { registerLocale } from "react-datepicker";
 import { ru } from "date-fns/locale";
 
@@ -33,11 +31,11 @@ const CustomDatePicker = ({ closePicker, onChange }) => {
                 request_date_from: [formatDate(start)],
                 request_date_to: [formatDate(end)],
             };
-            const query = buildQueryParams(filters);
-            onChange(query);
+
+            onChange(filters);
         }
 
-        closePicker(false);
+        closePicker("");
     };
 
     return (

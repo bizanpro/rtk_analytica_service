@@ -46,6 +46,31 @@
             max-width: 130px;
         }
 
+        &-label-date {
+            position: relative;
+            overflow: visible;
+
+            .hint__message {
+                top: calc(100% + 10px);
+                min-height: fit-content;
+            }
+
+            &:hover {
+                .hint__message {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+
+            span {
+                display: block;
+                max-width: 65px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+        }
+
         &-item {
             display: flex;
             align-items: center;

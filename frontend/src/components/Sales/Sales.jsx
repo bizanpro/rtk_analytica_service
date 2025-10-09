@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
-// import buildQueryParams from "../../utils/buildQueryParams";
+import buildQueryParams from "../../utils/buildQueryParams";
 
 import SalesItem from "./SalesItem";
 import Popup from "../Popup/Popup";
@@ -113,7 +113,13 @@ const Sales = () => {
             label: "Стоим. млн руб.",
             key: "costs",
         },
-        { label: "Дата запроса", key: "request_date", date: "range" },
+        {
+            label: "Дата запроса",
+            key: "request_date",
+            date: "range",
+            date_from: requestDateQuery,
+            date_to: requestDateQuery,
+        },
         {
             label: "Источник",
             key: "request_source",
@@ -138,7 +144,9 @@ const Sales = () => {
     const getList = () => {
         setIsLoading(true);
 
-        getData(`${URL}?${requestDateQuery}`, { Accept: "application/json" })
+        getData(`${URL}?${buildQueryParams(requestDateQuery)}`, {
+            Accept: "application/json",
+        })
             .then((response) => {
                 setList(response.data);
             })
@@ -269,7 +277,15 @@ const Sales = () => {
                         <thead className="registry-table__thead">
                             <tr>
                                 {COLUMNS.map(
-                                    ({ label, key, filter, date, options }) => {
+                                    ({
+                                        label,
+                                        key,
+                                        filter,
+                                        date,
+                                        date_from,
+                                        date_to,
+                                        options,
+                                    }) => {
                                         return (
                                             <th
                                                 className="min-w-[125px]"
@@ -392,8 +408,51 @@ const Sales = () => {
                                                         } else if (date) {
                                                             return (
                                                                 <>
-                                                                    <div className="registry-table__thead-label">
-                                                                        {label}
+                                                                    <div
+                                                                        className="registry-table__thead-label"
+                                                                        style={
+                                                                            date_from.request_date_from
+                                                                                ? {
+                                                                                      overflow:
+                                                                                          "visible",
+                                                                                  }
+                                                                                : {}
+                                                                        }
+                                                                    >
+                                                                        {date_from.request_date_from ? (
+                                                                            <div className="registry-table__thead-label-date">
+                                                                                <span>
+                                                                                    {date_from.request_date_from[0]
+                                                                                        .split(
+                                                                                            "-"
+                                                                                        )
+                                                                                        .reverse()
+                                                                                        .join(
+                                                                                            "."
+                                                                                        )}
+                                                                                </span>
+
+                                                                                <div className="hint__message">
+                                                                                    {`${date_from.request_date_from[0]
+                                                                                        .split(
+                                                                                            "-"
+                                                                                        )
+                                                                                        .reverse()
+                                                                                        .join(
+                                                                                            "."
+                                                                                        )} - ${date_to.request_date_to[0]
+                                                                                        .split(
+                                                                                            "-"
+                                                                                        )
+                                                                                        .reverse()
+                                                                                        .join(
+                                                                                            "."
+                                                                                        )}`}
+                                                                                </div>
+                                                                            </div>
+                                                                        ) : (
+                                                                            label
+                                                                        )}
                                                                     </div>
 
                                                                     {requestDateQuery !=
