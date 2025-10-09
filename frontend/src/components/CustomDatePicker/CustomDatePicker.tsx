@@ -11,7 +11,7 @@ registerLocale("ru", ru);
 
 const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
-const CustomDatePicker = ({ closePicker, onChange }) => {
+const CustomDatePicker = ({ closePicker, onChange, fieldkey }) => {
     const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
         null,
         null,
@@ -28,8 +28,8 @@ const CustomDatePicker = ({ closePicker, onChange }) => {
 
         if (start && end) {
             const filters = {
-                request_date_from: [formatDate(start)],
-                request_date_to: [formatDate(end)],
+                [`${fieldkey}_from`]: [formatDate(start)],
+                [`${fieldkey}_to`]: [formatDate(end)],
             };
 
             onChange(filters);

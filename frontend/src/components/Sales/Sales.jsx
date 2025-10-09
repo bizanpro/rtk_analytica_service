@@ -27,6 +27,7 @@ const Sales = () => {
     const [list, setList] = useState([]);
 
     const [requestDateQuery, setRequestDateQuery] = useState(""); // Дата запроса
+    const [statusDate, setStatusDate] = useState(""); // Дата статуса
 
     const [newProjectName, setNewProjectName] = useState("");
     const [openFilter, setOpenFilter] = useState("");
@@ -84,6 +85,15 @@ const Sales = () => {
         return Array.from(new Set(allSources));
     }, [list]);
 
+    // Заполняем селектор дат статуса
+    const statusDateOptions = useMemo(() => {
+        const allDates = list
+            .map((item) => item.status_date)
+            .filter((status_date) => status_date !== null);
+
+        return Array.from(new Set(allDates));
+    }, [list]);
+
     const COLUMNS = [
         {
             label: "Проект",
@@ -117,8 +127,8 @@ const Sales = () => {
             label: "Дата запроса",
             key: "request_date",
             date: "range",
-            date_from: requestDateQuery,
-            date_to: requestDateQuery,
+            dateValue: requestDateQuery,
+            setFunc: setRequestDateQuery,
         },
         {
             label: "Источник",
@@ -129,8 +139,10 @@ const Sales = () => {
         {
             label: "Дата статуса",
             key: "status_date",
-            // filter: "selectedBanks",
-            // options: bankOptions,
+            date: "range",
+            dateValue: statusDate,
+            options: statusDateOptions,
+            setFunc: setStatusDate,
         },
         {
             label: "Статус",
@@ -282,9 +294,9 @@ const Sales = () => {
                                         key,
                                         filter,
                                         date,
-                                        date_from,
-                                        date_to,
+                                        dateValue,
                                         options,
+                                        setFunc,
                                     }) => {
                                         return (
                                             <th
@@ -411,7 +423,10 @@ const Sales = () => {
                                                                     <div
                                                                         className="registry-table__thead-label"
                                                                         style={
-                                                                            date_from.request_date_from
+                                                                            dateValue &&
+                                                                            dateValue[
+                                                                                `${key}_from`
+                                                                            ][0]
                                                                                 ? {
                                                                                       overflow:
                                                                                           "visible",
@@ -419,28 +434,37 @@ const Sales = () => {
                                                                                 : {}
                                                                         }
                                                                     >
-                                                                        {date_from.request_date_from ? (
+                                                                        {dateValue[
+                                                                            `${key}_from`
+                                                                        ] ? (
                                                                             <div className="registry-table__thead-label-date">
                                                                                 <span>
-                                                                                    {date_from.request_date_from[0]
-                                                                                        .split(
-                                                                                            "-"
-                                                                                        )
-                                                                                        .reverse()
-                                                                                        .join(
-                                                                                            "."
-                                                                                        )}
+                                                                                    {dateValue &&
+                                                                                        dateValue[
+                                                                                            `${key}_from`
+                                                                                        ][0]
+                                                                                            .split(
+                                                                                                "-"
+                                                                                            )
+                                                                                            .reverse()
+                                                                                            .join(
+                                                                                                "."
+                                                                                            )}
                                                                                 </span>
 
                                                                                 <div className="hint__message">
-                                                                                    {`${date_from.request_date_from[0]
+                                                                                    {`${dateValue[
+                                                                                        `${key}_from`
+                                                                                    ][0]
                                                                                         .split(
                                                                                             "-"
                                                                                         )
                                                                                         .reverse()
                                                                                         .join(
                                                                                             "."
-                                                                                        )} - ${date_to.request_date_to[0]
+                                                                                        )} - ${dateValue[
+                                                                                        `${key}_to`
+                                                                                    ][0]
                                                                                         .split(
                                                                                             "-"
                                                                                         )
@@ -455,12 +479,14 @@ const Sales = () => {
                                                                         )}
                                                                     </div>
 
-                                                                    {requestDateQuery !=
-                                                                        "" && (
+                                                                    {Object.keys(
+                                                                        dateValue
+                                                                    ).length >
+                                                                        0 && (
                                                                         <button
                                                                             type="button"
                                                                             onClick={() => {
-                                                                                setRequestDateQuery(
+                                                                                setFunc(
                                                                                     ""
                                                                                 );
                                                                             }}
@@ -501,24 +527,18 @@ const Sales = () => {
                                                                     {openFilter ===
                                                                         key && (
                                                                         <CustomDatePicker
+                                                                            fieldkey={
+                                                                                key
+                                                                            }
                                                                             closePicker={
                                                                                 setOpenFilter
                                                                             }
                                                                             onChange={(
                                                                                 updated
                                                                             ) => {
-                                                                                console.log(
+                                                                                setFunc(
                                                                                     updated
                                                                                 );
-
-                                                                                if (
-                                                                                    key ===
-                                                                                    "request_date"
-                                                                                ) {
-                                                                                    setRequestDateQuery(
-                                                                                        updated
-                                                                                    );
-                                                                                }
                                                                             }}
                                                                         />
                                                                     )}
