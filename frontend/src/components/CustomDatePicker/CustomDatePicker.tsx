@@ -1,8 +1,15 @@
 import { useState } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+
 import buildQueryParams from "../../utils/buildQueryParams";
+
+import DatePicker, { registerLocale } from "react-datepicker";
+import { ru } from "date-fns/locale";
+
+import "react-datepicker/dist/react-datepicker.css";
+
 import "./CustomDatePicker.scss";
+
+registerLocale("ru", ru);
 
 const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
@@ -45,6 +52,15 @@ const CustomDatePicker = () => {
                 endDate={tempRange[1]}
                 selectsRange
                 inline
+                locale="ru"
+                renderDayContents={(day) => (
+                    <>
+                        <div className="react-datepicker__day-number">
+                            {day}
+                        </div>
+                        <div className="react-datepicker__day-overlay"></div>
+                    </>
+                )}
                 renderCustomHeader={({
                     date,
                     changeYear,
@@ -54,65 +70,73 @@ const CustomDatePicker = () => {
                     prevMonthButtonDisabled,
                     nextMonthButtonDisabled,
                 }) => (
-                    <div className="header flex items-center justify-between p-2 border-b">
-                        <div className="flex items-center gap-2">
+                    <div className="custom-datepicker__header">
+                        <div className="flex items-center gap-[10px]">
                             <select
-                                className="border rounded px-1 py-0.5"
+                                className="form-select"
                                 value={date.getMonth()}
                                 onChange={(e) =>
                                     changeMonth(Number(e.target.value))
                                 }
                             >
-                                {Array.from({ length: 12 }, (_, i) => (
-                                    <option key={i} value={i}>
-                                        {new Date(0, i).toLocaleString(
-                                            "ru-RU",
-                                            { month: "long" }
-                                        )}
-                                    </option>
-                                ))}
+                                {Array.from({ length: 12 }, (_, i) => {
+                                    const monthName = new Date(
+                                        0,
+                                        i
+                                    ).toLocaleString("ru-RU", {
+                                        month: "long",
+                                    });
+                                    const capitalized =
+                                        monthName.charAt(0).toUpperCase() +
+                                        monthName.slice(1);
+                                    return (
+                                        <option key={i} value={i}>
+                                            {capitalized}
+                                        </option>
+                                    );
+                                })}
                             </select>
 
                             <select
-                                className="border rounded px-1 py-0.5"
+                                className="form-select"
                                 value={date.getFullYear()}
                                 onChange={(e) =>
                                     changeYear(Number(e.target.value))
                                 }
                             >
-                                {Array.from({ length: 11 }, (_, i) => {
-                                    const year =
-                                        new Date().getFullYear() - 5 + i;
-                                    return (
-                                        <option key={year} value={year}>
-                                            {year}
-                                        </option>
-                                    );
-                                })}
+                                {Array.from(
+                                    {
+                                        length:
+                                            new Date().getFullYear() - 1900 + 1,
+                                    },
+                                    (_, i) => 1900 + i
+                                ).map((year) => (
+                                    <option key={year} value={year}>
+                                        {year}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
-                        <div className="flex items-center gap-1">
+                        <div className="custom-datepicker__header-actions">
                             <button
                                 onClick={decreaseMonth}
                                 disabled={prevMonthButtonDisabled}
-                                className="px-2 py-1 border rounded hover:bg-gray-100"
-                            >
-                                ‹
-                            </button>
+                                className="custom-datepicker__header-actions-prev-btn"
+                                title="К предыдущему месяцу"
+                            ></button>
                             <button
                                 onClick={increaseMonth}
                                 disabled={nextMonthButtonDisabled}
-                                className="px-2 py-1 border rounded hover:bg-gray-100"
-                            >
-                                ›
-                            </button>
+                                className="custom-datepicker__header-actions-next-btn"
+                                title="К следующему месяцу"
+                            ></button>
                         </div>
                     </div>
                 )}
             />
 
-            <div className="actions flex justify-end gap-2 p-2 border-t">
+            <div className="custom-datepicker__actions">
                 <button className="cancel-button" onClick={handleCancel}>
                     Отменить
                 </button>
