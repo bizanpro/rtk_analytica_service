@@ -26,7 +26,7 @@ const Sales = () => {
 
     const [list, setList] = useState([]);
 
-    const [dateRange, setDateRange] = useState([null, null]);
+    const [requestDateQuery, setRequestDateQuery] = useState(""); // Дата запроса
 
     const [newProjectName, setNewProjectName] = useState("");
     const [openFilter, setOpenFilter] = useState("");
@@ -135,10 +135,10 @@ const Sales = () => {
     ];
 
     // Получение реестра
-    const getList = (query = "") => {
+    const getList = () => {
         setIsLoading(true);
 
-        getData(`${URL}?${query}`, { Accept: "application/json" })
+        getData(`${URL}?${requestDateQuery}`, { Accept: "application/json" })
             .then((response) => {
                 setList(response.data);
             })
@@ -179,7 +179,7 @@ const Sales = () => {
 
     useEffect(() => {
         getList();
-    }, []);
+    }, [requestDateQuery]);
 
     const [filters, setFilters] = useState({
         selectedNames: [],
@@ -217,7 +217,7 @@ const Sales = () => {
                     ))
             );
         });
-    }, [list, filters, dateRange]);
+    }, [list, filters]);
 
     return (
         <main className="page projects">
@@ -396,21 +396,13 @@ const Sales = () => {
                                                                         {label}
                                                                     </div>
 
-                                                                    {filters[
-                                                                        filter
-                                                                    ]?.length >
-                                                                        0 && (
+                                                                    {requestDateQuery !=
+                                                                        "" && (
                                                                         <button
                                                                             type="button"
                                                                             onClick={() => {
-                                                                                setFilters(
-                                                                                    (
-                                                                                        prev
-                                                                                    ) => ({
-                                                                                        ...prev,
-                                                                                        [filter]:
-                                                                                            [],
-                                                                                    })
+                                                                                setRequestDateQuery(
+                                                                                    ""
                                                                                 );
                                                                             }}
                                                                         >
@@ -453,6 +445,22 @@ const Sales = () => {
                                                                             closePicker={
                                                                                 setOpenFilter
                                                                             }
+                                                                            onChange={(
+                                                                                updated
+                                                                            ) => {
+                                                                                console.log(
+                                                                                    updated
+                                                                                );
+
+                                                                                if (
+                                                                                    key ===
+                                                                                    "request_date"
+                                                                                ) {
+                                                                                    setRequestDateQuery(
+                                                                                        updated
+                                                                                    );
+                                                                                }
+                                                                            }}
                                                                         />
                                                                     )}
                                                                 </>
