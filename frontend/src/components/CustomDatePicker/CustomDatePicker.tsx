@@ -13,7 +13,7 @@ registerLocale("ru", ru);
 
 const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
-const CustomDatePicker = () => {
+const CustomDatePicker = ({ closePicker }) => {
     const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
         null,
         null,
@@ -35,10 +35,6 @@ const CustomDatePicker = () => {
             const query = buildQueryParams(filters);
             // getList(query);
         }
-    };
-
-    const handleCancel = () => {
-        setTempRange(dateRange); // вернуть исходное значение
     };
 
     return (
@@ -137,7 +133,10 @@ const CustomDatePicker = () => {
             />
 
             <div className="custom-datepicker__actions">
-                <button className="cancel-button" onClick={handleCancel}>
+                <button
+                    className="cancel-button"
+                    onClick={() => closePicker(false)}
+                >
                     Отменить
                 </button>
                 <button className="action-button" onClick={handleApply}>

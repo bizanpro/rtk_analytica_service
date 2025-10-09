@@ -429,39 +429,32 @@ const Sales = () => {
                                                                         </button>
                                                                     )}
 
-                                                                    {options &&
-                                                                        options.length >
-                                                                            0 &&
-                                                                        options.some(
-                                                                            (
-                                                                                val
-                                                                            ) =>
-                                                                                val !==
-                                                                                undefined
-                                                                        ) && (
-                                                                            <FilterButton
-                                                                                label={
-                                                                                    label
-                                                                                }
-                                                                                key={
-                                                                                    key
-                                                                                }
-                                                                                filterKey={
-                                                                                    key
-                                                                                }
-                                                                                openFilter={
-                                                                                    openFilter
-                                                                                }
-                                                                                setOpenFilter={
-                                                                                    setOpenFilter
-                                                                                }
-                                                                            />
-                                                                        )}
+                                                                    <FilterButton
+                                                                        label={
+                                                                            label
+                                                                        }
+                                                                        key={
+                                                                            key
+                                                                        }
+                                                                        filterKey={
+                                                                            key
+                                                                        }
+                                                                        openFilter={
+                                                                            openFilter
+                                                                        }
+                                                                        setOpenFilter={
+                                                                            setOpenFilter
+                                                                        }
+                                                                    />
 
-                                                                    {/* {openFilter ===
-                                                                        key && ( */}
-                                                                        <CustomDatePicker />
-                                                                    {/* )} */}
+                                                                    {openFilter ===
+                                                                        key && (
+                                                                        <CustomDatePicker
+                                                                            closePicker={
+                                                                                setOpenFilter
+                                                                            }
+                                                                        />
+                                                                    )}
                                                                 </>
                                                             );
                                                         }
