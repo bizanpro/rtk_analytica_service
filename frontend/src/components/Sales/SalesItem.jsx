@@ -29,13 +29,16 @@ const SalesItem = ({ props, columns, deleteProject, mode }) => {
                 let statusClass;
 
                 if (key === "last_service_last_stage") {
-                    if (value.toLowerCase() === "проект отложен") {
+                    if (value && value.toLowerCase() === "проект отложен") {
                         statusClass = "registry-table__item-status_completed";
                     } else if (
-                        value.toLowerCase() === "отказ от участия" ||
-                        value.toLowerCase() === "получен отказ"
+                        value &&
+                        (value.toLowerCase() === "отказ от участия" ||
+                            value.toLowerCase() === "получен отказ")
                     ) {
                         statusClass = "registry-table__item-status_canceled";
+                    } else if (!value) {
+                        statusClass = "";
                     } else {
                         statusClass = "registry-table__item-status_active";
                     }

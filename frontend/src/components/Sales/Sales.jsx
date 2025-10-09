@@ -81,7 +81,7 @@ const Sales = () => {
     const sourceOptions = useMemo(() => {
         const allSources = list
             .flatMap((item) => item.request_source)
-            .map((request_source) => request_source.name);
+            .map((request_source) => request_source?.name);
         return Array.from(new Set(allSources));
     }, [list]);
 
@@ -212,6 +212,24 @@ const Sales = () => {
 
     const filteredProjects = useMemo(() => {
         return list.filter((project) => {
+            const projectDateStr = project.status_date;
+
+            const hasDateFilter =
+                statusDate.status_date_from?.[0] &&
+                statusDate.status_date_to?.[0];
+
+            const isInDateRange = hasDateFilter
+                ? (() => {
+                      const projectDate = new Date(projectDateStr);
+                      const from = new Date(statusDate.status_date_from[0]);
+                      const to = new Date(statusDate.status_date_to[0]);
+
+                      to.setHours(23, 59, 59, 999);
+
+                      return projectDate >= from && projectDate <= to;
+                  })()
+                : true;
+
             return (
                 (filters.selectedNames.length === 0 ||
                     filters.selectedNames.includes(project.name)) &&
@@ -228,16 +246,18 @@ const Sales = () => {
                         filters.selectedServices.includes(c.name)
                     )) &&
                 (filters.selectedSources.length === 0 ||
-                    filters.selectedSources.includes(
-                        project.request_source.name
-                    )) &&
+                    (project.request_source?.name &&
+                        filters.selectedSources.includes(
+                            project.request_source.name
+                        ))) &&
                 (filters.selectedStatuses.length === 0 ||
                     filters.selectedStatuses.includes(
                         project.last_service_last_stage
-                    ))
+                    )) &&
+                isInDateRange
             );
         });
-    }, [list, filters]);
+    }, [list, filters, statusDate]);
 
     return (
         <main className="page projects">
@@ -536,6 +556,10 @@ const Sales = () => {
                                                                             onChange={(
                                                                                 updated
                                                                             ) => {
+                                                                                console.log(
+                                                                                    updated
+                                                                                );
+
                                                                                 setFunc(
                                                                                     updated
                                                                                 );
