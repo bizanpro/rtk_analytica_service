@@ -6,13 +6,20 @@ import { sortDateList } from "../../utils/sortDateList";
 
 import ReportItem from "./ReportItem";
 import ManagementItem from "./ManagementItem";
+
 import ManagementReportEditor from "./ManagementReportEditor";
 import ReportRateEditor from "../ReportRateEditor/ReportRateEditor";
 import ReportWindow from "../ReportWindow/ReportWindow";
+
 import TheadSortButton from "../TheadSortButton/TheadSortButton";
+import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
+import FilterButton from "../FilterButton";
+import OverlayTransparent from "../Overlay/OverlayTransparent";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import "./Reports.scss";
 
 const Reports = () => {
     const REPORTS_URL = `${import.meta.env.VITE_API_URL}reports`;
@@ -20,15 +27,56 @@ const Reports = () => {
 
     const COLUMNS = [
         [
-            { label: "Отчёт", key: "report_period_code" },
-            { label: "Проект", key: "project" },
-            { label: "Заказкчик", key: "contragent" },
-            { label: "Банк", key: "creditors" },
+            {
+                label: "Отчёт",
+                key: "report_period_code",
+                filter: "selectedReports",
+                // options: nameOptions,
+            },
+            {
+                label: "Проект",
+                key: "project",
+                filter: "selectedProjects",
+                // options: nameOptions,
+            },
+            {
+                label: "Отрасль",
+                key: "industry",
+                filter: "selectedIndusties",
+                // options: nameOptions,
+            },
+            {
+                label: "Заказкчик",
+                key: "contragent",
+                filter: "selectedContragents",
+                // options: nameOptions,
+            },
+            {
+                label: "Банк",
+                key: "creditors",
+                filter: "selectedCreditors",
+                // options: nameOptions,
+            },
             { label: "Бюджет", key: "project_budget" },
             { label: "Срок", key: "implementation_period" },
-            { label: "Руководитель проекта", key: "project_managers" },
-            { label: "Статус", key: "report_status" },
-            { label: "Период выполнения", key: "days" },
+            {
+                label: "Руководитель",
+                key: "project_managers",
+                filter: "selectedManagers",
+                // options: nameOptions,
+            },
+            {
+                label: "Период вып.",
+                key: "days",
+                filter: "selectedPeriod",
+                // options: nameOptions,
+            },
+            {
+                label: "Статус",
+                key: "report_status",
+                filter: "selectedStatus",
+                // options: nameOptions,
+            },
         ],
         [
             { label: "Отчёт", key: "name" },
@@ -45,22 +93,14 @@ const Reports = () => {
         ],
     ];
 
-    const FILTER_LABELS = [
-        { key: "projects", label: "Проект" },
-        { key: "contragents", label: "Заказчик" },
-        { key: "industries", label: "Отрасль" },
-        { key: "creditors", label: "Банк" },
-        { key: "project_managers", label: "Руководитель проекта" },
-        { key: "report_types", label: "Тип отчёта" },
-        { key: "statuses", label: "Статус" },
-    ];
-
     let query;
 
     const [activeTab, setActiveTab] = useState("projects");
     const [isLoading, setIsLoading] = useState(true);
 
     const [sortBy, setSortBy] = useState({ key: "", action: "" });
+
+    const [openFilter, setOpenFilter] = useState("");
 
     const [reportsList, setReportsList] = useState([]);
     const [managementList, setManagementList] = useState([]);
@@ -536,41 +576,43 @@ const Reports = () => {
     }, []);
 
     return (
-        <main className="page">
+        <main className="page reports-registry">
             <ToastContainer containerId="report" />
 
-            <div className="container pt-8 min-h-screen flex flex-col">
-                <section className="flex flex-col justify-between gap-6 mb-8">
-                    <h1 className="text-3xl font-medium">Реестр отчётов</h1>
+            <div className="container registry__container">
+                <section className="registry__header flex items-center">
+                    <h1 className="title">Реестр отчётов</h1>
 
-                    <nav className="flex items-center gap-10 border-b border-gray-300 text-lg">
-                        <button
-                            type="button"
-                            className={`py-2 transition-all border-b-2 ${
-                                activeTab == "projects"
-                                    ? "border-gray-500"
-                                    : "border-transparent"
-                            }`}
-                            onClick={() => setActiveTab("projects")}
-                            title="Перейти на вкладку Отчёты проектов"
-                        >
-                            Отчёты проектов ({reportsList.length})
-                        </button>
-                        <button
-                            type="button"
-                            className={`py-2 transition-all border-b-2 ${
-                                activeTab == "management"
-                                    ? "border-gray-500"
-                                    : "border-transparent"
-                            }`}
-                            onClick={() => setActiveTab("management")}
-                            title="Перейти на вкладку Отчёты сотрудников"
-                        >
-                            Отчёты сотрудников ({filteredReports.length})
-                        </button>
-                    </nav>
+                    <ul className="card__tabs">
+                        <li className="card__tabs-item radio-field_tab">
+                            <input
+                                type="radio"
+                                name="active_tab"
+                                id="project_reports"
+                                defaultChecked
+                                onChange={() => setActiveTab("projects")}
+                            />
+                            <label htmlFor="project_reports">
+                                Отчёты проектов
+                                <span>{reportsList.length}</span>
+                            </label>
+                        </li>
 
-                    <div className="flex items-center justify-between gap-6">
+                        <li className="card__tabs-item radio-field_tab">
+                            <input
+                                type="radio"
+                                name="active_tab"
+                                id="management_reports"
+                                onChange={() => setActiveTab("management")}
+                            />
+                            <label htmlFor="management_reports">
+                                Отчёты сотрудников
+                                <span>{filteredReports.length}</span>
+                            </label>
+                        </li>
+                    </ul>
+
+                    {/* <div className="flex items-center justify-between gap-6">
                         {activeTab === "projects" && (
                             <>
                                 <div className="flex items-center gap-5">
@@ -620,20 +662,6 @@ const Reports = () => {
                                         );
                                     })}
                                 </div>
-
-                                {Object.entries(filterOptionsList).length >
-                                    0 && (
-                                    <button
-                                        type="button"
-                                        className="border rounded-lg py-1 px-5"
-                                        onClick={() =>
-                                            setSelectedProjectsFilters([])
-                                        }
-                                        title="Очистить фильтр"
-                                    >
-                                        Очистить
-                                    </button>
-                                )}
                             </>
                         )}
                         {activeTab === "management" && (
@@ -724,39 +752,27 @@ const Reports = () => {
                                                 )
                                             )}
                                     </select>
-
-                                    <button
-                                        type="button"
-                                        className="border rounded-lg py-1 px-5"
-                                        onClick={() => {
-                                            setSelectedPhysicalPerson(
-                                                "default"
-                                            );
-                                            setSelectedManagementReport(
-                                                "default"
-                                            );
-                                            setSelectedManagementFilters({
-                                                report_month: [""],
-                                            });
-                                        }}
-                                        title="Очистить фильтр"
-                                    >
-                                        Очистить
-                                    </button>
                                 </div>
                             </>
                         )}
-                    </div>
+                    </div> */}
                 </section>
 
-                <section className="w-full pb-5 relative min-h-full flex-grow overflow-y-auto">
-                    <table className="table-auto w-full border-collapse border-gray-300 text-sm">
-                        <thead className="text-gray-400 text-left">
-                            <tr className="border-b border-gray-300">
+                <section className="registry__table-section w-full">
+                    {openFilter !== "" && (
+                        <OverlayTransparent
+                            state={true}
+                            toggleMenu={() => setOpenFilter("")}
+                        />
+                    )}
+
+                    <table className="registry-table table-auto w-full border-collapse">
+                        <thead className="registry-table__thead">
+                            <tr>
                                 {COLUMNS[activeTab === "projects" ? 0 : 1].map(
                                     ({ label, key, is_sortable }) => (
                                         <th
-                                            className="text-base px-4 py-2 min-w-[180px] max-w-[200px]"
+                                            className="text-base px-4 py-2 min-w-[120px] max-w-[160px]"
                                             rowSpan="2"
                                             key={key}
                                         >
@@ -776,7 +792,7 @@ const Reports = () => {
                             </tr>
                         </thead>
 
-                        <tbody>
+                        <tbody className="registry-table__tbody">
                             {isLoading ? (
                                 <tr>
                                     <td className="text-base px-4 py-2">
@@ -791,7 +807,6 @@ const Reports = () => {
                                         columns={COLUMNS[0]}
                                         props={item}
                                         openReportEditor={openReportEditor}
-                                        reportId={reportId}
                                     />
                                 ))
                             ) : (
@@ -819,86 +834,39 @@ const Reports = () => {
                     </table>
 
                     {activeTab === "projects" && reportWindowsState && (
-                        <div
-                            className="fixed w-[100vw] h-[100vh] inset-0 z-2"
-                            onClick={() => {
-                                setReportWindowsState(false);
-                            }}
-                        >
-                            <div
-                                className="bg-white border-2 border-gray-300 overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%] p-3"
-                                style={{ minHeight: "calc(100vh - 10%)" }}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <ReportWindow
-                                    reportWindowsState={setReportWindowsState}
-                                    contracts={contracts}
-                                    reportId={reportId}
-                                    setReportId={setReportId}
-                                    reportName={reportName}
-                                    mode={"read"}
-                                />
-                            </div>
-                        </div>
+                        <ReportWindow
+                            reportWindowsState={setReportWindowsState}
+                            contracts={contracts}
+                            reportId={reportId}
+                            setReportId={setReportId}
+                            reportName={reportName}
+                            mode={"read"}
+                        />
                     )}
 
                     {activeTab === "management" && (
                         <>
                             {rateEditorState && (
-                                <div
-                                    className="fixed w-[100vw] h-[100vh] inset-0 z-2"
-                                    onClick={() => {
-                                        closeRateReportEditor();
-                                    }}
-                                >
-                                    <div
-                                        className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
-                                        style={{
-                                            minHeight: "calc(100vh - 10%)",
-                                        }}
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        <ReportRateEditor
-                                            reportData={reportData}
-                                            closeEditor={closeRateReportEditor}
-                                            updateReportDetails={
-                                                updateReportDetails
-                                            }
-                                            mode={"edit"}
-                                        />
-                                    </div>
-                                </div>
+                                <ReportRateEditor
+                                    reportData={reportData}
+                                    closeEditor={closeRateReportEditor}
+                                    updateReportDetails={updateReportDetails}
+                                    mode={"edit"}
+                                />
                             )}
 
                             {managementEditorState && (
-                                <div
-                                    className="fixed w-[100vw] h-[100vh] inset-0 z-2"
-                                    onClick={() => {
-                                        closeManagementReportEditor();
-                                    }}
-                                >
-                                    <div
-                                        className="bg-white overflow-x-hidden overflow-y-auto fixed top-[5%] bottom-[5%] right-[2%] w-[35%]"
-                                        style={{
-                                            minHeight: "calc(100vh - 10%)",
-                                        }}
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        <ManagementReportEditor
-                                            managementReportData={
-                                                managementReportData
-                                            }
-                                            setManagementReportData={
-                                                setManagementReportData
-                                            }
-                                            updateReport={updateReport}
-                                            closeManagementReportEditor={
-                                                closeManagementReportEditor
-                                            }
-                                            mode={"edit"}
-                                        />
-                                    </div>
-                                </div>
+                                <ManagementReportEditor
+                                    managementReportData={managementReportData}
+                                    setManagementReportData={
+                                        setManagementReportData
+                                    }
+                                    updateReport={updateReport}
+                                    closeManagementReportEditor={
+                                        closeManagementReportEditor
+                                    }
+                                    mode={"edit"}
+                                />
                             )}
                         </>
                     )}

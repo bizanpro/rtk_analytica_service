@@ -1,7 +1,7 @@
-const ReportItem = ({ columns, props, openReportEditor, reportId }) => {
+const ReportItem = ({ columns, props, openReportEditor }) => {
     return (
         <tr
-            className="border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer"
+            className="registry-table__item transition text-base text-left cursor-pointer"
             onClick={() => {
                 openReportEditor(props);
             }}
@@ -9,33 +9,79 @@ const ReportItem = ({ columns, props, openReportEditor, reportId }) => {
             {columns.map(({ key }) => {
                 const value = props[key];
 
+                let statusClass;
+
+                if (key === "report_status") {
+                    if (value.toLowerCase() === "завершен") {
+                        statusClass = "registry-table__item-status_active";
+                    } else if (
+                        value.toLowerCase() === "в процессе" ||
+                        value.toLowerCase() === "в работе"
+                    ) {
+                        statusClass = "registry-table__item-status_inprogress";
+                    } else if (value === "active") {
+                        statusClass = "registry-table__item-status_active";
+                    }
+                }
+
                 if (Array.isArray(value) && value !== null) {
                     if (value?.length > 0) {
                         return (
                             <td
-                                className="border-b border-gray-300 py-2.5 min-w-[180px] max-w-[200px] text-lg"
+                                className={`${
+                                    key === "creditors"
+                                        ? "w-[90px] max-w-[90px]"
+                                        : "min-w-[110px] max-w-[135px]"
+                                }`}
                                 key={key}
                             >
                                 <table className="w-full">
                                     <tbody>
-                                        {value?.map((item, index) => (
-                                            <tr key={`${key}_${index}`}>
-                                                <td
-                                                    className={`px-4 ${
-                                                        index !==
-                                                        value?.length - 1
-                                                            ? "pb-1"
-                                                            : "pt-1"
-                                                    }`}
-                                                >
-                                                    {key ===
-                                                        "project_managers" ||
-                                                    key === "creditors"
-                                                        ? item.name
-                                                        : item?.toString()}
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        {value?.map((item, index) => {
+                                            let cellContent;
+
+                                            if (key === "project_managers") {
+                                                cellContent = (
+                                                    <div className="hidden-group text-blue">
+                                                        <div className="visible-text">
+                                                            <div>
+                                                                {item.name.toString() ||
+                                                                    "—"}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="hidden-text">
+                                                            {item.name.toString() ||
+                                                                "—"}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            } else if (key === "creditors") {
+                                                cellContent =
+                                                    item?.name?.toString();
+                                            } else {
+                                                cellContent = item?.toString();
+                                            }
+
+                                            return (
+                                                <tr key={`${key}_${index}`}>
+                                                    <td
+                                                        className={`${
+                                                            key === "creditors"
+                                                                ? "w-[90px] max-w-[90px]"
+                                                                : "min-w-[110px] max-w-[135px]"
+                                                        } ${
+                                                            index !==
+                                                            value?.length - 1
+                                                                ? "pb-1"
+                                                                : "pt-1"
+                                                        }`}
+                                                    >
+                                                        {cellContent}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
                                     </tbody>
                                 </table>
                             </td>
@@ -43,7 +89,7 @@ const ReportItem = ({ columns, props, openReportEditor, reportId }) => {
                     } else {
                         return (
                             <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-lg"
+                                className="min-w-[110px] max-w-[135px]"
                                 key={key}
                             >
                                 —
@@ -51,35 +97,26 @@ const ReportItem = ({ columns, props, openReportEditor, reportId }) => {
                         );
                     }
                 } else if (typeof value === "object" && value !== null) {
-                    if (key === "project") {
+                    if (key === "project" || key === "contragent") {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-lg"
-                                key={key}
-                            >
-                                {value?.name?.toString() || "—"}
-                                <br />
-                                <span className="text-gray-400 text-sm">
-                                    {value.industry?.main?.name}
-                                </span>
-                            </td>
-                        );
-                    } else if (key === "contragent") {
-                        return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-lg"
-                                key={key}
-                            >
-                                {value?.name?.toString() || "—"}
+                            <td className="w-[130px] text-blue" key={key}>
+                                <div className="hidden-group">
+                                    <div className="visible-text">
+                                        <div>
+                                            {value?.name?.toString() || "—"}
+                                        </div>
+                                    </div>
+
+                                    <div className="hidden-text">
+                                        {value?.name?.toString() || "—"}
+                                    </div>
+                                </div>
                             </td>
                         );
                     } else {
                         return Object.entries(value).map(
                             ([subKey, subValue]) => (
-                                <td
-                                    className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-lg"
-                                    key={subKey}
-                                >
+                                <td className="w-[130px]" key={subKey}>
                                     {subValue?.toString() || "—"}
                                 </td>
                             )
@@ -89,18 +126,12 @@ const ReportItem = ({ columns, props, openReportEditor, reportId }) => {
                     if (key === "report_period_code") {
                         return (
                             <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-lg"
+                                className="min-w-[120px] max-w-[155px]"
                                 key={key}
                             >
-                                <div
-                                    className={`${
-                                        reportId == props.id && "font-semibold"
-                                    }`}
-                                >
-                                    {value?.toString() || "—"}
-                                </div>
+                                <div>{value?.toString() || "—"}</div>
 
-                                <span className="text-base">
+                                <span className="min-w-[120px] text-[#98A2B3] whitespace-nowrap">
                                     {props?.report_period?.toString()}
                                 </span>
                             </td>
@@ -108,28 +139,20 @@ const ReportItem = ({ columns, props, openReportEditor, reportId }) => {
                     } else if (key === "project_budget") {
                         return (
                             <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-2xl"
+                                className="w-[100px] registry-table__item-budget"
                                 key={key}
                             >
-                                {value?.toString() || "—"}
-
-                                <div className="text-base">млрд руб.</div>
+                                <b>{value?.toString() || "—"}</b>
+                                <span>
+                                    {value?.toString() ? "млрд руб." : ""}
+                                </span>
                             </td>
                         );
                     } else if (key === "report_status") {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px]"
-                                key={key}
-                            >
+                            <td className="w-[110px]" key={key}>
                                 <div
-                                    className={`rounded px-3 py-1 text-center
-                                            ${
-                                                value === "Завершен"
-                                                    ? "bg-green-400"
-                                                    : "bg-gray-200"
-                                            }
-                                        `}
+                                    className={`registry-table__item-status ${statusClass}`}
                                 >
                                     {value?.toString() || "—"}
                                 </div>
@@ -137,13 +160,10 @@ const ReportItem = ({ columns, props, openReportEditor, reportId }) => {
                         );
                     } else if (key === "days") {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-2xl"
-                                key={key}
-                            >
+                            <td className="w-[110px]" key={key}>
                                 {value?.toString() || "—"}
 
-                                <div className="text-base">
+                                <div className="min-w-[120px] text-[#98A2B3] whitespace-nowrap">
                                     {props?.execution_period_code}
                                 </div>
                             </td>
@@ -151,34 +171,41 @@ const ReportItem = ({ columns, props, openReportEditor, reportId }) => {
                     } else if (key === "implementation_period") {
                         return (
                             <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-2xl"
+                                className="w-[127px] registry-table__item-period"
                                 key={key}
                             >
-                                <div className="flex items-end gap-1">
-                                    <div className="flex items-end gap-1">
-                                        {value?.toString() || "—"}{" "}
-                                        <span className="text-base">мес.</span>
-                                    </div>
+                                {value?.toString() ? (
+                                    <>
+                                        <div className="flex items-end gap-[5px]">
+                                            <b className="flex items-end gap-1">
+                                                {value?.toString()}
+                                                <span>мес.</span>
+                                            </b>
 
-                                    {props?.completion_percentage && (
-                                        <div className="text-gray-300 border-gray-300 py-1 px-1 text-center border rounded-md text-sm">
-                                            {Math.round(
-                                                props?.completion_percentage
+                                            {props?.completion_percentage && (
+                                                <span>
+                                                    {Math.round(
+                                                        props?.completion_percentage
+                                                    )}
+                                                    %
+                                                </span>
                                             )}
-                                            %
                                         </div>
-                                    )}
-                                </div>
 
-                                <div className="text-base">
-                                    до {props?.implementation_period_end}
-                                </div>
+                                        <span>
+                                            до{" "}
+                                            {props?.implementation_period_end}
+                                        </span>
+                                    </>
+                                ) : (
+                                    "—"
+                                )}
                             </td>
                         );
                     } else {
                         return (
                             <td
-                                className="border-b border-gray-300 px-4 py-2.5 min-w-[180px] max-w-[200px] text-lg"
+                                className="min-w-[110px] max-w-[120px]"
                                 key={key}
                             >
                                 {value?.toString() || "—"}

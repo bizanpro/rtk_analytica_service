@@ -1,0 +1,21 @@
+@use "../../styles/media-breakpoints" as *;
+
+.reports-registry {
+    .card__tabs {
+        margin-bottom: 0;
+        margin-left: 20px;
+
+        .card__tabs-item {
+            span {
+                display: inline-block;
+                color: var(--color-gray-50);
+                margin-left: 7px;
+            }
+
+            input:checked ~ label span {
+                color: var(--color-white);
+                opacity: 50%;
+            }
+        }
+    }
+}

@@ -47,6 +47,11 @@
     }
 
     @media (min-width: $media-lg) {
-        padding: 10px 0 40px;
+        padding: 10px 40px 40px;
+    }
+
+    @media (min-width: 1680px) {
+        padding-left: 40px;
+        padding-right: 40px;
     }
 }

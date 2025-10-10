@@ -112,6 +112,10 @@
             padding: 10px 0 30px;
         }
 
+        @media (min-width: $media-xxxl) {
+            padding: 10px 40px 30px;
+        }
+
         .container {
             display: grid;
             align-items: center;

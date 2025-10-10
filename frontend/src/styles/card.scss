@@ -32,6 +32,10 @@
             grid-template-columns: 840px 575px;
             gap: 40px;
         }
+
+        @media (min-width: $media-xxxl) {
+            grid-template-columns: 1fr 575px;
+        }
     }
 
     &__main-content {
