@@ -7,13 +7,11 @@ import buildQueryParams from "../../utils/buildQueryParams";
 
 import SalesItem from "./SalesItem";
 import Popup from "../Popup/Popup";
-// import Select from "../Select";
-
-import CustomDatePicker from "../CustomDatePicker/CustomDatePicker";
 
 import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
 import FilterButton from "../FilterButton";
 import OverlayTransparent from "../Overlay/OverlayTransparent";
+import CustomDatePicker from "../CustomDatePicker/CustomDatePicker";
 
 const Sales = () => {
     const URL = `${import.meta.env.VITE_API_URL}sales-funnel-projects`;

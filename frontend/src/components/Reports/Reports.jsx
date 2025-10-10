@@ -15,6 +15,7 @@ import TheadSortButton from "../TheadSortButton/TheadSortButton";
 import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
 import FilterButton from "../FilterButton";
 import OverlayTransparent from "../Overlay/OverlayTransparent";
+import CustomDatePicker from "../CustomDatePicker/CustomDatePicker";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -22,10 +23,10 @@ import "react-toastify/dist/ReactToastify.css";
 import "./Reports.scss";
 
 const Reports = () => {
+    let query;
+
     const REPORTS_URL = `${import.meta.env.VITE_API_URL}reports`;
     const MANAGEMENT_URL = `${import.meta.env.VITE_API_URL}management-reports`;
-
-    let query;
 
     const [activeTab, setActiveTab] = useState("projects");
     const [isLoading, setIsLoading] = useState(true);
@@ -48,19 +49,7 @@ const Reports = () => {
     const [reportId, setReportId] = useState(null);
 
     const [availableMonths, setAvailableMonths] = useState([]);
-
     const [filteredAvailableMonths, setFilteredAvailableMonths] = useState([]);
-    const [filterOptionsList, setFilterOptionsList] = useState({}); // Список доступных параметров фильтров
-
-    const [selectedProjectsFilters, setSelectedProjectsFilters] = useState({}); // Выбранные параметры фильтров во вкладке отчетов проектов
-    const [selectedManagementFilters, setSelectedManagementFilters] = useState({
-        report_month: [""],
-    }); // Выбранные параметры фильтров во вкладке отчетов сотрудника
-
-    const [selectedManagementReport, setSelectedManagementReport] =
-        useState("default"); // Выбранный отчет
-    const [selectedPhysicalPerson, setSelectedPhysicalPerson] =
-        useState("default"); // Выбранный отвественный
 
     const [managementReportData, setManagementReportData] = useState({
         name: "",
@@ -74,139 +63,40 @@ const Reports = () => {
         misc: "",
     });
 
-    // Фильтрованный список отчетов
-    const filteredReports = useMemo(() => {
-        const result = sortedManagementList.filter((report) => {
-            return (
-                (selectedManagementReport &&
-                selectedManagementReport !== "default"
-                    ? report?.name === selectedManagementReport
-                    : true) &&
-                (selectedPhysicalPerson && selectedPhysicalPerson !== "default"
-                    ? report?.physical_person?.name === selectedPhysicalPerson
-                    : true)
-            );
-        });
-
-        return result;
-    }, [
-        sortedManagementList,
-        selectedManagementReport,
-        selectedPhysicalPerson,
-    ]);
-
-    // Заполняем селектор отчетов Сотрудника
-    // const managementReportsOptions = useMemo(() => {
-    //     const allReports = sortedManagementList.flatMap((item) => item.name);
-    //     return Array.from(new Set(allReports));
-    // }, [sortedManagementList]);
-
-    // // Заполняем селектор ответственных
-    // const physicalPersonOptions = useMemo(() => {
-    //     const allReports = sortedManagementList.flatMap((item) =>
-    //         item?.physical_person ? [item.physical_person.name] : []
-    //     );
-
-    //     return Array.from(new Set(allReports));
-    // }, [sortedManagementList]);
-
-    // Обработка фильтров
-    const handleFilterChange = (filterKey, value, section) => {
-        const filteredValues = value.filter((v) => v !== "");
-
-        if (section === "projects") {
-            setSelectedProjectsFilters((prev) => ({
-                ...prev,
-                [filterKey]: filteredValues.length > 0 ? filteredValues : [],
-            }));
-        } else if (section === "management") {
-            setSelectedManagementFilters((prev) => ({
-                ...prev,
-                [filterKey]: filteredValues.length > 0 ? filteredValues : [],
-            }));
-        }
-    };
-
     // Получение списка отчетов
-    const getFilteredReports = () => {
+    const getReports = () => {
         setIsLoading(true);
 
-        const queryParams = new URLSearchParams();
+        // const queryParams = new URLSearchParams();
 
-        Object.entries(selectedProjectsFilters).forEach(([key, values]) => {
-            values.forEach((value) => {
-                queryParams.append(`filters[${key}][]`, value);
-            });
-        });
+        // Object.entries(selectedProjectsFilters).forEach(([key, values]) => {
+        //     values.forEach((value) => {
+        //         queryParams.append(`filters[${key}][]`, value);
+        //     });
+        // });
 
-        getData(`${REPORTS_URL}?${queryParams.toString()}`)
+        getData(REPORTS_URL)
             .then((response) => {
                 if (response.status === 200) {
                     setReportsList(response.data);
-                    setSelectedManagementReport("default");
-                    setSelectedPhysicalPerson("default");
                 }
             })
             .finally(() => setIsLoading(false));
     };
 
-    // Фильтрация доступных отчётных месяцев
-    const filterAvailableMonths = () => {
-        if (selectedManagementReport === "default") {
-            setFilteredAvailableMonths(availableMonths);
-        } else {
-            const availableReports = filteredReports.filter(
-                (item) => item?.report_month
-            );
-
-            const monthsLabels = [
-                ...new Set(
-                    availableReports.map(({ report_month }) => report_month)
-                ),
-            ];
-
-            setFilteredAvailableMonths(
-                availableMonths.filter((item) =>
-                    monthsLabels.includes(item.label)
-                )
-            );
-        }
-    };
-
     // Получение списка доступных фильтров
-    const getUpdatedProjectsFilters = () => {
-        const queryParams = new URLSearchParams();
-
-        Object.entries(selectedProjectsFilters).forEach(([key, values]) => {
-            values.forEach((value) => {
-                queryParams.append(`filters[${key}][]`, value);
-            });
-        });
-
-        getData(
-            `${
-                import.meta.env.VITE_API_URL
-            }reports/filter-options?${queryParams.toString()}`
-        ).then((response) => {
-            if (response.status === 200) {
-                setFilterOptionsList(response.data);
-            }
-        });
-    };
-
-    // Получение списка доступных фильтров
-    const getFilteredManagementReports = () => {
+    const getManagementReports = () => {
         setIsLoading(true);
 
-        const queryParams = new URLSearchParams();
+        // const queryParams = new URLSearchParams();
 
-        Object.entries(selectedManagementFilters).forEach(([key, values]) => {
-            values.forEach((value) => {
-                queryParams.append(key, value);
-            });
-        });
+        // Object.entries(selectedManagementFilters).forEach(([key, values]) => {
+        //     values.forEach((value) => {
+        //         queryParams.append(key, value);
+        //     });
+        // });
 
-        getData(`${MANAGEMENT_URL}?${queryParams.toString()}`)
+        getData(MANAGEMENT_URL)
             .then((response) => {
                 if (response.status === 200) {
                     setManagementList(response.data);
@@ -215,6 +105,29 @@ const Reports = () => {
             })
             .finally(() => setIsLoading(false));
     };
+
+    // Фильтрация доступных отчётных месяцев
+    // const filterAvailableMonths = () => {
+    //     if (selectedManagementReport === "default") {
+    //         setFilteredAvailableMonths(availableMonths);
+    //     } else {
+    //         const availableReports = filteredReports.filter(
+    //             (item) => item?.report_month
+    //         );
+
+    //         const monthsLabels = [
+    //             ...new Set(
+    //                 availableReports.map(({ report_month }) => report_month)
+    //             ),
+    //         ];
+
+    //         setFilteredAvailableMonths(
+    //             availableMonths.filter((item) =>
+    //                 monthsLabels.includes(item.label)
+    //             )
+    //         );
+    //     }
+    // };
 
     // Получаем доступные периоды для попапа отчета Сотрудника
     const getAvailableMonths = () => {
@@ -462,10 +375,6 @@ const Reports = () => {
         });
     };
 
-    const handleListSort = () => {
-        setSortedManagementList(sortDateList(managementList, sortBy));
-    };
-
     useEffect(() => {
         setManagementEditorState(false);
         setRateEditorState(false);
@@ -486,23 +395,6 @@ const Reports = () => {
             setRateEditorState(false);
         }
     }, [managementEditorState]);
-
-    useEffect(() => {
-        getUpdatedProjectsFilters();
-        getFilteredReports();
-    }, [selectedProjectsFilters]);
-
-    useEffect(() => {
-        getFilteredManagementReports();
-    }, [selectedManagementFilters]);
-
-    useEffect(() => {
-        filterAvailableMonths();
-    }, [selectedManagementReport]);
-
-    useEffect(() => {
-        handleListSort();
-    }, [sortBy]);
 
     useEffect(() => {
         getAvailableMonths();
@@ -685,6 +577,29 @@ const Reports = () => {
         });
     }, [reportsList, projectReportsFilters]);
 
+    const filteredManagementReports = useMemo(() => {
+        return managementList;
+        // return managementList.filter((report) => {
+        //     // return (
+        //     // );
+        // });
+    }, [sortedManagementList]);
+
+    const handleListSort = () => {
+        setSortedManagementList(
+            sortDateList(filteredManagementReports, sortBy)
+        );
+    };
+
+    useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
+
+    useEffect(() => {
+        getReports();
+        getManagementReports();
+    }, []);
+
     return (
         <main className="page reports-registry">
             <ToastContainer containerId="report" />
@@ -717,155 +632,95 @@ const Reports = () => {
                             />
                             <label htmlFor="management_reports">
                                 Отчёты сотрудников
-                                <span>{filteredReports.length}</span>
+                                <span>{filteredManagementReports.length}</span>
                             </label>
                         </li>
                     </ul>
 
-                    {/* <div className="flex items-center justify-between gap-6">
-                        {activeTab === "projects" && (
-                            <>
-                                <div className="flex items-center gap-5">
-                                    {FILTER_LABELS.map(({ key, label }) => {
-                                        const filterValues =
-                                            filterOptionsList[key];
-                                        if (!filterValues) return null;
+                    {/* {activeTab === "management" && (
+                        <>
+                            <div className="flex items-center gap-5">
+                                <select
+                                    className={
+                                        "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                    }
+                                    onChange={(evt) =>
+                                        setSelectedManagementReport(
+                                            evt.target.value
+                                        )
+                                    }
+                                    value={selectedManagementReport}
+                                >
+                                    <option value="default">Отчёт</option>
+                                    {managementReportsOptions.length > 0 &&
+                                        managementReportsOptions.map((item) => (
+                                            <option key={item} value={item}>
+                                                {item}
+                                            </option>
+                                        ))}
+                                </select>
 
-                                        return (
-                                            <select
-                                                key={key}
-                                                className="p-1 border border-gray-300 min-w-[110px] max-w-[180px]"
-                                                value={
-                                                    selectedProjectsFilters[
-                                                        key
-                                                    ] || ""
-                                                }
-                                                onChange={(e) => {
-                                                    const selectedValue =
-                                                        Array.from(
-                                                            e.target
-                                                                .selectedOptions
-                                                        ).map(
-                                                            (option) =>
-                                                                option.value
-                                                        );
+                                <select
+                                    className={
+                                        "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                    }
+                                    onChange={(e) => {
+                                        const selectedValue = Array.from(
+                                            e.target.selectedOptions
+                                        ).map((option) => option.value);
 
-                                                    handleFilterChange(
-                                                        key,
-                                                        selectedValue,
-                                                        "projects"
-                                                    );
-                                                }}
-                                            >
-                                                <option value="">
-                                                    {label}
-                                                </option>
-                                                {filterValues.map((item) => (
-                                                    <option
-                                                        key={item.id}
-                                                        value={item.id}
-                                                    >
-                                                        {item.name}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                        handleFilterChange(
+                                            "report_month",
+                                            selectedValue,
+                                            "management"
                                         );
-                                    })}
-                                </div>
-                            </>
-                        )}
-                        {activeTab === "management" && (
-                            <>
-                                <div className="flex items-center gap-5">
-                                    <select
-                                        className={
-                                            "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                        }
-                                        onChange={(evt) =>
-                                            setSelectedManagementReport(
-                                                evt.target.value
+                                    }}
+                                    value={
+                                        selectedManagementFilters
+                                            .report_month[0]
+                                    }
+                                >
+                                    <option value="">Отчётный месяц</option>
+                                    {filteredAvailableMonths.length > 0 &&
+                                        filteredAvailableMonths.map((month) => (
+                                            <option
+                                                key={month.value}
+                                                value={month.value}
+                                            >
+                                                {month.label}
+                                            </option>
+                                        ))}
+                                </select>
+
+                                <select
+                                    className={
+                                        "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
+                                    }
+                                    onChange={(evt) =>
+                                        setSelectedPhysicalPerson(
+                                            evt.target.value
+                                        )
+                                    }
+                                    value={selectedPhysicalPerson}
+                                >
+                                    <option value="default">
+                                        Ответственный
+                                    </option>
+                                    {physicalPersonOptions.length > 0 &&
+                                        physicalPersonOptions.map(
+                                            (item, index) => (
+                                                <option
+                                                    key={`${item}_${index}`}
+                                                    value={item}
+                                                >
+                                                    {item}
+                                                </option>
                                             )
-                                        }
-                                        value={selectedManagementReport}
-                                    >
-                                        <option value="default">Отчёт</option>
-                                        {managementReportsOptions.length > 0 &&
-                                            managementReportsOptions.map(
-                                                (item) => (
-                                                    <option
-                                                        key={item}
-                                                        value={item}
-                                                    >
-                                                        {item}
-                                                    </option>
-                                                )
-                                            )}
-                                    </select>
-
-                                    <select
-                                        className={
-                                            "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                        }
-                                        onChange={(e) => {
-                                            const selectedValue = Array.from(
-                                                e.target.selectedOptions
-                                            ).map((option) => option.value);
-
-                                            handleFilterChange(
-                                                "report_month",
-                                                selectedValue,
-                                                "management"
-                                            );
-                                        }}
-                                        value={
-                                            selectedManagementFilters
-                                                .report_month[0]
-                                        }
-                                    >
-                                        <option value="">Отчётный месяц</option>
-                                        {filteredAvailableMonths.length > 0 &&
-                                            filteredAvailableMonths.map(
-                                                (month) => (
-                                                    <option
-                                                        key={month.value}
-                                                        value={month.value}
-                                                    >
-                                                        {month.label}
-                                                    </option>
-                                                )
-                                            )}
-                                    </select>
-
-                                    <select
-                                        className={
-                                            "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                        }
-                                        onChange={(evt) =>
-                                            setSelectedPhysicalPerson(
-                                                evt.target.value
-                                            )
-                                        }
-                                        value={selectedPhysicalPerson}
-                                    >
-                                        <option value="default">
-                                            Ответственный
-                                        </option>
-                                        {physicalPersonOptions.length > 0 &&
-                                            physicalPersonOptions.map(
-                                                (item, index) => (
-                                                    <option
-                                                        key={`${item}_${index}`}
-                                                        value={item}
-                                                    >
-                                                        {item}
-                                                    </option>
-                                                )
-                                            )}
-                                    </select>
-                                </div>
-                            </>
-                        )}
-                    </div> */}
+                                        )}
+                                </select>
+                            </div>
+                        </>
+                    )} */}
                 </section>
 
                 <section className="registry__table-section w-full">
@@ -1044,8 +899,8 @@ const Reports = () => {
                                     />
                                 ))
                             ) : (
-                                filteredReports.length > 0 &&
-                                filteredReports.map((item) => (
+                                filteredManagementReports.length > 0 &&
+                                filteredManagementReports.map((item) => (
                                     <ManagementItem
                                         key={item.id}
                                         columns={COLUMNS[1]}
@@ -1067,9 +922,10 @@ const Reports = () => {
                         </tbody>
                     </table>
 
-                    {/* {activeTab === "projects" && reportWindowsState && (
+                    {activeTab === "projects" && (
                         <ReportWindow
-                            reportWindowsState={setReportWindowsState}
+                            reportWindowsState={reportWindowsState}
+                            setReportWindowsState={setReportWindowsState}
                             contracts={contracts}
                             reportId={reportId}
                             setReportId={setReportId}
@@ -1078,7 +934,7 @@ const Reports = () => {
                         />
                     )}
 
-                    {activeTab === "management" && (
+                    {/* {activeTab === "management" && (
                         <>
                             {rateEditorState && (
                                 <ReportRateEditor
