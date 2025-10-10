@@ -1200,49 +1200,65 @@ const ReportWindow = ({
                                         </div>
                                     </div>
                                 )}
-                                {mode === "edit" && (
-                                    <div className="bottom-nav">
-                                        <div className="container">
+
+                                <div className="bottom-nav">
+                                    <div className="container">
+                                        {mode === "edit" ? (
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const newErrors =
+                                                            validateFields();
+
+                                                        if (
+                                                            Object.keys(
+                                                                newErrors
+                                                            ).length === 0
+                                                        ) {
+                                                            setReportWindowsState(
+                                                                false
+                                                            );
+                                                            setSaveBeforeClose(
+                                                                true
+                                                            );
+                                                        } else {
+                                                            setReportId(null);
+                                                            setReportWindowsState(
+                                                                false
+                                                            );
+                                                        }
+                                                    }}
+                                                    className="cancel-button"
+                                                    title="Отменить сохранение отчёта"
+                                                >
+                                                    Отменить
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="action-button"
+                                                    onClick={() => handleSave()}
+                                                    title="Сохранить отчёт"
+                                                >
+                                                    Сохранить
+                                                </button>
+                                            </>
+                                        ) : (
                                             <button
                                                 type="button"
                                                 onClick={() => {
-                                                    const newErrors =
-                                                        validateFields();
-
-                                                    if (
-                                                        Object.keys(newErrors)
-                                                            .length === 0
-                                                    ) {
-                                                        setReportWindowsState(
-                                                            false
-                                                        );
-                                                        setSaveBeforeClose(
-                                                            true
-                                                        );
-                                                    } else {
-                                                        setReportId(null);
-                                                        setReportWindowsState(
-                                                            false
-                                                        );
-                                                    }
+                                                    resetState();
                                                 }}
+                                                style={{ gridColumn: "1 /-1" }}
                                                 className="cancel-button"
-                                                title="Отменить сохранение отчёта"
+                                                title="Закрыть отчёт"
                                             >
-                                                Отменить
+                                                Закрыть
                                             </button>
-
-                                            <button
-                                                type="button"
-                                                className="action-button"
-                                                onClick={() => handleSave()}
-                                                title="Сохранить отчёт"
-                                            >
-                                                Сохранить
-                                            </button>
-                                        </div>
+                                        )}
                                     </div>
-                                )}
+                                </div>
                             </div>
                         </div>
                     )}

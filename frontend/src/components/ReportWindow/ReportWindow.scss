@@ -84,7 +84,17 @@
 
     &_read-mode {
         .report-window__body {
-            padding: 18px 30px 10px !important;
+            padding: 18px 20px 15px !important;
+
+            @media (min-width: $media-xxl) {
+                padding: 18px 30px 10px !important;
+            }
+        }
+
+        .bottom-nav {
+            @media (min-width: $media-xxl) {
+                display: none;
+            }
         }
     }
 
