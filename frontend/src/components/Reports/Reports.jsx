@@ -510,11 +510,65 @@ const Reports = () => {
 
     // Заполняем селектор Отчетов
     const reportOptions = useMemo(() => {
-        const allNames = reportsList
+        const allItems = reportsList
             .map((item) => item.report_period_code)
             .filter((report_period_code) => report_period_code !== null);
 
-        return Array.from(new Set(allNames));
+        return Array.from(new Set(allItems));
+    }, [reportsList]);
+
+    // Заполняем селектор проектов
+    const projectOptions = useMemo(() => {
+        const allItems = reportsList
+            .map((item) => item.project.name)
+            .filter((name) => name !== null);
+
+        return Array.from(new Set(allItems));
+    }, [reportsList]);
+
+    // Заполняем селектор отраслей
+    const industryOptions = useMemo(() => {
+        const allItems = reportsList
+            .map((item) => item.industry)
+            .filter((industry) => industry !== null);
+
+        return Array.from(new Set(allItems));
+    }, [reportsList]);
+
+    // Заполняем селектор заказчиков
+    const contragentOptions = useMemo(() => {
+        const allItems = reportsList
+            .map((item) => item.contragent.name)
+            .filter((name) => name !== null);
+
+        return Array.from(new Set(allItems));
+    }, [reportsList]);
+
+    // Заполняем селектор банков
+    const creditorOptions = useMemo(() => {
+        const allItems = reportsList.flatMap((item) =>
+            item.creditors?.map((bank) => bank.name)
+        );
+
+        return Array.from(new Set(allItems));
+    }, [reportsList]);
+
+    // Заполняем селектор руководителей
+    const managerOptions = useMemo(() => {
+        const allItems = reportsList.flatMap((item) =>
+            item.project_managers?.map((item) => item.name)
+        );
+
+        return Array.from(new Set(allItems));
+    }, [reportsList]);
+
+    // Заполняем селектор руководителей
+    const statusOptions = useMemo(() => {
+        const allItems = reportsList
+            .map((item) => item.status)
+            .filter((status) => status !== null);
+
+        return Array.from(new Set(allItems));
     }, [reportsList]);
 
     const COLUMNS = [
@@ -529,25 +583,25 @@ const Reports = () => {
                 label: "Проект",
                 key: "project",
                 filter: "selectedProjects",
-                // options: nameOptions,
+                options: projectOptions,
             },
             {
                 label: "Отрасль",
                 key: "industry",
                 filter: "selectedIndusties",
-                // options: nameOptions,
+                options: industryOptions,
             },
             {
                 label: "Заказкчик",
                 key: "contragent",
                 filter: "selectedContragents",
-                // options: nameOptions,
+                options: contragentOptions,
             },
             {
                 label: "Банк",
                 key: "creditors",
                 filter: "selectedCreditors",
-                // options: nameOptions,
+                options: creditorOptions,
             },
             { label: "Бюджет", key: "project_budget" },
             { label: "Срок", key: "implementation_period" },
@@ -555,7 +609,7 @@ const Reports = () => {
                 label: "Руководитель",
                 key: "project_managers",
                 filter: "selectedManagers",
-                // options: nameOptions,
+                options: managerOptions,
             },
             {
                 label: "Период вып.",
@@ -567,7 +621,7 @@ const Reports = () => {
                 label: "Статус",
                 key: "report_status",
                 filter: "selectedStatus",
-                // options: nameOptions,
+                options: statusOptions,
             },
         ],
         [
@@ -597,29 +651,36 @@ const Reports = () => {
     });
 
     const filteredProjectReports = useMemo(() => {
-        return reportsList.filter((project) => {
+        return reportsList.filter((report) => {
             return (
-                projectReportsFilters.selectedReports.length === 0 ||
-                projectReportsFilters.selectedReports.includes(
-                    project.report_period_code
-                )
-                //     &&
-                // (projectReportsFilters.selectedBanks.length === 0 ||
-                //     project.creditors?.some((c) =>
-                //         projectReportsFilters.selectedBanks.includes(c.name)
-                //     )) &&
-                // (projectReportsFilters.selectedManagers.length === 0 ||
-                //     projectReportsFilters.selectedManagers.includes(
-                //         project.manager
-                //     )) &&
-                // (projectReportsFilters.selectedNames.length === 0 ||
-                //     projectReportsFilters.selectedNames.includes(
-                //         project.name
-                //     )) &&
-                // (projectReportsFilters.selectedContagents.length === 0 ||
-                //     projectReportsFilters.selectedContagents.includes(
-                //         project.contragent
-                //     ))
+                (projectReportsFilters.selectedReports.length === 0 ||
+                    projectReportsFilters.selectedReports.includes(
+                        report.report_period_code
+                    )) &&
+                (projectReportsFilters.selectedProjects.length === 0 ||
+                    projectReportsFilters.selectedProjects.includes(
+                        report.project?.name
+                    )) &&
+                (projectReportsFilters.selectedIndusties.length === 0 ||
+                    projectReportsFilters.selectedIndusties.includes(
+                        report.industry
+                    )) &&
+                (projectReportsFilters.selectedContragents.length === 0 ||
+                    projectReportsFilters.selectedContragents.includes(
+                        report.contragent?.name
+                    )) &&
+                (projectReportsFilters.selectedCreditors.length === 0 ||
+                    report.creditors?.some((c) =>
+                        projectReportsFilters.selectedCreditors.includes(c.name)
+                    )) &&
+                (projectReportsFilters.selectedManagers.length === 0 ||
+                    report.project_managers?.some((c) =>
+                        projectReportsFilters.selectedManagers.includes(c.name)
+                    )) &&
+                (projectReportsFilters.selectedStatus.length === 0 ||
+                    projectReportsFilters.selectedStatus.includes(
+                        report.status
+                    ))
             );
         });
     }, [reportsList, projectReportsFilters]);
@@ -643,7 +704,7 @@ const Reports = () => {
                             />
                             <label htmlFor="project_reports">
                                 Отчёты проектов
-                                <span>{reportsList.length}</span>
+                                <span>{filteredProjectReports.length}</span>
                             </label>
                         </li>
 
