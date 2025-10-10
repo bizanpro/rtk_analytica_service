@@ -25,74 +25,6 @@ const Reports = () => {
     const REPORTS_URL = `${import.meta.env.VITE_API_URL}reports`;
     const MANAGEMENT_URL = `${import.meta.env.VITE_API_URL}management-reports`;
 
-    const COLUMNS = [
-        [
-            {
-                label: "Отчёт",
-                key: "report_period_code",
-                filter: "selectedReports",
-                // options: nameOptions,
-            },
-            {
-                label: "Проект",
-                key: "project",
-                filter: "selectedProjects",
-                // options: nameOptions,
-            },
-            {
-                label: "Отрасль",
-                key: "industry",
-                filter: "selectedIndusties",
-                // options: nameOptions,
-            },
-            {
-                label: "Заказкчик",
-                key: "contragent",
-                filter: "selectedContragents",
-                // options: nameOptions,
-            },
-            {
-                label: "Банк",
-                key: "creditors",
-                filter: "selectedCreditors",
-                // options: nameOptions,
-            },
-            { label: "Бюджет", key: "project_budget" },
-            { label: "Срок", key: "implementation_period" },
-            {
-                label: "Руководитель",
-                key: "project_managers",
-                filter: "selectedManagers",
-                // options: nameOptions,
-            },
-            {
-                label: "Период вып.",
-                key: "days",
-                filter: "selectedPeriod",
-                // options: nameOptions,
-            },
-            {
-                label: "Статус",
-                key: "report_status",
-                filter: "selectedStatus",
-                // options: nameOptions,
-            },
-        ],
-        [
-            { label: "Отчёт", key: "name" },
-            { label: "Отчётный месяц", key: "report_month" },
-            { label: "Оценка", key: "score" },
-            { label: "Отвественный", key: "physical_person" },
-            { label: "Статус", key: "status" },
-            {
-                label: "Дата утверждения",
-                key: "approval_date",
-                is_sortable: true,
-            },
-            { label: "Дата изменения", key: "updated_at" },
-        ],
-    ];
-
     let query;
 
     const [activeTab, setActiveTab] = useState("projects");
@@ -142,6 +74,7 @@ const Reports = () => {
         misc: "",
     });
 
+    // Фильтрованный список отчетов
     const filteredReports = useMemo(() => {
         const result = sortedManagementList.filter((report) => {
             return (
@@ -160,22 +93,22 @@ const Reports = () => {
         sortedManagementList,
         selectedManagementReport,
         selectedPhysicalPerson,
-    ]); // Фильтрованный список отчетов
+    ]);
 
     // Заполняем селектор отчетов Сотрудника
-    const managementReportsOptions = useMemo(() => {
-        const allReports = sortedManagementList.flatMap((item) => item.name);
-        return Array.from(new Set(allReports));
-    }, [sortedManagementList]);
+    // const managementReportsOptions = useMemo(() => {
+    //     const allReports = sortedManagementList.flatMap((item) => item.name);
+    //     return Array.from(new Set(allReports));
+    // }, [sortedManagementList]);
 
-    // Заполняем селектор ответственных
-    const physicalPersonOptions = useMemo(() => {
-        const allReports = sortedManagementList.flatMap((item) =>
-            item?.physical_person ? [item.physical_person.name] : []
-        );
+    // // Заполняем селектор ответственных
+    // const physicalPersonOptions = useMemo(() => {
+    //     const allReports = sortedManagementList.flatMap((item) =>
+    //         item?.physical_person ? [item.physical_person.name] : []
+    //     );
 
-        return Array.from(new Set(allReports));
-    }, [sortedManagementList]);
+    //     return Array.from(new Set(allReports));
+    // }, [sortedManagementList]);
 
     // Обработка фильтров
     const handleFilterChange = (filterKey, value, section) => {
@@ -534,10 +467,6 @@ const Reports = () => {
     };
 
     useEffect(() => {
-        handleListSort();
-    }, [sortBy]);
-
-    useEffect(() => {
         setManagementEditorState(false);
         setRateEditorState(false);
         setReportWindowsState(false);
@@ -572,8 +501,128 @@ const Reports = () => {
     }, [selectedManagementReport]);
 
     useEffect(() => {
+        handleListSort();
+    }, [sortBy]);
+
+    useEffect(() => {
         getAvailableMonths();
     }, []);
+
+    // Заполняем селектор Отчетов
+    const reportOptions = useMemo(() => {
+        const allNames = reportsList
+            .map((item) => item.report_period_code)
+            .filter((report_period_code) => report_period_code !== null);
+
+        return Array.from(new Set(allNames));
+    }, [reportsList]);
+
+    const COLUMNS = [
+        [
+            {
+                label: "Отчёт",
+                key: "report_period_code",
+                filter: "selectedReports",
+                options: reportOptions,
+            },
+            {
+                label: "Проект",
+                key: "project",
+                filter: "selectedProjects",
+                // options: nameOptions,
+            },
+            {
+                label: "Отрасль",
+                key: "industry",
+                filter: "selectedIndusties",
+                // options: nameOptions,
+            },
+            {
+                label: "Заказкчик",
+                key: "contragent",
+                filter: "selectedContragents",
+                // options: nameOptions,
+            },
+            {
+                label: "Банк",
+                key: "creditors",
+                filter: "selectedCreditors",
+                // options: nameOptions,
+            },
+            { label: "Бюджет", key: "project_budget" },
+            { label: "Срок", key: "implementation_period" },
+            {
+                label: "Руководитель",
+                key: "project_managers",
+                filter: "selectedManagers",
+                // options: nameOptions,
+            },
+            {
+                label: "Период вып.",
+                key: "days",
+                filter: "selectedPeriod",
+                // options: nameOptions,
+            },
+            {
+                label: "Статус",
+                key: "report_status",
+                filter: "selectedStatus",
+                // options: nameOptions,
+            },
+        ],
+        [
+            { label: "Отчёт", key: "name" },
+            { label: "Отчётный месяц", key: "report_month" },
+            { label: "Оценка", key: "score" },
+            { label: "Отвественный", key: "physical_person" },
+            { label: "Статус", key: "status" },
+            {
+                label: "Дата утверждения",
+                key: "approval_date",
+                is_sortable: true,
+            },
+            { label: "Дата изменения", key: "updated_at" },
+        ],
+    ];
+
+    const [projectReportsFilters, setProjectReportsFilters] = useState({
+        selectedReports: [],
+        selectedProjects: [],
+        selectedIndusties: [],
+        selectedContragents: [],
+        selectedCreditors: [],
+        selectedManagers: [],
+        selectedPeriod: [],
+        selectedStatus: [],
+    });
+
+    const filteredProjectReports = useMemo(() => {
+        return reportsList.filter((project) => {
+            return (
+                projectReportsFilters.selectedReports.length === 0 ||
+                projectReportsFilters.selectedReports.includes(
+                    project.report_period_code
+                )
+                //     &&
+                // (projectReportsFilters.selectedBanks.length === 0 ||
+                //     project.creditors?.some((c) =>
+                //         projectReportsFilters.selectedBanks.includes(c.name)
+                //     )) &&
+                // (projectReportsFilters.selectedManagers.length === 0 ||
+                //     projectReportsFilters.selectedManagers.includes(
+                //         project.manager
+                //     )) &&
+                // (projectReportsFilters.selectedNames.length === 0 ||
+                //     projectReportsFilters.selectedNames.includes(
+                //         project.name
+                //     )) &&
+                // (projectReportsFilters.selectedContagents.length === 0 ||
+                //     projectReportsFilters.selectedContagents.includes(
+                //         project.contragent
+                //     ))
+            );
+        });
+    }, [reportsList, projectReportsFilters]);
 
     return (
         <main className="page reports-registry">
@@ -770,24 +819,148 @@ const Reports = () => {
                         <thead className="registry-table__thead">
                             <tr>
                                 {COLUMNS[activeTab === "projects" ? 0 : 1].map(
-                                    ({ label, key, is_sortable }) => (
-                                        <th
-                                            className="text-base px-4 py-2 min-w-[120px] max-w-[160px]"
-                                            rowSpan="2"
-                                            key={key}
-                                        >
-                                            {is_sortable ? (
-                                                <TheadSortButton
-                                                    label={label}
-                                                    value={key}
-                                                    sortBy={sortBy}
-                                                    setSortBy={setSortBy}
-                                                />
-                                            ) : (
-                                                label
-                                            )}
-                                        </th>
-                                    )
+                                    ({
+                                        label,
+                                        key,
+                                        filter,
+                                        options,
+                                        is_sortable,
+                                    }) => {
+                                        return (
+                                            <th
+                                                className="min-w-[125px]"
+                                                rowSpan="2"
+                                                key={key}
+                                            >
+                                                <div className="registry-table__thead-item">
+                                                    {filter ? (
+                                                        <>
+                                                            <div className="registry-table__thead-label">
+                                                                {label}
+                                                            </div>
+
+                                                            {projectReportsFilters[
+                                                                filter
+                                                            ].length > 0 && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        setProjectReportsFilters(
+                                                                            (
+                                                                                prev
+                                                                            ) => ({
+                                                                                ...prev,
+                                                                                [filter]:
+                                                                                    [],
+                                                                            })
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <svg
+                                                                        width="16"
+                                                                        height="16"
+                                                                        viewBox="0 0 16 16"
+                                                                        fill="none"
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                    >
+                                                                        <path
+                                                                            d="M9.06 8l3.713 3.712-1.06 1.06L8 9.06l-3.712 3.713-1.061-1.06L6.939 8 3.227 4.287l1.06-1.06L8 6.939l3.712-3.712 1.061 1.06L9.061 8z"
+                                                                            fill="#000"
+                                                                        />
+                                                                    </svg>
+                                                                </button>
+                                                            )}
+
+                                                            {options &&
+                                                                options.length >
+                                                                    0 &&
+                                                                options.some(
+                                                                    (val) =>
+                                                                        val !==
+                                                                        undefined
+                                                                ) && (
+                                                                    <FilterButton
+                                                                        label={
+                                                                            label
+                                                                        }
+                                                                        key={
+                                                                            key
+                                                                        }
+                                                                        filterKey={
+                                                                            key
+                                                                        }
+                                                                        openFilter={
+                                                                            openFilter
+                                                                        }
+                                                                        setOpenFilter={
+                                                                            setOpenFilter
+                                                                        }
+                                                                    />
+                                                                )}
+
+                                                            {openFilter ===
+                                                                key && (
+                                                                <MultiSelectWithSearch
+                                                                    options={
+                                                                        options &&
+                                                                        options.length >
+                                                                            0
+                                                                            ? options.map(
+                                                                                  (
+                                                                                      name
+                                                                                  ) => ({
+                                                                                      value: name,
+                                                                                      label: name,
+                                                                                  })
+                                                                              )
+                                                                            : []
+                                                                    }
+                                                                    selectedValues={
+                                                                        projectReportsFilters[
+                                                                            filter
+                                                                        ]
+                                                                    }
+                                                                    onChange={(
+                                                                        updated
+                                                                    ) =>
+                                                                        setProjectReportsFilters(
+                                                                            (
+                                                                                prev
+                                                                            ) => ({
+                                                                                ...prev,
+                                                                                ...updated,
+                                                                            })
+                                                                        )
+                                                                    }
+                                                                    fieldName={
+                                                                        filter
+                                                                    }
+                                                                    close={
+                                                                        setOpenFilter
+                                                                    }
+                                                                />
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <div className="registry-table__thead-label">
+                                                            {label}
+                                                        </div>
+                                                    )}
+
+                                                    {is_sortable && (
+                                                        <TheadSortButton
+                                                            label={label}
+                                                            value={key}
+                                                            sortBy={sortBy}
+                                                            setSortBy={
+                                                                setSortBy
+                                                            }
+                                                        />
+                                                    )}
+                                                </div>
+                                            </th>
+                                        );
+                                    }
                                 )}
                             </tr>
                         </thead>
@@ -800,8 +973,8 @@ const Reports = () => {
                                     </td>
                                 </tr>
                             ) : activeTab === "projects" ? (
-                                reportsList.length > 0 &&
-                                reportsList.map((item) => (
+                                filteredProjectReports.length > 0 &&
+                                filteredProjectReports.map((item) => (
                                     <ReportItem
                                         key={item.id}
                                         columns={COLUMNS[0]}
@@ -833,7 +1006,7 @@ const Reports = () => {
                         </tbody>
                     </table>
 
-                    {activeTab === "projects" && reportWindowsState && (
+                    {/* {activeTab === "projects" && reportWindowsState && (
                         <ReportWindow
                             reportWindowsState={setReportWindowsState}
                             contracts={contracts}
@@ -869,7 +1042,7 @@ const Reports = () => {
                                 />
                             )}
                         </>
-                    )}
+                    )} */}
                 </section>
             </div>
         </main>

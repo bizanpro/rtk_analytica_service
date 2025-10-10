@@ -92,7 +92,7 @@
             position: relative;
         }
 
-        .registry-table__thead-filter-item:first-of-type {
+        th:first-of-type .registry-table__thead-item {
             .multi-select {
                 @media (min-width: $media-lg) {
                     left: 0;
@@ -101,7 +101,7 @@
             }
         }
 
-        .registry-table__thead-filter-item:last-of-type {
+        th:last-of-type .registry-table__thead-item {
             .multi-select {
                 @media (min-width: $media-lg) {
                     left: auto;
