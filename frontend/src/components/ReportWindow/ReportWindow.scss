@@ -82,6 +82,12 @@
         }
     }
 
+    &_read-mode {
+        .report-window__body {
+            padding: 18px 30px 10px !important;
+        }
+    }
+
     &__fields {
         display: grid;
         gap: 20px;

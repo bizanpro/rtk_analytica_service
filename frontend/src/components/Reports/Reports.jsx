@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 import { sortDateList } from "../../utils/sortDateList";
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock.js";
 
 import ReportItem from "./ReportItem";
 import ManagementItem from "./ManagementItem";
@@ -599,6 +600,8 @@ const Reports = () => {
         getReports();
         getManagementReports();
     }, []);
+
+    useBodyScrollLock(reportWindowsState); // Блокируем экран при открытии редактора отчета
 
     return (
         <main className="page reports-registry">

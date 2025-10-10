@@ -720,7 +720,11 @@ const ReportWindow = ({
 
                 <div className="bottom-sheet__body">
                     {reportWindowsState && (
-                        <div className="report-window">
+                        <div
+                            className={`report-window ${
+                                mode === "read" ? "report-window_read-mode" : ""
+                            }`}
+                        >
                             {reportId
                                 ? isLoading && <Loader />
                                 : !isDataLoaded && <Loader />}
