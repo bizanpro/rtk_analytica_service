@@ -259,7 +259,7 @@ const Reports = () => {
                                 ? "bottom-right"
                                 : "top-right",
                     });
-                    getFilteredManagementReports();
+                    // getFilteredManagementReports();
                     getAvailableMonths();
                     setManagementEditorState(false);
                 } else {
@@ -329,7 +329,7 @@ const Reports = () => {
                                 : "top-right",
                     });
                     closeRateReportEditor();
-                    getFilteredManagementReports();
+                    // getFilteredManagementReports();
                 } else {
                     toast.dismiss(query);
                     toast.error("Ошибка обновления данных", {

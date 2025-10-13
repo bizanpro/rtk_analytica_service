@@ -1,17 +1,49 @@
+import { useState, useEffect } from "react";
+
+import "../RateSwitch/RateSwitch.scss";
+
 interface RateSwitchProps {
     name: string;
     rateHandler: (name: string, value: string | number) => void;
     reportRateData: Record<string, number | undefined>;
 }
 
-const ManagementItemRateSwitch = ({ name, reportRateData, rateHandler }: RateSwitchProps) => {
+const ManagementItemRateSwitch = ({
+    name,
+    reportRateData,
+    rateHandler,
+}: RateSwitchProps) => {
+    const [currentRateClass, setCurrentRateClass] = useState("");
+
+    const handleRateClass = () => {
+        switch (reportRateData[name]) {
+            case 0:
+                setCurrentRateClass("red");
+                break;
+
+            case 1:
+                setCurrentRateClass("orange");
+                break;
+
+            case 2:
+                setCurrentRateClass("green");
+                break;
+
+            default:
+                setCurrentRateClass("");
+                break;
+        }
+    };
+
+    useEffect(() => {
+        handleRateClass();
+    }, [reportRateData[name]]);
+
     return (
-        <nav className="grid grid-cols-[12px_12px_12px] justify-around items-center gap-2">
+        <nav className={`rate-switch rate-switch_${currentRateClass}`}>
             <button
                 type="button"
-                className={`w-[12px] h-[12px] rounded-[50%] bg-red-400 hover:opacity-100 transition-opacity ${
-                    reportRateData[name] === 0 ? "opacity-100" : "opacity-30"
-                }`}
+                className="rate-switch__button"
                 title="Поставить оценку Плохо"
                 onClick={(evt) => {
                     evt.stopPropagation();
@@ -20,9 +52,7 @@ const ManagementItemRateSwitch = ({ name, reportRateData, rateHandler }: RateSwi
             ></button>
             <button
                 type="button"
-                className={`w-[12px] h-[12px] rounded-[50%] bg-yellow-400 hover:opacity-100 transition-opacity ${
-                    reportRateData[name] === 1 ? "opacity-100" : "opacity-30"
-                }`}
+                className="rate-switch__button"
                 title="Поставить оценку Средне"
                 onClick={(evt) => {
                     evt.stopPropagation();
@@ -31,9 +61,7 @@ const ManagementItemRateSwitch = ({ name, reportRateData, rateHandler }: RateSwi
             ></button>
             <button
                 type="button"
-                className={`w-[12px] h-[12px] rounded-[50%] bg-green-400 hover:opacity-100 transition-opacity ${
-                    reportRateData[name] === 2 ? "opacity-100" : "opacity-30"
-                }`}
+                className="rate-switch__button"
                 title="Поставить оценку Хорошо"
                 onClick={(evt) => {
                     evt.stopPropagation();

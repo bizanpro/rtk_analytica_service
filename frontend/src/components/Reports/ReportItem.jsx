@@ -12,15 +12,16 @@ const ReportItem = ({ columns, props, openReportEditor }) => {
                 let statusClass;
 
                 if (key === "report_status") {
-                    if (value.toLowerCase() === "завершен") {
+                    if (
+                        value.toLowerCase() === "завершен" ||
+                        value === "active"
+                    ) {
                         statusClass = "registry-table__item-status_active";
                     } else if (
                         value.toLowerCase() === "в процессе" ||
                         value.toLowerCase() === "в работе"
                     ) {
                         statusClass = "registry-table__item-status_inprogress";
-                    } else if (value === "active") {
-                        statusClass = "registry-table__item-status_active";
                     }
                 }
 

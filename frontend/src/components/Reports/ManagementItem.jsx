@@ -5,6 +5,7 @@ import { ru } from "date-fns/locale";
 
 import ManagementItemRateSwitch from "./ManagementItemRateSwitch";
 
+
 const ManagementItem = ({
     columns,
     props,
@@ -18,12 +19,11 @@ const ManagementItem = ({
 
     return (
         <tr
-            className={`border-b border-gray-300 hover:bg-gray-50 transition text-base text-left cursor-pointer 
-            ${
+            className={`registry-table__item transition text-base text-left cursor-pointer ${
                 props?.status?.toLowerCase() == "не начат"
-                    ? "opacity-[40%]"
+                    ? "opacity-[50%]"
                     : ""
-            } `}
+            }`}
             onClick={() => {
                 !props.is_management
                     ? openRateReportEditor(props)
@@ -33,11 +33,27 @@ const ManagementItem = ({
             {columns.map(({ key }) => {
                 const value = props[key];
 
+                let statusClass;
+
+                if (key === "status") {
+                    if (
+                        value.toLowerCase() === "завершен" ||
+                        value.toLowerCase() === "утверждён"
+                    ) {
+                        statusClass = "registry-table__item-status_active";
+                    } else if (
+                        value.toLowerCase() === "в процессе" ||
+                        value.toLowerCase() === "в работе"
+                    ) {
+                        statusClass = "registry-table__item-status_static";
+                    }
+                }
+
                 if (Array.isArray(value) && value !== null) {
                     if (value?.length > 0) {
                         return (
                             <td
-                                className="border-b border-gray-300 py-5 min-w-[180px] max-w-[200px] text-lg"
+                                className="min-w-[110px] max-w-[135px]"
                                 key={key}
                             >
                                 <table className="w-full">
@@ -45,7 +61,7 @@ const ManagementItem = ({
                                         {value?.map((item, index) => (
                                             <tr key={`${key}_${index}`}>
                                                 <td
-                                                    className={`px-4 ${
+                                                    className={`${
                                                         index !==
                                                         value?.length - 1
                                                             ? "pb-1"
@@ -63,7 +79,7 @@ const ManagementItem = ({
                     } else {
                         return (
                             <td
-                                className="border-b border-gray-300 px-4 py-5 min-w-[180px] max-w-[200px] text-lg"
+                                className="min-w-[110px] max-w-[135px]"
                                 key={key}
                             >
                                 —
@@ -73,10 +89,7 @@ const ManagementItem = ({
                 } else if (typeof value === "object" && value !== null) {
                     if (key === "physical_person") {
                         return (
-                            <td
-                                className="border-b border-gray-300 px-4 py-5 min-w-[180px] max-w-[200px] text-lg"
-                                key={key}
-                            >
+                            <td className="w-[250px]" key={key}>
                                 <button
                                     type="button"
                                     className="text-left"
@@ -93,12 +106,14 @@ const ManagementItem = ({
                                         );
                                     }}
                                 >
-                                    {value?.name?.toString() || "—"}
+                                    <div className="text-blue">
+                                        {value?.name?.toString() || "—"}
+                                    </div>
 
                                     {props?.physical_person?.roles?.map(
                                         (item) => (
                                             <div
-                                                className="text-sm"
+                                                className="text-[#98A2B3]"
                                                 key={item.id}
                                             >
                                                 {item.name}
@@ -111,15 +126,7 @@ const ManagementItem = ({
                     }
                 } else {
                     return (
-                        <td
-                            className={`border-b border-gray-300 px-4 py-5 min-w-[180px] max-w-[200px] text-lg ${
-                                key === "status" &&
-                                value?.toLowerCase() == "утверждён"
-                                    ? "text-green-400"
-                                    : ""
-                            }`}
-                            key={key}
-                        >
+                        <td className="w-[110px]" key={key}>
                             {(() => {
                                 if (
                                     (key === "updated_at" ||
@@ -146,18 +153,32 @@ const ManagementItem = ({
                                             />
                                         </div>
                                     );
+                                } else if (key === "status") {
+                                    return (
+                                        <div
+                                            className={`registry-table__item-status ${statusClass}`}
+                                        >
+                                            {value?.toString() || "—"}
+                                        </div>
+                                    );
                                 } else if (
                                     props.is_management &&
                                     key === "name"
                                 ) {
                                     return (
-                                        <div
-                                            className={`${
-                                                selectedReport.id == props.id &&
-                                                "font-semibold"
-                                            }`}
-                                        >
-                                            {value?.toString() || "—"}
+                                        <div className="hidden-group min-w-[250px] max-w-[250px]">
+                                            <div
+                                                className="visible-text text-blue"
+                                                style={{ maxWidth: "250px" }}
+                                            >
+                                                <div>
+                                                    {value?.toString() || "—"}
+                                                </div>
+                                            </div>
+
+                                            <div className="hidden-text">
+                                                {value?.toString() || "—"}
+                                            </div>
                                         </div>
                                     );
                                 } else if (
@@ -165,23 +186,31 @@ const ManagementItem = ({
                                     key === "name"
                                 ) {
                                     return (
-                                        <div className="flex flex-col gap-2">
-                                            <div
-                                                className={`${
-                                                    selectedRateReport.real_id ==
-                                                        props.real_id &&
-                                                    "font-semibold"
-                                                }`}
-                                            >
-                                                {value?.toString() || "—"}
+                                        <div className="flex flex-col gap-[5px]">
+                                            <div className="hidden-group min-w-[250px] max-w-[250px]">
+                                                <div
+                                                    className="visible-text text-blue"
+                                                    style={{
+                                                        maxWidth: "250px",
+                                                    }}
+                                                >
+                                                    <div>
+                                                        {value?.toString() ||
+                                                            "—"}
+                                                    </div>
+                                                </div>
+
+                                                <div className="hidden-text">
+                                                    {value?.toString() || "—"}
+                                                </div>
                                             </div>
 
                                             {props.misc?.length > 0 && (
-                                                <ul className="flex flex-wrap gap-2">
+                                                <ul className="misc-list">
                                                     {props.misc?.map(
                                                         (item, index) => (
                                                             <li
-                                                                className="text-gray-300 border rounded-3xl border-gray-300 py-1.5 px-4 w-fit text-sm"
+                                                                className="misc-list__item"
                                                                 key={index}
                                                             >
                                                                 {item}
