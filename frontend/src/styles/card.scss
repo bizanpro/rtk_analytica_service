@@ -124,6 +124,48 @@
         flex-wrap: wrap;
         margin-bottom: 20px;
 
+        &-wrapper {
+            .swiper-button-prev,
+            .swiper-button-next {
+                width: 33px;
+                height: 33px;
+                border: 1px solid var(--color-blue-30);
+                background: var(--color-blue-20)
+                    url("../assets/icons/arrow-right-blue.svg") center no-repeat;
+                border-radius: 8px;
+                margin: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                transition: all var(--trans);
+
+                @media (min-width: $media-xxl) {
+                    opacity: 0;
+                }
+            }
+
+            .swiper-button-prev {
+                transform: translateY(-50%) rotate(-180deg);
+            }
+
+            .swiper-button-prev.swiper-button-disabled,
+            .swiper-button-next.swiper-button-disabled {
+                opacity: 0;
+            }
+
+            &:hover {
+                .swiper-button-prev:not(.swiper-button-disabled),
+                .swiper-button-next:not(.swiper-button-disabled) {
+                    opacity: 1;
+                    box-shadow: 0px 0px 25px 30px rgba(255, 255, 255, 1);
+                }
+            }
+
+            .swiper-button-prev svg,
+            .swiper-button-next svg {
+                display: none;
+            }
+        }
+
         &-item {
             input {
                 position: absolute;

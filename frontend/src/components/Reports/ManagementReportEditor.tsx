@@ -4,6 +4,11 @@ import handleStatusString from "../../utils/handleStatusString";
 
 import AutoResizeTextarea from "../AutoResizeTextarea";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+
 const TAB_OPTIONS = [
     { id: "status_summary", label: "Общий статус" },
     { id: "problems", label: "Проблемы" },
@@ -72,26 +77,47 @@ const ManagementReportEditor = ({
                             </div>
 
                             <div className="report-window__body">
-                                <ul className="card__tabs">
-                                    {TAB_OPTIONS.map((tab) => (
-                                        <li
-                                            key={tab.id}
-                                            className="card__tabs-item radio-field_tab"
+                                <div className="overflow-hidden">
+                                    {" "}
+                                    <div
+                                        className="card__tabs-wrapper"
+                                        style={{ position: "relative" }}
+                                    >
+                                        <Swiper
+                                            modules={[Navigation]}
+                                            slidesPerView="auto"
+                                            spaceBetween={12}
+                                            navigation={true}
+                                            className="card__tabs-swiper"
                                         >
-                                            <input
-                                                type="radio"
-                                                id={tab.id}
-                                                checked={currentTab === tab.id}
-                                                onChange={() =>
-                                                    setCurrentTab(tab.id)
-                                                }
-                                            />
-                                            <label htmlFor={tab.id}>
-                                                {tab.label}
-                                            </label>
-                                        </li>
-                                    ))}
-                                </ul>
+                                            {TAB_OPTIONS.map((tab) => (
+                                                <SwiperSlide
+                                                    key={tab.id}
+                                                    style={{ width: "auto" }}
+                                                >
+                                                    <li className="card__tabs-item radio-field_tab">
+                                                        <input
+                                                            type="radio"
+                                                            id={tab.id}
+                                                            checked={
+                                                                currentTab ===
+                                                                tab.id
+                                                            }
+                                                            onChange={() =>
+                                                                setCurrentTab(
+                                                                    tab.id
+                                                                )
+                                                            }
+                                                        />
+                                                        <label htmlFor={tab.id}>
+                                                            {tab.label}
+                                                        </label>
+                                                    </li>
+                                                </SwiperSlide>
+                                            ))}
+                                        </Swiper>
+                                    </div>
+                                </div>
 
                                 <div className="report-window__field">
                                     <label className="form-label">Статус</label>
