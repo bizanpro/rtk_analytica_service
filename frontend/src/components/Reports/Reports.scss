@@ -1,9 +1,13 @@
 @use "../../styles/media-breakpoints" as *;
 
 .reports-registry {
+    .registry__header {
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
     .card__tabs {
         margin-bottom: 0;
-        margin-left: 20px;
 
         .card__tabs-item {
             span {

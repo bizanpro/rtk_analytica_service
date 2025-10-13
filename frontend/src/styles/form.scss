@@ -18,6 +18,18 @@
         }
     }
 
+    &.read-mode {
+        .form-field:disabled {
+            opacity: 1;
+        }
+
+        .form-select-extend {
+            [class*="-singleValue"] {
+                color: var(--color-gray-100);
+            }
+        }
+    }
+
     &-field {
         padding: 10px 13px;
         border-radius: 10px;

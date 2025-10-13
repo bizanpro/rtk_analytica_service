@@ -50,7 +50,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
     };
 
     return (
-        <div className="grid gap-1">
+        <div className="grid gap-1 form-fields">
             <div className={`${className}`}>
                 <IMaskInput
                     inputRef={dateFromRef}
