@@ -937,18 +937,17 @@ const Reports = () => {
                         />
                     )}
 
-                    {/* {activeTab === "management" && (
+                    {activeTab === "management" && (
                         <>
-                            {rateEditorState && (
-                                <ReportRateEditor
-                                    reportData={reportData}
-                                    closeEditor={closeRateReportEditor}
-                                    updateReportDetails={updateReportDetails}
-                                    mode={"edit"}
-                                />
-                            )}
+                            <ReportRateEditor
+                                rateEditorState={rateEditorState}
+                                reportData={reportData}
+                                closeEditor={closeRateReportEditor}
+                                updateReportDetails={updateReportDetails}
+                                mode={"edit"}
+                            />
 
-                            {managementEditorState && (
+                            {/* {managementEditorState && (
                                 <ManagementReportEditor
                                     managementReportData={managementReportData}
                                     setManagementReportData={
@@ -960,9 +959,9 @@ const Reports = () => {
                                     }
                                     mode={"edit"}
                                 />
-                            )}
+                            )} */}
                         </>
-                    )} */}
+                    )}
                 </section>
             </div>
         </main>

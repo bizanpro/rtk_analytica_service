@@ -17,9 +17,6 @@ const RateSwitch = ({
 }: RateSwitchProps) => {
     const [currentRateClass, setCurrentRateClass] = useState("");
 
-    console.log(reportRateData);
-    
-
     const handleRateClass = () => {
         switch (reportRateData[name]) {
             case 0:
