@@ -21,12 +21,22 @@
     &.read-mode {
         .form-field:disabled {
             opacity: 1;
+            background-color: transparent;
         }
 
         .form-select-extend {
+            > [class*="-control"] {
+                background-color: transparent;
+            }
+
             [class*="-singleValue"] {
                 color: var(--color-gray-100);
             }
+        }
+
+        .form-field,
+        .form-select:disabled {
+            background-color: transparent;
         }
     }
 
