@@ -30,11 +30,18 @@ const SingleBook = () => {
 
     const [booksItems, setBooksItems] = useState([]);
     const [refBooksItems, setRefBooksItems] = useState([]);
+
     const [mode, setMode] = useState("read");
+
     const [formFields, setFormFields] = useState({});
+
     const [isLoading, setIsLoading] = useState(true);
+
     const [listLength, setListLength] = useState(0);
+
     const [popupState, setPopupState] = useState(false);
+    const [rolesAction, setRolesAction] = useState({ action: "", roleId: "" });
+
     const [positions, setPositions] = useState([]);
     const [availableYears, setAvailableYears] = useState([]);
     const [currentYear, setCurrentYear] = useState("");
@@ -244,7 +251,66 @@ const SingleBook = () => {
                 email: "",
                 phone: "",
             });
+
+            if (bookId == "roles") {
+                setRolesAction({ action: "", roleId: "" });
+                getBooks();
+            }
         }
+    };
+
+    // Изименение генерации отчетов
+    const toggleRoleResponce = (action) => {
+        query = toast.loading("Обновление", {
+            containerId: "singleBook",
+            position: "top-center",
+        });
+
+        postData(
+            "POST",
+            `${import.meta.env.VITE_API_URL}roles/${
+                rolesAction.roleId
+            }/project-reports/toggle`,
+            action
+        )
+            .then((response) => {
+                if (response?.ok) {
+                    setRolesAction({ action: "", roleId: "" });
+                    getBooks();
+
+                    toast.update(query, {
+                        render: response.message || "Успех",
+                        type: "success",
+                        containerId: "singleBook",
+                        isLoading: false,
+                        autoClose: 1200,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                    });
+                } else {
+                    toast.dismiss(query);
+                    toast.error(response.message || "Ошибка операции", {
+                        isLoading: false,
+                        autoClose: 1500,
+                        pauseOnFocusLoss: false,
+                        pauseOnHover: false,
+                        position: "top-center",
+                        containerId: "singleBook",
+                    });
+                }
+            })
+            .catch((error) => {
+                toast.dismiss(query);
+                toast.error(error.message || "Ошибка операции", {
+                    isLoading: false,
+                    autoClose: 1500,
+                    pauseOnFocusLoss: false,
+                    pauseOnHover: false,
+                    position: "top-center",
+                    containerId: "singleBook",
+                });
+            });
     };
 
     // Добавление записи
@@ -1000,6 +1066,7 @@ const SingleBook = () => {
                                             }
                                             deleteElement={deleteElement}
                                             editElement={editElement}
+                                            setRolesAction={setRolesAction}
                                             positions={positions}
                                         />
                                     );
@@ -1087,6 +1154,107 @@ const SingleBook = () => {
                                     >
                                         Отменить
                                     </button>
+                                </div>
+                            </div>
+                        </Popup>
+                    )}
+
+                {rolesAction.action != "" &&
+                    mode === "edit" &&
+                    bookId === "roles" && (
+                        <Popup
+                            onClick={closePopup}
+                            title={`${
+                                rolesAction.action === "true"
+                                    ? "Включение генерации отчетов"
+                                    : "Отключение генерации отчетов"
+                            }`}
+                        >
+                            <div className="min-w-[300px] max-w-[450px]">
+                                <div className="action-form__body grid grid-cols-1 gap-3">
+                                    <p>
+                                        {rolesAction.action === "true"
+                                            ? "Отчеты сотрудников с данной ролью начнут генерироваться, начиная с текущего месяца. Следует ли сгенерировать отчеты сотрудников для прошлого периода?"
+                                            : "Отчеты сотрудников с данной ролью перестанут генерироваться начиная с текущего месяца. Что следует сделать с ранее созданными отчетами?"}
+                                    </p>
+
+                                    <div className="flex flex-col gap-4 mt-4">
+                                        {rolesAction.action === "true" ? (
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    className="rounded-lg py-3 px-5 border"
+                                                    title="Да"
+                                                    onClick={() =>
+                                                        toggleRoleResponce({
+                                                            action: "enable",
+                                                            backfill: true,
+                                                        })
+                                                    }
+                                                >
+                                                    Да
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="rounded-lg py-3 px-5 border"
+                                                    title="Нет"
+                                                    onClick={() =>
+                                                        toggleRoleResponce({
+                                                            action: "enable",
+                                                            backfill: false,
+                                                        })
+                                                    }
+                                                >
+                                                    Нет
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    className="rounded-lg py-3 px-5 border"
+                                                    title="Безвозвратно удалить"
+                                                    onClick={() =>
+                                                        toggleRoleResponce({
+                                                            action: "disable",
+                                                            policy: "delete",
+                                                        })
+                                                    }
+                                                >
+                                                    Безвозвратно удалить
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="rounded-lg py-3 px-5 border"
+                                                    title="Скрыть из списка"
+                                                    onClick={() =>
+                                                        toggleRoleResponce({
+                                                            action: "disable",
+                                                            policy: "hide",
+                                                        })
+                                                    }
+                                                >
+                                                    Скрыть из списка
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="rounded-lg py-3 px-5 border"
+                                                    title="Оставить в списке"
+                                                    onClick={() =>
+                                                        toggleRoleResponce({
+                                                            action: "disable",
+                                                            policy: "keep",
+                                                        })
+                                                    }
+                                                >
+                                                    Оставить в списке
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </Popup>

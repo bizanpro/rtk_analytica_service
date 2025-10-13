@@ -14,6 +14,7 @@ const ReferenceItem = ({
     editElement,
     handleInputChange,
     positions,
+    setRolesAction,
 }) => {
     const navigate = useNavigate();
 
@@ -289,9 +290,13 @@ const ReferenceItem = ({
                                     }`}
                                     name={key}
                                     value={value.toString() || ""}
-                                    onChange={(e) =>
-                                        handleInputChange(e, key, data.id)
-                                    }
+                                    onChange={(e) => {
+                                        handleInputChange(e, key, data.id);
+                                        setRolesAction({
+                                            action: e.target.value,
+                                            roleId: data.id,
+                                        });
+                                    }}
                                     disabled={mode == "read"}
                                 >
                                     <option value="true">Да</option>
