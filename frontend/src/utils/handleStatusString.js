@@ -4,13 +4,13 @@ const handleStatusString = (status) => {
         status.toLowerCase() === "утвержден" ||
         status.toLowerCase() === "получено согласие"
     ) {
-        return "text-green-400";
+        return "form-field__status_completed";
     } else if (
         status.toLowerCase() === "получен отказ" ||
         status.toLowerCase() === "отменен" ||
         status.toLowerCase() === "отменён"
     ) {
-        return "text-red-400";
+        return "form-field__status_canceled";
     }
 };
 

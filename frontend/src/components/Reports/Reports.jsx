@@ -947,19 +947,16 @@ const Reports = () => {
                                 mode={"edit"}
                             />
 
-                            {/* {managementEditorState && (
-                                <ManagementReportEditor
-                                    managementReportData={managementReportData}
-                                    setManagementReportData={
-                                        setManagementReportData
-                                    }
-                                    updateReport={updateReport}
-                                    closeManagementReportEditor={
-                                        closeManagementReportEditor
-                                    }
-                                    mode={"edit"}
-                                />
-                            )} */}
+                            <ManagementReportEditor
+                                editorState={managementEditorState}
+                                managementReportData={managementReportData}
+                                setManagementReportData={
+                                    setManagementReportData
+                                }
+                                updateReport={updateReport}
+                                closeEditor={closeManagementReportEditor}
+                                mode={"edit"}
+                            />
                         </>
                     )}
                 </section>
