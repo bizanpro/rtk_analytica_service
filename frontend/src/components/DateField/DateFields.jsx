@@ -74,7 +74,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                             dateToRef.current?.focus();
                         }
                     }}
-                    placeholder="дд.мм.гггг"
+                    placeholder={`${mode === "read" ? "" : "дд.мм.гггг"}`}
                     className="h-full min-w-[5ch] max-w-[9ch]"
                     inputMode="numeric"
                     disabled={mode === "read"}
@@ -102,7 +102,7 @@ const DateFields = ({ mode = "edit", value = "", onChange, className }) => {
                             }
                         }
                     }}
-                    placeholder="дд.мм.гггг"
+                    placeholder={`${mode === "read" ? "" : "дд.мм.гггг"}`}
                     className="h-full min-w-[5ch] max-w-[9ch]"
                     inputMode="numeric"
                     disabled={mode === "read"}

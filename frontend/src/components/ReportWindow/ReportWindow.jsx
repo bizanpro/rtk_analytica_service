@@ -722,7 +722,9 @@ const ReportWindow = ({
                     {reportWindowsState && (
                         <div
                             className={`report-window form ${
-                                mode === "read" ? "report-window_read-mode read-mode" : ""
+                                mode === "read"
+                                    ? "report-window_read-mode read-mode"
+                                    : ""
                             }`}
                         >
                             {reportId
@@ -871,7 +873,11 @@ const ReportWindow = ({
                                                 <input
                                                     type="text"
                                                     className="form-field"
-                                                    placeholder="0.0"
+                                                    placeholder={`${
+                                                        mode === "read"
+                                                            ? ""
+                                                            : "0.0"
+                                                    }`}
                                                     value={reportData.budget_in_billions?.replace(
                                                         ".",
                                                         ","
@@ -924,7 +930,11 @@ const ReportWindow = ({
                                                     }))
                                                 }
                                                 className="form-select-extend"
-                                                placeholder="Выберите договор"
+                                                placeholder={`${
+                                                    mode === "read"
+                                                        ? ""
+                                                        : "Выберите договор"
+                                                }`}
                                                 noOptionsMessage={() =>
                                                     "Совпадений нет"
                                                 }
@@ -967,7 +977,11 @@ const ReportWindow = ({
                                                     <input
                                                         type="text"
                                                         className="form-field"
-                                                        placeholder="0.0"
+                                                        placeholder={`${
+                                                            mode === "read"
+                                                                ? ""
+                                                                : "0.0"
+                                                        }`}
                                                         value={formatMoney(
                                                             reportData.service_cost_in_rubles
                                                         )}
