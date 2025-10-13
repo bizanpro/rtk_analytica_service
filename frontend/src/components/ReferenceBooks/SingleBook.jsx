@@ -248,6 +248,8 @@ const SingleBook = () => {
             position: "top-center",
         });
 
+        action.is_project_report_responsible = rolesAction.action === "true";
+
         postData(
             "POST",
             `${import.meta.env.VITE_API_URL}roles/${
