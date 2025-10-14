@@ -65,6 +65,7 @@ const CustomDatePicker = ({
                 selectsRange
                 inline
                 locale="ru"
+                dateFormat={type === "months" ? "MM.yyyy" : "dd.MM.yyyy"}
                 showMonthYearPicker={type === "months"}
                 renderDayContents={(day) => (
                     <>
@@ -74,95 +75,148 @@ const CustomDatePicker = ({
                         <div className="react-datepicker__day-overlay"></div>
                     </>
                 )}
+                renderMonthContent={(monthIndex) => {
+                    const monthName = new Date(0, monthIndex).toLocaleString(
+                        "ru-RU",
+                        {
+                            month: "long",
+                        }
+                    );
+                    return (
+                        monthName.charAt(0).toUpperCase() + monthName.slice(1)
+                    );
+                }}
                 renderCustomHeader={({
                     date,
                     changeYear,
                     changeMonth,
+                    decreaseYear,
+                    increaseYear,
                     decreaseMonth,
                     increaseMonth,
                     prevMonthButtonDisabled,
                     nextMonthButtonDisabled,
-                }) => (
-                    <div
-                        className={`custom-datepicker__header custom-datepicker__header_${type}`}
-                    >
-                        <div className="flex items-center gap-[10px]">
-                            {type !== "months" && (
-                                <select
-                                    className="form-select"
-                                    value={date.getMonth()}
-                                    onChange={(e) =>
-                                        changeMonth(Number(e.target.value))
-                                    }
-                                >
-                                    {Array.from({ length: 12 }, (_, i) => {
-                                        const monthName = new Date(
-                                            0,
-                                            i
-                                        ).toLocaleString("ru-RU", {
-                                            month: "long",
-                                        });
-                                        const capitalized =
-                                            monthName.charAt(0).toUpperCase() +
-                                            monthName.slice(1);
-                                        return (
-                                            <option key={i} value={i}>
-                                                {capitalized}
-                                            </option>
-                                        );
-                                    })}
-                                </select>
-                            )}
+                }) => {
+                    // Массив года (1900 -> текущий -> +15 лет)
+                    const currentYear = new Date().getFullYear();
+                    const years = Array.from(
+                        { length: currentYear - 1900 + 11 },
+                        (_, i) => 1900 + i
+                    );
 
-                            {type === "months" && (
-                                <button
-                                    onClick={decreaseMonth}
-                                    disabled={prevMonthButtonDisabled}
-                                    className="custom-datepicker__header-actions-prev-btn"
-                                    title="К предыдущему месяцу"
-                                ></button>
-                            )}
+                    return (
+                        <div
+                            className={`custom-datepicker__header custom-datepicker__header_${type}`}
+                        >
+                            <div className="flex items-center gap-[10px]">
+                                {type === "months" ? (
+                                    <>
+                                        <button
+                                            onClick={decreaseYear}
+                                            disabled={prevMonthButtonDisabled}
+                                            className="custom-datepicker__header-actions-prev-btn"
+                                            title="Предыдущий год"
+                                        ></button>
 
-                            <select
-                                className="form-select custom-datepicker__select-year"
-                                value={date.getFullYear()}
-                                onChange={(e) =>
-                                    changeYear(Number(e.target.value))
-                                }
-                            >
-                                {Array.from(
-                                    {
-                                        length:
-                                            new Date().getFullYear() - 1900 + 1,
-                                    },
-                                    (_, i) => 1900 + i
-                                ).map((year) => (
-                                    <option key={year} value={year}>
-                                        {year}
-                                    </option>
-                                ))}
-                            </select>
+                                        <select
+                                            className="form-select custom-datepicker__select-year"
+                                            value={date.getFullYear()}
+                                            onChange={(e) =>
+                                                changeYear(
+                                                    Number(e.target.value)
+                                                )
+                                            }
+                                        >
+                                            {years.map((year) => (
+                                                <option key={year} value={year}>
+                                                    {year}
+                                                </option>
+                                            ))}
+                                        </select>
+
+                                        <button
+                                            onClick={increaseYear}
+                                            disabled={nextMonthButtonDisabled}
+                                            className="custom-datepicker__header-actions-next-btn"
+                                            title="Следующий год"
+                                        ></button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <select
+                                            className="form-select"
+                                            value={date.getMonth()}
+                                            onChange={(e) =>
+                                                changeMonth(
+                                                    Number(e.target.value)
+                                                )
+                                            }
+                                        >
+                                            {Array.from(
+                                                { length: 12 },
+                                                (_, i) => {
+                                                    const monthName = new Date(
+                                                        0,
+                                                        i
+                                                    ).toLocaleString("ru-RU", {
+                                                        month: "long",
+                                                    });
+                                                    const capitalized =
+                                                        monthName
+                                                            .charAt(0)
+                                                            .toUpperCase() +
+                                                        monthName.slice(1);
+                                                    return (
+                                                        <option
+                                                            key={i}
+                                                            value={i}
+                                                        >
+                                                            {capitalized}
+                                                        </option>
+                                                    );
+                                                }
+                                            )}
+                                        </select>
+
+                                        <select
+                                            className="form-select custom-datepicker__select-year"
+                                            value={date.getFullYear()}
+                                            onChange={(e) =>
+                                                changeYear(
+                                                    Number(e.target.value)
+                                                )
+                                            }
+                                        >
+                                            {years.map((year) => (
+                                                <option key={year} value={year}>
+                                                    {year}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </>
+                                )}
+                            </div>
+
+                            {type === "days" && (
+                                <div className="custom-datepicker__header-actions">
+                                    <button
+                                        onClick={decreaseMonth}
+                                        disabled={prevMonthButtonDisabled}
+                                        className="custom-datepicker__header-actions-prev-btn"
+                                        title="Предыдущий месяц"
+                                    ></button>
+
+                                    <button
+                                        onClick={increaseMonth}
+                                        disabled={nextMonthButtonDisabled}
+                                        className="custom-datepicker__header-actions-next-btn"
+                                        title="Следующий месяц"
+                                    ></button>
+                                </div>
+                            )}
                         </div>
-
-                        <div className="custom-datepicker__header-actions">
-                            {type !== "months" && (
-                                <button
-                                    onClick={decreaseMonth}
-                                    disabled={prevMonthButtonDisabled}
-                                    className="custom-datepicker__header-actions-prev-btn"
-                                    title="К предыдущему месяцу"
-                                ></button>
-                            )}
-
-                            <button
-                                onClick={increaseMonth}
-                                disabled={nextMonthButtonDisabled}
-                                className="custom-datepicker__header-actions-next-btn"
-                                title="К следующему месяцу"
-                            ></button>
-                        </div>
-                    </div>
-                )}
+                    );
+                }}
             />
 
             <div className="custom-datepicker__actions">
