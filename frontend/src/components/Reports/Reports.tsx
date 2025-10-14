@@ -49,8 +49,6 @@ const Reports = () => {
     const [contracts, setContracts] = useState([]);
     const [reportId, setReportId] = useState(null);
 
-    // const [availableMonths, setAvailableMonths] = useState([]);
-
     const [managementReportData, setManagementReportData] = useState({
         name: "",
         physical_person_id: 1,
@@ -66,14 +64,6 @@ const Reports = () => {
     // Получение списка отчетов
     const getReports = () => {
         setIsLoading(true);
-
-        // const queryParams = new URLSearchParams();
-
-        // Object.entries(selectedProjectsFilters).forEach(([key, values]) => {
-        //     values.forEach((value) => {
-        //         queryParams.append(`filters[${key}][]`, value);
-        //     });
-        // });
 
         getData(REPORTS_URL)
             .then((response) => {
@@ -97,22 +87,6 @@ const Reports = () => {
             })
             .finally(() => setIsLoading(false));
     };
-
-    // Получаем доступные периоды для попапа отчета Сотрудника
-    // const getAvailableMonths = () => {
-    //     getData(
-    //         `${import.meta.env.VITE_API_URL}management-reports/available-months`
-    //     ).then((response) => {
-    //         if (response?.status == 200) {
-    //             setAvailableMonths(
-    //                 response.data.map((item) => ({
-    //                     name: item.label,
-    //                     value: item.value,
-    //                 }))
-    //             );
-    //         }
-    //     });
-    // };
 
     // Открытие окна отчёта проекта
     const openReportEditor = (reportData) => {
@@ -231,8 +205,8 @@ const Reports = () => {
                                 ? "bottom-right"
                                 : "top-right",
                     });
+
                     getManagementReports();
-                    // getAvailableMonths();
                     setManagementEditorState(false);
                 } else {
                     toast.dismiss(query);
@@ -436,14 +410,47 @@ const Reports = () => {
         return Array.from(new Set(allItems));
     }, [managementList]);
 
-    // Заполняем селектор Отчетов
-    // const managementReportOptions = useMemo(() => {
+    // Заполняем селектор Оценок
+    // const managementRateOptions = useMemo(() => {
     //     const allItems = managementList
     //         .map((item) => item.name)
     //         .filter((name) => name !== null);
 
     //     return Array.from(new Set(allItems));
     // }, [managementList]);
+
+    // Заполняем селектор Ответственных
+    const managemenReponsiblePersontOptions = useMemo(() => {
+        const allItems = managementList
+            .map((item) => item.physical_person?.name)
+            .filter((name) => name !== null);
+
+        return Array.from(new Set(allItems));
+    }, [managementList]);
+
+    // Заполняем селектор оценок
+    const managemenStatusOptions = useMemo(() => {
+        const allItems = managementList
+            .map((item) => item.status)
+            .filter((status) => status !== null);
+
+        return Array.from(new Set(allItems));
+    }, [managementList]);
+
+    const rateOptions = [
+        {
+            name: "Плохо",
+            value: 0,
+        },
+        {
+            name: "Нормально",
+            value: 1,
+        },
+        {
+            name: "Хорошо",
+            value: 2,
+        },
+    ];
 
     const COLUMNS = [
         [
@@ -508,15 +515,28 @@ const Reports = () => {
             {
                 label: "Отчётный месяц",
                 key: "report_month",
-                // filter: "selectedReportMonths",
-                // options: availableMonths,
-                date: "range",
+                date: "month",
                 dateValue: reportMonthQuery,
                 setFunc: setReportMonthQuery,
             },
-            { label: "Оценка", key: "score" },
-            { label: "Отвественный", key: "physical_person" },
-            { label: "Статус", key: "status" },
+            {
+                label: "Оценка",
+                key: "score",
+                filter: "selectedRates",
+                options: rateOptions,
+            },
+            {
+                label: "Отвественный",
+                key: "physical_person",
+                filter: "selectedResponsiblePersons",
+                options: managemenReponsiblePersontOptions,
+            },
+            {
+                label: "Статус",
+                key: "status",
+                filter: "selectedManagementStatus",
+                options: managemenStatusOptions,
+            },
             {
                 label: "Дата утверждения",
                 key: "approval_date",
@@ -574,20 +594,33 @@ const Reports = () => {
 
     const [managementReportsFilters, setManagementReportsFilters] = useState({
         selectedManagementReports: [],
-        selectedReportMonths: [],
         selectedRates: [],
         selectedResponsiblePersons: [],
-        selectedStatus: [],
+        selectedManagementStatus: [],
     });
 
     const filteredManagementReports = useMemo(() => {
         return managementList.filter((report) => {
             return (
-                managementReportsFilters.selectedManagementReports.length ===
+                (managementReportsFilters.selectedManagementReports.length ===
                     0 ||
-                managementReportsFilters.selectedManagementReports.includes(
-                    report.name
-                )
+                    managementReportsFilters.selectedManagementReports.includes(
+                        report.name
+                    )) &&
+                (managementReportsFilters.selectedResponsiblePersons.length ===
+                    0 ||
+                    managementReportsFilters.selectedResponsiblePersons.includes(
+                        report?.physical_person?.name
+                    )) &&
+                (managementReportsFilters.selectedRates.length === 0 ||
+                    managementReportsFilters.selectedRates.includes(
+                        report?.general_assessment
+                    )) &&
+                (managementReportsFilters.selectedManagementStatus.length ===
+                    0 ||
+                    managementReportsFilters.selectedManagementStatus.includes(
+                        report.status
+                    ))
             );
         });
     }, [sortedManagementList, managementReportsFilters]);
@@ -603,7 +636,6 @@ const Reports = () => {
     }, [sortBy]);
 
     useEffect(() => {
-        // getAvailableMonths();
         getReports();
     }, []);
 

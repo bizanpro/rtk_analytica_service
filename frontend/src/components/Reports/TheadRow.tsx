@@ -19,7 +19,7 @@ interface ManagementReportsFilters {
     selectedReportMonths: string[];
     selectedRates: string[];
     selectedResponsiblePersons: string[];
-    selectedStatus: string[];
+    selectedManagementStatus: string[];
 }
 
 type Props = {
