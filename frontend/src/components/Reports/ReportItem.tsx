@@ -1,4 +1,17 @@
-const ReportItem = ({ columns, props, openReportEditor }) => {
+type Column = {
+    label: string;
+    key: string;
+    filter?: string;
+    options?: string[];
+};
+
+type ReportItemProps = {
+    columns: Column[];
+    props: object;
+    openReportEditor: () => void;
+};
+
+const ReportItem = ({ columns, props, openReportEditor }: ReportItemProps) => {
     return (
         <tr
             className="registry-table__item transition text-base text-left cursor-pointer"

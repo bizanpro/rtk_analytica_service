@@ -137,6 +137,7 @@
                 top: 50%;
                 transform: translateY(-50%);
                 transition: all var(--trans);
+                box-shadow: 0px 0px 25px 30px rgba(255, 255, 255, 1);
 
                 @media (min-width: $media-xxl) {
                     opacity: 0;

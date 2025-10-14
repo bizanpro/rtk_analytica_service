@@ -5,16 +5,28 @@ import { ru } from "date-fns/locale";
 
 import ManagementItemRateSwitch from "./ManagementItemRateSwitch";
 
+type Column = {
+    label: string;
+    key: string;
+    filter?: string;
+    options?: string[];
+};
+
+type ReportItemProps = {
+    columns: Column[];
+    props: object;
+    openManagementReportEditor: () => void;
+    openRateReportEditor: () => void;
+    managementReportEditorHandler: () => void;
+};
 
 const ManagementItem = ({
     columns,
     props,
-    selectedRateReport,
-    selectedReport,
     openManagementReportEditor,
     openRateReportEditor,
     managementReportEditorHandler,
-}) => {
+}: ReportItemProps) => {
     const navigate = useNavigate();
 
     return (

@@ -50,7 +50,6 @@ const Reports = () => {
     const [reportId, setReportId] = useState(null);
 
     const [availableMonths, setAvailableMonths] = useState([]);
-    const [filteredAvailableMonths, setFilteredAvailableMonths] = useState([]);
 
     const [managementReportData, setManagementReportData] = useState({
         name: "",
@@ -136,8 +135,12 @@ const Reports = () => {
             `${import.meta.env.VITE_API_URL}management-reports/available-months`
         ).then((response) => {
             if (response?.status == 200) {
-                setAvailableMonths(response.data);
-                setFilteredAvailableMonths(response.data);
+                setAvailableMonths(
+                    response.data.map((item) => ({
+                        name: item.label,
+                        value: item.value,
+                    }))
+                );
             }
         });
     };
@@ -377,15 +380,6 @@ const Reports = () => {
     };
 
     useEffect(() => {
-        setManagementEditorState(false);
-        setRateEditorState(false);
-        setReportWindowsState(false);
-        setReportId(null);
-        setReportData({});
-        setManagementReportData({});
-    }, [activeTab]);
-
-    useEffect(() => {
         if (rateEditorState === true) {
             setManagementEditorState(false);
         }
@@ -397,9 +391,7 @@ const Reports = () => {
         }
     }, [managementEditorState]);
 
-    useEffect(() => {
-        getAvailableMonths();
-    }, []);
+    // ОТЧЕТЫ ПРОЕКТОВ //
 
     // Заполняем селектор Отчетов
     const reportOptions = useMemo(() => {
@@ -464,6 +456,26 @@ const Reports = () => {
         return Array.from(new Set(allItems));
     }, [reportsList]);
 
+    // ОТЧЕТЫ СОТРУДНИКОВ //
+
+    // Заполняем селектор Отчетов
+    const managementReportOptions = useMemo(() => {
+        const allItems = managementList
+            .map((item) => item.name)
+            .filter((name) => name !== null);
+
+        return Array.from(new Set(allItems));
+    }, [managementList]);
+
+    // Заполняем селектор Отчетов
+    // const managementReportOptions = useMemo(() => {
+    //     const allItems = managementList
+    //         .map((item) => item.name)
+    //         .filter((name) => name !== null);
+
+    //     return Array.from(new Set(allItems));
+    // }, [managementList]);
+
     const COLUMNS = [
         [
             {
@@ -518,8 +530,18 @@ const Reports = () => {
             },
         ],
         [
-            { label: "Отчёт", key: "name" },
-            { label: "Отчётный месяц", key: "report_month" },
+            {
+                label: "Отчёт",
+                key: "name",
+                filter: "selectedManagementReports",
+                options: managementReportOptions,
+            },
+            {
+                label: "Отчётный месяц",
+                key: "report_month",
+                filter: "selectedReportMonths",
+                options: availableMonths,
+            },
             { label: "Оценка", key: "score" },
             { label: "Отвественный", key: "physical_person" },
             { label: "Статус", key: "status" },
@@ -578,13 +600,25 @@ const Reports = () => {
         });
     }, [reportsList, projectReportsFilters]);
 
+    const [managementReportsFilters, setManagementReportsFilters] = useState({
+        selectedManagementReports: [],
+        selectedReportMonths: [],
+        selectedRates: [],
+        selectedResponsiblePersons: [],
+        selectedStatus: [],
+    });
+
     const filteredManagementReports = useMemo(() => {
-        return managementList;
-        // return managementList.filter((report) => {
-        //     // return (
-        //     // );
-        // });
-    }, [sortedManagementList]);
+        return managementList.filter((report) => {
+            return (
+                managementReportsFilters.selectedManagementReports.length ===
+                    0 ||
+                managementReportsFilters.selectedManagementReports.includes(
+                    report.name
+                )
+            );
+        });
+    }, [sortedManagementList, managementReportsFilters]);
 
     const handleListSort = () => {
         setSortedManagementList(
@@ -597,11 +631,14 @@ const Reports = () => {
     }, [sortBy]);
 
     useEffect(() => {
+        getAvailableMonths();
         getReports();
         getManagementReports();
     }, []);
 
     useBodyScrollLock(reportWindowsState); // Блокируем экран при открытии редактора отчета
+    useBodyScrollLock(rateEditorState); // Блокируем экран при открытии редактора оценки отчета
+    useBodyScrollLock(managementEditorState); // Блокируем экран при открытии редактора отчета сотрудника
 
     return (
         <main className="page reports-registry">
@@ -642,27 +679,6 @@ const Reports = () => {
 
                     {/* {activeTab === "management" && (
                         <>
-                            <div className="flex items-center gap-5">
-                                <select
-                                    className={
-                                        "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
-                                    }
-                                    onChange={(evt) =>
-                                        setSelectedManagementReport(
-                                            evt.target.value
-                                        )
-                                    }
-                                    value={selectedManagementReport}
-                                >
-                                    <option value="default">Отчёт</option>
-                                    {managementReportsOptions.length > 0 &&
-                                        managementReportsOptions.map((item) => (
-                                            <option key={item} value={item}>
-                                                {item}
-                                            </option>
-                                        ))}
-                                </select>
-
                                 <select
                                     className={
                                         "p-1 border border-gray-300 min-w-[120px] max-w-[200px]"
@@ -721,8 +737,7 @@ const Reports = () => {
                                             )
                                         )}
                                 </select>
-                            </div>
-                        </>
+
                     )} */}
                 </section>
 
@@ -758,21 +773,42 @@ const Reports = () => {
                                                                 {label}
                                                             </div>
 
-                                                            {projectReportsFilters[
-                                                                filter
-                                                            ].length > 0 && (
+                                                            {(activeTab ===
+                                                            "projects"
+                                                                ? projectReportsFilters[
+                                                                      filter
+                                                                  ]
+                                                                : managementReportsFilters[
+                                                                      filter
+                                                                  ]
+                                                            )?.length > 0 && (
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => {
-                                                                        setProjectReportsFilters(
-                                                                            (
-                                                                                prev
-                                                                            ) => ({
-                                                                                ...prev,
-                                                                                [filter]:
-                                                                                    [],
-                                                                            })
-                                                                        );
+                                                                        if (
+                                                                            activeTab ===
+                                                                            "projects"
+                                                                        ) {
+                                                                            setProjectReportsFilters(
+                                                                                (
+                                                                                    prev
+                                                                                ) => ({
+                                                                                    ...prev,
+                                                                                    [filter]:
+                                                                                        [],
+                                                                                })
+                                                                            );
+                                                                        } else {
+                                                                            setManagementReportsFilters(
+                                                                                (
+                                                                                    prev
+                                                                                ) => ({
+                                                                                    ...prev,
+                                                                                    [filter]:
+                                                                                        [],
+                                                                                })
+                                                                            );
+                                                                        }
                                                                     }}
                                                                 >
                                                                     <svg
@@ -821,36 +857,68 @@ const Reports = () => {
                                                                 key && (
                                                                 <MultiSelectWithSearch
                                                                     options={
-                                                                        options &&
+                                                                        Array.isArray(
+                                                                            options
+                                                                        ) &&
                                                                         options.length >
                                                                             0
                                                                             ? options.map(
                                                                                   (
-                                                                                      name
-                                                                                  ) => ({
-                                                                                      value: name,
-                                                                                      label: name,
-                                                                                  })
+                                                                                      opt
+                                                                                  ) =>
+                                                                                      typeof opt ===
+                                                                                      "string"
+                                                                                          ? {
+                                                                                                value: opt,
+                                                                                                label: opt,
+                                                                                            }
+                                                                                          : {
+                                                                                                value:
+                                                                                                    opt.value ??
+                                                                                                    opt.name,
+                                                                                                label:
+                                                                                                    opt.label ??
+                                                                                                    opt.name,
+                                                                                            }
                                                                               )
                                                                             : []
                                                                     }
                                                                     selectedValues={
-                                                                        projectReportsFilters[
-                                                                            filter
-                                                                        ]
+                                                                        activeTab ===
+                                                                        "projects"
+                                                                            ? projectReportsFilters[
+                                                                                  filter
+                                                                              ]
+                                                                            : managementReportsFilters[
+                                                                                  filter
+                                                                              ]
                                                                     }
                                                                     onChange={(
                                                                         updated
-                                                                    ) =>
-                                                                        setProjectReportsFilters(
-                                                                            (
-                                                                                prev
-                                                                            ) => ({
-                                                                                ...prev,
-                                                                                ...updated,
-                                                                            })
-                                                                        )
-                                                                    }
+                                                                    ) => {
+                                                                        if (
+                                                                            activeTab ===
+                                                                            "projects"
+                                                                        ) {
+                                                                            setProjectReportsFilters(
+                                                                                (
+                                                                                    prev
+                                                                                ) => ({
+                                                                                    ...prev,
+                                                                                    ...updated,
+                                                                                })
+                                                                            );
+                                                                        } else {
+                                                                            setManagementReportsFilters(
+                                                                                (
+                                                                                    prev
+                                                                                ) => ({
+                                                                                    ...prev,
+                                                                                    ...updated,
+                                                                                })
+                                                                            );
+                                                                        }
+                                                                    }}
                                                                     fieldName={
                                                                         filter
                                                                     }
@@ -908,8 +976,6 @@ const Reports = () => {
                                         key={item.id}
                                         columns={COLUMNS[1]}
                                         props={item}
-                                        selectedRateReport={reportData}
-                                        selectedReport={managementReportData}
                                         openManagementReportEditor={
                                             openManagementReportEditor
                                         }

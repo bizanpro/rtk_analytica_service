@@ -554,10 +554,6 @@ const Sales = () => {
                                                                             onChange={(
                                                                                 updated
                                                                             ) => {
-                                                                                console.log(
-                                                                                    updated
-                                                                                );
-
                                                                                 setFunc(
                                                                                     updated
                                                                                 );

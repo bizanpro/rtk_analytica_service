@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-
 import "./MultiSelect.scss";
 
 const MultiSelectWithSearch = ({
@@ -13,20 +12,28 @@ const MultiSelectWithSearch = ({
     const [searchTerm, setSearchTerm] = useState("");
     const [draftSelected, setDraftSelected] = useState(selectedValues);
 
-    // Синхронизируем драфт с внешним состоянием, если оно изменилось
+    // Синхронизация с внешним состоянием
     useEffect(() => {
         setDraftSelected(selectedValues);
     }, [selectedValues]);
 
-    const filteredOptions = Array.isArray(options)
-        ? options.filter((opt) =>
-              opt?.label
-                  ?.toLowerCase()
-                  .includes(searchTerm?.toLowerCase() || "")
+    const normalizedOptions = Array.isArray(options)
+        ? options.map((opt) =>
+              typeof opt === "string"
+                  ? { name: opt, value: opt }
+                  : {
+                        name: opt.name ?? opt.label ?? opt.value,
+                        value: opt.value,
+                    }
           )
         : [];
 
-    const allValues = options.map((o) => o.value);
+    // Фильтрация по поиску
+    const filteredOptions = normalizedOptions.filter((opt) =>
+        opt.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const allValues = normalizedOptions.map((o) => o.value);
 
     const toggleValue = (value) => {
         setDraftSelected((prev) =>
@@ -95,7 +102,11 @@ const MultiSelectWithSearch = ({
 
             <ul
                 className="multi-select__list"
-                style={!filterNoSearch ? {} : { border: "none", padding: "0", minHeight: "55px" }}
+                style={
+                    !filterNoSearch
+                        ? {}
+                        : { border: "none", padding: "0", minHeight: "55px" }
+                }
             >
                 {filteredOptions.map((option) => (
                     <li className="multi-select__list-item" key={option.value}>
@@ -106,10 +117,8 @@ const MultiSelectWithSearch = ({
                                 onChange={() => toggleValue(option.value)}
                                 id={option.value}
                             />
-
                             <span className="checkbox"></span>
-
-                            <span>{option.label}</span>
+                            <span>{option.name}</span>
                         </label>
                     </li>
                 ))}
