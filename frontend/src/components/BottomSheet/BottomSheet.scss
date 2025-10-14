@@ -9,12 +9,13 @@
     height: 100vh;
     height: 100dvh;
     width: 100%;
-    z-index: 999;
+    max-width: 0;
     background: var(--bg-color);
     visibility: hidden;
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--trans);
+    z-index: -1;
 
     &:not(.bottom-sheet_desk) {
         @media (min-width: $media-xxl) {
@@ -50,6 +51,8 @@
         visibility: visible;
         opacity: 1;
         pointer-events: all;
+        z-index: 999;
+        max-width: 100%;
 
         > .bottom-sheet__wrapper {
             transform: translate3d(0, 0, 0);

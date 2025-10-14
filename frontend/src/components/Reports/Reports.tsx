@@ -410,15 +410,6 @@ const Reports = () => {
         return Array.from(new Set(allItems));
     }, [managementList]);
 
-    // Заполняем селектор Оценок
-    // const managementRateOptions = useMemo(() => {
-    //     const allItems = managementList
-    //         .map((item) => item.name)
-    //         .filter((name) => name !== null);
-
-    //     return Array.from(new Set(allItems));
-    // }, [managementList]);
-
     // Заполняем селектор Ответственных
     const managemenReponsiblePersontOptions = useMemo(() => {
         const allItems = managementList
@@ -439,16 +430,55 @@ const Reports = () => {
 
     const rateOptions = [
         {
-            name: "Есть проблемы",
-            value: 0,
+            label: (
+                <span className="flex items-center gap-[5px]">
+                    Проблем нет
+                    <span
+                        style={{
+                            display: "block",
+                            background: "var(--color-green-60)",
+                            width: "16px",
+                            height: "16px",
+                            borderRadius: "50%",
+                        }}
+                    ></span>
+                </span>
+            ),
+            value: 2,
         },
         {
-            name: "Есть сложности",
+            label: (
+                <span className="flex items-center gap-[5px]">
+                    Есть сложности
+                    <span
+                        style={{
+                            display: "block",
+                            background: "var(--color-orange-60)",
+                            width: "16px",
+                            height: "16px",
+                            borderRadius: "50%",
+                        }}
+                    ></span>
+                </span>
+            ),
             value: 1,
         },
         {
-            name: "Проблем нет",
-            value: 2,
+            label: (
+                <span className="flex items-center gap-[5px]">
+                    Есть проблемы
+                    <span
+                        style={{
+                            display: "block",
+                            background: "var(--color-red-60)",
+                            width: "16px",
+                            height: "16px",
+                            borderRadius: "50%",
+                        }}
+                    ></span>
+                </span>
+            ),
+            value: 0,
         },
     ];
 

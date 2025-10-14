@@ -22,16 +22,17 @@ const MultiSelectWithSearch = ({
               typeof opt === "string"
                   ? { name: opt, value: opt }
                   : {
-                        name: opt.name ?? opt.label ?? opt.value,
+                        name: opt.label ?? opt.name ?? opt.value,
                         value: opt.value,
                     }
           )
         : [];
 
     // Фильтрация по поиску
-    const filteredOptions = normalizedOptions.filter((opt) =>
-        opt.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredOptions = normalizedOptions.filter((opt) => {
+        if (typeof opt.name !== "string") return true;
+        return opt.name.toLowerCase().includes(searchTerm.toLowerCase());
+    });
 
     const allValues = normalizedOptions.map((o) => o.value);
 
@@ -118,7 +119,7 @@ const MultiSelectWithSearch = ({
                                 id={option.value}
                             />
                             <span className="checkbox"></span>
-                            <span>{option.name}</span>
+                            <span>{option.label || option.name}</span>
                         </label>
                     </li>
                 ))}
