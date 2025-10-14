@@ -124,10 +124,6 @@ const Projects = () => {
         { label: "Последние отчёты", key: "latest_reports" },
     ];
 
-    const handleListSort = () => {
-        setSortedList(sortList(list, sortBy));
-    };
-
     const handleProjectsNameChange = (e) => {
         setNewProjectName(e.target.value);
     };
@@ -173,7 +169,7 @@ const Projects = () => {
     };
 
     useEffect(() => {
-        handleListSort();
+        setSortedList(sortList(list, sortBy));
     }, [sortBy]);
 
     useEffect(() => {

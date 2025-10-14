@@ -93,12 +93,8 @@ const Suppliers = () => {
         },
     ];
 
-    const handleListSort = () => {
-        setSortedList(sortList(list, sortBy));
-    };
-
     useEffect(() => {
-        handleListSort();
+        setSortedList(sortList(list, sortBy));
     }, [sortBy]);
 
     useEffect(() => {

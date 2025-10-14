@@ -439,15 +439,15 @@ const Reports = () => {
 
     const rateOptions = [
         {
-            name: "Плохо",
+            name: "Есть проблемы",
             value: 0,
         },
         {
-            name: "Нормально",
+            name: "Есть сложности",
             value: 1,
         },
         {
-            name: "Хорошо",
+            name: "Проблем нет",
             value: 2,
         },
     ];

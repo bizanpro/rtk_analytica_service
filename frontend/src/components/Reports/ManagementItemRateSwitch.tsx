@@ -44,7 +44,7 @@ const ManagementItemRateSwitch = ({
             <button
                 type="button"
                 className="rate-switch__button"
-                title="Поставить оценку Плохо"
+                title="Поставить оценку Есть проблемы"
                 onClick={(evt) => {
                     evt.stopPropagation();
                     rateHandler(reportRateData, 0);
@@ -53,7 +53,7 @@ const ManagementItemRateSwitch = ({
             <button
                 type="button"
                 className="rate-switch__button"
-                title="Поставить оценку Средне"
+                title="Поставить оценку Есть сложности"
                 onClick={(evt) => {
                     evt.stopPropagation();
                     rateHandler(reportRateData, 1);
@@ -62,7 +62,7 @@ const ManagementItemRateSwitch = ({
             <button
                 type="button"
                 className="rate-switch__button"
-                title="Поставить оценку Хорошо"
+                title="Поставить оценку Проблем нет"
                 onClick={(evt) => {
                     evt.stopPropagation();
                     rateHandler(reportRateData, 2);

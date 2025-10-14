@@ -85,12 +85,8 @@ const Contragents = () => {
         },
     ];
 
-    const handleListSort = () => {
-        setSortedList(sortList(list, sortBy));
-    };
-
     useEffect(() => {
-        handleListSort();
+        setSortedList(sortList(list, sortBy));
     }, [sortBy]);
 
     useEffect(() => {
