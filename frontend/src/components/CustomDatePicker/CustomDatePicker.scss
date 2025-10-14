@@ -8,6 +8,7 @@
     box-shadow: 0px 8px 8px 0px #0020330a;
     z-index: 22;
     overflow: hidden;
+    background: var(--color-white);
 
     &__actions {
         display: grid;
@@ -27,6 +28,20 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        &_months {
+            gap: 10px;
+
+            & > .flex {
+                flex-grow: 1;
+            }
+
+            .custom-datepicker__select-year {
+                flex: 1 0 114px !important;
+                background: var(--color-gray-20);
+                text-align: center;
+            }
         }
 
         &-actions-next-btn,

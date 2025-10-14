@@ -16,7 +16,17 @@ const formatDate = (date: Date) => {
     return `${year}-${month}-${day}`;
 };
 
-const CustomDatePicker = ({ closePicker, onChange, fieldkey }) => {
+const CustomDatePicker = ({
+    type = "days",
+    closePicker,
+    onChange,
+    fieldkey,
+}: {
+    type: string;
+    closePicker: () => void;
+    onChange: () => void;
+    fieldkey: string;
+}) => {
     const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
         null,
         null,
@@ -44,7 +54,7 @@ const CustomDatePicker = ({ closePicker, onChange, fieldkey }) => {
     };
 
     return (
-        <div className="custom-datepicker">
+        <div className={`custom-datepicker custom-datepicker_${type}`}>
             <DatePicker
                 selected={tempRange[0]}
                 onChange={(update) =>
@@ -55,6 +65,7 @@ const CustomDatePicker = ({ closePicker, onChange, fieldkey }) => {
                 selectsRange
                 inline
                 locale="ru"
+                showMonthYearPicker={type === "months"}
                 renderDayContents={(day) => (
                     <>
                         <div className="react-datepicker__day-number">
@@ -72,35 +83,48 @@ const CustomDatePicker = ({ closePicker, onChange, fieldkey }) => {
                     prevMonthButtonDisabled,
                     nextMonthButtonDisabled,
                 }) => (
-                    <div className="custom-datepicker__header">
+                    <div
+                        className={`custom-datepicker__header custom-datepicker__header_${type}`}
+                    >
                         <div className="flex items-center gap-[10px]">
-                            <select
-                                className="form-select"
-                                value={date.getMonth()}
-                                onChange={(e) =>
-                                    changeMonth(Number(e.target.value))
-                                }
-                            >
-                                {Array.from({ length: 12 }, (_, i) => {
-                                    const monthName = new Date(
-                                        0,
-                                        i
-                                    ).toLocaleString("ru-RU", {
-                                        month: "long",
-                                    });
-                                    const capitalized =
-                                        monthName.charAt(0).toUpperCase() +
-                                        monthName.slice(1);
-                                    return (
-                                        <option key={i} value={i}>
-                                            {capitalized}
-                                        </option>
-                                    );
-                                })}
-                            </select>
+                            {type !== "months" && (
+                                <select
+                                    className="form-select"
+                                    value={date.getMonth()}
+                                    onChange={(e) =>
+                                        changeMonth(Number(e.target.value))
+                                    }
+                                >
+                                    {Array.from({ length: 12 }, (_, i) => {
+                                        const monthName = new Date(
+                                            0,
+                                            i
+                                        ).toLocaleString("ru-RU", {
+                                            month: "long",
+                                        });
+                                        const capitalized =
+                                            monthName.charAt(0).toUpperCase() +
+                                            monthName.slice(1);
+                                        return (
+                                            <option key={i} value={i}>
+                                                {capitalized}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                            )}
+
+                            {type === "months" && (
+                                <button
+                                    onClick={decreaseMonth}
+                                    disabled={prevMonthButtonDisabled}
+                                    className="custom-datepicker__header-actions-prev-btn"
+                                    title="К предыдущему месяцу"
+                                ></button>
+                            )}
 
                             <select
-                                className="form-select"
+                                className="form-select custom-datepicker__select-year"
                                 value={date.getFullYear()}
                                 onChange={(e) =>
                                     changeYear(Number(e.target.value))
@@ -121,12 +145,15 @@ const CustomDatePicker = ({ closePicker, onChange, fieldkey }) => {
                         </div>
 
                         <div className="custom-datepicker__header-actions">
-                            <button
-                                onClick={decreaseMonth}
-                                disabled={prevMonthButtonDisabled}
-                                className="custom-datepicker__header-actions-prev-btn"
-                                title="К предыдущему месяцу"
-                            ></button>
+                            {type !== "months" && (
+                                <button
+                                    onClick={decreaseMonth}
+                                    disabled={prevMonthButtonDisabled}
+                                    className="custom-datepicker__header-actions-prev-btn"
+                                    title="К предыдущему месяцу"
+                                ></button>
+                            )}
+
                             <button
                                 onClick={increaseMonth}
                                 disabled={nextMonthButtonDisabled}

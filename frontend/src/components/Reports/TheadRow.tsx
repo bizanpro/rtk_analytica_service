@@ -313,6 +313,7 @@ const TheadRow = ({
                                                         onChange={(updated) => {
                                                             setFunc(updated);
                                                         }}
+                                                        type={date}
                                                     />
                                                 )}
                                             </>

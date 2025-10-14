@@ -545,7 +545,7 @@ const Reports = () => {
             {
                 label: "Отчётный месяц",
                 key: "report_month",
-                date: "month",
+                date: "months",
                 dateValue: reportMonthQuery,
                 setFunc: setReportMonthQuery,
             },
@@ -587,6 +587,7 @@ const Reports = () => {
         selectedStatus: [],
     });
 
+    // ОТЧЕТЫ ПРОЕКТОВ //
     const filteredProjectReports = useMemo(() => {
         return reportsList.filter((report) => {
             return (
@@ -629,6 +630,7 @@ const Reports = () => {
         selectedManagementStatus: [],
     });
 
+    // ОТЧЕТЫ СОТРУДНИКОВ //
     const filteredManagementReports = useMemo(() => {
         return managementList.filter((report) => {
             return (
@@ -656,10 +658,6 @@ const Reports = () => {
     }, [managementList, managementReportsFilters]);
 
     useEffect(() => {
-        getReports();
-    }, []);
-
-    useEffect(() => {
         getManagementReports();
     }, [reportMonthQuery]);
 
@@ -669,9 +667,13 @@ const Reports = () => {
         );
     }, [sortBy, filteredManagementReports]);
 
-    useBodyScrollLock(reportWindowsState); // Блокируем экран при открытии редактора отчета
-    useBodyScrollLock(rateEditorState); // Блокируем экран при открытии редактора оценки отчета
-    useBodyScrollLock(managementEditorState); // Блокируем экран при открытии редактора отчета сотрудника
+    useEffect(() => {
+        getReports();
+    }, []);
+
+    useBodyScrollLock(
+        reportWindowsState || rateEditorState || managementEditorState
+    ); // Блокируем экран при открытии редакторов отчета
 
     return (
         <main className="page reports-registry">
