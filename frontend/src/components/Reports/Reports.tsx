@@ -623,17 +623,7 @@ const Reports = () => {
                     ))
             );
         });
-    }, [sortedManagementList, managementReportsFilters]);
-
-    const handleListSort = () => {
-        setSortedManagementList(
-            sortDateList(filteredManagementReports, sortBy)
-        );
-    };
-
-    useEffect(() => {
-        handleListSort();
-    }, [sortBy]);
+    }, [managementList, managementReportsFilters]);
 
     useEffect(() => {
         getReports();
@@ -642,6 +632,12 @@ const Reports = () => {
     useEffect(() => {
         getManagementReports();
     }, [reportMonthQuery]);
+
+    useEffect(() => {
+        setSortedManagementList(
+            sortDateList(filteredManagementReports, sortBy)
+        );
+    }, [sortBy, filteredManagementReports]);
 
     useBodyScrollLock(reportWindowsState); // Блокируем экран при открытии редактора отчета
     useBodyScrollLock(rateEditorState); // Блокируем экран при открытии редактора оценки отчета
@@ -733,8 +729,8 @@ const Reports = () => {
                                     />
                                 ))
                             ) : (
-                                filteredManagementReports.length > 0 &&
-                                filteredManagementReports.map((item) => (
+                                sortedManagementList.length > 0 &&
+                                sortedManagementList.map((item) => (
                                     <ManagementItem
                                         key={item.id}
                                         columns={COLUMNS[1]}
