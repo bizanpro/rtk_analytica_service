@@ -1,13 +1,14 @@
 import { useState } from "react";
 
 import handleStatusString from "../../utils/handleStatusString";
-
 import AutoResizeTextarea from "../AutoResizeTextarea";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+
+import Popup from "../Popup/Popup";
 
 const TAB_OPTIONS = [
     { id: "status_summary", label: "Общий статус" },
@@ -34,20 +35,32 @@ const ManagementReportEditor = ({
     mode: string;
 }) => {
     const [currentTab, setCurrentTab] = useState("status_summary");
+    const [saveBeforeClose, setSaveBeforeClose] = useState(false);
+    const [isChanged, setIsChanged] = useState(false);
 
     const handleTextArea = (e, name) => {
         setManagementReportData((prev) => ({
             ...prev,
             [name]: e.target.value,
         }));
+
+        if (!isChanged) {
+            setIsChanged(true);
+        }
     };
 
-    return (
+    const resetState = () => {
+        setSaveBeforeClose(false);
+        setIsChanged(false);
+        closeEditor();
+    };
+
+    return !saveBeforeClose ? (
         <div
             className={`bottom-sheet bottom-sheet_desk ${
                 editorState ? "active" : ""
             }`}
-            onClick={() => closeEditor()}
+            onClick={() => resetState()}
         >
             <div
                 className="bottom-sheet__wrapper"
@@ -70,7 +83,13 @@ const ManagementReportEditor = ({
 
                                 <button
                                     type="button"
-                                    onClick={closeEditor}
+                                    onClick={() => {
+                                        if (isChanged) {
+                                            setSaveBeforeClose(true);
+                                        } else {
+                                            resetState();
+                                        }
+                                    }}
                                     className="report-window__close-btn"
                                     title="Закрыть отчёт"
                                 ></button>
@@ -78,7 +97,6 @@ const ManagementReportEditor = ({
 
                             <div className="report-window__body">
                                 <div className="overflow-hidden">
-                                    {" "}
                                     <div
                                         className="card__tabs-wrapper"
                                         style={{ position: "relative" }}
@@ -154,7 +172,11 @@ const ManagementReportEditor = ({
                                 </div>
                             </div>
 
-                            <div className="bottom-nav">
+                            <div
+                                className={`bottom-nav ${
+                                    isChanged ? "" : "bottom-nav_disabled"
+                                }`}
+                            >
                                 <div className="container">
                                     {mode === "edit" && (
                                         <>
@@ -194,6 +216,49 @@ const ManagementReportEditor = ({
                 </div>
             </div>
         </div>
+    ) : (
+        <Popup
+            className="report-window-popup"
+            onClick={() => resetState()}
+            title={"Вы покидаете страницу"}
+        >
+            <div className="action-form__body">
+                <p>
+                    Если не сохранить изменения, новые данные будут безвозвратно
+                    утеряны.
+                </p>
+            </div>
+
+            <div className="action-form__footer">
+                <div
+                    className="report-window-alert__actions"
+                    style={{ maxWidth: "100%" }}
+                >
+                    <button
+                        type="button"
+                        onClick={() => {
+                            resetState();
+                        }}
+                        className="cancel-button"
+                        title="Не сохранять"
+                    >
+                        Не сохранять
+                    </button>
+
+                    <button
+                        type="button"
+                        className="action-button"
+                        onClick={() => {
+                            updateReport(managementReportData, "approve");
+                            resetState();
+                        }}
+                        title="Сохранить изменения"
+                    >
+                        Сохранить изменения
+                    </button>
+                </div>
+            </div>
+        </Popup>
     );
 };
 

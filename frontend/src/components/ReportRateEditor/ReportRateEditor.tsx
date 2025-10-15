@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 import RateSwitch from "../RateSwitch/RateSwitch";
+import Popup from "../Popup/Popup";
 
 import "./ReportRateEditor.scss";
 
@@ -27,12 +28,24 @@ const ReportRateEditor = ({
     mode,
 }: Props) => {
     const [reportRateData, setReportRateData] = useState<object>(reportData);
+    const [saveBeforeClose, setSaveBeforeClose] = useState(false);
+    const [isChanged, setIsChanged] = useState(false);
 
     const rateHandler = (name: string, value: string | number) => {
         setReportRateData((prev) => ({
             ...prev,
             [name]: value,
         }));
+
+        if (!isChanged) {
+            setIsChanged(true);
+        }
+    };
+
+    const resetState = () => {
+        setSaveBeforeClose(false);
+        setIsChanged(false);
+        closeEditor();
     };
 
     useEffect(() => {
@@ -41,12 +54,12 @@ const ReportRateEditor = ({
         }
     }, [reportData]);
 
-    return (
+    return !saveBeforeClose ? (
         <div
             className={`bottom-sheet bottom-sheet_desk ${
                 rateEditorState ? "active" : ""
             }`}
-            onClick={() => closeEditor()}
+            onClick={() => resetState()}
         >
             <div
                 className="bottom-sheet__wrapper"
@@ -85,7 +98,13 @@ const ReportRateEditor = ({
 
                                 <button
                                     type="button"
-                                    onClick={closeEditor}
+                                    onClick={() => {
+                                        if (isChanged) {
+                                            setSaveBeforeClose(true);
+                                        } else {
+                                            resetState();
+                                        }
+                                    }}
                                     className="report-window__close-btn"
                                     title="Закрыть отчёт"
                                 ></button>
@@ -182,7 +201,11 @@ const ReportRateEditor = ({
                                 </div>
                             </div>
 
-                            <div className="bottom-nav">
+                            <div
+                                className={`bottom-nav ${
+                                    isChanged ? "" : "bottom-nav_disabled"
+                                }`}
+                            >
                                 <div className="container">
                                     {mode === "edit" && (
                                         <>
@@ -222,6 +245,49 @@ const ReportRateEditor = ({
                 </div>
             </div>
         </div>
+    ) : (
+        <Popup
+            className="report-window-popup"
+            onClick={() => resetState()}
+            title={"Вы покидаете страницу"}
+        >
+            <div className="action-form__body">
+                <p>
+                    Если не сохранить изменения, новые данные будут безвозвратно
+                    утеряны.
+                </p>
+            </div>
+
+            <div className="action-form__footer">
+                <div
+                    className="report-window-alert__actions"
+                    style={{ maxWidth: "100%" }}
+                >
+                    <button
+                        type="button"
+                        onClick={() => {
+                            resetState();
+                        }}
+                        className="cancel-button"
+                        title="Не сохранять"
+                    >
+                        Не сохранять
+                    </button>
+
+                    <button
+                        type="button"
+                        className="action-button"
+                        onClick={() => {
+                            updateReportDetails(reportRateData, "approve");
+                            resetState();
+                        }}
+                        title="Сохранить изменения"
+                    >
+                        Сохранить изменения
+                    </button>
+                </div>
+            </div>
+        </Popup>
     );
 };
 
