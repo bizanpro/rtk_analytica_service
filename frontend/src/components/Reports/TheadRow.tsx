@@ -221,7 +221,9 @@ const TheadRow = ({
                                                     style={
                                                         dateValue &&
                                                         dateValue[
-                                                            `${key}_from`
+                                                            Object.keys(
+                                                                dateValue
+                                                            )[0]
                                                         ][0]
                                                             ? {
                                                                   overflow:
@@ -231,13 +233,17 @@ const TheadRow = ({
                                                     }
                                                 >
                                                     {dateValue[
-                                                        `${key}_from`
+                                                        Object.keys(
+                                                            dateValue
+                                                        )[0]
                                                     ] ? (
                                                         <div className="registry-table__thead-label-date">
                                                             <span>
                                                                 {dateValue &&
                                                                     dateValue[
-                                                                        `${key}_from`
+                                                                        Object.keys(
+                                                                            dateValue
+                                                                        )[0]
                                                                     ][0]
                                                                         .split(
                                                                             "-"
@@ -251,13 +257,18 @@ const TheadRow = ({
                                                             <div className="hint__message">
                                                                 {(() => {
                                                                     const from =
-                                                                        dateValue?.[
-                                                                            `${key}_from`
-                                                                        ]?.[0];
+                                                                        dateValue[
+                                                                            Object.keys(
+                                                                                dateValue
+                                                                            )[0]
+                                                                        ][0];
+                                                                        
                                                                     const to =
-                                                                        dateValue?.[
-                                                                            `${key}_to`
-                                                                        ]?.[0];
+                                                                        dateValue[
+                                                                            Object.keys(
+                                                                                dateValue
+                                                                            )[1]
+                                                                        ][0];
 
                                                                     if (!from)
                                                                         return "";

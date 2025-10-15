@@ -42,6 +42,8 @@ const Reports = () => {
     const [rateEditorState, setRateEditorState] = useState(false); // Редактор оценки
     const [reportWindowsState, setReportWindowsState] = useState(false); // Редактор отчёта
 
+    const [reportExecutionPeriodQuery, setReportExecutionPeriodQuery] =
+        useState(""); // Период выполнение
     const [reportMonthQuery, setReportMonthQuery] = useState(""); // Отчетный месяц
 
     const [reportData, setReportData] = useState({});
@@ -65,7 +67,20 @@ const Reports = () => {
     const getReports = () => {
         setIsLoading(true);
 
-        getData(REPORTS_URL)
+        if (Object.keys(reportExecutionPeriodQuery).length > 0) {
+            reportExecutionPeriodQuery.date_from =
+                reportExecutionPeriodQuery.days_from;
+
+            reportExecutionPeriodQuery.date_to =
+                reportExecutionPeriodQuery.days_to;
+
+            delete reportExecutionPeriodQuery.days_from;
+            delete reportExecutionPeriodQuery.days_to;
+        }
+
+        getData(
+            `${REPORTS_URL}?${buildQueryParams(reportExecutionPeriodQuery)}`
+        )
             .then((response) => {
                 if (response.status === 200) {
                     setReportsList(response.data);
@@ -525,8 +540,9 @@ const Reports = () => {
             {
                 label: "Период вып.",
                 key: "days",
-                filter: "selectedPeriod",
-                // options: nameOptions,
+                date: "days",
+                dateValue: reportExecutionPeriodQuery,
+                setFunc: setReportExecutionPeriodQuery,
             },
             {
                 label: "Статус",
@@ -658,6 +674,10 @@ const Reports = () => {
     }, [managementList, managementReportsFilters]);
 
     useEffect(() => {
+        getReports();
+    }, [reportExecutionPeriodQuery]);
+
+    useEffect(() => {
         getManagementReports();
     }, [reportMonthQuery]);
 
@@ -666,10 +686,6 @@ const Reports = () => {
             sortDateList(filteredManagementReports, sortBy)
         );
     }, [sortBy, filteredManagementReports]);
-
-    useEffect(() => {
-        getReports();
-    }, []);
 
     useBodyScrollLock(
         reportWindowsState || rateEditorState || managementEditorState
