@@ -471,25 +471,46 @@ const Sales = () => {
                                                                                 </span>
 
                                                                                 <div className="hint__message">
-                                                                                    {`${dateValue[
-                                                                                        `${key}_from`
-                                                                                    ][0]
-                                                                                        .split(
-                                                                                            "-"
+                                                                                    {(() => {
+                                                                                        const from =
+                                                                                            dateValue?.[
+                                                                                                `${key}_from`
+                                                                                            ]?.[0];
+                                                                                        const to =
+                                                                                            dateValue?.[
+                                                                                                `${key}_to`
+                                                                                            ]?.[0];
+
+                                                                                        if (
+                                                                                            !from
                                                                                         )
-                                                                                        .reverse()
-                                                                                        .join(
-                                                                                            "."
-                                                                                        )} - ${dateValue[
-                                                                                        `${key}_to`
-                                                                                    ][0]
-                                                                                        .split(
-                                                                                            "-"
-                                                                                        )
-                                                                                        .reverse()
-                                                                                        .join(
-                                                                                            "."
-                                                                                        )}`}
+                                                                                            return "";
+
+                                                                                        const formattedFrom =
+                                                                                            from
+                                                                                                .split(
+                                                                                                    "-"
+                                                                                                )
+                                                                                                .reverse()
+                                                                                                .join(
+                                                                                                    "."
+                                                                                                );
+                                                                                        const formattedTo =
+                                                                                            to
+                                                                                                ? to
+                                                                                                      .split(
+                                                                                                          "-"
+                                                                                                      )
+                                                                                                      .reverse()
+                                                                                                      .join(
+                                                                                                          "."
+                                                                                                      )
+                                                                                                : null;
+
+                                                                                        return formattedTo
+                                                                                            ? `${formattedFrom} - ${formattedTo}`
+                                                                                            : formattedFrom;
+                                                                                    })()}
                                                                                 </div>
                                                                             </div>
                                                                         ) : (
