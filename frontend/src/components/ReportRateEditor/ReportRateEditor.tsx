@@ -212,12 +212,13 @@ const ReportRateEditor = ({
                                             <button
                                                 type="button"
                                                 className="cancel-button"
-                                                onClick={() =>
+                                                onClick={() => {
                                                     updateReportDetails(
                                                         reportRateData,
                                                         "save"
-                                                    )
-                                                }
+                                                    );
+                                                    resetState();
+                                                }}
                                                 title="Сохранить без утверждения"
                                             >
                                                 Сохранить без утверждения
@@ -226,12 +227,13 @@ const ReportRateEditor = ({
                                             <button
                                                 type="button"
                                                 className="action-button"
-                                                onClick={() =>
+                                                onClick={() => {
                                                     updateReportDetails(
                                                         reportRateData,
                                                         "approve"
-                                                    )
-                                                }
+                                                    );
+                                                    resetState();
+                                                }}
                                                 title="Сохранить и утвердить"
                                             >
                                                 Сохранить и утвердить
