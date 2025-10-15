@@ -8,7 +8,7 @@ import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 import { ToastContainer, toast } from "react-toastify";
 
-import CustomerProjectItem from "../ContragentCard/ContragentProjectItem";
+import CardProjects from "../CardProjects/CardProjects";
 import ReportWindow from "../ReportWindow/ReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
 import SupplierStatisticBlock from "./SupplierStatisticBlock";
@@ -530,22 +530,13 @@ const SupplierCard = () => {
                                             <span>Период реализации</span>
                                         </li>
 
-                                        {projects.length > 0 &&
-                                            projects.map((project) => (
-                                                <CustomerProjectItem
-                                                    key={project.id}
-                                                    {...project}
-                                                    setActiveProject={
-                                                        setActiveProject
-                                                    }
-                                                    activeProject={
-                                                        activeProject
-                                                    }
-                                                    getProjectReports={
-                                                        getProjectReports
-                                                    }
-                                                />
-                                            ))}
+                                        <CardProjects
+                                            setActiveProject={setActiveProject}
+                                            activeProject={activeProject}
+                                            getProjectReports={
+                                                getProjectReports
+                                            }
+                                        />
                                     </ul>
                                 </div>
                             </div>

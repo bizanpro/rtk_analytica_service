@@ -8,13 +8,16 @@ import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 import { ToastContainer, toast } from "react-toastify";
 
-import ContragentProjectItem from "./ContragentProjectItem";
-import FilledExecutorBlock from "../ExecutorBlock/FilledExecutorBlock";
+import CardProjects from "../CardProjects/CardProjects";
 import ReportWindow from "../ReportWindow/ReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
 import ContragentStatisticBlock from "./ContragentStatisticBlock";
 import ContragentManagementReportsTab from "./ContragentManagementReportsTab";
+import BottomNavCard from "../BottomNav/BottomNavCard";
+import AutoResizeTextarea from "../AutoResizeTextarea";
+import ContragentResponsiblePersons from "./ContragentResponsiblePersons";
 
+import "./ContragentCard.scss";
 import "react-toastify/dist/ReactToastify.css";
 
 const ContragentCard = () => {
@@ -22,10 +25,13 @@ const ContragentCard = () => {
     const { contragentId } = useParams();
     const navigate = useNavigate();
 
-    const [contagentData, setContragentData] = useState({});
+    const [contragentData, setContragentData] = useState({});
     const [contragentDataCustom, setContragentDataCustom] = useState({});
-    const [mode, setMode] = useState("read");
+    // const [mode, setMode] = useState("read");
+    const [mode, setMode] = useState("edit");
+
     const [activeReportTab, setActiveReportTab] = useState("projectReports");
+    const [activeWindow, setActiveWindow] = useState(""); // Активное окно на мобилке (Отчеты или ОСВ)
 
     const [reports, setReports] = useState([]); // Отчёты проектов
     const [selectedReports, setSelectedReports] = useState([]); // Очёты выбранного проекта
@@ -160,7 +166,7 @@ const ContragentCard = () => {
     // Обновление контрагента
     const updateData = (showMessage = true) => {
         query = toast.loading("Обновление", {
-            containerId: "customer",
+            containerId: "toastContainer",
             draggable: true,
             position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
@@ -171,7 +177,7 @@ const ContragentCard = () => {
                     toast.update(query, {
                         render: "Данные обновлены",
                         type: "success",
-                        containerId: "customer",
+                        containerId: "toastContainer",
                         isLoading: false,
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
@@ -185,7 +191,7 @@ const ContragentCard = () => {
                 } else {
                     toast.dismiss(query);
                     toast.error("Ошибка обновления данных", {
-                        containerId: "customer",
+                        containerId: "toastContainer",
                         isLoading: false,
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
@@ -201,7 +207,7 @@ const ContragentCard = () => {
             .catch(() => {
                 toast.dismiss(query);
                 toast.error("Ошибка обновления данных", {
-                    containerId: "customer",
+                    containerId: "toastContainer",
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -258,218 +264,213 @@ const ContragentCard = () => {
 
     return (
         <main className="page">
-            <div className="pt-8 pb-15">
+            <section className="card contragent-card">
+                <div className="container card__container contragent-card__container">
+                    <ToastContainer containerId="toastContainer" />
+
+                    <div className="card__wrapper contragent-card__wrapper">
+                        <section className="card__main-content contragent-card__main-content">
+                            <div className="card__main-name">
+                                <input
+                                    type="text"
+                                    name="program_name"
+                                    value={contragentData?.program_name}
+                                    onChange={(e) =>
+                                        setContragentDataCustom((prev) => ({
+                                            ...prev,
+                                            name: e.target.value,
+                                        }))
+                                    }
+                                    // onBlur={() => {
+                                    //     if (
+                                    //         projectData?.name !=
+                                    //         projectDataCustom?.program_name
+                                    //     ) {
+                                    //         updateData(projectId, true, {
+                                    //             name: projectDataCustom.program_name,
+                                    //         });
+                                    //     }
+                                    // }}
+                                    disabled={mode == "read"}
+                                />
+
+                                <span
+                                    className={`status
+                                    ${
+                                        contragentData?.status === "active"
+                                            ? "active"
+                                            : contragentData?.status ===
+                                              "completed"
+                                    }
+                                `}
+                                >
+                                    {handleStatus(contragentData?.status)}
+                                </span>
+                            </div>
+
+                            <section className="card__general-info">
+                                <div>
+                                    <div className="form-label">
+                                        Краткое описание компании
+                                    </div>
+
+                                    <AutoResizeTextarea
+                                        className="form-textarea"
+                                        placeholder="Заполните описание"
+                                        type="text"
+                                        name="description_short"
+                                        value={
+                                            contragentData?.description_short ||
+                                            ""
+                                        }
+                                        onChange={(e) =>
+                                            setContragentDataCustom((prev) => ({
+                                                ...prev,
+                                                description_short:
+                                                    e.target.value,
+                                            }))
+                                        }
+                                        // onBlur={() => {
+                                        //     if (
+                                        //         projectData?.description !=
+                                        //         projectDataCustom?.description
+                                        //     ) {
+                                        //         updateProject(projectId, true, {
+                                        //             description:
+                                        //                 projectDataCustom.description,
+                                        //         });
+                                        //     }
+                                        // }}
+                                        disabled={mode == "read"}
+                                    />
+                                </div>
+
+                                <div>
+                                    <div className="form-label">
+                                        Адрес центрального офиса
+                                    </div>
+
+                                    <AutoResizeTextarea
+                                        className="form-textarea"
+                                        placeholder="Заполните адрес центрального офиса"
+                                        type="text"
+                                        name="head_office_address"
+                                        value={
+                                            contragentData?.head_office_address ||
+                                            ""
+                                        }
+                                        onChange={(e) =>
+                                            setContragentDataCustom((prev) => ({
+                                                ...prev,
+                                                head_office_address:
+                                                    e.target.value,
+                                            }))
+                                        }
+                                        // onBlur={() => {
+                                        //     if (
+                                        //         projectData?.description !=
+                                        //         projectDataCustom?.description
+                                        //     ) {
+                                        //         updateProject(projectId, true, {
+                                        //             description:
+                                        //                 projectDataCustom.description,
+                                        //         });
+                                        //     }
+                                        // }}
+                                        disabled={mode == "read"}
+                                    />
+                                </div>
+
+                                <div>
+                                    <div className="form-label">
+                                        Сайт компании
+                                    </div>
+
+                                    <input
+                                        type="text"
+                                        className="form-field"
+                                        placeholder="Введите адрес сайта компании"
+                                        name="company_website"
+                                        value={contragentData?.company_website}
+                                        onChange={(e) =>
+                                            setContragentDataCustom((prev) => ({
+                                                ...prev,
+                                                company_website: e.target.value,
+                                            }))
+                                        }
+                                        // onBlur={() => {
+                                        //     if (
+                                        //         projectData?.description !=
+                                        //         projectDataCustom?.description
+                                        //     ) {
+                                        //         updateProject(projectId, true, {
+                                        //             description:
+                                        //                 projectDataCustom.description,
+                                        //         });
+                                        //     }
+                                        // }}
+                                        disabled={mode == "read"}
+                                    />
+                                </div>
+                            </section>
+
+                            <section className="project-card__project-team">
+                                <h2 className="card__subtitle">
+                                    Ключевые лица Заказчика
+                                </h2>
+
+                                <div className="project-card__team">
+                                    <ContragentResponsiblePersons
+                                        teamData={
+                                            selectedResponsiblePersons.contacts
+                                        }
+                                    />
+                                </div>
+                            </section>
+
+                            <section className="project-card__projects">
+                                <h2 className="card__subtitle">
+                                    Проекты
+                                    <span>{projects.length}</span>
+                                </h2>
+
+                                <div ref={block1Ref}>
+                                    <CardProjects
+                                        projects={projects}
+                                        setActiveProject={setActiveProject}
+                                        activeProject={activeProject}
+                                        getProjectReports={getProjectReports}
+                                        getProjectContact={getProjectContact}
+                                    />
+
+                                    {/* {projects.length > 0 &&
+                                        projects.map((project) => (
+                                            <ContragentProjectItem
+                                                key={project.id}
+                                                {...project}
+                                                setActiveProject={
+                                                    setActiveProject
+                                                }
+                                                activeProject={activeProject}
+                                                getProjectReports={
+                                                    getProjectReports
+                                                }
+                                                getProjectContact={
+                                                    getProjectContact
+                                                }
+                                            />
+                                        ))} */}
+                                </div>
+                            </section>
+                        </section>
+                    </div>
+                </div>
+
                 <div
                     className="container flex flex-col min-h-full"
                     style={{ minHeight: "calc(100vh - 215px)" }}
                 >
-                    <ToastContainer containerId="customer" />
-
-                    <div className="flex justify-between items-center gap-10">
-                        <div className="flex items-center gap-3 justify-between flex-grow">
-                            <div className="flex items-center gap-10">
-                                <div className="flex items-center gap-3">
-                                    <div className="text-3xl font-medium w-full">
-                                        {contagentData?.program_name}
-                                    </div>
-
-                                    <span
-                                        className={`
-                                            whitespace-nowrap 
-                                                ${
-                                                    contagentData?.status ===
-                                                    "active"
-                                                        ? "text-green-500"
-                                                        : contagentData?.status ===
-                                                          "completed"
-                                                        ? "text-black"
-                                                        : "text-gray-300"
-                                                }
-                                        `}
-                                    >
-                                        {handleStatus(contagentData?.status)}
-                                    </span>
-                                </div>
-                            </div>
-
-                            {mode === "edit" && (
-                                <button
-                                    type="button"
-                                    className="update-icon"
-                                    title="Обновить данные сотрудника"
-                                    onClick={() => {
-                                        updateData();
-                                    }}
-                                ></button>
-                            )}
-                        </div>
-
-                        <nav className="switch">
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="read_mode"
-                                    onChange={() => {
-                                        setMode("read");
-                                    }}
-                                    checked={mode === "read" ? true : false}
-                                />
-                                <label htmlFor="read_mode">Чтение</label>
-                            </div>
-
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="edit_mode"
-                                    onChange={() => setMode("edit")}
-                                    checked={mode === "edit" ? true : false}
-                                />
-                                <label htmlFor="edit_mode">
-                                    Редактирование
-                                </label>
-                            </div>
-                        </nav>
-                    </div>
-
                     <div className="grid grid-cols-3 mt-15 gap-10 flex-grow">
-                        <div className="flex flex-col">
-                            <div className="grid gap-5 mb-5">
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-gray-400">
-                                        Адрес центрального офиса
-                                    </span>
-                                    <textarea
-                                        className="border-2 border-gray-300 p-5 h-[100px]"
-                                        style={{ resize: "none" }}
-                                        placeholder="Заполните адрес центрального офиса"
-                                        type="text"
-                                        onChange={(e) =>
-                                            handleInputChange(
-                                                e,
-                                                "head_office_address"
-                                            )
-                                        }
-                                        value={
-                                            contagentData?.head_office_address ||
-                                            ""
-                                        }
-                                        disabled={mode == "read"}
-                                    ></textarea>
-                                </div>
-
-                                <div className="flex flex-col gap-2 justify-between">
-                                    <span className="text-gray-400">
-                                        Сайт компании
-                                    </span>
-                                    <div className="border-2 border-gray-300 py-1 px-5 min-h-[32px]">
-                                        <input
-                                            className="w-full"
-                                            type="text"
-                                            placeholder="Введите адрес сайта компании"
-                                            value={
-                                                contagentData?.company_website
-                                            }
-                                            onChange={(e) =>
-                                                handleInputChange(
-                                                    e,
-                                                    "company_website"
-                                                )
-                                            }
-                                            disabled={
-                                                mode == "read" ? true : false
-                                            }
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        Ключевые лица Заказчика
-                                    </span>
-                                </div>
-
-                                <div className="border-2 border-gray-300 py-5 px-3 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                    <ul className="grid gap-5">
-                                        {selectedResponsiblePersons?.contacts
-                                            ?.length > 0 &&
-                                            selectedResponsiblePersons?.contacts?.map(
-                                                (person) => (
-                                                    <FilledExecutorBlock
-                                                        key={person.id}
-                                                        contanct={person}
-                                                    />
-                                                )
-                                            )}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col">
-                            <div className="flex flex-col gap-2 mb-5">
-                                <span className="text-gray-400">
-                                    Краткое описание
-                                </span>
-                                <textarea
-                                    className="border-2 border-gray-300 p-5 min-h-[170px] max-h-[170px]"
-                                    style={{ resize: "none" }}
-                                    placeholder="Заполните описание"
-                                    type="text"
-                                    disabled={mode == "read"}
-                                    value={
-                                        contagentData?.description_short || ""
-                                    }
-                                    onChange={(e) =>
-                                        handleInputChange(
-                                            e,
-                                            "description_short"
-                                        )
-                                    }
-                                />
-                            </div>
-
-                            <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        Проекты ({projects.length})
-                                    </span>
-                                </div>
-                                <div className="border-2 border-gray-300 py-5 px-2 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                    <ul className="grid gap-5" ref={block1Ref}>
-                                        <li className="grid items-center grid-cols-[30%_26%_1fr] gap-3 text-gray-400 px-2">
-                                            <span>Проект</span>
-                                            <span>Бюджет</span>
-                                            <span>Период реализации</span>
-                                        </li>
-
-                                        {projects.length > 0 &&
-                                            projects.map((project) => (
-                                                <ContragentProjectItem
-                                                    key={project.id}
-                                                    {...project}
-                                                    setActiveProject={
-                                                        setActiveProject
-                                                    }
-                                                    activeProject={
-                                                        activeProject
-                                                    }
-                                                    getProjectReports={
-                                                        getProjectReports
-                                                    }
-                                                    getProjectContact={
-                                                        getProjectContact
-                                                    }
-                                                />
-                                            ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
                         <div className="flex flex-col">
                             <div ref={block3Ref}>
                                 <ContragentStatisticBlock
@@ -589,7 +590,86 @@ const ContragentCard = () => {
                         </div>
                     </div>
                 </div>
+            </section>
+
+            <div className="card__bottom-actions">
+                <button
+                    type="button"
+                    title="Открыть отчёты"
+                    onClick={() => {
+                        setReportWindowsState(false);
+                        setActiveWindow("reports");
+                    }}
+                >
+                    <svg
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M8.83116 9.62235H21.1633M8.83116 14.6909H21.1633M8.83116 19.4801H17.4517M6.06055 26.2405H24.0007C24.553 26.2405 25.0007 25.7928 25.0007 25.2405V4.75928C25.0007 4.20699 24.553 3.75928 24.0007 3.75928H6.06055C5.50826 3.75928 5.06055 4.20699 5.06055 4.75928V25.2405C5.06055 25.7928 5.50826 26.2405 6.06055 26.2405Z"
+                            stroke="#F38B00"
+                            strokeWidth="2"
+                        />
+                    </svg>
+                </button>
+
+                <button
+                    type="button"
+                    title="Открыть ОСВ"
+                    onClick={() => {
+                        setReportWindowsState(false);
+                        setActiveWindow("statistic");
+                    }}
+                >
+                    <svg
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M10 21.25H6.25V18.75H10V16.25H6.25V13.75H10V3.75H18.75C20.4076 3.75 21.9973 4.40848 23.1694 5.58058C24.3415 6.75269 25 8.3424 25 10C25 11.6576 24.3415 13.2473 23.1694 14.4194C21.9973 15.5915 20.4076 16.25 18.75 16.25H12.5V18.75H21.25V21.25H12.5V26.25H10V21.25ZM18.75 13.75C19.7446 13.75 20.6984 13.3549 21.4016 12.6517C22.1049 11.9484 22.5 10.9946 22.5 10C22.5 9.00544 22.1049 8.05161 21.4017 7.34835C20.6984 6.64509 19.7446 6.25 18.75 6.25L12.5 6.25V13.75H18.75Z"
+                            fill="#F38B00"
+                        />
+                    </svg>
+                </button>
             </div>
+
+            <BottomNavCard update={() => updateData()}>
+                {mode == "edit" && (
+                    <button
+                        type="button"
+                        className="button-add"
+                        onClick={() => {
+                            setActiveWindow("");
+                            setReportWindowsState(true);
+                        }}
+                        title="Создать отчёт"
+                    >
+                        Отчёт
+                        <span>
+                            <svg
+                                width="13"
+                                height="12"
+                                viewBox="0 0 13 12"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M7.5 5H12.5V7H7.5V12H5.5V7H0.5V5H5.5V0H7.5V5Z"
+                                    fill="currentColor"
+                                />
+                            </svg>
+                        </span>
+                    </button>
+                )}
+            </BottomNavCard>
         </main>
     );
 };
