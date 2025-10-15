@@ -42,12 +42,12 @@ const CustomDatePicker = ({
         const [start, end] = tempRange;
         const filters = {};
 
-        if (start) {
+        if (start && end) {
             filters[`${fieldkey}_from`] = [formatDate(start, type)];
-        }
-
-        if (end) {
             filters[`${fieldkey}_to`] = [formatDate(end, type)];
+        } else if (start && !end) {
+            filters[`${fieldkey}_from`] = [formatDate(start, type)];
+            filters[`${fieldkey}_to`] = [formatDate(start, type)];
         }
 
         if (Object.keys(filters).length > 0) {
