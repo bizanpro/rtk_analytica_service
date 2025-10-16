@@ -60,14 +60,6 @@ const ContragentCard = () => {
 
     let query;
 
-    // const handleInputChange = (e, name) => {
-    //     setContragentDataCustom((prev) => ({
-    //         ...prev,
-    //         [name]: e.target.value,
-    //     }));
-    //     setContragentData((prev) => ({ ...prev, [name]: e.target.value }));
-    // };
-
     // Получение данных заказчика и его проекты
     const fetchData = () => {
         getData(`${URL}/${contragentId}`, {
@@ -76,6 +68,7 @@ const ContragentCard = () => {
             .then((response) => {
                 if (response.status == 200) {
                     setContragentData(response.data);
+                    setContragentDataCustom(response.data);
                     setProjects(response.data.projects);
                 }
             })
@@ -185,14 +178,14 @@ const ContragentCard = () => {
     };
 
     // Обновление контрагента
-    const updateData = (showMessage = true) => {
+    const updateData = (showMessage = true, data = contragentDataCustom) => {
         query = toast.loading("Обновление", {
             containerId: "toastContainer",
             draggable: true,
             position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
-        postData("PATCH", `${URL}/${contragentId}`, contragentDataCustom)
+        postData("PATCH", `${URL}/${contragentId}`, data)
             .then((response) => {
                 if (response?.ok && showMessage) {
                     toast.update(query, {
@@ -209,6 +202,15 @@ const ContragentCard = () => {
                                 ? "bottom-right"
                                 : "top-right",
                     });
+
+                    setContragentData((prev) => ({
+                        ...prev,
+                        ...response,
+                    }));
+                    setContragentDataCustom((prev) => ({
+                        ...prev,
+                        ...response,
+                    }));
                 } else {
                     toast.dismiss(query);
                     toast.error("Ошибка обновления данных", {
@@ -297,6 +299,8 @@ const ContragentCard = () => {
         }
     }, [width]);
 
+    useEffect(() => {}, []);
+
     return (
         <main className="page">
             <section className="card contragent-card">
@@ -309,23 +313,26 @@ const ContragentCard = () => {
                                 <input
                                     type="text"
                                     name="program_name"
-                                    value={contragentData?.program_name || ""}
+                                    value={
+                                        contragentDataCustom?.program_name || ""
+                                    }
                                     onChange={(e) =>
                                         setContragentDataCustom((prev) => ({
                                             ...prev,
-                                            name: e.target.value,
+                                            program_name: e.target.value,
                                         }))
                                     }
-                                    // onBlur={() => {
-                                    //     if (
-                                    //         projectData?.name !=
-                                    //         projectDataCustom?.program_name
-                                    //     ) {
-                                    //         updateData(projectId, true, {
-                                    //             name: projectDataCustom.program_name,
-                                    //         });
-                                    //     }
-                                    // }}
+                                    onBlur={() => {
+                                        if (
+                                            contragentData?.program_name !=
+                                            contragentDataCustom?.program_name
+                                        ) {
+                                            updateData(true, {
+                                                program_name:
+                                                    contragentDataCustom.program_name,
+                                            });
+                                        }
+                                    }}
                                     disabled={mode == "read"}
                                 />
 
@@ -355,7 +362,7 @@ const ContragentCard = () => {
                                         type="text"
                                         name="description_short"
                                         value={
-                                            contragentData?.description_short ||
+                                            contragentDataCustom?.description_short ||
                                             ""
                                         }
                                         onChange={(e) =>
@@ -365,17 +372,17 @@ const ContragentCard = () => {
                                                     e.target.value,
                                             }))
                                         }
-                                        // onBlur={() => {
-                                        //     if (
-                                        //         projectData?.description !=
-                                        //         projectDataCustom?.description
-                                        //     ) {
-                                        //         updateProject(projectId, true, {
-                                        //             description:
-                                        //                 projectDataCustom.description,
-                                        //         });
-                                        //     }
-                                        // }}
+                                        onBlur={() => {
+                                            if (
+                                                contragentData?.description_short !=
+                                                contragentDataCustom?.description_short
+                                            ) {
+                                                updateData(true, {
+                                                    description_short:
+                                                        contragentDataCustom.description_short,
+                                                });
+                                            }
+                                        }}
                                         disabled={mode == "read"}
                                     />
                                 </div>
@@ -391,7 +398,7 @@ const ContragentCard = () => {
                                         type="text"
                                         name="head_office_address"
                                         value={
-                                            contragentData?.head_office_address ||
+                                            contragentDataCustom?.head_office_address ||
                                             ""
                                         }
                                         onChange={(e) =>
@@ -401,17 +408,17 @@ const ContragentCard = () => {
                                                     e.target.value,
                                             }))
                                         }
-                                        // onBlur={() => {
-                                        //     if (
-                                        //         projectData?.description !=
-                                        //         projectDataCustom?.description
-                                        //     ) {
-                                        //         updateProject(projectId, true, {
-                                        //             description:
-                                        //                 projectDataCustom.description,
-                                        //         });
-                                        //     }
-                                        // }}
+                                        onBlur={() => {
+                                            if (
+                                                contragentData?.head_office_address !=
+                                                contragentDataCustom?.head_office_address
+                                            ) {
+                                                updateData(true, {
+                                                    head_office_address:
+                                                        contragentDataCustom.head_office_address,
+                                                });
+                                            }
+                                        }}
                                         disabled={mode == "read"}
                                     />
                                 </div>
@@ -427,7 +434,7 @@ const ContragentCard = () => {
                                         placeholder="Введите адрес сайта компании"
                                         name="company_website"
                                         value={
-                                            contragentData?.company_website ||
+                                            contragentDataCustom?.company_website ||
                                             ""
                                         }
                                         onChange={(e) =>
@@ -436,17 +443,17 @@ const ContragentCard = () => {
                                                 company_website: e.target.value,
                                             }))
                                         }
-                                        // onBlur={() => {
-                                        //     if (
-                                        //         projectData?.description !=
-                                        //         projectDataCustom?.description
-                                        //     ) {
-                                        //         updateProject(projectId, true, {
-                                        //             description:
-                                        //                 projectDataCustom.description,
-                                        //         });
-                                        //     }
-                                        // }}
+                                        onBlur={() => {
+                                            if (
+                                                contragentData?.company_website !=
+                                                contragentDataCustom?.company_website
+                                            ) {
+                                                updateData(true, {
+                                                    company_website:
+                                                        contragentDataCustom.company_website,
+                                                });
+                                            }
+                                        }}
                                         disabled={mode == "read"}
                                     />
                                 </div>
