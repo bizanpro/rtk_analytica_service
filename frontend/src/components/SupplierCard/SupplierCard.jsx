@@ -10,7 +10,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 import CardProjects from "../CardProjects/CardProjects";
 import ReportWindow from "../ReportWindow/ReportWindow";
-import CardReportsListItem from "../CardReportsListItem";
+import CardReportsList from "../CardReportsList/CardReportsList";
 import SupplierStatisticBlock from "./SupplierStatisticBlock";
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
 import SupplierEmptyExecutorBlock from "./SupplierEmptyExecutorBlock";
@@ -606,38 +606,13 @@ const SupplierCard = () => {
 
                                     {activeReportTab === "projectReports" &&
                                         (!reportWindowsState ? (
-                                            <ul className="grid gap-3">
-                                                <li className="grid items-center grid-cols-[21%_21%_26%_28%] gap-4 mb-2 text-gray-400">
-                                                    <span>Проект</span>
-                                                    <span>Отчёт</span>
-                                                    <span className="text-center">
-                                                        Статус / Роль
-                                                    </span>
-                                                    <span>
-                                                        Период выполнения
-                                                    </span>
-                                                </li>
-
-                                                {selectedReports.length > 0 &&
-                                                    selectedReports.map(
-                                                        (report, index) => (
-                                                            <CardReportsListItem
-                                                                key={
-                                                                    report.id ||
-                                                                    index
-                                                                }
-                                                                {...report}
-                                                                openReportEditor={
-                                                                    openReportEditor
-                                                                }
-                                                                openSubReportEditor={
-                                                                    openSubReportEditor
-                                                                }
-                                                                mode={"read"}
-                                                            />
-                                                        )
-                                                    )}
-                                            </ul>
+                                            <CardReportsList
+                                                reports={selectedReports}
+                                                openReportEditor={
+                                                    openReportEditor
+                                                }
+                                                mode={"read"}
+                                            />
                                         ) : (
                                             <ReportWindow
                                                 reportWindowsState={

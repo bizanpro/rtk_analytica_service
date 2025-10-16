@@ -529,7 +529,7 @@ const ProjectCard = () => {
         });
     };
 
-    // Открытие окна редактирования отчёта
+    // Открытие редактора отчёта
     const openReportEditor = (id) => {
         setReportId(id);
         if (id) {
@@ -772,8 +772,8 @@ const ProjectCard = () => {
         }
     }, [projectData?.contragent_id]);
 
-    useBodyScrollLock(activeWindow); // Блокируем экран при открытии попапа
-    useBodyScrollLock(reportWindowsState); // Блокируем экран при открытии редактора отчета
+    useBodyScrollLock(activeWindow || reportWindowsState); // Блокируем экран при открытии попапа или редактора отчета
+
     const width = useWindowWidth(); // Снимаем блокировку на десктопе
 
     useEffect(() => {

@@ -3,7 +3,7 @@ type Props = {
     reportData: object;
 };
 
-const ContragentManagementReportListItem = ({
+const ManagementReportListItem = ({
     openEditor,
     reportData,
 }: Props) => {
@@ -66,4 +66,4 @@ const ContragentManagementReportListItem = ({
     );
 };
 
-export default ContragentManagementReportListItem;
+export default ManagementReportListItem;
