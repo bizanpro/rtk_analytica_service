@@ -69,7 +69,7 @@ body {
 .wrapper {
     position: relative;
     max-width: 100%;
-    min-width: var(--media-sm);
+    min-width: $media-sm;
     min-height: 100vh;
     margin: 0 auto;
     overflow: hidden;

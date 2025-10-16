@@ -52,17 +52,8 @@ const CardReportsList = ({
                                     openReportEditor(item.id);
                                 }}
                             >
-                                <div className="reports__list-item__col">
-                                    <div
-                                        style={{
-                                            overflow: "hidden",
-                                            whiteSpace: "nowrap",
-                                            textOverflow: "ellipsis",
-                                            maxWidth: "150px",
-                                        }}
-                                    >
-                                        {item.project_name}
-                                    </div>
+                                <div className="reports__list-item__col reports__list-item__col-name">
+                                    <div>{item.project_name}</div>
                                     <span
                                         style={{
                                             overflow: "hidden",

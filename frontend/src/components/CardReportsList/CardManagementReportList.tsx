@@ -1,15 +1,16 @@
 import { useState } from "react";
 
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock.js";
+
 import ReportRateEditor from "../ReportRateEditor/ReportRateEditor";
-import ManagementReportListItem from "./ManagementReportListItem";
+import RateSwitchStatic from "../RateSwitch/ReteSwitchStatic.js";
 
 const CardManagementReportList = ({
     managerReports,
-    mode,
 }: {
     managerReports: [];
-    mode: string;
 }) => {
+    let statusClass;
     const [rateEditorState, setRateEditorState] = useState(false); // Редактор оценки отчёта
     const [reportData, setReportData] = useState({});
 
@@ -25,31 +26,91 @@ const CardManagementReportList = ({
         setRateEditorState(false);
     };
 
+    useBodyScrollLock(rateEditorState); // Блокируем экран при открытии редактора отчета
+
     return (
         <>
-            <ul className="grid gap-3">
-                <li className="grid items-center grid-cols-[18%_15%_46px_15%_1fr] gap-[20px] mb-2 text-gray-400">
+            <div className="card-reports-list management-card-reports-list">
+                <div className="management-card-reports-list__header">
                     <span>Проект</span>
                     <span>Месяц</span>
-                    <span>Оценка</span>
+                    <span>Рук</span>
                     <span>Статус</span>
-                    <span>Отвественный</span>
-                </li>
+                    <span>Оценка</span>
+                </div>
 
-                {managerReports.length > 0 &&
-                    managerReports.map((item) => (
-                        <ManagementReportListItem
-                            openEditor={openRateReportEditor}
-                            reportData={item}
-                        />
-                    ))}
-            </ul>
+                <ul className="reports__list">
+                    {managerReports.length > 0 &&
+                        managerReports.map((item) => {
+                            if (
+                                item.status?.toLowerCase() === "завершен" ||
+                                item.status?.toLowerCase() === "утвержден" ||
+                                item.status?.toLowerCase() === "завершён" ||
+                                item.status?.toLowerCase() === "утверждён"
+                            ) {
+                                statusClass =
+                                    "reports__list-item__status_completed completed";
+                            } else if (
+                                item.status?.toLowerCase() === "в процессе" ||
+                                item.status?.toLowerCase() === "запланирован" ||
+                                item.status?.toLowerCase() === "в работе"
+                            ) {
+                                statusClass =
+                                    "reports__list-item__status_active active";
+                            }
+
+                            return (
+                                <li
+                                    className="management-card-reports-list__item"
+                                    onClick={() => openRateReportEditor(item)}
+                                >
+                                    <div className="reports__list-item__col reports__list-item__col-name">
+                                        <div>{item.project_name}</div>
+                                    </div>
+
+                                    <div className="reports__list-item__col">
+                                        {item.report_month}
+                                    </div>
+
+                                    <div className="management-reports__item__col">
+                                        <p>{item?.physical_person?.name}</p>
+                                        {item?.physical_person?.roles?.map(
+                                            (item) => (
+                                                <div
+                                                    className="text-sm"
+                                                    key={item.id}
+                                                >
+                                                    {item.name}
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
+
+                                    <div className="reports__list-item__col">
+                                        <div
+                                            className={`reports__list-item__status status ${statusClass}`}
+                                        >
+                                            {item.status}
+                                        </div>
+                                    </div>
+
+                                    <div className="reports__list-item__col">
+                                        <RateSwitchStatic
+                                            name={"general_assessment"}
+                                            reportRateData={item}
+                                        />
+                                    </div>
+                                </li>
+                            );
+                        })}
+                </ul>
+            </div>
 
             <ReportRateEditor
                 rateEditorState={rateEditorState}
                 reportData={reportData}
                 closeEditor={closeRateReportEditor}
-                mode={mode}
+                mode={"read"}
             />
         </>
     );

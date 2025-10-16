@@ -568,28 +568,12 @@ const ContragentCard = () => {
                                             />
                                         )}
 
-                                        {/* {activeReportTab ===
-                                            "managementReports" && (
-                                            <ManagementReportsTab
-                                                projectId={projectId}
-                                                setManagementReports={
-                                                    setManagementReports
-                                                }
-                                                activeWindow={activeWindow}
-                                                setActiveWindow={
-                                                    setActiveWindow
-                                                }
-                                                mode={"read"}
-                                            />
-                                        )} */}
-
                                         {activeReportTab ===
                                             "managementReports" && (
                                             <CardManagementReportList
                                                 managerReports={
                                                     selectedManagerReports
                                                 }
-                                                mode={"read"}
                                             />
                                         )}
                                     </div>
@@ -697,15 +681,12 @@ const ContragentCard = () => {
                                     mode={"read"}
                                 />
                             )}
-
-                            {/* {activeReportTab === "managementReports" && (
-                            <ManagementReportsTabMobile
-                                activeWindow={activeWindow}
-                                setActiveWindow={setActiveWindow}
-                                managementReports={managementReports}
-                                mode={"read"}
-                            />
-                        )} */}
+                            
+                            {activeReportTab === "managementReports" && (
+                                <CardManagementReportList
+                                    managerReports={selectedManagerReports}
+                                />
+                            )}
                         </div>
                     </div>
                 </BottomSheet>

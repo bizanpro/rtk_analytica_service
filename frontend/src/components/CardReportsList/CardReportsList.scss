@@ -21,7 +21,8 @@
         }
 
         @media (min-width: $media-xxl) {
-            padding: 0;
+            padding: 0 0 20px;
+            margin: 0;
             grid-template-columns: 155px 22% 22% 80px;
         }
     }
@@ -41,6 +42,92 @@
         @media (min-width: $media-xxl) {
             padding: 20px 0;
             grid-template-columns: 150px 20% 20% 80px;
+        }
+    }
+
+    .reports__list-item__col-name > div {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 150px;
+
+        @media (min-width: 560px) {
+            white-space: unset;
+            max-width: none;
+        }
+
+        @media (min-width: $media-xxl) {
+            white-space: nowrap;
+            max-width: 150px;
+        }
+    }
+}
+
+.management-card-reports-list {
+    &__header {
+        display: none;
+        align-items: center;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 150%;
+        color: var(--color-gray-70);
+        padding: 0 20px 20px;
+        border-bottom: 1px solid var(--color-gray-20);
+        margin-bottom: 20px;
+
+        @media (min-width: 560px) {
+            display: grid;
+        }
+
+        @media (min-width: $media-xxl) {
+            padding: 0 0 20px;
+            margin: 0;
+            grid-template-columns: 95px 85px 1fr 100px 90px;
+        }
+    }
+
+    &__item {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        align-items: start;
+        gap: 10px;
+        cursor: pointer;
+
+        @media (min-width: 560px) {
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+
+        @media (min-width: $media-xxl) {
+            padding: 20px 0;
+            grid-template-columns: 85px 80px 1fr 90px 80px;
+        }
+
+        .management-reports__item__col {
+            grid-column: -1 / 1;
+
+            @media (min-width: 560px) {
+                grid-column: unset;
+            }
+        }
+    }
+
+    .reports__list-item__col-name > div {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 150px;
+
+        @media (min-width: 560px) {
+            white-space: unset;
+            max-width: none;
+        }
+
+        @media (min-width: $media-xxl) {
+            white-space: nowrap;
+            max-width: 85px;
         }
     }
 }
