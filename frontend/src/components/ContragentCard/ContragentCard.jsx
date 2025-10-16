@@ -274,7 +274,7 @@ const ContragentCard = () => {
                                 <input
                                     type="text"
                                     name="program_name"
-                                    value={contragentData?.program_name}
+                                    value={contragentData?.program_name || ""}
                                     onChange={(e) =>
                                         setContragentDataCustom((prev) => ({
                                             ...prev,
@@ -391,7 +391,10 @@ const ContragentCard = () => {
                                         className="form-field"
                                         placeholder="Введите адрес сайта компании"
                                         name="company_website"
-                                        value={contragentData?.company_website}
+                                        value={
+                                            contragentData?.company_website ||
+                                            ""
+                                        }
                                         onChange={(e) =>
                                             setContragentDataCustom((prev) => ({
                                                 ...prev,
@@ -641,35 +644,7 @@ const ContragentCard = () => {
                 </button>
             </div>
 
-            <BottomNavCard update={() => updateData()}>
-                {mode == "edit" && (
-                    <button
-                        type="button"
-                        className="button-add"
-                        onClick={() => {
-                            setActiveWindow("");
-                            setReportWindowsState(true);
-                        }}
-                        title="Создать отчёт"
-                    >
-                        Отчёт
-                        <span>
-                            <svg
-                                width="13"
-                                height="12"
-                                viewBox="0 0 13 12"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M7.5 5H12.5V7H7.5V12H5.5V7H0.5V5H5.5V0H7.5V5Z"
-                                    fill="currentColor"
-                                />
-                            </svg>
-                        </span>
-                    </button>
-                )}
-            </BottomNavCard>
+            <BottomNavCard update={() => updateData()}></BottomNavCard>
         </main>
     );
 };
