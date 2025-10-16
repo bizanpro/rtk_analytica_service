@@ -12,9 +12,12 @@ import { ToastContainer, toast } from "react-toastify";
 
 import CardProjects from "../CardProjects/CardProjects";
 import ReportWindow from "../ReportWindow/ReportWindow";
-import CardReportsList from "../CardReportsList/CardReportsList";
+
 import SupplierStatisticBlock from "./SupplierStatisticBlock";
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
+
+import CardReportsList from "../CardReportsList/CardReportsList";
+import CardManagementReportList from "../CardReportsList/CardManagementReportList";
 
 import SupplierEmptyExecutorBlock from "./SupplierEmptyExecutorBlock";
 import SupplierManagementReportsTab from "./SupplierManagementReportsTab";
@@ -95,12 +98,14 @@ const SupplierCard = () => {
     const getProjectsReports = () => {
         getData(`${URL}/${supplierId}/reports`, {
             Accept: "application/json",
-        }).then((response) => {
-            if (response.status == 200) {
-                setReports(response.data);
-                setSelectedReports(response.data);
-            }
-        });
+        })
+            .then((response) => {
+                if (response.status == 200) {
+                    setReports(response.data);
+                    setSelectedReports(response.data);
+                }
+            })
+            .finally(() => setIsDataLoaded(true));
     };
 
     // Получаем список отчетов руководителя
@@ -539,56 +544,103 @@ const SupplierCard = () => {
                                 </div>
                             </section>
                         </section>
+
+                        <section className="card__aside-content project-card__aside-content supplier-card__aside-content">
+                            <div className="flex flex-col">
+                                <div ref={block3Ref}>
+                                    <SupplierStatisticBlock
+                                        supplierId={supplierId}
+                                        activeProject={activeProject}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="reports" ref={block2Ref}>
+                                <div className="reports__body">
+                                    <nav className="card__tabs reports__tabs">
+                                        <div
+                                            className="card__tabs-item radio-field_tab"
+                                            onClick={() =>
+                                                setActiveReportTab(
+                                                    "projectReports"
+                                                )
+                                            }
+                                            aria-label="Открыть вкладку Отчёты проекта"
+                                        >
+                                            <input
+                                                id="projectReports"
+                                                type="radio"
+                                                checked={
+                                                    activeReportTab ==
+                                                    "projectReports"
+                                                }
+                                                name="active_reports_1"
+                                                onChange={() =>
+                                                    setActiveReportTab(
+                                                        "projectReports"
+                                                    )
+                                                }
+                                            />
+                                            <label htmlFor="projectReports">
+                                                Отчёты проекта
+                                            </label>
+                                        </div>
+                                        <div
+                                            className="card__tabs-item radio-field_tab"
+                                            onClick={() =>
+                                                setActiveReportTab(
+                                                    "projectReports"
+                                                )
+                                            }
+                                            aria-label="Открыть вкладку Отчёты руководителя проекта"
+                                        >
+                                            <input
+                                                id="managementReports"
+                                                type="radio"
+                                                checked={
+                                                    activeReportTab ==
+                                                    "managementReports"
+                                                }
+                                                name="active_reports_1"
+                                                onChange={() =>
+                                                    setActiveReportTab(
+                                                        "managementReports"
+                                                    )
+                                                }
+                                            />
+                                            <label htmlFor="managementReports">
+                                                Отчёты руководителя проекта
+                                            </label>
+                                        </div>
+                                    </nav>
+
+                                    {activeReportTab === "projectReports" && (
+                                        <CardReportsList
+                                            isDataLoaded={isDataLoaded}
+                                            reports={selectedReports}
+                                            openReportEditor={openReportEditor}
+                                            mode={"read"}
+                                        />
+                                    )}
+
+                                    {activeReportTab ===
+                                        "managementReports" && (
+                                        <CardManagementReportList
+                                            managerReports={
+                                                selectedManagerReports
+                                            }
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        </section>
                     </div>
                 </div>
             </section>
 
-            <div className="grid grid-cols-3 justify-between mt-15 gap-10 flex-grow">
+            {/* <div className="grid grid-cols-3 justify-between mt-15 gap-10 flex-grow">
                 <div className="flex flex-col">
                     <div className="flex flex-col gap-2 flex-grow">
-                        <div className="flex items-center gap-2">
-                            <span className="text-gray-400">
-                                Проекты ({projects.length})
-                            </span>
-                        </div>
-                        <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[310px] overflow-x-hidden overflow-y-auto">
-                            <ul className="grid gap-3" ref={block1Ref}>
-                                <li className="grid items-center grid-cols-[30%_26%_1fr] gap-3 mb-2 text-gray-400">
-                                    <span>Проект</span>
-                                    <span>Бюджет</span>
-                                    <span>Период реализации</span>
-                                </li>
-
-                                <CardProjects
-                                    projects={projects}
-                                    setActiveProject={setActiveProject}
-                                    activeProject={activeProject}
-                                    getProjectReports={getProjectReports}
-                                />
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col">
-                    <div className="flex flex-col gap-2 mb-5">
-                        <span className="text-gray-400">Взаиморасчёты</span>
-
-                        <div ref={block3Ref}>
-                            <SupplierStatisticBlock
-                                supplierId={supplierId}
-                                activeProject={activeProject}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2 flex-grow">
-                        <div className="flex items-center gap-2">
-                            <span className="text-gray-400">
-                                История проектов
-                            </span>
-                        </div>
-
                         <div
                             className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto"
                             ref={block2Ref}
@@ -652,7 +704,7 @@ const SupplierCard = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </main>
     );
 };
