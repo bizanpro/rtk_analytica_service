@@ -16,8 +16,8 @@ const SelectList = ({ options = [], onChange, selectedContact }) => {
 
     return (
         <ul className="form-select__list">
-            {options.map((item) => (
-                <li key={item.value}>
+            {options.map((item, index) => (
+                <li key={`${item.value}_${index}`}>
                     <label
                         htmlFor={item.value}
                         className={`${selected === item.value ? "active" : ""}`}

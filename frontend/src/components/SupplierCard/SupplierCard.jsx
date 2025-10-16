@@ -20,6 +20,7 @@ import CardReportsList from "../CardReportsList/CardReportsList";
 import CardManagementReportList from "../CardReportsList/CardManagementReportList";
 
 import SupplierEmptyExecutorBlock from "./SupplierEmptyExecutorBlock";
+import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock.jsx";
 import SupplierManagementReportsTab from "./SupplierManagementReportsTab";
 
 import BottomSheet from "../BottomSheet/BottomSheet";
@@ -478,44 +479,13 @@ const SupplierCard = () => {
                                 </div>
                             </section>
 
-                            <section className="project-card__project-team">
+                            <section className="project-card__project-executors">
                                 <h2 className="card__subtitle">
                                     Ключевые лица подрядчика
                                 </h2>
 
-                                {mode == "edit" && (
-                                    <button
-                                        type="button"
-                                        className="add-button"
-                                        onClick={() => {
-                                            if (!addRespPerson) {
-                                                setAddRespPerson(true);
-                                            }
-                                        }}
-                                        title="Добавить ключевое лицо Подрядчика"
-                                    >
-                                        <span></span>
-                                    </button>
-                                )}
-
-                                <div className="project-card__team">
-                                    {/* <ContragentResponsiblePersons
-                                        teamData={
-                                            selectedResponsiblePersons?.contacts
-                                        }
-                                    /> */}
-
-                                    {addRespPerson && (
-                                        <SupplierEmptyExecutorBlock
-                                            supplierId={supplierId}
-                                            removeBlock={() =>
-                                                setAddRespPerson(false)
-                                            }
-                                            sendExecutor={sendExecutor}
-                                        />
-                                    )}
-
-                                    {responsiblePersons.length > 0 &&
+                                <ul className="project-card__executors-list">
+                                    {responsiblePersons.length > 0 ? (
                                         responsiblePersons.map((person) => (
                                             <ExecutorBlock
                                                 key={person.id}
@@ -524,8 +494,52 @@ const SupplierCard = () => {
                                                 type={"customer"}
                                                 deleteBlock={deleteRespPerson}
                                             />
-                                        ))}
-                                </div>
+                                        ))
+                                    ) : (
+                                        <li className="project-card__executors-list-nodata">
+                                            Нет данных
+                                        </li>
+                                    )}
+                                </ul>
+
+                                {mode == "edit" && (
+                                    <button
+                                        type="button"
+                                        className="button-add"
+                                        onClick={() => {
+                                            if (!addRespPerson) {
+                                                setAddRespPerson(true);
+                                            }
+                                        }}
+                                        title="Добавить ключевое лицо подрядчика"
+                                    >
+                                        Добавить
+                                        <span>
+                                            <svg
+                                                width="10"
+                                                height="9"
+                                                viewBox="0 0 10 9"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <path
+                                                    d="M5.75 3.75H9.5v1.5H5.75V9h-1.5V5.25H.5v-1.5h3.75V0h1.5v3.75z"
+                                                    fill="currentColor"
+                                                />
+                                            </svg>
+                                        </span>
+                                    </button>
+                                )}
+
+                                {addRespPerson && (
+                                    <SupplierEmptyExecutorBlock
+                                        supplierId={supplierId}
+                                        removeBlock={() =>
+                                            setAddRespPerson(false)
+                                        }
+                                        sendExecutor={sendExecutor}
+                                    />
+                                )}
                             </section>
 
                             <section className="project-card__projects">

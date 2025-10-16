@@ -31,6 +31,7 @@ const CardProjects = ({
                             onClick={() => {
                                 getProjectReports(item.id);
                                 setActiveProject(item.id);
+                                
                                 if (typeof getProjectContact === "function") {
                                     getProjectContact(item.id);
                                 }

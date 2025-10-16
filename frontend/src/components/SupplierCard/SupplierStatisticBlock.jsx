@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 
 import getData from "../../utils/getData";
-
 import Loader from "../Loader";
 
 const SupplierStatisticBlock = ({ supplierId, activeProject }) => {
