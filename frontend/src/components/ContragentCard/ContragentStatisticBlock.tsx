@@ -3,10 +3,33 @@ import { useEffect } from "react";
 import CountUp from "react-countup";
 import Hint from "../Hint/Hint";
 
-const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
+const ContragentStatisticBlock = ({
+    revenue,
+    contragentId,
+    activeProject,
+    getRevenue,
+    period,
+    setPeriod,
+}: {
+    revenue: object[];
+    contragentId: number;
+    activeProject: number;
+    getRevenue: () => void;
+    period: string;
+    setPeriod: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+    const URL =
+        activeProject != null
+            ? `${
+                  import.meta.env.VITE_API_URL
+              }projects/${activeProject}/revenue?period=${period}`
+            : `${
+                  import.meta.env.VITE_API_URL
+              }contragents/${contragentId}/financial-metrics?period=${period}`;
+
     useEffect(() => {
-        getRevenue(period);
-    }, [period]);
+        getRevenue(URL);
+    }, [period, activeProject]);
 
     return (
         <div className="statistics-block project-card__statistics-block">
@@ -313,4 +336,4 @@ const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
     );
 };
 
-export default ProjectStatisticsBlock;
+export default ContragentStatisticBlock;

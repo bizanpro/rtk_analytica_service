@@ -1,12 +1,29 @@
-import { useEffect } from "react";
-
 import CountUp from "react-countup";
 import Hint from "../Hint/Hint";
 
-const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
-    useEffect(() => {
-        getRevenue(period);
-    }, [period]);
+const ContragentStatisticBlockMobile = ({
+    revenue,
+    contragentId,
+    activeProject,
+    getRevenue,
+    period,
+    setPeriod,
+}: {
+    revenue: object[];
+    contragentId: number;
+    activeProject: number;
+    getRevenue: () => void;
+    period: string;
+    setPeriod: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+    const URL =
+        activeProject != null
+            ? `${
+                  import.meta.env.VITE_API_URL
+              }projects/${activeProject}/revenue?period=${period}`
+            : `${
+                  import.meta.env.VITE_API_URL
+              }contragents/${contragentId}/financial-metrics?period=${period}`;
 
     return (
         <div className="statistics-block project-card__statistics-block">
@@ -14,20 +31,26 @@ const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
                 <div className="card__tabs-item radio-field_tab">
                     <input
                         type="radio"
-                        name="time_sort"
+                        name="time_sort_1"
                         id="this_year"
                         checked={period === "current_year"}
-                        onChange={() => setPeriod("current_year")}
+                        onChange={() => {
+                            getRevenue(URL);
+                            setPeriod("current_year");
+                        }}
                     />
                     <label htmlFor="this_year">Текущий год</label>
                 </div>
                 <div className="card__tabs-item radio-field_tab">
                     <input
                         type="radio"
-                        name="time_sort"
+                        name="time_sort_1"
                         id="all_time"
                         checked={period === "all"}
-                        onChange={() => setPeriod("all")}
+                        onChange={() => {
+                            getRevenue(URL);
+                            setPeriod("all");
+                        }}
                     />
                     <label htmlFor="all_time">За всё время</label>
                 </div>
@@ -313,4 +336,4 @@ const ProjectStatisticsBlock = ({ revenue, getRevenue, period, setPeriod }) => {
     );
 };
 
-export default ProjectStatisticsBlock;
+export default ContragentStatisticBlockMobile;

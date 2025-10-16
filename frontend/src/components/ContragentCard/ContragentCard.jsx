@@ -5,6 +5,8 @@ import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 import handleStatus from "../../utils/handleStatus";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock.js";
+import { useWindowWidth } from "../../hooks/useWindowWidth.js";
 
 import { ToastContainer, toast } from "react-toastify";
 
@@ -12,7 +14,9 @@ import CardProjects from "../CardProjects/CardProjects";
 import ReportWindow from "../ReportWindow/ReportWindow";
 import CardReportsListItem from "../CardReportsListItem";
 import ContragentStatisticBlock from "./ContragentStatisticBlock";
+import ProjectStatisticsBlockMobile from "./ContragentStatisticBlockMobile";
 import ContragentManagementReportsTab from "./ContragentManagementReportsTab";
+import BottomSheet from "../BottomSheet/BottomSheet";
 import BottomNavCard from "../BottomNav/BottomNavCard";
 import AutoResizeTextarea from "../AutoResizeTextarea";
 import ContragentResponsiblePersons from "./ContragentResponsiblePersons";
@@ -41,6 +45,9 @@ const ContragentCard = () => {
 
     const [activeProject, setActiveProject] = useState(null); // Выбранный проект
 
+    const [period, setPeriod] = useState("current_year");
+    const [revenue, setRevenue] = useState({}); // ОСВ
+
     const [responsiblePersons, setResponsiblePersons] = useState([]); // Ключевые лица Заказчика
     const [selectedResponsiblePersons, setSelectedResponsiblePersons] =
         useState([]); // Ключевые лица Заказчика выбранного проекта
@@ -50,13 +57,13 @@ const ContragentCard = () => {
 
     let query;
 
-    const handleInputChange = (e, name) => {
-        setContragentDataCustom((prev) => ({
-            ...prev,
-            [name]: e.target.value,
-        }));
-        setContragentData((prev) => ({ ...prev, [name]: e.target.value }));
-    };
+    // const handleInputChange = (e, name) => {
+    //     setContragentDataCustom((prev) => ({
+    //         ...prev,
+    //         [name]: e.target.value,
+    //     }));
+    //     setContragentData((prev) => ({ ...prev, [name]: e.target.value }));
+    // };
 
     // Получение данных заказчика и его проекты
     const fetchData = () => {
@@ -80,6 +87,15 @@ const ContragentCard = () => {
                     });
                 }
             });
+    };
+
+    // Получение ОСВ
+    const getRevenue = (url) => {
+        getData(url).then((response) => {
+            if (response.status == 200) {
+                setRevenue(response.data);
+            }
+        });
     };
 
     // Получение ключевых лиц
@@ -261,6 +277,16 @@ const ContragentCard = () => {
         setSelectedManagerReports(managerReports);
         setSelectedResponsiblePersons(responsiblePersons);
     });
+
+    useBodyScrollLock(activeWindow || reportWindowsState); // Блокируем экран при открытии попапа или редактора отчета
+
+    const width = useWindowWidth(); // Снимаем блокировку на десктопе
+
+    useEffect(() => {
+        if (width >= 1440) {
+            setActiveWindow("");
+        }
+    }, [width]);
 
     return (
         <main className="page">
@@ -445,48 +471,21 @@ const ContragentCard = () => {
                                         getProjectReports={getProjectReports}
                                         getProjectContact={getProjectContact}
                                     />
-
-                                    {/* {projects.length > 0 &&
-                                        projects.map((project) => (
-                                            <ContragentProjectItem
-                                                key={project.id}
-                                                {...project}
-                                                setActiveProject={
-                                                    setActiveProject
-                                                }
-                                                activeProject={activeProject}
-                                                getProjectReports={
-                                                    getProjectReports
-                                                }
-                                                getProjectContact={
-                                                    getProjectContact
-                                                }
-                                            />
-                                        ))} */}
                                 </div>
                             </section>
                         </section>
-                    </div>
-                </div>
 
-                <div
-                    className="container flex flex-col min-h-full"
-                    style={{ minHeight: "calc(100vh - 215px)" }}
-                >
-                    <div className="grid grid-cols-3 mt-15 gap-10 flex-grow">
-                        <div className="flex flex-col">
-                            <div ref={block3Ref}>
-                                <ContragentStatisticBlock
-                                    contragentId={contragentId}
-                                    activeProject={activeProject}
-                                />
-                            </div>
-
-                            <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        История проекта
-                                    </span>
+                        <section className="card__aside-content contragent-card__aside-content">
+                            <div className="flex flex-col">
+                                <div ref={block3Ref}>
+                                    <ContragentStatisticBlock
+                                        revenue={revenue}
+                                        getRevenue={getRevenue}
+                                        contragentId={contragentId}
+                                        activeProject={activeProject}
+                                        period={period}
+                                        setPeriod={setPeriod}
+                                    />
                                 </div>
 
                                 <div
@@ -590,10 +589,25 @@ const ContragentCard = () => {
                                     )}
                                 </div>
                             </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
             </section>
+
+            {/* Мобильный ОСВ */}
+            <BottomSheet
+                onClick={() => setActiveWindow("")}
+                className={`${activeWindow === "statistic" ? "active" : ""}`}
+            >
+                <ProjectStatisticsBlockMobile
+                    revenue={revenue}
+                    getRevenue={getRevenue}
+                    contragentId={contragentId}
+                    activeProject={activeProject}
+                    period={period}
+                    setPeriod={setPeriod}
+                />
+            </BottomSheet>
 
             <div className="card__bottom-actions">
                 <button

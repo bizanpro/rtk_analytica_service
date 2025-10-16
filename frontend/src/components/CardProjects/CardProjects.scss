@@ -12,6 +12,14 @@
         border: 1px solid var(--color-gray-30);
         border-radius: 10px;
         padding: 10px;
+        transition: background var(--trans);
+        cursor: pointer;
+
+        &:hover,
+        &.active {
+            border: 1px solid var(--color-gray-20);
+            background: var(--color-gray-20);
+        }
 
         @media (min-width: $media-md) {
             padding: 15px;

@@ -21,12 +21,7 @@ const ProjectStatisticsBlockMobile = ({
                             setPeriod("current_year");
                         }}
                     />
-                    <label
-                        className="bg-gray-200 py-1 px-2 text-center rounded-md"
-                        htmlFor="this_year"
-                    >
-                        Текущий год
-                    </label>
+                    <label htmlFor="this_year">Текущий год</label>
                 </div>
                 <div className="card__tabs-item radio-field_tab">
                     <input
@@ -39,12 +34,7 @@ const ProjectStatisticsBlockMobile = ({
                             setPeriod("all");
                         }}
                     />
-                    <label
-                        className="bg-gray-200 py-1 px-2 text-center rounded-md"
-                        htmlFor="all_time"
-                    >
-                        За всё время
-                    </label>
+                    <label htmlFor="all_time">За всё время</label>
                 </div>
             </nav>
 

@@ -209,6 +209,7 @@
                 &:checked ~ label {
                     color: var(--color-white);
                     background: var(--color-blue-70);
+                    border: 1px solid var(--color-blue-70);
                 }
             }
 
@@ -216,7 +217,7 @@
                 display: block;
                 border-radius: 8px;
                 padding: 7px 10px;
-                border: 1px solid var(--color-blue-70);
+                border: 1px solid var(--color-blue-30);
                 background: var(--color-white);
                 color: var(--color-blue-70);
                 transition: color var(--trans), background var(--trans);
@@ -228,6 +229,7 @@
                 &:hover {
                     color: var(--color-white);
                     background: var(--color-blue-70);
+                    border: 1px solid var(--color-blue-70);
                 }
             }
         }
