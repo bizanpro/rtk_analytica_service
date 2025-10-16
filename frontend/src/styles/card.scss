@@ -1,12 +1,19 @@
 @use "./media-breakpoints" as *;
 
 .card {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
     @media (min-width: $media-xxl) {
         background: var(--color-gray-20);
     }
 
     &__container {
         padding-bottom: 160px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
 
         @media (min-width: $media-lg) {
             padding-bottom: 90px;
@@ -22,6 +29,7 @@
     &__wrapper {
         display: grid;
         gap: 20px;
+        flex-grow: 1;
 
         @media (min-width: $media-lg) {
             justify-content: center;
