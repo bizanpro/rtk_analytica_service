@@ -460,7 +460,7 @@ const ContragentCard = () => {
                                 <div className="project-card__team">
                                     <ContragentResponsiblePersons
                                         teamData={
-                                            selectedResponsiblePersons.contacts
+                                            selectedResponsiblePersons?.contacts
                                         }
                                     />
                                 </div>
@@ -681,7 +681,7 @@ const ContragentCard = () => {
                                     mode={"read"}
                                 />
                             )}
-                            
+
                             {activeReportTab === "managementReports" && (
                                 <CardManagementReportList
                                     managerReports={selectedManagerReports}
