@@ -30,10 +30,9 @@ const ContragentCard = () => {
     const { contragentId } = useParams();
     const navigate = useNavigate();
 
-    const [contragentData, setContragentData] = useState({});
-    const [contragentDataCustom, setContragentDataCustom] = useState({});
+    const [cardData, setCardData] = useState({});
+    const [cardDataCustom, setCardDataCustom] = useState({});
 
-    // const [mode, setMode] = useState("read");
     const [mode, setMode] = useState("edit");
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
@@ -67,8 +66,8 @@ const ContragentCard = () => {
         })
             .then((response) => {
                 if (response.status == 200) {
-                    setContragentData(response.data);
-                    setContragentDataCustom(response.data);
+                    setCardData(response.data);
+                    setCardDataCustom(response.data);
                     setProjects(response.data.projects);
                 }
             })
@@ -178,7 +177,7 @@ const ContragentCard = () => {
     };
 
     // Обновление контрагента
-    const updateData = (showMessage = true, data = contragentDataCustom) => {
+    const updateData = (showMessage = true, data = cardDataCustom) => {
         query = toast.loading("Обновление", {
             containerId: "toastContainer",
             draggable: true,
@@ -203,11 +202,11 @@ const ContragentCard = () => {
                                 : "top-right",
                     });
 
-                    setContragentData((prev) => ({
+                    setCardData((prev) => ({
                         ...prev,
                         ...response,
                     }));
-                    setContragentDataCustom((prev) => ({
+                    setCardDataCustom((prev) => ({
                         ...prev,
                         ...response,
                     }));
@@ -313,23 +312,21 @@ const ContragentCard = () => {
                                 <input
                                     type="text"
                                     name="program_name"
-                                    value={
-                                        contragentDataCustom?.program_name || ""
-                                    }
+                                    value={cardDataCustom?.program_name || ""}
                                     onChange={(e) =>
-                                        setContragentDataCustom((prev) => ({
+                                        setCardDataCustom((prev) => ({
                                             ...prev,
                                             program_name: e.target.value,
                                         }))
                                     }
                                     onBlur={() => {
                                         if (
-                                            contragentData?.program_name !=
-                                            contragentDataCustom?.program_name
+                                            cardData?.program_name !=
+                                            cardDataCustom?.program_name
                                         ) {
                                             updateData(true, {
                                                 program_name:
-                                                    contragentDataCustom.program_name,
+                                                    cardDataCustom.program_name,
                                             });
                                         }
                                     }}
@@ -339,14 +336,13 @@ const ContragentCard = () => {
                                 <span
                                     className={`status
                                     ${
-                                        contragentData?.status === "active"
+                                        cardData?.status === "active"
                                             ? "active"
-                                            : contragentData?.status ===
-                                              "completed"
+                                            : cardData?.status === "completed"
                                     }
                                 `}
                                 >
-                                    {handleStatus(contragentData?.status)}
+                                    {handleStatus(cardData?.status)}
                                 </span>
                             </div>
 
@@ -362,11 +358,11 @@ const ContragentCard = () => {
                                         type="text"
                                         name="description_short"
                                         value={
-                                            contragentDataCustom?.description_short ||
+                                            cardDataCustom?.description_short ||
                                             ""
                                         }
                                         onChange={(e) =>
-                                            setContragentDataCustom((prev) => ({
+                                            setCardDataCustom((prev) => ({
                                                 ...prev,
                                                 description_short:
                                                     e.target.value,
@@ -374,12 +370,12 @@ const ContragentCard = () => {
                                         }
                                         onBlur={() => {
                                             if (
-                                                contragentData?.description_short !=
-                                                contragentDataCustom?.description_short
+                                                cardData?.description_short !=
+                                                cardDataCustom?.description_short
                                             ) {
                                                 updateData(true, {
                                                     description_short:
-                                                        contragentDataCustom.description_short,
+                                                        cardDataCustom.description_short,
                                                 });
                                             }
                                         }}
@@ -398,11 +394,11 @@ const ContragentCard = () => {
                                         type="text"
                                         name="head_office_address"
                                         value={
-                                            contragentDataCustom?.head_office_address ||
+                                            cardDataCustom?.head_office_address ||
                                             ""
                                         }
                                         onChange={(e) =>
-                                            setContragentDataCustom((prev) => ({
+                                            setCardDataCustom((prev) => ({
                                                 ...prev,
                                                 head_office_address:
                                                     e.target.value,
@@ -410,12 +406,12 @@ const ContragentCard = () => {
                                         }
                                         onBlur={() => {
                                             if (
-                                                contragentData?.head_office_address !=
-                                                contragentDataCustom?.head_office_address
+                                                cardData?.head_office_address !=
+                                                cardDataCustom?.head_office_address
                                             ) {
                                                 updateData(true, {
                                                     head_office_address:
-                                                        contragentDataCustom.head_office_address,
+                                                        cardDataCustom.head_office_address,
                                                 });
                                             }
                                         }}
@@ -434,23 +430,23 @@ const ContragentCard = () => {
                                         placeholder="Введите адрес сайта компании"
                                         name="company_website"
                                         value={
-                                            contragentDataCustom?.company_website ||
+                                            cardDataCustom?.company_website ||
                                             ""
                                         }
                                         onChange={(e) =>
-                                            setContragentDataCustom((prev) => ({
+                                            setCardDataCustom((prev) => ({
                                                 ...prev,
                                                 company_website: e.target.value,
                                             }))
                                         }
                                         onBlur={() => {
                                             if (
-                                                contragentData?.company_website !=
-                                                contragentDataCustom?.company_website
+                                                cardData?.company_website !=
+                                                cardDataCustom?.company_website
                                             ) {
                                                 updateData(true, {
                                                     company_website:
-                                                        contragentDataCustom.company_website,
+                                                        cardDataCustom.company_website,
                                                 });
                                             }
                                         }}

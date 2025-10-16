@@ -5,6 +5,8 @@ import getData from "../../utils/getData";
 import postData from "../../utils/postData";
 import handleStatus from "../../utils/handleStatus";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock.js";
+import { useWindowWidth } from "../../hooks/useWindowWidth.js";
 
 import { ToastContainer, toast } from "react-toastify";
 
@@ -13,8 +15,14 @@ import ReportWindow from "../ReportWindow/ReportWindow";
 import CardReportsList from "../CardReportsList/CardReportsList";
 import SupplierStatisticBlock from "./SupplierStatisticBlock";
 import ExecutorBlock from "../ExecutorBlock/ExecutorBlock";
+
 import SupplierEmptyExecutorBlock from "./SupplierEmptyExecutorBlock";
 import SupplierManagementReportsTab from "./SupplierManagementReportsTab";
+
+import BottomSheet from "../BottomSheet/BottomSheet";
+import BottomNavCard from "../BottomNav/BottomNavCard";
+import AutoResizeTextarea from "../AutoResizeTextarea";
+// import ContragentResponsiblePersons from "./ContragentResponsiblePersons";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -23,18 +31,21 @@ const SupplierCard = () => {
     const { supplierId } = useParams();
     const navigate = useNavigate();
 
-    const [supplierData, setSupplierData] = useState({});
-    const [formFields, setFormFields] = useState({});
-    const [mode, setMode] = useState("read");
+    const [mode, setMode] = useState("edit");
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+    const [cardData, setCardData] = useState({});
+    const [cardDataCustom, setCardDataCustom] = useState({});
+
     const [activeReportTab, setActiveReportTab] = useState("projectReports");
+    const [activeWindow, setActiveWindow] = useState("");
+    const [activeProject, setActiveProject] = useState(null); // Выбранный проект
 
     const [reports, setReports] = useState([]); // Отчёты проектов
     const [selectedReports, setSelectedReports] = useState([]); // Очёты выбранного проекта
     const [managerReports, setManagerReports] = useState([]); // Отчёты руководителя проектов
     const [selectedManagerReports, setSelectedManagerReports] = useState([]); // Отчёты руководителя выбранного проекта
     const [projects, setProjects] = useState([]); // Проекты
-
-    const [activeProject, setActiveProject] = useState(null); // Выбранный проект
 
     const [reportWindowsState, setReportWindowsState] = useState(false); // Конструктор отчёта
     const [reportId, setReportId] = useState(null);
@@ -44,11 +55,6 @@ const SupplierCard = () => {
 
     let query;
 
-    const handleInputChange = (e, name) => {
-        setFormFields((prev) => ({ ...prev, [name]: e.target.value }));
-        setSupplierData((prev) => ({ ...prev, [name]: e.target.value }));
-    };
-
     // Получаем отчеты по выбранному проекту
     const getProjectReports = (id) => {
         setReportWindowsState(false);
@@ -57,7 +63,7 @@ const SupplierCard = () => {
             (report) => report.project_id === id
         );
 
-        const targetManagerReport = supplierData.manager_reports?.filter(
+        const targetManagerReport = cardData.manager_reports?.filter(
             (report) => report.project_id === id
         );
 
@@ -115,7 +121,8 @@ const SupplierCard = () => {
             Accept: "application/json",
         })
             .then((response) => {
-                setSupplierData(response.data);
+                setCardData(response.data);
+                setCardDataCustom(response.data);
                 setProjects(response.data.projects);
                 setResponsiblePersons(response.data.contacts);
             })
@@ -132,20 +139,21 @@ const SupplierCard = () => {
             });
     };
 
+    // Обновление данных карточки
     const updateData = (showMessage = true) => {
         query = toast.loading("Обновление", {
-            containerId: "supplier",
+            containerId: "toastContainer",
             draggable: true,
             position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
-        postData("PATCH", `${URL}/${supplierId}`, formFields)
+        postData("PATCH", `${URL}/${supplierId}`, cardDataCustom)
             .then((response) => {
                 if (response?.ok && showMessage) {
                     toast.update(query, {
                         render: "Данные обновлены",
                         type: "success",
-                        containerId: "supplier",
+                        containerId: "toastContainer",
                         isLoading: false,
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
@@ -159,7 +167,7 @@ const SupplierCard = () => {
                 } else {
                     toast.dismiss(query);
                     toast.error("Ошибка обновления данных", {
-                        containerId: "supplier",
+                        containerId: "toastContainer",
                         isLoading: false,
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
@@ -175,7 +183,7 @@ const SupplierCard = () => {
             .catch((error) => {
                 toast.dismiss(query);
                 toast.error(error.message || "Ошибка обновления данных", {
-                    containerId: "supplier",
+                    containerId: "toastContainer",
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -189,30 +197,19 @@ const SupplierCard = () => {
             });
     };
 
-    // Открытие окна отчёта
+    // Открытие редактора отчёта
     const openReportEditor = (id) => {
         setReportId(id);
         if (id) {
+            setActiveWindow("");
             setReportWindowsState(true);
         }
-    };
-
-    // Принудительное открытие окна редактирования заключения по отчёту
-    const openSubReportEditor = (id) => {
-        setReportWindowsState(false);
-        getData(`${import.meta.env.VITE_API_URL}reports/${id}`).then(
-            (response) => {
-                if (response?.status == 200) {
-                    setReportId(id);
-                }
-            }
-        );
     };
 
     // Добавление ключевого лица
     const sendExecutor = (data) => {
         query = toast.loading("Выполняется отправка", {
-            containerId: "supplier",
+            containerId: "toastContainer",
             draggable: true,
             position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
@@ -230,7 +227,7 @@ const SupplierCard = () => {
                     toast.update(query, {
                         render: response.message || "Ключевое лицо добавлено",
                         type: "success",
-                        containerId: "supplier",
+                        containerId: "toastContainer",
                         isLoading: false,
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
@@ -246,7 +243,7 @@ const SupplierCard = () => {
             .catch((error) => {
                 toast.dismiss(query);
                 toast.error(error.message || "Ошибка добавления исполнителя", {
-                    containerId: "supplier",
+                    containerId: "toastContainer",
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -275,7 +272,7 @@ const SupplierCard = () => {
                 );
 
                 toast.success("Ключевое лицо удалено", {
-                    containerId: "supplier",
+                    containerId: "toastContainer",
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -305,6 +302,16 @@ const SupplierCard = () => {
         setSelectedManagerReports(managerReports);
     });
 
+    useBodyScrollLock(activeWindow || reportWindowsState); // Блокируем экран при открытии попапа или редактора отчета
+
+    const width = useWindowWidth(); // Снимаем блокировку на десктопе
+
+    useEffect(() => {
+        if (width >= 1440) {
+            setActiveWindow("");
+        }
+    }, [width]);
+
     useEffect(() => {
         if (mode === "read") {
             setAddRespPerson(false);
@@ -313,329 +320,335 @@ const SupplierCard = () => {
 
     return (
         <main className="page">
-            <div className="pt-8 pb-15">
-                <div
-                    className="container flex flex-col min-h-full"
-                    style={{ minHeight: "calc(100vh - 215px)" }}
-                >
-                    <ToastContainer containerId="supplier" />
+            <section className="card supplier-card">
+                <div className="container card__container supplier-card__container">
+                    <ToastContainer containerId="toastContainer" />
 
-                    <div className="flex justify-between items-center gap-10">
-                        <div className="flex items-center gap-3 justify-between flex-grow">
-                            <div className="flex items-center gap-10">
-                                <div className="flex items-center gap-3">
-                                    <div className="text-3xl font-medium w-full">
-                                        {supplierData?.program_name}
+                    <div className="card__wrapper supplier-card__wrapper">
+                        <section className="card__main-content supplier-card__main-content">
+                            <div className="card__main-name">
+                                <input
+                                    type="text"
+                                    name="program_name"
+                                    value={cardDataCustom?.program_name || ""}
+                                    onChange={(e) =>
+                                        setCardDataCustom((prev) => ({
+                                            ...prev,
+                                            program_name: e.target.value,
+                                        }))
+                                    }
+                                    onBlur={() => {
+                                        if (
+                                            cardData?.program_name !=
+                                            cardDataCustom?.program_name
+                                        ) {
+                                            updateData(true, {
+                                                program_name:
+                                                    cardDataCustom.program_name,
+                                            });
+                                        }
+                                    }}
+                                    disabled={mode == "read"}
+                                />
+
+                                <span
+                                    className={`status
+                                    ${
+                                        cardData?.status === "active"
+                                            ? "active"
+                                            : cardData?.status === "completed"
+                                    }
+                                `}
+                                >
+                                    {handleStatus(cardData?.status)}
+                                </span>
+                            </div>
+
+                            <section className="card__general-info">
+                                <div>
+                                    <div className="form-label">
+                                        Краткое описание компании
                                     </div>
 
-                                    <span
-                                        className={`
-                                            whitespace-nowrap 
-                                                ${
-                                                    supplierData?.status ===
-                                                    "active"
-                                                        ? "text-green-500"
-                                                        : supplierData?.status ===
-                                                          "completed"
-                                                        ? "text-black"
-                                                        : "text-gray-300"
-                                                }
-                                        `}
-                                    >
-                                        {handleStatus(supplierData?.status)}
-                                    </span>
-                                </div>
-                            </div>
-
-                            {mode === "edit" && (
-                                <button
-                                    type="button"
-                                    className="update-icon"
-                                    title="Обновить данные сотрудника"
-                                    onClick={() => {
-                                        updateData();
-                                    }}
-                                ></button>
-                            )}
-                        </div>
-
-                        <nav className="switch">
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="read_mode"
-                                    onChange={() => {
-                                        setMode("read");
-                                    }}
-                                    checked={mode === "read" ? true : false}
-                                />
-                                <label htmlFor="read_mode">Чтение</label>
-                            </div>
-
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="edit_mode"
-                                    onChange={() => setMode("edit")}
-                                    checked={mode === "edit" ? true : false}
-                                />
-                                <label htmlFor="edit_mode">
-                                    Редактирование
-                                </label>
-                            </div>
-                        </nav>
-                    </div>
-
-                    <div className="grid grid-cols-3 justify-between mt-15 gap-10 flex-grow">
-                        <div className="flex flex-col">
-                            <div className="grid gap-5 mb-5">
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-gray-400">
-                                        Адрес центрального офиса
-                                    </span>
-                                    <textarea
-                                        className="border-2 border-gray-300 p-5 h-[100px]"
-                                        style={{ resize: "none" }}
-                                        placeholder="Заполните адрес центрального офиса"
+                                    <AutoResizeTextarea
+                                        className="form-textarea"
+                                        placeholder="Заполните описание"
                                         type="text"
-                                        onChange={(e) =>
-                                            handleInputChange(
-                                                e,
-                                                "head_office_address"
-                                            )
-                                        }
+                                        name="description_short"
                                         value={
-                                            supplierData?.head_office_address ||
+                                            cardDataCustom?.description_short ||
                                             ""
                                         }
+                                        onChange={(e) =>
+                                            setCardDataCustom((prev) => ({
+                                                ...prev,
+                                                description_short:
+                                                    e.target.value,
+                                            }))
+                                        }
+                                        onBlur={() => {
+                                            if (
+                                                cardData?.description_short !=
+                                                cardDataCustom?.description_short
+                                            ) {
+                                                updateData(true, {
+                                                    description_short:
+                                                        cardDataCustom.description_short,
+                                                });
+                                            }
+                                        }}
                                         disabled={mode == "read"}
-                                    ></textarea>
-                                </div>
-
-                                <div className="flex flex-col gap-2 justify-between">
-                                    <span className="text-gray-400">
-                                        Сайт компании
-                                    </span>
-                                    <div className="border-2 border-gray-300 py-1 px-5 min-h-[32px]">
-                                        <input
-                                            className="w-full"
-                                            type="text"
-                                            placeholder="Введите адрес сайта компании"
-                                            value={
-                                                supplierData?.company_website
-                                            }
-                                            onChange={(e) =>
-                                                handleInputChange(
-                                                    e,
-                                                    "company_website"
-                                                )
-                                            }
-                                            disabled={
-                                                mode == "read" ? true : false
-                                            }
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col gap-2 flex-grow">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-gray-400">
-                                            Ключевые лица Подрядчика
-                                        </span>
-
-                                        {mode == "edit" && (
-                                            <button
-                                                type="button"
-                                                className="add-button"
-                                                onClick={() => {
-                                                    if (!addRespPerson) {
-                                                        setAddRespPerson(true);
-                                                    }
-                                                }}
-                                                title="Добавить ключевое лицо Подрядчика"
-                                            >
-                                                <span></span>
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    <div className="border-2 border-gray-300 py-5 px-3 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto">
-                                        <ul className="grid gap-5">
-                                            {addRespPerson && (
-                                                <SupplierEmptyExecutorBlock
-                                                    supplierId={supplierId}
-                                                    removeBlock={() =>
-                                                        setAddRespPerson(false)
-                                                    }
-                                                    sendExecutor={sendExecutor}
-                                                />
-                                            )}
-
-                                            {responsiblePersons.length > 0 &&
-                                                responsiblePersons.map(
-                                                    (person) => (
-                                                        <ExecutorBlock
-                                                            key={person.id}
-                                                            contanct={person}
-                                                            mode={mode}
-                                                            type={"customer"}
-                                                            deleteBlock={
-                                                                deleteRespPerson
-                                                            }
-                                                        />
-                                                    )
-                                                )}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col">
-                            <div className="flex flex-col gap-2 mb-10">
-                                <span className="text-gray-400">
-                                    Краткое описание
-                                </span>
-                                <textarea
-                                    className="border-2 border-gray-300 p-5 min-h-[155px] max-h-[155px]"
-                                    style={{ resize: "none" }}
-                                    placeholder="Заполните описание"
-                                    type="text"
-                                    disabled={mode == "read" ? true : false}
-                                    value={
-                                        supplierData?.description_short || ""
-                                    }
-                                    onChange={(e) =>
-                                        handleInputChange(
-                                            e,
-                                            "description_short"
-                                        )
-                                    }
-                                />
-                            </div>
-
-                            <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        Проекты ({projects.length})
-                                    </span>
-                                </div>
-                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[310px] overflow-x-hidden overflow-y-auto">
-                                    <ul className="grid gap-3" ref={block1Ref}>
-                                        <li className="grid items-center grid-cols-[30%_26%_1fr] gap-3 mb-2 text-gray-400">
-                                            <span>Проект</span>
-                                            <span>Бюджет</span>
-                                            <span>Период реализации</span>
-                                        </li>
-
-                                        <CardProjects
-                                            setActiveProject={setActiveProject}
-                                            activeProject={activeProject}
-                                            getProjectReports={
-                                                getProjectReports
-                                            }
-                                        />
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col">
-                            <div className="flex flex-col gap-2 mb-5">
-                                <span className="text-gray-400">
-                                    Взаиморасчёты
-                                </span>
-
-                                <div ref={block3Ref}>
-                                    <SupplierStatisticBlock
-                                        supplierId={supplierId}
-                                        activeProject={activeProject}
                                     />
                                 </div>
-                            </div>
 
-                            <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        История проектов
-                                    </span>
+                                <div>
+                                    <div className="form-label">
+                                        Адрес центрального офиса
+                                    </div>
+
+                                    <AutoResizeTextarea
+                                        className="form-textarea"
+                                        placeholder="Заполните адрес центрального офиса"
+                                        type="text"
+                                        name="head_office_address"
+                                        value={
+                                            cardDataCustom?.head_office_address ||
+                                            ""
+                                        }
+                                        onChange={(e) =>
+                                            setCardDataCustom((prev) => ({
+                                                ...prev,
+                                                head_office_address:
+                                                    e.target.value,
+                                            }))
+                                        }
+                                        onBlur={() => {
+                                            if (
+                                                cardData?.head_office_address !=
+                                                cardDataCustom?.head_office_address
+                                            ) {
+                                                updateData(true, {
+                                                    head_office_address:
+                                                        cardDataCustom.head_office_address,
+                                                });
+                                            }
+                                        }}
+                                        disabled={mode == "read"}
+                                    />
                                 </div>
 
-                                <div
-                                    className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto"
-                                    ref={block2Ref}
-                                >
-                                    <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
-                                        <button
-                                            type="button"
-                                            className={`py-2 transition-all border-b-2 ${
-                                                activeReportTab ==
-                                                "projectReports"
-                                                    ? "border-gray-500"
-                                                    : "border-transparent"
-                                            }`}
-                                            onClick={() =>
-                                                setActiveReportTab(
-                                                    "projectReports"
-                                                )
-                                            }
-                                            title="Перейти на вкладку Отчёты проекта"
-                                        >
-                                            Отчёты проекта
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`py-2 transition-all border-b-2 ${
-                                                activeReportTab ==
-                                                "managementReports"
-                                                    ? "border-gray-500"
-                                                    : "border-transparent"
-                                            }`}
-                                            onClick={() =>
-                                                setActiveReportTab(
-                                                    "managementReports"
-                                                )
-                                            }
-                                            title="Перейти на вкладку Отчёты руководителя проекта"
-                                        >
-                                            Отчёты руководителя проекта
-                                        </button>
-                                    </nav>
+                                <div>
+                                    <div className="form-label">
+                                        Сайт компании
+                                    </div>
 
-                                    {activeReportTab === "projectReports" &&
-                                        (!reportWindowsState ? (
-                                            <CardReportsList
-                                                reports={selectedReports}
-                                                openReportEditor={
-                                                    openReportEditor
-                                                }
-                                                mode={"read"}
-                                            />
-                                        ) : (
-                                            <ReportWindow
-                                                reportWindowsState={
-                                                    setReportWindowsState
-                                                }
-                                                contracts={contracts}
-                                                reportId={reportId}
-                                                setReportId={setReportId}
-                                                mode={"read"}
-                                            />
-                                        ))}
-
-                                    {activeReportTab ===
-                                        "managementReports" && (
-                                        <SupplierManagementReportsTab
-                                            managerReports={
-                                                selectedManagerReports
+                                    <input
+                                        type="text"
+                                        className="form-field"
+                                        placeholder="Введите адрес сайта компании"
+                                        name="company_website"
+                                        value={
+                                            cardDataCustom?.company_website ||
+                                            ""
+                                        }
+                                        onChange={(e) =>
+                                            setCardDataCustom((prev) => ({
+                                                ...prev,
+                                                company_website: e.target.value,
+                                            }))
+                                        }
+                                        onBlur={() => {
+                                            if (
+                                                cardData?.company_website !=
+                                                cardDataCustom?.company_website
+                                            ) {
+                                                updateData(true, {
+                                                    company_website:
+                                                        cardDataCustom.company_website,
+                                                });
                                             }
-                                            mode={"read"}
+                                        }}
+                                        disabled={mode == "read"}
+                                    />
+                                </div>
+                            </section>
+
+                            <section className="project-card__project-team">
+                                <h2 className="card__subtitle">
+                                    Ключевые лица подрядчика
+                                </h2>
+
+                                {mode == "edit" && (
+                                    <button
+                                        type="button"
+                                        className="add-button"
+                                        onClick={() => {
+                                            if (!addRespPerson) {
+                                                setAddRespPerson(true);
+                                            }
+                                        }}
+                                        title="Добавить ключевое лицо Подрядчика"
+                                    >
+                                        <span></span>
+                                    </button>
+                                )}
+
+                                <div className="project-card__team">
+                                    {/* <ContragentResponsiblePersons
+                                        teamData={
+                                            selectedResponsiblePersons?.contacts
+                                        }
+                                    /> */}
+
+                                    {addRespPerson && (
+                                        <SupplierEmptyExecutorBlock
+                                            supplierId={supplierId}
+                                            removeBlock={() =>
+                                                setAddRespPerson(false)
+                                            }
+                                            sendExecutor={sendExecutor}
                                         />
                                     )}
+
+                                    {responsiblePersons.length > 0 &&
+                                        responsiblePersons.map((person) => (
+                                            <ExecutorBlock
+                                                key={person.id}
+                                                contanct={person}
+                                                mode={mode}
+                                                type={"customer"}
+                                                deleteBlock={deleteRespPerson}
+                                            />
+                                        ))}
                                 </div>
-                            </div>
+                            </section>
+
+                            <section className="project-card__projects">
+                                <h2 className="card__subtitle">
+                                    Проекты
+                                    <span>{projects.length}</span>
+                                </h2>
+
+                                <div ref={block1Ref}>
+                                    <CardProjects
+                                        projects={projects}
+                                        setActiveProject={setActiveProject}
+                                        activeProject={activeProject}
+                                        getProjectReports={getProjectReports}
+                                    />
+                                </div>
+                            </section>
+                        </section>
+                    </div>
+                </div>
+            </section>
+
+            <div className="grid grid-cols-3 justify-between mt-15 gap-10 flex-grow">
+                <div className="flex flex-col">
+                    <div className="flex flex-col gap-2 flex-grow">
+                        <div className="flex items-center gap-2">
+                            <span className="text-gray-400">
+                                Проекты ({projects.length})
+                            </span>
+                        </div>
+                        <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[310px] overflow-x-hidden overflow-y-auto">
+                            <ul className="grid gap-3" ref={block1Ref}>
+                                <li className="grid items-center grid-cols-[30%_26%_1fr] gap-3 mb-2 text-gray-400">
+                                    <span>Проект</span>
+                                    <span>Бюджет</span>
+                                    <span>Период реализации</span>
+                                </li>
+
+                                <CardProjects
+                                    projects={projects}
+                                    setActiveProject={setActiveProject}
+                                    activeProject={activeProject}
+                                    getProjectReports={getProjectReports}
+                                />
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex flex-col">
+                    <div className="flex flex-col gap-2 mb-5">
+                        <span className="text-gray-400">Взаиморасчёты</span>
+
+                        <div ref={block3Ref}>
+                            <SupplierStatisticBlock
+                                supplierId={supplierId}
+                                activeProject={activeProject}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2 flex-grow">
+                        <div className="flex items-center gap-2">
+                            <span className="text-gray-400">
+                                История проектов
+                            </span>
+                        </div>
+
+                        <div
+                            className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow max-h-[300px] overflow-x-hidden overflow-y-auto"
+                            ref={block2Ref}
+                        >
+                            <nav className="flex items-center gap-10 border-b border-gray-300 text-base mb-5">
+                                <button
+                                    type="button"
+                                    className={`py-2 transition-all border-b-2 ${
+                                        activeReportTab == "projectReports"
+                                            ? "border-gray-500"
+                                            : "border-transparent"
+                                    }`}
+                                    onClick={() =>
+                                        setActiveReportTab("projectReports")
+                                    }
+                                    title="Перейти на вкладку Отчёты проекта"
+                                >
+                                    Отчёты проекта
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`py-2 transition-all border-b-2 ${
+                                        activeReportTab == "managementReports"
+                                            ? "border-gray-500"
+                                            : "border-transparent"
+                                    }`}
+                                    onClick={() =>
+                                        setActiveReportTab("managementReports")
+                                    }
+                                    title="Перейти на вкладку Отчёты руководителя проекта"
+                                >
+                                    Отчёты руководителя проекта
+                                </button>
+                            </nav>
+
+                            {activeReportTab === "projectReports" &&
+                                (!reportWindowsState ? (
+                                    <CardReportsList
+                                        reports={selectedReports}
+                                        openReportEditor={openReportEditor}
+                                        mode={"read"}
+                                    />
+                                ) : (
+                                    <ReportWindow
+                                        reportWindowsState={
+                                            setReportWindowsState
+                                        }
+                                        contracts={contracts}
+                                        reportId={reportId}
+                                        setReportId={setReportId}
+                                        mode={"read"}
+                                    />
+                                ))}
+
+                            {activeReportTab === "managementReports" && (
+                                <SupplierManagementReportsTab
+                                    managerReports={selectedManagerReports}
+                                    mode={"read"}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
