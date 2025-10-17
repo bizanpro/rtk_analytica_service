@@ -175,6 +175,15 @@ const SupplierCard = () => {
                                 ? "bottom-right"
                                 : "top-right",
                     });
+
+                    setCardData((prev) => ({
+                        ...prev,
+                        ...response,
+                    }));
+                    setCardDataCustom((prev) => ({
+                        ...prev,
+                        ...response,
+                    }));
                 } else {
                     toast.dismiss(query);
                     toast.error("Ошибка обновления данных", {
@@ -366,24 +375,7 @@ const SupplierCard = () => {
                                     type="text"
                                     name="program_name"
                                     value={cardDataCustom?.program_name || ""}
-                                    onChange={(e) =>
-                                        setCardDataCustom((prev) => ({
-                                            ...prev,
-                                            program_name: e.target.value,
-                                        }))
-                                    }
-                                    onBlur={() => {
-                                        if (
-                                            cardData?.program_name !=
-                                            cardDataCustom?.program_name
-                                        ) {
-                                            updateData(true, {
-                                                program_name:
-                                                    cardDataCustom.program_name,
-                                            });
-                                        }
-                                    }}
-                                    disabled={mode == "read"}
+                                    disabled
                                 />
 
                                 <span
