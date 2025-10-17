@@ -16,6 +16,9 @@ import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
 import EmployeePersonalWorkloadItem from "./EmployeePersonalWorkloadItem";
 import EmployeeWorkloadSummary from "./EmployeeWorkloadSummary";
 
+import Loader from "../Loader.jsx";
+
+import "./EmployeeCard.scss";
 import "react-toastify/dist/ReactToastify.css";
 
 const customStyles = {
@@ -35,10 +38,13 @@ const EmployeeCard = () => {
     const { employeeId } = useParams();
     const navigate = useNavigate();
 
-    const [mode, setMode] = useState("read");
+    const [mode, setMode] = useState("edit");
     const [errors, setErrors] = useState({});
 
-    const [employeeData, setEmployeeData] = useState({});
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+    const [cardData, setCardData] = useState({});
+    const [cardDataCustom, setCardDataCustom] = useState({});
 
     const [departments, setDepartments] = useState([]);
 
@@ -83,10 +89,8 @@ const EmployeeCard = () => {
 
     const handleSave = () => {
         const newErrors = {
-            // phone_number: !employeeData.phone_number,
-            // email: !employeeData.email || !validateEmail(employeeData.email),
             dismissal_date:
-                !employeeData?.is_active && !employeeData.dismissal_date,
+                !cardDataCustom?.is_active && !cardDataCustom.dismissal_date,
         };
 
         setErrors(newErrors);
@@ -107,7 +111,7 @@ const EmployeeCard = () => {
             value = e.target.value;
         }
 
-        setEmployeeData((prev) => ({
+        setCardData((prev) => ({
             ...prev,
             [name]: value,
         }));
@@ -202,23 +206,23 @@ const EmployeeCard = () => {
 
     // Обновление данных сотрудника
     const updateEmployee = () => {
-        // if (employeeData.position_id != null) {
+        // if (cardDataCustom.position_id != null) {
         query = toast.loading("Обновление", {
-            containerId: "employee",
+            containerId: "toastContainer",
             position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData(
             "PATCH",
             `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
-            employeeData
+            cardDataCustom
         )
             .then((response) => {
                 if (response?.ok) {
                     toast.update(query, {
                         render: "Успешно обновлено!",
                         type: "success",
-                        containerId: "employee",
+                        containerId: "toastContainer",
                         isLoading: false,
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
@@ -240,14 +244,14 @@ const EmployeeCard = () => {
                             window.innerWidth >= 1440
                                 ? "bottom-right"
                                 : "top-right",
-                        containerId: "employee",
+                        containerId: "toastContainer",
                     });
                 }
             })
             .catch((error) => {
                 toast.dismiss(query);
                 toast.error(error.message || "Ошибка обновления данных", {
-                    containerId: "employee",
+                    containerId: "toastContainer",
                     isLoading: false,
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
@@ -261,7 +265,7 @@ const EmployeeCard = () => {
             });
         // } else {
         //     toast.error("Необходимо выбрать должность", {
-        //         containerId: "employee",
+        //         containerId: "toastContainer",
         //         isLoading: false,
         //         autoClose: 1500,
         //         pauseOnFocusLoss: false,
@@ -275,6 +279,8 @@ const EmployeeCard = () => {
 
     // Получаем сотрудника
     const getEmployee = async () => {
+        setIsDataLoaded(false);
+
         try {
             const response = await getData(
                 `${import.meta.env.VITE_API_URL}physical-persons/${employeeId}`,
@@ -283,7 +289,8 @@ const EmployeeCard = () => {
                 }
             );
             if (response.status === 200) {
-                setEmployeeData(response.data);
+                setCardData(response.data);
+                setCardDataCustom(response.data);
             }
 
             await Promise.all([
@@ -292,6 +299,8 @@ const EmployeeCard = () => {
                 getYears(),
                 getTypes(),
             ]);
+
+            setIsDataLoaded(true);
         } catch (error) {
             if (error && error.status === 404) {
                 navigate("/not-found", {
@@ -336,7 +345,7 @@ const EmployeeCard = () => {
         if (totalPercentage === 100) {
             if ("value" in selectedPersonalMonth) {
                 query = toast.loading("Обновление", {
-                    containerId: "employee",
+                    containerId: "toastContainer",
                     draggable: true,
                     position:
                         window.innerWidth >= 1440
@@ -365,7 +374,7 @@ const EmployeeCard = () => {
                             toast.update(query, {
                                 render: "Успешно обновлено!",
                                 type: "success",
-                                containerId: "employee",
+                                containerId: "toastContainer",
                                 isLoading: false,
                                 autoClose: 1200,
                                 pauseOnFocusLoss: false,
@@ -381,7 +390,7 @@ const EmployeeCard = () => {
                     .catch((error) => {
                         toast.dismiss(query);
                         toast.error(error.message || "Ошибка при обновлении", {
-                            containerId: "employee",
+                            containerId: "toastContainer",
                             isLoading: false,
                             autoClose: 4000,
                             pauseOnFocusLoss: false,
@@ -396,7 +405,7 @@ const EmployeeCard = () => {
             }
         } else {
             toast.error("Сумма всех трудозатрат должна равняться 100%", {
-                containerId: "employee",
+                containerId: "toastContainer",
                 isLoading: false,
                 autoClose: 4000,
                 pauseOnFocusLoss: false,
@@ -469,24 +478,24 @@ const EmployeeCard = () => {
     }, [availablePersonalMonths]);
 
     useEffect(() => {
-        if (employeeData?.is_active) {
-            setEmployeeData((prev) => ({
+        if (cardDataCustom?.is_active) {
+            setCardDataCustom((prev) => ({
                 ...prev,
                 dismissal_date: null,
             }));
         }
-    }, [employeeData?.is_active]);
+    }, [cardDataCustom?.is_active]);
 
     useEffect(() => {
-        if (!employeeData?.is_staff) {
-            setEmployeeData((prev) => ({
+        if (!cardDataCustom?.is_staff) {
+            setCardDataCustom((prev) => ({
                 ...prev,
                 dismissal_date: null,
                 employment_date: null,
                 is_active: true,
             }));
         }
-    }, [employeeData?.is_staff]);
+    }, [cardDataCustom?.is_staff]);
 
     // Инициируем даты периода в своде по трудозатратам
     useEffect(() => {
@@ -508,27 +517,170 @@ const EmployeeCard = () => {
         getEmployee();
     }, []);
 
-    return (
+    return !isDataLoaded ? (
+        <Loader />
+    ) : (
         <main className="page">
-            <div className="pt-8 pb-15">
-                <div
-                    className="container flex flex-col min-h-full"
-                    style={{ minHeight: "calc(100vh - 215px)" }}
-                >
-                    <ToastContainer containerId="employee" />
+            <section
+                className={`card employee-card ${
+                    mode === "read" ? "read-mode" : ""
+                }`}
+            >
+                <div className="container card__container project-card__container">
+                    <ToastContainer containerId="toastContainer" />
 
-                    <div className="flex justify-between items-center gap-10">
-                        <div className="flex items-center gap-3 justify-between flex-grow">
-                            <div className="flex items-center gap-10">
-                                <div className="text-3xl font-medium w-full">
-                                    {employeeData.name}
+                    <div className="card__wrapper project-card__wrapper">
+                        <section className="card__main-content project-card__main-content">
+                            <div className="card__main-name">
+                                <input
+                                    type="text"
+                                    name="program_name"
+                                    value={cardDataCustom?.name || ""}
+                                    disabled
+                                />
+
+                                <span
+                                    className={`status
+                                    ${
+                                        cardDataCustom?.status === "Работает"
+                                            ? "completed"
+                                            : ""
+                                    }
+                                `}
+                                >
+                                    {cardDataCustom?.status}
+                                </span>
+                            </div>
+
+                            <section className="card__general-info employee-card__general-info">
+                                <div className="card__general-info__row">
+                                    <div className="flex flex-col gap-2 justify-between">
+                                        <span className="text-gray-400">
+                                            Телефон
+                                        </span>
+                                        <div className="border-2 border-gray-300 p-1 h-[32px]">
+                                            <IMaskInput
+                                                mask={PhoneMask}
+                                                className="w-full"
+                                                name="phone"
+                                                type="tel"
+                                                inputMode="tel"
+                                                onAccept={(value) =>
+                                                    handleInputChange(
+                                                        value || "",
+                                                        "phone_number"
+                                                    )
+                                                }
+                                                value={
+                                                    cardDataCustom.phone_number
+                                                }
+                                                placeholder="+7 999 999 99 99"
+                                                disabled={mode == "read"}
+                                            />
+
+                                            {errors.phone_number && (
+                                                <p className="text-red-500 text-sm mt-2">
+                                                    Заполните телефон
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-2 justify-between">
+                                        <span className="text-gray-400">
+                                            Email
+                                        </span>
+                                        <div className="border-2 border-gray-300 p-1 h-[32px]">
+                                            <input
+                                                className="w-full"
+                                                type="email"
+                                                placeholder="mail@mail.ru"
+                                                value={cardDataCustom.email}
+                                                onChange={(e) =>
+                                                    handleInputChange(
+                                                        e,
+                                                        "email"
+                                                    )
+                                                }
+                                                disabled={mode == "read"}
+                                            />
+                                            {errors.email && (
+                                                <p className="text-red-500 text-sm mt-2">
+                                                    Некорректный email
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="flex items-center gap-3">
+                                <div className="card__general-info__row">
+                                    <div className="flex flex-col">
+                                        <span className="block mb-2 text-gray-400">
+                                            Дата приема
+                                        </span>
+                                        <DatePicker
+                                            className={`border-2 border-gray-300 p-1 w-full h-[32px] transition ${
+                                                !cardDataCustom.is_staff
+                                                    ? "bg-gray-100"
+                                                    : ""
+                                            }`}
+                                            selected={
+                                                cardDataCustom.employment_date
+                                            }
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    e,
+                                                    "employment_date"
+                                                )
+                                            }
+                                            dateFormat="dd.MM.yyyy"
+                                            disabled={
+                                                mode === "read" ||
+                                                !cardDataCustom.is_staff
+                                            }
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col">
+                                        <span className="block mb-2 text-gray-400">
+                                            Дата увольнения
+                                        </span>
+                                        <DatePicker
+                                            className={`border-2 border-gray-300 p-1 w-full h-[32px] transition ${
+                                                cardDataCustom?.is_active ||
+                                                !cardDataCustom.is_staff
+                                                    ? "bg-gray-100"
+                                                    : ""
+                                            }`}
+                                            selected={
+                                                cardDataCustom.dismissal_date
+                                            }
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    e,
+                                                    "dismissal_date"
+                                                )
+                                            }
+                                            dateFormat="dd.MM.yyyy"
+                                            disabled={
+                                                mode === "read" ||
+                                                cardDataCustom?.is_active ||
+                                                !cardDataCustom.is_staff
+                                            }
+                                        />
+
+                                        {errors.dismissal_date && (
+                                            <p className="text-red-500 text-sm mt-2">
+                                                Укажите дату увольнения
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="card__general-info__row">
                                     {departments.length > 0 && (
                                         <select
                                             className="border-2 h-[32px] p-1 border-gray-300 min-w-[130px] cursor-pointer"
-                                            value={employeeData.department_id}
+                                            value={cardDataCustom.department_id}
                                             onChange={(e) =>
                                                 handleInputChange(
                                                     e,
@@ -553,7 +705,7 @@ const EmployeeCard = () => {
 
                                     <select
                                         className="border-2 h-[32px] p-1 border-gray-300 min-w-[120px] cursor-pointer"
-                                        value={String(employeeData.is_staff)}
+                                        value={String(cardDataCustom.is_staff)}
                                         onChange={(e) =>
                                             handleInputChange(e, "is_staff")
                                         }
@@ -564,12 +716,45 @@ const EmployeeCard = () => {
                                             внештатный
                                         </option>
                                     </select>
+                                </div>
 
-                                    {employeeData.is_staff && (
+                                <div className="card__general-info__row">
+                                    <div className="flex flex-col gap-2">
+                                        <span className="text-gray-400">
+                                            Должность
+                                        </span>
+                                        <select
+                                            className="border-2 border-gray-300 p-1 h-[32px]"
+                                            name="position_id"
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    e,
+                                                    "position_id"
+                                                )
+                                            }
+                                            value={cardDataCustom.position_id}
+                                            disabled={mode == "read"}
+                                        >
+                                            <option value="">
+                                                Выбрать должность
+                                            </option>
+                                            {positions.length > 0 &&
+                                                positions.map((position) => (
+                                                    <option
+                                                        key={position.id}
+                                                        value={position.id}
+                                                    >
+                                                        {position.name}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    </div>
+
+                                    {cardDataCustom.is_staff && (
                                         <select
                                             className="border-2 h-[32px] p-1 border-gray-300 min-w-[120px] cursor-pointer"
                                             value={String(
-                                                employeeData.is_active
+                                                cardDataCustom.is_active
                                             )}
                                             onChange={(e) =>
                                                 handleInputChange(
@@ -588,205 +773,9 @@ const EmployeeCard = () => {
                                         </select>
                                     )}
                                 </div>
-                            </div>
+                            </section>
 
-                            {mode === "edit" && (
-                                <button
-                                    type="button"
-                                    className="update-icon"
-                                    title="Обновить данные сотрудника"
-                                    onClick={() => {
-                                        handleSave();
-                                    }}
-                                ></button>
-                            )}
-                        </div>
-
-                        <nav className="switch">
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="read_mode"
-                                    onChange={() => {
-                                        setMode("read");
-                                    }}
-                                    checked={mode === "read" ? true : false}
-                                />
-                                <label htmlFor="read_mode">Чтение</label>
-                            </div>
-
-                            <div>
-                                <input
-                                    type="radio"
-                                    name="mode"
-                                    id="edit_mode"
-                                    onChange={() => setMode("edit")}
-                                    checked={mode === "edit" ? true : false}
-                                />
-                                <label htmlFor="edit_mode">
-                                    Редактирование
-                                </label>
-                            </div>
-                        </nav>
-                    </div>
-
-                    <div className="grid grid-cols-3 mt-15 gap-10 flex-grow">
-                        <div className="flex flex-col">
-                            <div className="grid gap-5 mb-5">
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-gray-400">
-                                        Должность
-                                    </span>
-                                    <select
-                                        className="border-2 border-gray-300 p-1 h-[32px]"
-                                        name="position_id"
-                                        onChange={(e) =>
-                                            handleInputChange(e, "position_id")
-                                        }
-                                        value={employeeData.position_id}
-                                        disabled={mode == "read"}
-                                    >
-                                        <option value="">
-                                            Выбрать должность
-                                        </option>
-                                        {positions.length > 0 &&
-                                            positions.map((position) => (
-                                                <option
-                                                    key={position.id}
-                                                    value={position.id}
-                                                >
-                                                    {position.name}
-                                                </option>
-                                            ))}
-                                    </select>
-                                </div>
-
-                                <div className="flex flex-col gap-4 justify-between">
-                                    <div className="flex flex-col gap-2 justify-between">
-                                        <span className="text-gray-400">
-                                            Телефон
-                                        </span>
-                                        <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                            <IMaskInput
-                                                mask={PhoneMask}
-                                                className="w-full"
-                                                name="phone"
-                                                type="tel"
-                                                inputMode="tel"
-                                                onAccept={(value) =>
-                                                    handleInputChange(
-                                                        value || "",
-                                                        "phone_number"
-                                                    )
-                                                }
-                                                value={
-                                                    employeeData.phone_number
-                                                }
-                                                placeholder="+7 999 999 99 99"
-                                                disabled={mode == "read"}
-                                            />
-
-                                            {errors.phone_number && (
-                                                <p className="text-red-500 text-sm mt-2">
-                                                    Заполните телефон
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col gap-2 justify-between">
-                                        <span className="text-gray-400">
-                                            Email
-                                        </span>
-                                        <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                            <input
-                                                className="w-full"
-                                                type="email"
-                                                placeholder="mail@mail.ru"
-                                                value={employeeData.email}
-                                                onChange={(e) =>
-                                                    handleInputChange(
-                                                        e,
-                                                        "email"
-                                                    )
-                                                }
-                                                disabled={mode == "read"}
-                                            />
-                                            {errors.email && (
-                                                <p className="text-red-500 text-sm mt-2">
-                                                    Некорректный email
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 items-start gap-3">
-                                        <div className="flex flex-col">
-                                            <span className="block mb-2 text-gray-400">
-                                                Дата приема
-                                            </span>
-                                            <DatePicker
-                                                className={`border-2 border-gray-300 p-1 w-full h-[32px] transition ${
-                                                    !employeeData.is_staff
-                                                        ? "bg-gray-100"
-                                                        : ""
-                                                }`}
-                                                selected={
-                                                    employeeData.employment_date
-                                                }
-                                                onChange={(e) =>
-                                                    handleInputChange(
-                                                        e,
-                                                        "employment_date"
-                                                    )
-                                                }
-                                                dateFormat="dd.MM.yyyy"
-                                                disabled={
-                                                    mode === "read" ||
-                                                    !employeeData.is_staff
-                                                }
-                                            />
-                                        </div>
-
-                                        <div className="flex flex-col">
-                                            <span className="block mb-2 text-gray-400">
-                                                Дата увольнения
-                                            </span>
-                                            <DatePicker
-                                                className={`border-2 border-gray-300 p-1 w-full h-[32px] transition ${
-                                                    employeeData?.is_active ||
-                                                    !employeeData.is_staff
-                                                        ? "bg-gray-100"
-                                                        : ""
-                                                }`}
-                                                selected={
-                                                    employeeData.dismissal_date
-                                                }
-                                                onChange={(e) =>
-                                                    handleInputChange(
-                                                        e,
-                                                        "dismissal_date"
-                                                    )
-                                                }
-                                                dateFormat="dd.MM.yyyy"
-                                                disabled={
-                                                    mode === "read" ||
-                                                    employeeData?.is_active ||
-                                                    !employeeData.is_staff
-                                                }
-                                            />
-
-                                            {errors.dismissal_date && (
-                                                <p className="text-red-500 text-sm mt-2">
-                                                    Укажите дату увольнения
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col gap-2 flex-grow">
+                            <section className="employee-card__current-workload">
                                 <div className="flex items-center gap-2">
                                     <span className="text-gray-400">
                                         Текущая загрузка ({workload.length})
@@ -810,10 +799,10 @@ const EmployeeCard = () => {
                                             ))}
                                     </ul>
                                 </div>
-                            </div>
-                        </div>
+                            </section>
+                        </section>
 
-                        <div className="flex flex-col">
+                        <section className="card__aside-content project-card__aside-content supplier-card__aside-content">
                             <div className="flex flex-col gap-2 flex-grow">
                                 <div className="flex items-center gap-2">
                                     <span className="text-gray-400">
@@ -895,9 +884,7 @@ const EmployeeCard = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="flex flex-col">
                             <div className="flex flex-col gap-2 flex-grow">
                                 <div className="flex items-center gap-2">
                                     <span className="text-gray-400">
@@ -1087,10 +1074,10 @@ const EmployeeCard = () => {
                                     </ul>
                                 </div>
                             </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
-            </div>
+            </section>
         </main>
     );
 };
