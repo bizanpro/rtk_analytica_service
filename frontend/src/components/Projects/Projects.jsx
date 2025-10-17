@@ -199,7 +199,7 @@ const Projects = () => {
                         filters.selectedBanks.includes(c.name)
                     )) &&
                 (filters.selectedManagers.length === 0 ||
-                    filters.selectedManagers.includes(project.manager)) &&
+                    filters.selectedManagers.includes(project.project_manager)) &&
                 (filters.selectedNames.length === 0 ||
                     filters.selectedNames.includes(project.name)) &&
                 (filters.selectedStatuses.length === 0 ||
