@@ -3,9 +3,15 @@
 .employee-card-projects {
     .card-projects__item {
         cursor: unset;
+        border-radius: 0;
+        border: none !important;
+        border-bottom: 1px solid var(--color-gray-30) !important;
+        background: transparent !important;
+        padding-left: 0;
+        padding-right: 0;
 
         @media (min-width: $media-lg) {
-            grid-template-columns: 22% 22% 15% 1fr
+            grid-template-columns: 22% 22% 15% 1fr;
         }
 
         .employee-projects__item-period {
