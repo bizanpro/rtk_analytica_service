@@ -6,6 +6,7 @@ import { useWindowWidth } from "../../hooks/useWindowWidth.js";
 
 import ManagementReportListItem from "./ManagementReportListItem";
 import ReportRateEditor from "../ReportRateEditor/ReportRateEditor";
+import Loader from "../Loader";
 
 import "./ManagementReports.scss";
 
@@ -27,6 +28,7 @@ const ManagementReportsTab = ({
     const [list, setList] = useState([]);
     const [rateEditorState, setRateEditorState] = useState(false); // Редактор оценки отчёта
     const [reportData, setReportData] = useState({});
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     // Открытие окна редактора оценки отчета
     const openRateReportEditor = (props) => {
@@ -41,10 +43,13 @@ const ManagementReportsTab = ({
     };
 
     const getList = () => {
+        setIsDataLoaded(false);
+
         getData(`${URL}/${projectId}/manager-reports`).then((response) => {
             if (response.status == 200) {
                 setList(response.data);
                 setManagementReports(response.data);
+                setIsDataLoaded(true);
             }
         });
     };
@@ -64,24 +69,30 @@ const ManagementReportsTab = ({
     }, [width]);
 
     return (
-        <>
-            <ul className="reports__list">
-                {list.length > 0 &&
-                    list.map((item) => (
-                        <ManagementReportListItem
-                            openEditor={openRateReportEditor}
-                            reportData={item}
-                        />
-                    ))}
-            </ul>
+        <div className="relative min-h-[50px]">
+            {!isDataLoaded ? (
+                <Loader />
+            ) : (
+                <>
+                    <ul className="reports__list">
+                        {list.length > 0 &&
+                            list.map((item) => (
+                                <ManagementReportListItem
+                                    openEditor={openRateReportEditor}
+                                    reportData={item}
+                                />
+                            ))}
+                    </ul>
 
-            <ReportRateEditor
-                rateEditorState={rateEditorState}
-                reportData={reportData}
-                closeEditor={closeRateReportEditor}
-                mode={mode}
-            />
-        </>
+                    <ReportRateEditor
+                        rateEditorState={rateEditorState}
+                        reportData={reportData}
+                        closeEditor={closeRateReportEditor}
+                        mode={mode}
+                    />
+                </>
+            )}
+        </div>
     );
 };
 

@@ -38,7 +38,10 @@ const ContragentCard = () => {
     const [cardDataCustom, setCardDataCustom] = useState({});
 
     const [mode, setMode] = useState("edit");
+
     const [isReportsDataLoaded, setIsReportsDataLoaded] = useState(false);
+    const [isManagementReportsDataLoaded, setIsManagementReportsDataLoaded] =
+        useState(false);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     const [activeReportTab, setActiveReportTab] = useState("projectReports");
@@ -128,12 +131,15 @@ const ContragentCard = () => {
 
     // Получение списка отчетов руководителя
     const getProjectsManagerReports = () => {
+        setIsManagementReportsDataLoaded(false);
+
         getData(`${URL}/${contragentId}/manager-reports`, {
             Accept: "application/json",
         }).then((response) => {
             if (response.status == 200) {
                 setManagerReports(response.data);
                 setSelectedManagerReports(response.data);
+                setIsManagementReportsDataLoaded(true);
             }
         });
     };
@@ -611,6 +617,9 @@ const ContragentCard = () => {
                                                 managerReports={
                                                     selectedManagerReports
                                                 }
+                                                isDataLoaded={
+                                                    isManagementReportsDataLoaded
+                                                }
                                             />
                                         )}
                                     </div>
@@ -726,6 +735,9 @@ const ContragentCard = () => {
                                 {activeReportTab === "managementReports" && (
                                     <CardManagementReportList
                                         managerReports={selectedManagerReports}
+                                        isDataLoaded={
+                                            isManagementReportsDataLoaded
+                                        }
                                     />
                                 )}
                             </div>

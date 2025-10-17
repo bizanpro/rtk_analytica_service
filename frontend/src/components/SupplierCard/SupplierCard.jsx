@@ -26,6 +26,7 @@ import SupplierEmptyExecutorBlock from "./SupplierEmptyExecutorBlock";
 import BottomSheet from "../BottomSheet/BottomSheet";
 import BottomNavCard from "../BottomNav/BottomNavCard";
 import AutoResizeTextarea from "../AutoResizeTextarea";
+
 import Loader from "../Loader.jsx";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -36,7 +37,10 @@ const SupplierCard = () => {
     const navigate = useNavigate();
 
     const [mode, setMode] = useState("edit");
+
     const [isReportsDataLoaded, setIsReportsDataLoaded] = useState(false);
+    const [isManagementReportsDataLoaded, setIsManagementReportsDataLoaded] =
+        useState(false);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     const [cardData, setCardData] = useState({});
@@ -101,6 +105,8 @@ const SupplierCard = () => {
 
     // Получаем список отчетов
     const getProjectsReports = () => {
+        setIsReportsDataLoaded(false);
+
         getData(`${URL}/${supplierId}/reports`, {
             Accept: "application/json",
         })
@@ -115,12 +121,15 @@ const SupplierCard = () => {
 
     // Получаем список отчетов руководителя
     const getProjectsManagerReports = () => {
+        setIsManagementReportsDataLoaded(false);
+
         getData(`${URL}/${supplierId}/manager-reports`, {
             Accept: "application/json",
         }).then((response) => {
             if (response.status == 200) {
                 setManagerReports(response.data);
                 setSelectedManagerReports(response.data);
+                setIsManagementReportsDataLoaded(true);
             }
         });
     };
@@ -695,6 +704,9 @@ const SupplierCard = () => {
                                             managerReports={
                                                 selectedManagerReports
                                             }
+                                            isDataLoaded={
+                                                isManagementReportsDataLoaded
+                                            }
                                         />
                                     )}
                                 </div>
@@ -809,6 +821,9 @@ const SupplierCard = () => {
                                 {activeReportTab === "managementReports" && (
                                     <CardManagementReportList
                                         managerReports={selectedManagerReports}
+                                        isDataLoaded={
+                                            isManagementReportsDataLoaded
+                                        }
                                     />
                                 )}
                             </div>
