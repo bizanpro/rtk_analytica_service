@@ -12,9 +12,9 @@ import formatToUtcDateOnly from "../../utils/formatToUtcDateOnly";
 import { ru } from "date-fns/locale";
 import { format } from "date-fns";
 
-import EmployeeWorkloadItem from "./EmployeeWorkloadItem";
 import EmployeePersonalWorkloadItem from "./EmployeePersonalWorkloadItem";
 import EmployeeWorkloadSummary from "./EmployeeWorkloadSummary";
+import EmployeeCurrentWorkload from "./EmployeeCurrentWorkload";
 
 import Loader from "../Loader.jsx";
 
@@ -554,69 +554,85 @@ const EmployeeCard = () => {
 
                             <section className="card__general-info employee-card__general-info">
                                 <div className="card__general-info__row">
-                                    <div className="flex flex-col gap-2 justify-between">
-                                        <span className="text-gray-400">
+                                    <div>
+                                        <div className="form-label">
                                             Телефон
-                                        </span>
-                                        <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                            <IMaskInput
-                                                mask={PhoneMask}
-                                                className="w-full"
-                                                name="phone"
-                                                type="tel"
-                                                inputMode="tel"
-                                                onAccept={(value) =>
-                                                    handleInputChange(
-                                                        value || "",
-                                                        "phone_number"
-                                                    )
-                                                }
-                                                value={
-                                                    cardDataCustom.phone_number
-                                                }
-                                                placeholder="+7 999 999 99 99"
-                                                disabled={mode == "read"}
-                                            />
+                                        </div>
 
-                                            {errors.phone_number && (
-                                                <p className="text-red-500 text-sm mt-2">
-                                                    Заполните телефон
-                                                </p>
-                                            )}
-                                        </div>
+                                        <IMaskInput
+                                            mask={PhoneMask}
+                                            className="form-field"
+                                            name="phone"
+                                            type="tel"
+                                            inputMode="tel"
+                                            placeholder={
+                                                mode === "edit"
+                                                    ? "+7 999 999 99 99"
+                                                    : ""
+                                            }
+                                            // onAccept={(value) => {
+                                            //     if (mode === "read") return;
+                                            //     handleInputChange(
+                                            //         value || "",
+                                            //         "phone_number"
+                                            //     );
+                                            // }}
+                                            // onBlur={() => {
+                                            //     if (mode === "read") return;
+                                            //     if (
+                                            //         cardData?.company_website !=
+                                            //         cardDataCustom?.company_website
+                                            //     ) {
+                                            //         updateData(true, {
+                                            //             company_website:
+                                            //                 cardDataCustom.company_website,
+                                            //         });
+                                            //     }
+                                            // }}
+                                            value={cardDataCustom.phone_number}
+                                            disabled={mode == "read"}
+                                        />
                                     </div>
-                                    <div className="flex flex-col gap-2 justify-between">
-                                        <span className="text-gray-400">
-                                            Email
-                                        </span>
-                                        <div className="border-2 border-gray-300 p-1 h-[32px]">
-                                            <input
-                                                className="w-full"
-                                                type="email"
-                                                placeholder="mail@mail.ru"
-                                                value={cardDataCustom.email}
-                                                onChange={(e) =>
-                                                    handleInputChange(
-                                                        e,
-                                                        "email"
-                                                    )
-                                                }
-                                                disabled={mode == "read"}
-                                            />
-                                            {errors.email && (
-                                                <p className="text-red-500 text-sm mt-2">
-                                                    Некорректный email
-                                                </p>
-                                            )}
-                                        </div>
+
+                                    <div>
+                                        <div className="form-label">Email</div>
+
+                                        <input
+                                            className="form-field"
+                                            type="email"
+                                            placeholder={
+                                                mode === "edit"
+                                                    ? "mail@mail.ru"
+                                                    : ""
+                                            }
+                                            value={cardDataCustom.email}
+                                            onChange={(e) => {
+                                                if (mode === "read") return;
+                                                handleInputChange(e, "email");
+                                            }}
+                                            // onBlur={() => {
+                                            //     if (mode === "read") return;
+                                            //     if (
+                                            //         cardData?.company_website !=
+                                            //         cardDataCustom?.company_website
+                                            //     ) {
+                                            //         updateData(true, {
+                                            //             company_website:
+                                            //                 cardDataCustom.company_website,
+                                            //         });
+                                            //     }
+                                            // }}
+                                            disabled={mode == "read"}
+                                        />
                                     </div>
                                 </div>
 
                                 <div className="card__general-info__row">
-                                    <div className="flex flex-col">
-                                        <span className="block mb-2 text-gray-400">
+                                    <div className="relative">
+                                        <div className="form-label">
                                             Дата приема
-                                        </span>
+                                        </div>
+
                                         <DatePicker
                                             className={`border-2 border-gray-300 p-1 w-full h-[32px] transition ${
                                                 !cardDataCustom.is_staff
@@ -640,10 +656,11 @@ const EmployeeCard = () => {
                                         />
                                     </div>
 
-                                    <div className="flex flex-col">
-                                        <span className="block mb-2 text-gray-400">
+                                    <div className="relative">
+                                        <div className="form-label">
                                             Дата увольнения
-                                        </span>
+                                        </div>
+
                                         <DatePicker
                                             className={`border-2 border-gray-300 p-1 w-full h-[32px] transition ${
                                                 cardDataCustom?.is_active ||
@@ -669,62 +686,79 @@ const EmployeeCard = () => {
                                         />
 
                                         {errors.dismissal_date && (
-                                            <p className="text-red-500 text-sm mt-2">
+                                            <span className="text-red-400 absolute top-[105%] left-0 text-sm">
                                                 Укажите дату увольнения
-                                            </p>
+                                            </span>
                                         )}
                                     </div>
                                 </div>
 
                                 <div className="card__general-info__row">
-                                    {departments.length > 0 && (
+                                    <div>
+                                        <div className="form-label">
+                                            Подразделение
+                                        </div>
+
+                                        {departments.length > 0 && (
+                                            <select
+                                                className="form-select"
+                                                value={
+                                                    cardDataCustom.department_id
+                                                }
+                                                onChange={(e) =>
+                                                    handleInputChange(
+                                                        e,
+                                                        "department_id"
+                                                    )
+                                                }
+                                                disabled={mode == "read"}
+                                            >
+                                                <option value="">
+                                                    Подразделение
+                                                </option>
+                                                {departments.map((item) => (
+                                                    <option
+                                                        value={item.id}
+                                                        key={item.id}
+                                                    >
+                                                        {item.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <div className="form-label">Тип</div>
+
                                         <select
-                                            className="border-2 h-[32px] p-1 border-gray-300 min-w-[130px] cursor-pointer"
-                                            value={cardDataCustom.department_id}
+                                            className="form-select"
+                                            value={String(
+                                                cardDataCustom.is_staff
+                                            )}
                                             onChange={(e) =>
-                                                handleInputChange(
-                                                    e,
-                                                    "department_id"
-                                                )
+                                                handleInputChange(e, "is_staff")
                                             }
                                             disabled={mode == "read"}
                                         >
-                                            <option value="">
-                                                Подразделение
+                                            <option value="true">
+                                                штатный
                                             </option>
-                                            {departments.map((item) => (
-                                                <option
-                                                    value={item.id}
-                                                    key={item.id}
-                                                >
-                                                    {item.name}
-                                                </option>
-                                            ))}
+                                            <option value="false">
+                                                внештатный
+                                            </option>
                                         </select>
-                                    )}
-
-                                    <select
-                                        className="border-2 h-[32px] p-1 border-gray-300 min-w-[120px] cursor-pointer"
-                                        value={String(cardDataCustom.is_staff)}
-                                        onChange={(e) =>
-                                            handleInputChange(e, "is_staff")
-                                        }
-                                        disabled={mode == "read"}
-                                    >
-                                        <option value="true">штатный</option>
-                                        <option value="false">
-                                            внештатный
-                                        </option>
-                                    </select>
+                                    </div>
                                 </div>
 
                                 <div className="card__general-info__row">
-                                    <div className="flex flex-col gap-2">
-                                        <span className="text-gray-400">
+                                    <div>
+                                        <div className="form-label">
                                             Должность
-                                        </span>
+                                        </div>
+
                                         <select
-                                            className="border-2 border-gray-300 p-1 h-[32px]"
+                                            className="form-select"
                                             name="position_id"
                                             onChange={(e) =>
                                                 handleInputChange(
@@ -750,59 +784,46 @@ const EmployeeCard = () => {
                                         </select>
                                     </div>
 
-                                    {cardDataCustom.is_staff && (
-                                        <select
-                                            className="border-2 h-[32px] p-1 border-gray-300 min-w-[120px] cursor-pointer"
-                                            value={String(
-                                                cardDataCustom.is_active
-                                            )}
-                                            onChange={(e) =>
-                                                handleInputChange(
-                                                    e,
-                                                    "is_active"
-                                                )
-                                            }
-                                            disabled={mode == "read"}
-                                        >
-                                            <option value="true">
-                                                работает
-                                            </option>
-                                            <option value="false">
-                                                не работает
-                                            </option>
-                                        </select>
-                                    )}
+                                    <div>
+                                        <div className="form-label">Статус</div>
+
+                                        {cardDataCustom.is_staff && (
+                                            <select
+                                                className="form-select"
+                                                value={String(
+                                                    cardDataCustom.is_active
+                                                )}
+                                                onChange={(e) =>
+                                                    handleInputChange(
+                                                        e,
+                                                        "is_active"
+                                                    )
+                                                }
+                                                disabled={mode == "read"}
+                                            >
+                                                <option value="true">
+                                                    работает
+                                                </option>
+                                                <option value="false">
+                                                    не работает
+                                                </option>
+                                            </select>
+                                        )}
+                                    </div>
                                 </div>
                             </section>
 
                             <section className="employee-card__current-workload">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        Текущая загрузка ({workload.length})
-                                    </span>
-                                </div>
-                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
-                                    <ul className="grid gap-5">
-                                        <li className="grid items-stretch grid-cols-[26%_22%_28%_1fr] gap-2 text-gray-400">
-                                            <span>Проект</span>
-                                            <span>Отчёт</span>
-                                            <span>Период выполн.</span>
-                                            <span>Роль</span>
-                                        </li>
+                                <h2 className="card__subtitle">
+                                    Текущая загрузка
+                                    <span>{workload.length}</span>
+                                </h2>
 
-                                        {workload.length > 0 &&
-                                            workload.map((item, index) => (
-                                                <EmployeeWorkloadItem
-                                                    key={index}
-                                                    {...item}
-                                                />
-                                            ))}
-                                    </ul>
-                                </div>
+                                <EmployeeCurrentWorkload projects={workload} />
                             </section>
                         </section>
 
-                        <section className="card__aside-content project-card__aside-content supplier-card__aside-content">
+                        {/* <section className="card__aside-content project-card__aside-content supplier-card__aside-content">
                             <div className="flex flex-col gap-2 flex-grow">
                                 <div className="flex items-center gap-2">
                                     <span className="text-gray-400">
@@ -1074,7 +1095,7 @@ const EmployeeCard = () => {
                                     </ul>
                                 </div>
                             </div>
-                        </section>
+                        </section> */}
                     </div>
                 </div>
             </section>

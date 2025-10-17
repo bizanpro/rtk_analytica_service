@@ -1,0 +1,35 @@
+@use "../../styles/media-breakpoints" as *;
+
+.employee-card-projects {
+    .card-projects__item {
+        cursor: unset;
+
+        @media (min-width: $media-lg) {
+            grid-template-columns: 22% 22% 15% 1fr
+        }
+
+        .employee-projects__item-period {
+            grid-column: 3 / 5;
+
+            @media (min-width: $media-lg) {
+                grid-column: unset;
+            }
+        }
+
+        .employee-projects__item-role {
+            grid-column: 1 / 2;
+
+            @media (min-width: $media-lg) {
+                grid-column: unset;
+            }
+        }
+
+        .card-projects__item-progress {
+            grid-column: 2 / 5;
+
+            @media (min-width: $media-lg) {
+                grid-column: unset;
+            }
+        }
+    }
+}

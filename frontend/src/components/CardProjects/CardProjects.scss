@@ -30,6 +30,23 @@
             gap: 30px;
         }
 
+        &-col {
+            strong {
+                display: block;
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 150%;
+                letter-spacing: 0%;
+            }
+
+            span {
+                font-weight: 400;
+                font-size: 12px;
+                line-height: 150%;
+                color: var(--color-gray-70);
+            }
+        }
+
         &-name {
             grid-column: 1 / 3;
 
