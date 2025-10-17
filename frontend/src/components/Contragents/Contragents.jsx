@@ -11,6 +11,7 @@ import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
 import TheadSortButton from "../TheadSortButton/TheadSortButton";
 import FilterButton from "../FilterButton";
 import OverlayTransparent from "../Overlay/OverlayTransparent";
+import Loader from "../Loader";
 
 const Contragents = () => {
     const [sortBy, setSortBy] = useState({ key: "", action: "" });
@@ -322,8 +323,8 @@ const Contragents = () => {
                         <tbody className="registry-table__tbody">
                             {isLoading ? (
                                 <tr>
-                                    <td className="text-base px-4 py-2">
-                                        Загрузка...
+                                    <td>
+                                        <Loader />
                                     </td>
                                 </tr>
                             ) : (

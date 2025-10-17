@@ -292,16 +292,28 @@ body {
     border-radius: 50%;
     position: relative;
     animation: rotate 1s linear infinite;
+    aspect-ratio: 1 / 1;
 }
 
 .loader__icon::before {
     content: "";
-    box-sizing: border-box;
     position: absolute;
-    inset: 0px;
+    inset: 0;
     border-radius: 50%;
-    border: 5px solid var(--color-orange-70);
-    animation: prixClipFix 2s linear infinite;
+    background: conic-gradient(
+        from 0deg at 50% 50%,
+        #2b2b29 0deg,
+        rgba(43, 43, 41, 0) 360deg
+    );
+
+    -webkit-mask: radial-gradient(
+        farthest-side,
+        transparent calc(100% - 5px),
+        black 0
+    );
+    mask: radial-gradient(farthest-side, transparent calc(100% - 5px), black 0);
+
+    animation: rotate 2s linear infinite;
 }
 
 .form-field:disabled {

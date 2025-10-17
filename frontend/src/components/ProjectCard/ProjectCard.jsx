@@ -34,6 +34,7 @@ import CustomSelect from "../CustomSelect/CustomSelect";
 import BottomSheet from "../BottomSheet/BottomSheet";
 import BottomNavCard from "../BottomNav/BottomNavCard";
 import Popup from "../Popup/Popup.jsx";
+import Loader from "../Loader.jsx";
 
 import "../../styles/card.scss";
 import "./ProjectCard.scss";
@@ -789,7 +790,9 @@ const ProjectCard = () => {
         }
     }, [width]);
 
-    return (
+    return !isDataLoaded ? (
+        <Loader />
+    ) : (
         <main className="page">
             <section
                 className={`card project-card ${

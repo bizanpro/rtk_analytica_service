@@ -25,6 +25,8 @@ import BottomNavCard from "../BottomNav/BottomNavCard";
 import AutoResizeTextarea from "../AutoResizeTextarea";
 import ContragentResponsiblePersons from "./ContragentResponsiblePersons";
 
+import Loader from "../Loader.jsx";
+
 import "react-toastify/dist/ReactToastify.css";
 
 const ContragentCard = () => {
@@ -36,6 +38,7 @@ const ContragentCard = () => {
     const [cardDataCustom, setCardDataCustom] = useState({});
 
     const [mode, setMode] = useState("edit");
+    const [isReportsDataLoaded, setIsReportsDataLoaded] = useState(false);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     const [activeReportTab, setActiveReportTab] = useState("projectReports");
@@ -71,6 +74,8 @@ const ContragentCard = () => {
                     setCardData(response.data);
                     setCardDataCustom(response.data);
                     setProjects(response.data.projects);
+
+                    setIsDataLoaded(true);
                 }
             })
             .catch((error) => {
@@ -118,7 +123,7 @@ const ContragentCard = () => {
                     setSelectedReports(response.data);
                 }
             })
-            .finally(() => setIsDataLoaded(true));
+            .finally(() => setIsReportsDataLoaded(true));
     };
 
     // Получение списка отчетов руководителя
@@ -302,7 +307,9 @@ const ContragentCard = () => {
 
     useEffect(() => {}, []);
 
-    return (
+    return !isDataLoaded ? (
+        <Loader />
+    ) : (
         <main className="page">
             <section
                 className={`card contragent-card ${
@@ -589,7 +596,9 @@ const ContragentCard = () => {
                                         {activeReportTab ===
                                             "projectReports" && (
                                             <CardReportsList
-                                                isDataLoaded={isDataLoaded}
+                                                isDataLoaded={
+                                                    isReportsDataLoaded
+                                                }
                                                 reports={selectedReports}
                                                 openReportEditor={
                                                     openReportEditor
@@ -709,7 +718,7 @@ const ContragentCard = () => {
 
                                 {activeReportTab === "projectReports" && (
                                     <CardReportsList
-                                        isDataLoaded={isDataLoaded}
+                                        isDataLoaded={isReportsDataLoaded}
                                         reports={selectedReports}
                                         openReportEditor={openReportEditor}
                                         mode={"read"}

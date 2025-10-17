@@ -13,6 +13,7 @@ import ManagementItem from "./ManagementItem";
 import ManagementReportEditor from "./ManagementReportEditor";
 import ReportRateEditor from "../ReportRateEditor/ReportRateEditor";
 import ReportWindow from "../ReportWindow/ReportWindow";
+import Loader from "../Loader";
 
 import OverlayTransparent from "../Overlay/OverlayTransparent";
 
@@ -762,8 +763,8 @@ const Reports = () => {
                         <tbody className="registry-table__tbody">
                             {isLoading ? (
                                 <tr>
-                                    <td className="text-base px-4 py-2">
-                                        Загрузка...
+                                    <td>
+                                        <Loader />
                                     </td>
                                 </tr>
                             ) : activeTab === "projects" ? (

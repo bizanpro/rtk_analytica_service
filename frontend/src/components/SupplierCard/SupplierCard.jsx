@@ -26,6 +26,7 @@ import SupplierEmptyExecutorBlock from "./SupplierEmptyExecutorBlock";
 import BottomSheet from "../BottomSheet/BottomSheet";
 import BottomNavCard from "../BottomNav/BottomNavCard";
 import AutoResizeTextarea from "../AutoResizeTextarea";
+import Loader from "../Loader.jsx";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -35,6 +36,7 @@ const SupplierCard = () => {
     const navigate = useNavigate();
 
     const [mode, setMode] = useState("edit");
+    const [isReportsDataLoaded, setIsReportsDataLoaded] = useState(false);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     const [cardData, setCardData] = useState({});
@@ -108,7 +110,7 @@ const SupplierCard = () => {
                     setSelectedReports(response.data);
                 }
             })
-            .finally(() => setIsDataLoaded(true));
+            .finally(() => setIsReportsDataLoaded(true));
     };
 
     // Получаем список отчетов руководителя
@@ -133,6 +135,7 @@ const SupplierCard = () => {
                 setCardDataCustom(response.data);
                 setProjects(response.data.projects);
                 setResponsiblePersons(response.data.contacts);
+                setIsDataLoaded(true);
             })
             .catch((error) => {
                 if (error && error.status === 404) {
@@ -359,7 +362,9 @@ const SupplierCard = () => {
         }
     }, [mode]);
 
-    return (
+    return !isDataLoaded ? (
+        <Loader />
+    ) : (
         <main className="page">
             <section
                 className={`card supplier-card ${
@@ -674,7 +679,7 @@ const SupplierCard = () => {
 
                                     {activeReportTab === "projectReports" && (
                                         <CardReportsList
-                                            isDataLoaded={isDataLoaded}
+                                            isDataLoaded={isReportsDataLoaded}
                                             reports={selectedReports}
                                             openReportEditor={openReportEditor}
                                             mode={"read"}
@@ -791,7 +796,7 @@ const SupplierCard = () => {
 
                                 {activeReportTab === "projectReports" && (
                                     <CardReportsList
-                                        isDataLoaded={isDataLoaded}
+                                        isDataLoaded={isReportsDataLoaded}
                                         reports={selectedReports}
                                         openReportEditor={openReportEditor}
                                         mode={"read"}

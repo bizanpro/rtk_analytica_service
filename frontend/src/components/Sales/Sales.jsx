@@ -7,6 +7,7 @@ import buildQueryParams from "../../utils/buildQueryParams";
 
 import SalesItem from "./SalesItem";
 import Popup from "../Popup/Popup";
+import Loader from "../Loader";
 
 import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
 import FilterButton from "../FilterButton";
@@ -602,8 +603,8 @@ const Sales = () => {
                         <tbody className="registry-table__tbody">
                             {isLoading ? (
                                 <tr>
-                                    <td className="text-base px-4 py-2">
-                                        Загрузка...
+                                    <td>
+                                        <Loader />
                                     </td>
                                 </tr>
                             ) : (

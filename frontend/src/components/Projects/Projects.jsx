@@ -14,6 +14,8 @@ import MultiSelectWithSearch from "../MultiSelect/MultiSelectWithSearch";
 import FilterButton from "../FilterButton";
 import OverlayTransparent from "../Overlay/OverlayTransparent";
 
+import Loader from "../Loader";
+
 const Projects = () => {
     const URL = `${import.meta.env.VITE_API_URL}projects`;
     const navigate = useNavigate();
@@ -406,8 +408,8 @@ const Projects = () => {
                         <tbody className="registry-table__tbody">
                             {isLoading ? (
                                 <tr>
-                                    <td className="text-base px-4 py-2">
-                                        Загрузка...
+                                    <td>
+                                        <Loader />
                                     </td>
                                 </tr>
                             ) : (
