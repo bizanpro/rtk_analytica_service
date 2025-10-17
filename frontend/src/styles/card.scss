@@ -5,6 +5,30 @@
     flex-direction: column;
     flex-grow: 1;
 
+    &.read-mode {
+        .card__main-name input:disabled,
+        .form-textarea:disabled,
+        .form-field:disabled {
+            opacity: 1;
+            background-color: transparent;
+        }
+
+        .form-select-extend {
+            > [class*="-control"] {
+                background-color: transparent;
+            }
+
+            [class*="-singleValue"] {
+                color: var(--color-gray-100);
+            }
+        }
+
+        .form-field,
+        .form-select:disabled {
+            background-color: transparent;
+        }
+    }
+
     @media (min-width: $media-xxl) {
         background: var(--color-gray-20);
     }

@@ -791,7 +791,11 @@ const ProjectCard = () => {
 
     return (
         <main className="page">
-            <section className="card project-card">
+            <section
+                className={`card project-card ${
+                    mode === "read" ? "read-mode" : ""
+                }`}
+            >
                 <div className="container card__container project-card__container">
                     <ToastContainer containerId="toastContainer" />
 
@@ -802,13 +806,15 @@ const ProjectCard = () => {
                                     type="text"
                                     name="name"
                                     value={projectDataCustom?.name}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                        if (mode === "read") return;
                                         setProjectDataCustom((prev) => ({
                                             ...prev,
                                             name: e.target.value,
-                                        }))
-                                    }
+                                        }));
+                                    }}
                                     onBlur={() => {
+                                        if (mode === "read") return;
                                         if (
                                             projectData?.name !=
                                             projectDataCustom?.name
@@ -865,7 +871,11 @@ const ProjectCard = () => {
                                         ref={contragentRef}
                                         options={contragents}
                                         className="form-select-extend"
-                                        placeholder="Выбрать из списка"
+                                        placeholder={
+                                            mode === "edit"
+                                                ? "Выбрать из списка"
+                                                : ""
+                                        }
                                         noOptionsMessage={() =>
                                             "Совпадений нет"
                                         }
@@ -880,6 +890,8 @@ const ProjectCard = () => {
                                             null
                                         }
                                         onChange={(selectedOption) => {
+                                            if (mode === "read") return;
+
                                             const newValue =
                                                 selectedOption?.value || null;
 
@@ -887,10 +899,6 @@ const ProjectCard = () => {
                                                 ...prev,
                                                 contragent_id: newValue,
                                             }));
-                                            // setProjectData((prev) => ({
-                                            //     ...prev,
-                                            //     contragent_id: newValue,
-                                            // }));
                                             updateProject(projectId, true, {
                                                 contragent_id: newValue,
                                             });
@@ -935,6 +943,7 @@ const ProjectCard = () => {
                                             projectData?.industries?.main || ""
                                         }
                                         onChange={(evt) => {
+                                            if (mode === "read") return;
                                             setProjectDataCustom({
                                                 ...projectDataCustom,
                                                 industries: {
@@ -979,11 +988,11 @@ const ProjectCard = () => {
 
                                     <CustomSelect
                                         type={"checkbox"}
-                                        placeholder={`${
-                                            mode === "read"
-                                                ? "Нет данных"
-                                                : "Выбрать из списка"
-                                        }`}
+                                        placeholder={
+                                            mode === "edit"
+                                                ? "Выбрать из списка"
+                                                : ""
+                                        }
                                         options={industries
                                             .filter(
                                                 (industry) =>
@@ -998,6 +1007,7 @@ const ProjectCard = () => {
                                         selectedValues={otherIndustries}
                                         fieldName={"others"}
                                         onChange={(values) => {
+                                            if (mode === "read") return;
                                             const newArray = values.map(
                                                 (item) => item.value
                                             );
@@ -1026,19 +1036,25 @@ const ProjectCard = () => {
 
                                     <AutoResizeTextarea
                                         className="form-textarea"
-                                        placeholder="Например: создание производства заготовки с микрокристаллической структурой..."
+                                        placeholder={
+                                            mode === "edit"
+                                                ? "Например: создание производства заготовки с микрокристаллической структурой..."
+                                                : ""
+                                        }
                                         type="text"
                                         name="description"
                                         value={
                                             projectDataCustom?.description || ""
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            if (mode === "read") return;
                                             setProjectDataCustom((prev) => ({
                                                 ...prev,
                                                 description: e.target.value,
-                                            }))
-                                        }
+                                            }));
+                                        }}
                                         onBlur={() => {
+                                            if (mode === "read") return;
                                             if (
                                                 projectData?.description !=
                                                 projectDataCustom?.description
@@ -1063,16 +1079,23 @@ const ProjectCard = () => {
 
                                     <AutoResizeTextarea
                                         className="form-textarea"
+                                        placeholder={
+                                            mode === "edit"
+                                                ? "Страна, город, область..."
+                                                : ""
+                                        }
                                         value={
                                             projectDataCustom?.location || ""
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            if (mode === "read") return;
                                             setProjectDataCustom((prev) => ({
                                                 ...prev,
                                                 location: e.target.value,
-                                            }))
-                                        }
+                                            }));
+                                        }}
                                         onBlur={() => {
+                                            if (mode === "read") return;
                                             if (
                                                 projectData?.location !=
                                                 projectDataCustom?.location
@@ -1083,7 +1106,6 @@ const ProjectCard = () => {
                                                 });
                                             }
                                         }}
-                                        placeholder="Страна, город, область..."
                                         disabled={
                                             mode == "read" || !availableToChange
                                         }
@@ -1098,14 +1120,21 @@ const ProjectCard = () => {
 
                                     <AutoResizeTextarea
                                         className="form-textarea"
+                                        placeholder={
+                                            mode === "edit"
+                                                ? "Заполните ТЭП"
+                                                : ""
+                                        }
                                         value={projectDataCustom?.tep || ""}
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            if (mode === "read") return;
                                             setProjectDataCustom((prev) => ({
                                                 ...prev,
                                                 tep: e.target.value,
-                                            }))
-                                        }
+                                            }));
+                                        }}
                                         onBlur={() => {
+                                            if (mode === "read") return;
                                             if (
                                                 projectData?.tep !=
                                                 projectDataCustom?.tep
@@ -1115,7 +1144,6 @@ const ProjectCard = () => {
                                                 });
                                             }
                                         }}
-                                        placeholder="Заполните ТЭП"
                                         disabled={
                                             mode == "read" || !availableToChange
                                         }

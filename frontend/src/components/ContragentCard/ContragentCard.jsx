@@ -304,7 +304,11 @@ const ContragentCard = () => {
 
     return (
         <main className="page">
-            <section className="card contragent-card">
+            <section
+                className={`card contragent-card ${
+                    mode === "read" ? "read-mode" : ""
+                }`}
+            >
                 <div className="container card__container contragent-card__container">
                     <ToastContainer containerId="toastContainer" />
 
@@ -315,13 +319,16 @@ const ContragentCard = () => {
                                     type="text"
                                     name="program_name"
                                     value={cardDataCustom?.program_name || ""}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                        if (mode === "read") return;
+
                                         setCardDataCustom((prev) => ({
                                             ...prev,
                                             program_name: e.target.value,
-                                        }))
-                                    }
+                                        }));
+                                    }}
                                     onBlur={() => {
+                                        if (mode === "read") return;
                                         if (
                                             cardData?.program_name !=
                                             cardDataCustom?.program_name
@@ -356,21 +363,27 @@ const ContragentCard = () => {
 
                                     <AutoResizeTextarea
                                         className="form-textarea"
-                                        placeholder="Заполните описание"
+                                        placeholder={
+                                            mode === "edit"
+                                                ? "Заполните описание"
+                                                : ""
+                                        }
                                         type="text"
                                         name="description_short"
                                         value={
                                             cardDataCustom?.description_short ||
                                             ""
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            if (mode === "read") return;
                                             setCardDataCustom((prev) => ({
                                                 ...prev,
                                                 description_short:
                                                     e.target.value,
-                                            }))
-                                        }
+                                            }));
+                                        }}
                                         onBlur={() => {
+                                            if (mode === "read") return;
                                             if (
                                                 cardData?.description_short !=
                                                 cardDataCustom?.description_short
@@ -392,21 +405,27 @@ const ContragentCard = () => {
 
                                     <AutoResizeTextarea
                                         className="form-textarea"
-                                        placeholder="Заполните адрес центрального офиса"
+                                        placeholder={
+                                            mode === "edit"
+                                                ? "Заполните адрес центрального офиса"
+                                                : ""
+                                        }
                                         type="text"
                                         name="head_office_address"
                                         value={
                                             cardDataCustom?.head_office_address ||
                                             ""
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            if (mode === "read") return;
                                             setCardDataCustom((prev) => ({
                                                 ...prev,
                                                 head_office_address:
                                                     e.target.value,
-                                            }))
-                                        }
+                                            }));
+                                        }}
                                         onBlur={() => {
+                                            if (mode === "read") return;
                                             if (
                                                 cardData?.head_office_address !=
                                                 cardDataCustom?.head_office_address
@@ -429,19 +448,25 @@ const ContragentCard = () => {
                                     <input
                                         type="text"
                                         className="form-field"
-                                        placeholder="Введите адрес сайта компании"
+                                        placeholder={
+                                            mode === "edit"
+                                                ? "Введите адрес сайта компании"
+                                                : ""
+                                        }
                                         name="company_website"
                                         value={
                                             cardDataCustom?.company_website ||
                                             ""
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            if (mode === "read") return;
                                             setCardDataCustom((prev) => ({
                                                 ...prev,
                                                 company_website: e.target.value,
-                                            }))
-                                        }
+                                            }));
+                                        }}
                                         onBlur={() => {
+                                            if (mode === "read") return;
                                             if (
                                                 cardData?.company_website !=
                                                 cardDataCustom?.company_website

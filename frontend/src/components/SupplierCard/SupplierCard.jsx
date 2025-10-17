@@ -22,13 +22,10 @@ import CardReportsList from "../CardReportsList/CardReportsList";
 import CardManagementReportList from "../CardReportsList/CardManagementReportList";
 
 import SupplierEmptyExecutorBlock from "./SupplierEmptyExecutorBlock";
-import EmptyExecutorBlock from "../ExecutorBlock/EmptyExecutorBlock.jsx";
-import SupplierManagementReportsTab from "./SupplierManagementReportsTab";
 
 import BottomSheet from "../BottomSheet/BottomSheet";
 import BottomNavCard from "../BottomNav/BottomNavCard";
 import AutoResizeTextarea from "../AutoResizeTextarea";
-// import ContragentResponsiblePersons from "./ContragentResponsiblePersons";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -364,12 +361,16 @@ const SupplierCard = () => {
 
     return (
         <main className="page">
-            <section className="card supplier-card">
+            <section
+                className={`card supplier-card ${
+                    mode === "read" ? "read-mode" : ""
+                }`}
+            >
                 <div className="container card__container supplier-card__container">
                     <ToastContainer containerId="toastContainer" />
 
                     <div className="card__wrapper supplier-card__wrapper">
-                        <section className="card__main-content supplier-card__main-content">
+                        <section className="form card__main-content supplier-card__main-content">
                             <div className="card__main-name">
                                 <input
                                     type="text"
@@ -399,21 +400,27 @@ const SupplierCard = () => {
 
                                     <AutoResizeTextarea
                                         className="form-textarea"
-                                        placeholder="Заполните описание"
+                                        placeholder={
+                                            mode === "edit"
+                                                ? "Заполните описание"
+                                                : ""
+                                        }
                                         type="text"
                                         name="description_short"
                                         value={
                                             cardDataCustom?.description_short ||
                                             ""
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            if (mode === "read") return;
                                             setCardDataCustom((prev) => ({
                                                 ...prev,
                                                 description_short:
                                                     e.target.value,
-                                            }))
-                                        }
+                                            }));
+                                        }}
                                         onBlur={() => {
+                                            if (mode === "read") return;
                                             if (
                                                 cardData?.description_short !=
                                                 cardDataCustom?.description_short
@@ -435,21 +442,27 @@ const SupplierCard = () => {
 
                                     <AutoResizeTextarea
                                         className="form-textarea"
-                                        placeholder="Заполните адрес центрального офиса"
+                                        placeholder={
+                                            mode === "edit"
+                                                ? "Заполните адрес центрального офиса"
+                                                : ""
+                                        }
                                         type="text"
                                         name="head_office_address"
                                         value={
                                             cardDataCustom?.head_office_address ||
                                             ""
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            if (mode === "read") return;
                                             setCardDataCustom((prev) => ({
                                                 ...prev,
                                                 head_office_address:
                                                     e.target.value,
-                                            }))
-                                        }
+                                            }));
+                                        }}
                                         onBlur={() => {
+                                            if (mode === "read") return;
                                             if (
                                                 cardData?.head_office_address !=
                                                 cardDataCustom?.head_office_address
@@ -472,19 +485,25 @@ const SupplierCard = () => {
                                     <input
                                         type="text"
                                         className="form-field"
-                                        placeholder="Введите адрес сайта компании"
+                                        placeholder={
+                                            mode === "edit"
+                                                ? "Введите адрес сайта компании"
+                                                : ""
+                                        }
                                         name="company_website"
                                         value={
                                             cardDataCustom?.company_website ||
                                             ""
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            if (mode === "read") return;
                                             setCardDataCustom((prev) => ({
                                                 ...prev,
                                                 company_website: e.target.value,
-                                            }))
-                                        }
+                                            }));
+                                        }}
                                         onBlur={() => {
+                                            if (mode === "read") return;
                                             if (
                                                 cardData?.company_website !=
                                                 cardDataCustom?.company_website
