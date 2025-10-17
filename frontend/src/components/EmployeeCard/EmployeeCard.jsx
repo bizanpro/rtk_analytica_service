@@ -823,94 +823,65 @@ const EmployeeCard = () => {
                             </section>
                         </section>
 
-                        {/* <section className="card__aside-content project-card__aside-content supplier-card__aside-content">
-                            <div className="flex flex-col gap-2 flex-grow">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
-                                        Свод по трудозатратам
-                                    </span>
+                        <section className="card__aside-content project-card__aside-content employee-card__aside-content">
+                            <div className="employee-card__workload-summary">
+                                <h2 className="card__subtitle">
+                                    Свод по трудозатратам, часы
+                                </h2>
+
+                                <div className="employee-card__workload-summary__header">
+                                    <DatePicker
+                                        className="border-2 border-gray-300 p-1 w-full h-[32px]"
+                                        selectsRange
+                                        startDate={startDate}
+                                        endDate={endDate}
+                                        onChange={(update) =>
+                                            setDateRange(update)
+                                        }
+                                        dateFormat="MM-yyyy"
+                                        placeholderText="мм.гггг - мм.гггг"
+                                        showMonthYearPicker
+                                        // includeDates={allowedDates}
+                                        locale={ru}
+                                    />
+
+                                    <Select
+                                        closeMenuOnSelect={false}
+                                        isMulti
+                                        name="colors"
+                                        options={reportTypes.map((type) => ({
+                                            value: type.id,
+                                            label: type.name,
+                                        }))}
+                                        className="basic-multi-select min-w-[170px] min-h-[32px]"
+                                        classNamePrefix="select"
+                                        placeholder="Выбрать тип отчёта"
+                                        onChange={(selectedOptions) => {
+                                            setSelecterTypes(
+                                                selectedOptions.map(
+                                                    (option) => option.value
+                                                )
+                                            );
+                                        }}
+                                    />
                                 </div>
-                                <div className="border-2 border-gray-300 py-5 px-4 min-h-full flex-grow h-full max-h-[500px] overflow-x-hidden overflow-y-auto">
-                                    <div className="grid grid-cols-1 items-start gap-4 mb-8">
-                                        <div className="grid grid-cols-2 items-center gap-3">
-                                            <div className="flex flex-col">
-                                                <span className="block mb-2 text-gray-400">
-                                                    Период
-                                                </span>
 
-                                                <DatePicker
-                                                    className="border-2 border-gray-300 p-1 w-full h-[32px]"
-                                                    selectsRange
-                                                    startDate={startDate}
-                                                    endDate={endDate}
-                                                    onChange={(update) =>
-                                                        setDateRange(update)
-                                                    }
-                                                    dateFormat="MM-yyyy"
-                                                    placeholderText="мм.гггг - мм.гггг"
-                                                    showMonthYearPicker
-                                                    // includeDates={allowedDates}
-                                                    locale={ru}
-                                                />
-                                            </div>
-
-                                            <div className="flex flex-col">
-                                                <span className="block mb-2 text-gray-400">
-                                                    Типы отчётов
-                                                </span>
-                                                <Select
-                                                    closeMenuOnSelect={false}
-                                                    isMulti
-                                                    name="colors"
-                                                    options={reportTypes.map(
-                                                        (type) => ({
-                                                            value: type.id,
-                                                            label: type.name,
-                                                        })
-                                                    )}
-                                                    className="basic-multi-select min-w-[170px] min-h-[32px]"
-                                                    classNamePrefix="select"
-                                                    placeholder="Выбрать тип отчёта"
-                                                    onChange={(
-                                                        selectedOptions
-                                                    ) => {
-                                                        setSelecterTypes(
-                                                            selectedOptions.map(
-                                                                (option) =>
-                                                                    option.value
-                                                            )
-                                                        );
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-col">
-                                        <span className="block mb-2 text-gray-400">
-                                            Свод по трудозатратам, часы
-                                        </span>
-                                        <ul className="grid gap-3">
-                                            {workloadSummary?.length > 0 &&
-                                                workloadSummary?.map((item) => (
-                                                    <EmployeeWorkloadSummary
-                                                        workloadSummaryMaxPercentage={
-                                                            workloadSummaryMaxPercentage
-                                                        }
-                                                        key={item.uuid}
-                                                        {...item}
-                                                    />
-                                                ))}
-                                        </ul>
-                                    </div>
+                                <div className="employee-card__workload-summary__body">
+                                    <EmployeeWorkloadSummary
+                                        workloadSummaryMaxPercentage={
+                                            workloadSummaryMaxPercentage
+                                        }
+                                        workloadSummary={workloadSummary}
+                                    />
                                 </div>
                             </div>
 
                             <div className="flex flex-col gap-2 flex-grow">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-gray-400">
+                                    <h2 className="card__subtitle">
                                         Трудозатраты
-                                    </span>
+                                    </h2>
+
                                     <span className="flex items-center justify-center border border-gray-300 text-gray-400 p-1 rounded-[50%] w-[18px] h-[18px]">
                                         ?
                                     </span>
@@ -1095,7 +1066,7 @@ const EmployeeCard = () => {
                                     </ul>
                                 </div>
                             </div>
-                        </section> */}
+                        </section>
                     </div>
                 </div>
             </section>

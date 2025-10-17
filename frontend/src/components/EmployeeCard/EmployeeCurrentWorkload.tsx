@@ -4,14 +4,6 @@ const EmployeeCurrentWorkload = ({ projects }: { projects: object[] }) => {
             {projects &&
                 projects.length > 0 &&
                 projects.map((item) => {
-                    let statusClass;
-
-                    if (item.status === "completed") {
-                        statusClass = "registry-table__item-status_active";
-                    } else if (item.status === "active") {
-                        statusClass = "registry-table__item-status_completed";
-                    }
-
                     return (
                         <li className="card-projects__item" key={item.id}>
                             <div className="card-projects__item-name">
