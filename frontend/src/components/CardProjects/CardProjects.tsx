@@ -97,8 +97,11 @@ const CardProjects = ({
 
                                 {withLink && (
                                     <a
-                                        href={`${import.meta.env.VITE_BASE_URL}projects/${item.id}`}
+                                        href={`${
+                                            import.meta.env.VITE_BASE_URL
+                                        }projects/${item.id}`}
                                         className="card-projects__item-link"
+                                        aria-label={`Перейти в карточку проекта ${item.name}`}
                                     >
                                         <svg
                                             width="12"
