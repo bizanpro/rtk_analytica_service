@@ -365,7 +365,10 @@ const SaleCard = () => {
                             autoClose: 1200,
                             pauseOnFocusLoss: false,
                             pauseOnHover: false,
-                            position: "top-center",
+                            position:
+                                window.innerWidth >= 1440
+                                    ? "bottom-right"
+                                    : "top-right",
                         }
                     );
                 } else {
@@ -375,7 +378,10 @@ const SaleCard = () => {
                         autoClose: 2000,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 }
             })
@@ -386,7 +392,10 @@ const SaleCard = () => {
                     autoClose: 2000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             });
     };
@@ -512,7 +521,10 @@ const SaleCard = () => {
                     autoClose: 2000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             }
         } else {
@@ -589,7 +601,10 @@ const SaleCard = () => {
                     autoClose: 2000,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             }
         } else {

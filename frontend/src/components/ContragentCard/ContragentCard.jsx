@@ -305,8 +305,6 @@ const ContragentCard = () => {
         }
     }, [width]);
 
-    useEffect(() => {}, []);
-
     return !isDataLoaded ? (
         <Loader />
     ) : (

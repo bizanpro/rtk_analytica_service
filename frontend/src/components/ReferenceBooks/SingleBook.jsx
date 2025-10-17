@@ -263,7 +263,7 @@ const SingleBook = () => {
     const toggleRoleResponce = (action) => {
         query = toast.loading("Обновление", {
             containerId: "singleBook",
-            position: "top-center",
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         action.is_project_report_responsible = rolesAction.action === "true";
@@ -288,7 +288,10 @@ const SingleBook = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                 } else {
                     toast.dismiss(query);
@@ -297,7 +300,10 @@ const SingleBook = () => {
                         autoClose: 1500,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                         containerId: "singleBook",
                     });
                 }
@@ -309,7 +315,10 @@ const SingleBook = () => {
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                     containerId: "singleBook",
                 });
             });
@@ -426,7 +435,10 @@ const SingleBook = () => {
                         autoClose: 1200,
                         pauseOnFocusLoss: false,
                         pauseOnHover: false,
-                        position: "top-center",
+                        position:
+                            window.innerWidth >= 1440
+                                ? "bottom-right"
+                                : "top-right",
                     });
                     setPopupState(false);
                 }

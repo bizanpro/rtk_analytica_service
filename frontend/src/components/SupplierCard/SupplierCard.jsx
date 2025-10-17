@@ -297,7 +297,10 @@ const SupplierCard = () => {
                     autoClose: 1500,
                     pauseOnFocusLoss: false,
                     pauseOnHover: false,
-                    position: "top-center",
+                    position:
+                        window.innerWidth >= 1440
+                            ? "bottom-right"
+                            : "top-right",
                 });
             }
         });

@@ -205,7 +205,7 @@ const EmployeeCard = () => {
         // if (employeeData.position_id != null) {
         query = toast.loading("Обновление", {
             containerId: "employee",
-            position: "top-center",
+            position: window.innerWidth >= 1440 ? "bottom-right" : "top-right",
         });
 
         postData(
