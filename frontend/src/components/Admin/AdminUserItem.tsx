@@ -47,7 +47,7 @@ const AdminUserItem = ({
                     : "—"}
             </td>
 
-            <td>
+            <td className="max-w-[100px]">
                 <div className="admin-actions">
                     {user.status === "invited" ? (
                         mode.edit === "full" && (
