@@ -954,22 +954,27 @@ const GroupEditor = ({
 
                                         {/* Чекбокс для выделения всех строк */}
                                         <td className="mass-checkbox-cell">
-                                            <label
-                                                htmlFor="select_all"
-                                                className="form-checkbox"
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    id="select_all"
-                                                    checked={areAllRowsSelected}
-                                                    onChange={
-                                                        handleSelectAllRows
-                                                    }
-                                                    className="row-checkbox"
-                                                />
+                                            {Object.keys(selectedPermissions)
+                                                .length > 0 && (
+                                                <label
+                                                    htmlFor="select_all"
+                                                    className="form-checkbox"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        id="select_all"
+                                                        checked={
+                                                            areAllRowsSelected
+                                                        }
+                                                        onChange={
+                                                            handleSelectAllRows
+                                                        }
+                                                        className="row-checkbox"
+                                                    />
 
-                                                <div className="checkbox"></div>
-                                            </label>
+                                                    <div className="checkbox"></div>
+                                                </label>
+                                            )}
                                         </td>
                                     </tr>
                                 </tbody>
