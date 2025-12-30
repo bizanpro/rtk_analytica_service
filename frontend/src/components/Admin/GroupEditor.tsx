@@ -162,7 +162,6 @@ const GroupEditor = ({
     };
 
     // Обработчик чекбокса выбора всей строки (раздела)
-    // Теперь ТОЛЬКО отмечает/снимает строку, НЕ трогая чекбоксы прав
     const handleSectionCheckboxChange = (section) => {
         const newSelectedSections = new Set(selectedSections);
 
@@ -282,6 +281,7 @@ const GroupEditor = ({
         return firstScope || "";
     };
 
+    // Массовое переключаение ширины прав
     const handleMassScopeChange = (permissionType, scope) => {
         if (selectedSections.size === 0) {
             return;
@@ -454,6 +454,10 @@ const GroupEditor = ({
             setGroupName("");
         }
     }, [selectedGroup]);
+
+    useEffect(() => {
+        console.log(selectedSections);
+    }, [selectedSections]);
 
     return (
         <div className="popup" onClick={closeEditor}>
@@ -786,11 +790,6 @@ const GroupEditor = ({
                                                 const massScopeValue =
                                                     getMassScopeValue(permType);
 
-                                                const isMassCheckboxCheckedForType =
-                                                    isMassCheckboxChecked(
-                                                        permType
-                                                    );
-
                                                 return (
                                                     <td
                                                         key={`mass_scope_${permType}`}
@@ -823,9 +822,8 @@ const GroupEditor = ({
                                                                 );
                                                             }}
                                                             isDisabled={
-                                                                !isMassCheckboxCheckedForType ||
                                                                 selectedSections.size ===
-                                                                    0
+                                                                0
                                                             }
                                                         />
                                                     </td>
