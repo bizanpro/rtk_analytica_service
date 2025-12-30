@@ -831,6 +831,13 @@ const GroupEditor = ({
                                                                     : null
                                                             }
                                                             onChange={(e) => {
+                                                                if (
+                                                                    !isMassPermissionAvailable(
+                                                                        permType
+                                                                    )
+                                                                )
+                                                                    return;
+                                                                    
                                                                 handleMassScopeChange(
                                                                     permType,
                                                                     e.value
