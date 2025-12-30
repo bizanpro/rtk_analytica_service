@@ -407,6 +407,17 @@ const GroupEditor = ({
             .finally(() => setIsLoading(false));
     };
 
+    const isMassPermissionAvailable = (permissionType) => {
+        if (selectedSections.size === 0) {
+            return false;
+        }
+
+        return Array.from(selectedSections).some((section) => {
+            const matrix = PERMISSION_MATRIX[section];
+            return matrix?.[permissionType] === 1;
+        });
+    };
+
     // Иерархия прав (Просмотр -> Редактирование -> Удаление)
     useEffect(() => {
         setSelectedPermissions((prev) => {
@@ -454,10 +465,6 @@ const GroupEditor = ({
             setGroupName("");
         }
     }, [selectedGroup]);
-
-    useEffect(() => {
-        console.log(selectedSections);
-    }, [selectedSections]);
 
     return (
         <div className="popup" onClick={closeEditor}>
@@ -810,11 +817,19 @@ const GroupEditor = ({
                                                             menuShouldScrollIntoView={
                                                                 false
                                                             }
-                                                            value={RIGHTS_WIDTH_OPTIONS.find(
-                                                                (item) =>
-                                                                    item.value ===
-                                                                    massScopeValue
-                                                            )}
+                                                            value={
+                                                                isMassPermissionAvailable(
+                                                                    permType
+                                                                )
+                                                                    ? RIGHTS_WIDTH_OPTIONS.find(
+                                                                          (
+                                                                              item
+                                                                          ) =>
+                                                                              item.value ===
+                                                                              massScopeValue
+                                                                      )
+                                                                    : null
+                                                            }
                                                             onChange={(e) => {
                                                                 handleMassScopeChange(
                                                                     permType,
@@ -822,8 +837,9 @@ const GroupEditor = ({
                                                                 );
                                                             }}
                                                             isDisabled={
-                                                                selectedSections.size ===
-                                                                0
+                                                                !isMassPermissionAvailable(
+                                                                    permType
+                                                                )
                                                             }
                                                         />
                                                     </td>
